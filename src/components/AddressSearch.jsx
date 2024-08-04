@@ -1,201 +1,258 @@
-import React, { useState, useCallback } from 'react'
-import clsx from 'clsx'
-import { AddressAutofill, AddressMinimap, useConfirmAddress } from '@mapbox/search-js-react'
+import React, { useEffect, useState, useCallback } from 'react';
+import { AddressAutofill, AddressMinimap, useConfirmAddress } from '@mapbox/search-js-react';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
 import Button from '@mui/material/Button';
+import {fetchRegion} from '../store/apiFunctions';
+import Grid from '@mui/material/Grid';
 
-const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg'
+// This is a public token, so it's okay to expose it here
+const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
 const styleConstants = {
     fieldSpacing: { mb: 2 }
 };
 
+
 const MapboxExample = () => {
-    const [activePage, setActivePage] = useState('shipping')
-    const [formData, setFormData] = useState()
-    const [minimapFeature, setMinimapFeature] = useState()
+    const [addresses, setAddresses] = useState([]);
+    const [defaultCoordinates, setDefaultCoordinates] = useState([0, 0])
+    const [minimapFeature, setMinimapFeature] = useState({
+        type: 'Feature',
+        geometry: {
+            type: 'Point',
+            coordinates: defaultCoordinates,
+        },
+        properties: {},
+    });
+    const [mapKey, setMapKey] = useState(0);
     const { formRef, showConfirm } = useConfirmAddress({
         accessToken: MAPBOX_ACCESS_TOKEN
     });
 
+
+    useEffect(() => {
+        const loadLocation = async () => {
+            const region = await fetchRegion();
+            if (region && region.latitude && region.longitude) {
+                console.log( "Setting default coordinates " + region.longitude)
+                setDefaultCoordinates( [region.longitude, region.latitude] );
+                handleResetMap();
+                
+            };
+        };
+
+        loadLocation();
+    }, []);
+
+    const removeLocation = (index) => {
+        setAddresses(prevAddresses => {
+            const updatedAddresses = [...prevAddresses];
+            updatedAddresses.splice(index, 1);
+            return updatedAddresses;
+        });
+    };
+
+
     const handleAutofillRetrieve = (response) => {
-        setMinimapFeature(response.features[0])
-    }
+        setMinimapFeature(response.features[0]);
+    };
 
     const handleFormSubmit = useCallback(async (e) => {
-        e.preventDefault()
-        const result = await showConfirm()
+        e.preventDefault();
+        const result = await showConfirm();
 
         if (result.type === 'nochange') {
-            setFormData(new FormData(e.target))
-            setActivePage('confirm')
+            const newAddress = new FormData(e.target);
+            console.log("New address address is " + newAddress.get('address'))
+            newAddress.append('latitude', minimapFeature.geometry.coordinates[0]);
+            newAddress.append('longitude', minimapFeature.geometry.coordinates[1]);
+            setAddresses(prevAddresses => [...prevAddresses, newAddress]);
+            handleResetMap();
         }
     }, [showConfirm]);
 
-    const handleChangeAddress = () => {
-        setActivePage('shipping')
-    }
 
     const handleTryAgain = () => {
-        formRef.current.reset()
-        setMinimapFeature()
-        setActivePage('shipping')
-    }
+        handleResetMap();
+    };
 
-    let displayAddress
+    const handleResetMap = () => {
+        setMinimapFeature({
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: defaultCoordinates,
+            },
+            properties: {},
+        });
+        formRef.current.reset();
+        setMapKey(prevKey => prevKey + 1); // Force re-render of AddressMinimap
+    };
 
-    if (formData) {
-        displayAddress = (
-            <>
-                {formData.get('first-name')} {formData.get('last-name')}<br />
-                {formData.get('address-line1 address-search')}<br />
-                {formData.get('address-line2') && (<>{formData.get('address-line2')} <br /></>)}
-                {formData.get('address-level2')} {formData.get('address-level1')} {formData.get('postal-code')}
-            </>
-        )
-    }
+    const handleSaveMarkerLocation = (coordinate) => {
+        setMinimapFeature({
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: coordinate,
+            },
+            properties: {},
+        });
+    };
+
+    const renderAddress = (formData) => {
+        return (
+            <Grid container spacing={1}>
+                <Grid item xs={12} sx={{ fontWeight: 'bold' }}>
+                    Customer: {formData.get('customerName')}
+                </Grid>
+                <Grid item xs={8}>
+                    <div><strong>Address:</strong></div>
+                    <div>{formData.get('address-main')}</div>
+                    {formData.get('address-line2') && <div>{formData.get('address-line2')}</div>}
+                    <div>
+                        {formData.get('address-level2')}, {formData.get('address-level1')} {formData.get('postal-code')}
+                    </div>
+                </Grid>
+                <Grid item xs={4}>
+                    <div><strong>Latitude:</strong> {formData.get('latitude')}</div>
+                    <div><strong>Longitude:</strong> {formData.get('longitude')}</div>
+                </Grid>
+            </Grid>
+        );
+    };
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 600, width: '100%' }}>
-                <div>
-                    <h4>Shipping Address</h4>
-                    <form className="flex flex--column" ref={formRef} onSubmit={handleFormSubmit}>
-                        <div className='grid grid--gut12'>
+            <Paper elevation={3} sx={{ padding: 3, maxWidth: 900, width: '100%' }}>
+            <Grid container spacing={2} >
+                <Grid item xs={12} >
+                    <h3>Delivery Address</h3>
+                </Grid>
+
+                <form ref={formRef} onSubmit={handleFormSubmit}>
+                    <Grid item xs={12} sx={styleConstants.fieldSpacing}>
+                        <TextField
+                            name="customerName"
+                            label="Customer Name"
+                            required
+                            fullWidth
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} sx={styleConstants.fieldSpacing}>
+                        <AddressAutofill accessToken={MAPBOX_ACCESS_TOKEN} onRetrieve={handleAutofillRetrieve}>
                             <TextField
-                                name="customerName"
-                                label="Customer Name"
+                                id="address"
+                                name="address-main"
+                                variant="outlined"
+                                autoComplete="address-line1"
+                                fullWidth
+                                label="Address"
+                            />
+                        </AddressAutofill>
+                    </Grid>
+
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6} md={3} sx={styleConstants.fieldSpacing}>
+                            <TextField
+                                label="Apartment, suite, etc. (optional)"
+                                name="apartment"
+                                variant='outlined'
+                                autoComplete='address-line2'
+                                fullWidth
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6} md={3} sx={styleConstants.fieldSpacing}>
+                            <TextField
+                                label="City"
+                                name="address-level2"
+                                variant='outlined'
+                                autoComplete='address-level2'
                                 required
                                 fullWidth
-                                sx={styleConstants.fieldSpacing}
                             />
-                        </div>
+                        </Grid>
 
-                        <AddressAutofill accessToken={MAPBOX_ACCESS_TOKEN} onRetrieve={handleAutofillRetrieve}>
-                            <FormControl fullWidth sx={styleConstants.fieldSpacing}>
-                                <InputLabel htmlFor="address">Address</InputLabel>
-                                <TextField
-                                    id="address"
-                                    name="address"
-                                    variant="outlined"
-                                    autoComplete="address-line1"
-                                    fullWidth
-                                    label="Address"
-                                />
-                            </FormControl>
-                        </AddressAutofill>
+                        <Grid item xs={12} sm={6} md={3} sx={styleConstants.fieldSpacing}>
+                            <TextField
+                                label="State / Region"
+                                name="address-level1"
+                                variant='outlined'
+                                autoComplete='address-level1'
+                                required
+                                fullWidth
+                            />
+                        </Grid>
 
-                        <TextField
-                            label="Apartment, suite, etc. (optional)"
-                            name="apartment"
-                            variant='outlined'
-                            autoComplete='address-line2'
-                            fullWidth
-                            sx={styleConstants.fieldSpacing}
+                        <Grid item xs={12} sm={6} md={3} sx={styleConstants.fieldSpacing}>
+                            <TextField
+                                label="ZIP / Postcode"
+                                name="postal-code"
+                                variant='outlined'
+                                autoComplete='postal-code'
+                                required
+                                fullWidth
+                            />
+                        </Grid>
+                    </Grid>
+
+                    <Box sx={{ height: 180, width: '100%', position: 'relative', mt: 2, mb: 5 }}>
+                        <AddressMinimap
+                            key={mapKey}
+                            feature={minimapFeature}
+                            show={!!minimapFeature}
+                            satelliteToggle
+                            canAdjustMarker
+                            onSaveMarkerLocation={handleSaveMarkerLocation}
+                            footer
+                            accessToken={MAPBOX_ACCESS_TOKEN}
+                            keepMarkerCentered={false} // Keep this false to allow marker adjustments
                         />
+                    </Box>
 
-                        <div className='grid grid--gut12 mb12'>
-                            <div className='col w-1/3'>
-                                <TextField
-                                    label="City"
-                                    name="address-level2"
-                                    variant='outlined'
-                                    autoComplete='address-level2'
-                                    required
-                                    fullWidth
-                                    sx={styleConstants.fieldSpacing}
-                                />
-                            </div>
-                            <div className='col w-1/3'>
-                                <TextField
-                                    label="State / Region"
-                                    name="address-level1"
-                                    variant='outlined'
-                                    autoComplete='address-level1'
-                                    required
-                                    fullWidth
-                                    sx={styleConstants.fieldSpacing}
-                                />
-                            </div>
-                            <div className='col w-1/3'>
-                                <TextField
-                                    label="ZIP / Postcode"
-                                    name="postal-code"
-                                    variant='outlined'
-                                    autoComplete='postal-code'
-                                    required
-                                    fullWidth
-                                    sx={styleConstants.fieldSpacing}
-                                />
-                            </div>
-                        </div>
+                    <Grid container spacing={1}>
+                    <Grid item xs={6} justifyContent={'flex-end'} >
+                        <Button onClick={handleTryAgain} variant="contained" color="secondary">
+                            Clear Form
+                        </Button>
+                    </Grid>
 
-                        <div id="minimap-container" className={clsx("h180 wfull relative mt18 mb60", {
-                            none: !minimapFeature
-                        })}>
-                            <AddressMinimap
-                                feature={minimapFeature}
-                                show={!!minimapFeature}
-                                satelliteToggle
-                                canAdjustMarker
-                                footer
-                                accessToken={MAPBOX_ACCESS_TOKEN}
-                            />
-                        </div>
+                    <Grid item xs={6} justifyContent={'flex-end'} >
+                        <Button type="submit" variant="contained" color="primary">
+                            Add Location
+                        </Button>
+                    </Grid>
+                    </Grid>
+                </form>
+            </Grid>
 
-                        <div className="mb12 submit-btns align-r">
-                            <button type="submit" className="btn round">
-                                Add Location
-                            </button>
-                        </div>
-                    </form>
-                </div>
 
-                <div className={clsx("confirm-page", {
-                    'none': activePage === 'shipping'
-                })}>
-                    <div className={clsx("confirm-order-blurb", {
-                        'none': activePage !== 'confirm'
-                    })}>
-                        
-                    </div>
+                <Box sx={{ display: addresses.length === 0 ? 'none' : 'block' }}>
+                    {addresses.map((address, index) => (
+                        <Box key={index} sx={{ borderRadius: 1, border: 1, borderColor: 'grey.300', px: 2, py: 1, mb: 3 }}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={8} id="shipping-address">
+                                {renderAddress(address)}
+                            </Grid>
+                            <Grid item xs={4} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                                <Button onClick={() => removeLocation(index)} variant="contained" color="secondary">
+                                    Remove
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </Box>
+                    
+                    ))}
 
-                    <div className={clsx("order-submitted-blurb mb24", {
-                        'none': activePage !== 'complete'
-                    })}>
-                        <h4 className="txt-l txt-bold mb6">Order Submitted!</h4>
-
-                        <button className="txt-ms border-b color-blue color-blue-dark-on-hover link restart-button inline-block" onClick={handleTryAgain}>Clear Entries</button>
-                    </div>
-
-                    <div className="round border border--gray-light px18 py6 flex mb24">
-                        <div className="txt-bold mr24 w60">Order</div>
-                        <div className="flex-child-grow">1 - Mapbox Developer Tee Shirt</div>
-                    </div>
-
-                    <div className="round border border--gray-light px18 py6 flex mb24">
-                        <div className="txt-bold mr24 w60">Ship To</div>
-                        <div className="flex-child-grow" id="shipping-address">
-                            {displayAddress}
-                        </div>
-                        <div className={clsx({ 'none': activePage !== 'confirm' })}>
-                            <Button onClick={handleChangeAddress} variant="contained" color="secondary" >Change</Button>
-                        </div>
-                    </div>
-
-                    <div className={clsx("mb12 submit-btns align-r", {
-                        'none': activePage !== 'confirm'
-                    })}>
-                        
-                    </div>
-                </div>
+                   
+                </Box>
             </Paper>
         </Box>
-    )
-}
+    );
+};
 
-export default MapboxExample
+export default MapboxExample;

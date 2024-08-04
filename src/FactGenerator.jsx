@@ -4,6 +4,7 @@ import QLogo from './assets/quantumicon.png'
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import MapComponent from './MapComponent.jsx';
+import AddressSearch from './components/AddressSearch.jsx';
 import * as Constants from './Constants.js';
 
 
@@ -102,6 +103,9 @@ const RandomFactGenerator = () => {
             </div>
 
             <MapComponent longitude={longitude} latitude={latitude} />
+
+            <AddressSearch />
+
             
         </div>
     );

@@ -1,5 +1,6 @@
 import React from 'react';
 
+// Page design for daily reports page
 const DailyReports = () => {
     return (
       <div

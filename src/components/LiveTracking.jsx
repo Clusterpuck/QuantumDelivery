@@ -1,5 +1,6 @@
 import React from 'react';
 
+// Page design for live tracking page
 const LiveTracking = () => {
     return (
       <div

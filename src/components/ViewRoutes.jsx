@@ -1,5 +1,6 @@
 import React from 'react';
 
+// Page design for view routes page
 const ViewRoutes = () => {
     return (
       <div

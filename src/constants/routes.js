@@ -4,6 +4,8 @@ import LiveTracking from "../components/LiveTracking";
 import DailyReports from "../components/DailyReports";
 import UploadRunsheet from "../components/UploadRunsheet";
 
+// Defines the routes
+// Everytime you add a new page please add a route for it here
 export const ROUTES = [
   {
     path: "/",
@@ -27,6 +29,7 @@ export const ROUTES = [
   },
 ];
 
+// Default export
 export default function ViewRoutes() {
     return (
       <div

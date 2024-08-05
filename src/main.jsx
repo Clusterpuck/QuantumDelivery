@@ -12,10 +12,11 @@ import DailyReports from './components/DailyReports';
 import UploadRunsheet from './components/UploadRunsheet';
 import './index.css';
 
+// Initializes the routes within the app
 const App = () => {
     return (
         <Router>
-            <Routes>
+            <Routes> 
                 <Route path="/" element={<RandomFactGenerator />} />
                 <Route path="/viewroutes" element={<ViewRoutes />} />
                 <Route path="/livetracking" element={<LiveTracking />} />

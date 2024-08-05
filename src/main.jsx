@@ -5,7 +5,7 @@ import {
     Routes,
     Route,
 } from 'react-router-dom';
-import RandomFactGenerator from './FactGenerator';
+import RandomFactGenerator from './components/Home';
 import ViewRoutes from './components/ViewRoutes';
 import LiveTracking from './components/LiveTracking';
 import DailyReports from './components/DailyReports';

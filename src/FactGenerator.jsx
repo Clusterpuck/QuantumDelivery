@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import MapComponent from './MapComponent.jsx';
 import AddressSearch from './components/AddressSearch.jsx';
+import UploadRunsheet from './components/UploadRunsheet.jsx';
 import * as Constants from './Constants.js';
 
 const FactGenerator = () => {
@@ -68,7 +69,7 @@ const FactGenerator = () => {
         } finally {
             setLoadingLocation(false);
             const endTime = performance.now(); // Record end time
-            const duration = endTime - startTime; // Calculate duration
+            const duration = endTime - startTime; 
             console.log('Two Public API request duration:', duration, 'milliseconds');
         }
     };
@@ -77,8 +78,11 @@ const FactGenerator = () => {
         <div>
             <img src={QLogo} className="icon" alt="Quantum logo" />
             <h1>Route Finder</h1>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <Link to="/testpage">View Routes</Link>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <Link to="/viewroutes">View Routes</Link>
+                <Link to="/livetracking">Live Tracking</Link>
+                <Link to="/dailyreports">Daily Reports</Link>
+                <Link to="/uploadrunsheet">Upload Runsheet</Link>
             </div>
             <div className="fact-container">
                 <div>

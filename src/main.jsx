@@ -6,7 +6,10 @@ import {
     Route,
 } from 'react-router-dom';
 import RandomFactGenerator from './FactGenerator';
-import TestPage from './components/ViewRoutes';
+import ViewRoutes from './components/ViewRoutes';
+import LiveTracking from './components/LiveTracking';
+import DailyReports from './components/DailyReports';
+import UploadRunsheet from './components/UploadRunsheet';
 import './index.css';
 
 const App = () => {
@@ -14,7 +17,10 @@ const App = () => {
         <Router>
             <Routes>
                 <Route path="/" element={<RandomFactGenerator />} />
-                <Route path="/testpage" element={<TestPage />} />
+                <Route path="/viewroutes" element={<ViewRoutes />} />
+                <Route path="/livetracking" element={<LiveTracking />} />
+                <Route path="/dailyreports" element={<DailyReports />} />
+                <Route path="/uploadrunsheet" element={<UploadRunsheet />} />
             </Routes>
         </Router>
     );

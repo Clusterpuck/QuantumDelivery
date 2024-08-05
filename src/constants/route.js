@@ -1,5 +1,8 @@
 import Home from "../../components/Home";
-import TestPage from "../components/ViewRoutes";
+import ViewRoutes from "../components/ViewRoutes";
+import LiveTracking from "../components/LiveTracking";
+import DailyReports from "../components/DailyReports";
+import UploadRunsheet from "../components/UploadRunsheet";
 
 export const ROUTES = [
   {
@@ -7,12 +10,24 @@ export const ROUTES = [
     element: <Home />,
   },
   {
-    path: "/testpage",
-    element: <TestPage />,
+    path: "/viewroutes",
+    element: <ViewRoutes />,
+  },
+  {
+    path: "/livetracking",
+    element: <LiveTracking />,
+  },
+  {
+    path: "/dailyreports",
+    element: <DailyReports />,
+  },
+  {
+    path: "/uploadrunsheet",
+    element: <UploadRunsheet />,
   },
 ];
 
-export default function TestPage() {
+export default function ViewRoutes() {
     return (
       <div
         style={{

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ViewRoutes = () => {
+const UploadRunsheet = () => {
     return (
       <div
         style={{
@@ -11,10 +11,10 @@ const ViewRoutes = () => {
           gap: 8,
         }}
       >
-        <h1>View Routes</h1>
+        <h1>Upload Runsheet</h1>
         <a href="/">Back Home</a>
       </div>
     );
 };
 
-export default ViewRoutes;
+export default UploadRunsheet;

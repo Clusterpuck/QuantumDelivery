@@ -15,13 +15,14 @@ const styleConstants = {
 };
 
 
-const MapboxExample = () => {
+const AddressSearch = () => {
     const [addresses, setAddresses] = useState([]);
     const [defaultCoordinates, setDefaultCoordinates] = useState([0, 0])
     const [minimapFeature, setMinimapFeature] = useState({
         type: 'Feature',
         geometry: {
             type: 'Point',
+            //reset map to allow for pin movement reset
             coordinates: defaultCoordinates,
         },
         properties: {},
@@ -65,7 +66,9 @@ const MapboxExample = () => {
 
         if (result.type === 'nochange') {
             const newAddress = new FormData(e.target);
-            console.log("New address address is " + newAddress.get('address'))
+            for (const pair of newAddress.entries()) {
+                console.log(`${pair[0]}: ${pair[1]}`);
+            }
             newAddress.append('latitude', minimapFeature.geometry.coordinates[0]);
             newAddress.append('longitude', minimapFeature.geometry.coordinates[1]);
             setAddresses(prevAddresses => [...prevAddresses, newAddress]);
@@ -110,7 +113,9 @@ const MapboxExample = () => {
                 </Grid>
                 <Grid item xs={8}>
                     <div><strong>Address:</strong></div>
-                    <div>{formData.get('address-main')}</div>
+                    <div>{formData.get('address-line1 address-search')}</div>
+                    {/*Frustratingly the name is set to automatically be appended with
+                    address search at the end */}
                     {formData.get('address-line2') && <div>{formData.get('address-line2')}</div>}
                     <div>
                         {formData.get('address-level2')}, {formData.get('address-level1')} {formData.get('postal-code')}
@@ -145,8 +150,8 @@ const MapboxExample = () => {
                     <Grid item xs={12} sx={styleConstants.fieldSpacing}>
                         <AddressAutofill accessToken={MAPBOX_ACCESS_TOKEN} onRetrieve={handleAutofillRetrieve}>
                             <TextField
-                                id="address"
-                                name="address-main"
+                                id='address-line1'
+                                name='address-line1'
                                 variant="outlined"
                                 autoComplete="address-line1"
                                 fullWidth
@@ -255,4 +260,4 @@ const MapboxExample = () => {
     );
 };
 
-export default MapboxExample;
+export default AddressSearch;

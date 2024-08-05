@@ -15,13 +15,14 @@ const styleConstants = {
 };
 
 
-const MapboxExample = () => {
+const AddressSearch = () => {
     const [addresses, setAddresses] = useState([]);
     const [defaultCoordinates, setDefaultCoordinates] = useState([0, 0])
     const [minimapFeature, setMinimapFeature] = useState({
         type: 'Feature',
         geometry: {
             type: 'Point',
+            //reset map to allow for pin movement reset
             coordinates: defaultCoordinates,
         },
         properties: {},
@@ -259,4 +260,4 @@ const MapboxExample = () => {
     );
 };
 
-export default MapboxExample;
+export default AddressSearch;

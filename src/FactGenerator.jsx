@@ -1,14 +1,15 @@
-import { useState, useEffect } from 'react';
-import './App.css'
-import QLogo from './assets/quantumicon.png'
+import React, { useState, useEffect } from 'react';
+import './App.css';
+import { Link } from 'react-router-dom';
+import QLogo from './assets/quantumicon.png';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import MapComponent from './MapComponent.jsx';
 import AddressSearch from './components/AddressSearch.jsx';
+import UploadRunsheet from './components/UploadRunsheet.jsx';
 import * as Constants from './Constants.js';
 
-
-const RandomFactGenerator = () => {
+const FactGenerator = () => {
     const [fact, setFact] = useState('');
     const [loadingFact, setLoadingFact] = useState(false);
     const [loadingLocation, setLoadingLocation] = useState(false);
@@ -16,14 +17,11 @@ const RandomFactGenerator = () => {
     const [latitude, setLatitude] = useState(-70);
     const [longitude, setLongitude] = useState(115);
 
-    // Fetch random fact on component mount
     useEffect(() => {
         fetchRandomFact();
         fetchRegion();
-    }, []); // Empty dependency array ensures the effect runs only once on mount
+    }, []);
 
-
-    // Function to fetch random fact from the backend
     const fetchRandomFact = async () => {
         setLoadingFact(true);
         const startTime = performance.now(); // Record start time
@@ -44,8 +42,6 @@ const RandomFactGenerator = () => {
         }
     };
 
-
-    // Function to fetch random fact from the backend
     const fetchRegion = async () => {
         setLoadingLocation(true);
         const startTime = performance.now(); // Record start time
@@ -57,33 +53,37 @@ const RandomFactGenerator = () => {
             const ipData = await ipResponse.json();
             const userIP = ipData.ip;
             console.log("Ip is " + userIP);
-    
-            // Use user's IP address to fetch region information
+
             const response = await fetch(`https://ipapi.co/${userIP}/json/`);
             if (!response.ok) {
-                console.log("error in fetch region response")
+                console.log("error in fetch region response");
                 throw new Error('Failed to fetch location information');
             }
             const data = await response.json();
             setLocation(`${data.city}, ${data.region}`);
-            setLongitude(data.longitude)
-            setLatitude(data.latitude)
-            console.log("Latitude in fact gen is " + data.latitude)
+            setLongitude(data.longitude);
+            setLatitude(data.latitude);
+            console.log("Latitude in fact gen is " + data.latitude);
         } catch (error) {
             console.error('Error fetching region:', error.message);
         } finally {
             setLoadingLocation(false);
             const endTime = performance.now(); // Record end time
-            const duration = endTime - startTime; // Calculate duration
+            const duration = endTime - startTime; 
             console.log('Two Public API request duration:', duration, 'milliseconds');
         }
     };
-
 
     return (
         <div>
             <img src={QLogo} className="icon" alt="Quantum logo" />
             <h1>Route Finder</h1>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <Link to="/viewroutes">View Routes</Link>
+                <Link to="/livetracking">Live Tracking</Link>
+                <Link to="/dailyreports">Daily Reports</Link>
+                <Link to="/uploadrunsheet">Upload Runsheet</Link>
+            </div>
             <div className="fact-container">
                 <div>
                     <p>Azure Branch Updated 6/05/24 03:21 pm</p>
@@ -91,24 +91,22 @@ const RandomFactGenerator = () => {
                 <div>
                     <p>{fact}</p>
                 </div>
-                <Button variant={loadingFact ? 'disabled' : 'contained' } color='secondary' onClick={fetchRandomFact}  >
-                {loadingFact ? <CircularProgress size={24} /> : 'New Fact'}</Button>
+                <Button variant={loadingFact ? 'disabled' : 'contained'} color='secondary' onClick={fetchRandomFact}>
+                    {loadingFact ? <CircularProgress size={24} /> : 'New Fact'}
+                </Button>
             </div>
             <div className="region-container">
                 <div>
                     <p>You are at: {location}</p>
                 </div>
-                <Button variant={loadingLocation ? 'disabled' : 'contained' } color='primary' onClick={fetchRegion}  >
-                {loadingLocation? <CircularProgress size={24} /> : 'Read Location'}</Button>
+                <Button variant={loadingLocation ? 'disabled' : 'contained'} color='primary' onClick={fetchRegion}>
+                    {loadingLocation ? <CircularProgress size={24} /> : 'Read Location'}
+                </Button>
             </div>
-
             <MapComponent longitude={longitude} latitude={latitude} />
-
             <AddressSearch />
-
-            
         </div>
     );
 };
-////-32.01
-export default RandomFactGenerator;
+
+export default FactGenerator;

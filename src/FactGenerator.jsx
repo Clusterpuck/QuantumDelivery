@@ -23,7 +23,7 @@ const FactGenerator = () => {
 
     const fetchRandomFact = async () => {
         setLoadingFact(true);
-        const startTime = performance.now();
+        const startTime = performance.now(); // Record start time
         try {
             const response = await fetch(Constants.DATA_ENDPOINT + "/QuantumFact");
             if (!response.ok) {
@@ -35,15 +35,15 @@ const FactGenerator = () => {
             console.error('Error fetching random fact:', error.message);
         } finally {
             setLoadingFact(false);
-            const endTime = performance.now();
-            const duration = endTime - startTime;
+            const endTime = performance.now(); // Record end time
+            const duration = endTime - startTime; // Calculate duration
             console.log('Request duration:', duration, 'milliseconds');
         }
     };
 
     const fetchRegion = async () => {
         setLoadingLocation(true);
-        const startTime = performance.now();
+        const startTime = performance.now(); // Record start time
         try {
             const ipResponse = await fetch('https://api.ipify.org?format=json');
             if (!ipResponse.ok) {
@@ -67,8 +67,8 @@ const FactGenerator = () => {
             console.error('Error fetching region:', error.message);
         } finally {
             setLoadingLocation(false);
-            const endTime = performance.now();
-            const duration = endTime - startTime;
+            const endTime = performance.now(); // Record end time
+            const duration = endTime - startTime; // Calculate duration
             console.log('Two Public API request duration:', duration, 'milliseconds');
         }
     };

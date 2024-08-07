@@ -1,48 +1,30 @@
-import Home from "../../components/Home";
-import ViewRoutes from "../components/ViewRoutes";
-import LiveTracking from "../components/LiveTracking";
-import DailyReports from "../components/DailyReports";
-import UploadRunsheet from "../components/UploadRunsheet";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import RandomFactGenerator from './components/Home';
+import ViewRoutes from './components/ViewRoutes';
+import LiveTracking from './components/LiveTracking';
+import DailyReports from './components/DailyReports';
+import AddOrder from './components/AddOrder';
+import './index.css';
 
-// Defines the routes
-// Everytime you add a new page please add a route for it here
-export const ROUTES = [
-  {
-    path: "/",
-    element: <Home />,
-  },
-  {
-    path: "/viewroutes",
-    element: <ViewRoutes />,
-  },
-  {
-    path: "/livetracking",
-    element: <LiveTracking />,
-  },
-  {
-    path: "/dailyreports",
-    element: <DailyReports />,
-  },
-  {
-    path: "/uploadrunsheet",
-    element: <UploadRunsheet />,
-  },
-];
-
-// Default export
-export default function ViewRoutes() {
+// Initializes the routes within the app
+const App = () => {
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 8,
-        }}
-      >
-        <h1>Page 1</h1>
-        <a href="/">Back Home</a>
-      </div>
+        <Router>
+            <Routes>
+                <Route path="/" element={<RandomFactGenerator />} />
+                <Route path="/viewroutes" element={<ViewRoutes />} />
+                <Route path="/livetracking" element={<LiveTracking />} />
+                <Route path="/dailyreports" element={<DailyReports />} />
+                <Route path="/addorder" element={<AddOrder />} />
+            </Routes>
+        </Router>
     );
-  }
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);

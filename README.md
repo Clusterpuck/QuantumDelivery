@@ -15,7 +15,7 @@ This project is a web application that represents the front end of a Quantum Del
     > router.jsx - file to setup and initialize the router
     > routes.js - file to initialize the routes to each component
 
-    
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

@@ -9,7 +9,7 @@ import RandomFactGenerator from './components/Home';
 import ViewRoutes from './components/ViewRoutes';
 import LiveTracking from './components/LiveTracking';
 import DailyReports from './components/DailyReports';
-import UploadRunsheet from './components/UploadRunsheet';
+import AddOrder from './components/AddOrder';
 import './index.css';
 
 // Initializes the routes within the app
@@ -21,7 +21,7 @@ const App = () => {
                 <Route path="/viewroutes" element={<ViewRoutes />} />
                 <Route path="/livetracking" element={<LiveTracking />} />
                 <Route path="/dailyreports" element={<DailyReports />} />
-                <Route path="/uploadrunsheet" element={<UploadRunsheet />} />
+                <Route path="/addorder" element={<AddOrder />} />
             </Routes>
         </Router>
     );

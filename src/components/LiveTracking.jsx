@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 // Page design for live tracking page
 const LiveTracking = () => {

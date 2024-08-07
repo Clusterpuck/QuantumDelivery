@@ -16,7 +16,7 @@ const AddOrder = () => {
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <Link to="/viewroutes" className="nav-link">View Routes</Link>
             <Link to="/livetracking" className="nav-link">Live Tracking</Link>
-            <Link to="/dailyreport" className="nav-link">Daily Reports</Link>
+            <Link to="/dailyreports" className="nav-link">Daily Reports</Link>
             <Link to="/addorder" className="nav-link">Add Order</Link>
         </div>
         <h1>Add Order</h1>

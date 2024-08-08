@@ -4,6 +4,7 @@ import { fetchCustomers, fetchLocations } from '../store/apiFunctions';
 import { Autocomplete, Button, Dialog, DialogActions, DialogContent, Box, Paper, Grid } from '@mui/material';
 import AddressSearch from './AddressSearch';
 import AddCustomer from './AddCustomer';
+import ProductListForm from './ProductListForm';
 import TextField from '@mui/material/TextField';
 
 
@@ -151,6 +152,8 @@ const AddOrder = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <ProductListForm/>
 
             
 

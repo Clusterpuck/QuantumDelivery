@@ -57,6 +57,24 @@ export const fetchLocations = async () => {
 };
 
 
+export const fetchProducts = async () => {
+    let ipData = null
+    try {
+        const ipResponse = await fetch( Constants.DATA_ENDPOINT + 'products');
+        if (!ipResponse.ok) {
+            throw new Error('Failed to fetch IP address');
+        }
+        ipData = await ipResponse.json();
+        console.log("Data is " + JSON.stringify(ipData) );
+        // Use user's IP address to fetch region information
+    } catch (error) {
+        console.error('Error fetching region:', error.message);
+    }
+    return ipData
+};
+
+
+
 export const postLocation = async (newLocation) => {
     try {
         const response = await fetch( Constants.DATA_ENDPOINT + 'locations', {

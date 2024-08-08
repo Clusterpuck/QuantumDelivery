@@ -21,3 +21,20 @@ export const fetchRegion = async () => {
     }
     return data
 };
+
+export const fetchCustomers = async () => {
+    let ipData = null
+    try {
+        const ipResponse = await fetch('https://routingdata.azurewebsites.net/api/customers');
+        if (!ipResponse.ok) {
+            throw new Error('Failed to fetch IP address');
+        }
+        ipData = await ipResponse.json();
+        console.log("Data is " + JSON.stringify(ipData) );
+        // Use user's IP address to fetch region information
+    } catch (error) {
+        console.error('Error fetching region:', error.message);
+    }
+    return ipData
+};
+

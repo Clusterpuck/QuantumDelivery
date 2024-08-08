@@ -1,1 +1,1 @@
-export const DATA_ENDPOINT = "https://routingdata.azurewebsites.net";
+export const DATA_ENDPOINT = "https://routingdata.azurewebsites.net/api/";

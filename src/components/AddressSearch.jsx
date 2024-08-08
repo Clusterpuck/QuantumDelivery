@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import {fetchRegion} from '../store/apiFunctions';
+import {fetchRegion, postLocation} from '../store/apiFunctions';
 import Grid from '@mui/material/Grid';
 
 // This is a public token, so it's okay to expose it here
@@ -66,6 +66,7 @@ const AddressSearch = () => {
 
         if (result.type === 'nochange') {
             const newAddress = new FormData(e.target);
+            sendLocation(newAddress);
             for (const pair of newAddress.entries()) {
                 console.log(`${pair[0]}: ${pair[1]}`);
             }
@@ -75,6 +76,24 @@ const AddressSearch = () => {
             handleResetMap();
         }
     }, [showConfirm]);
+
+
+    const sendLocation = (formData) => {
+        const newAddress = {
+            longitude: minimapFeature.geometry.coordinates[0],
+            latitude: minimapFeature.geometry.coordinates[1],
+            address: formData.get('address-line1 address-search'),
+            suburb: formData.get('suburb'),
+            state: formData.get('state'),
+            country: 'Australia', // Assuming this is a constant, otherwise capture from form
+            description: formData.get('apartment') || 'No Description', // Default description if not provided
+        };
+        
+        console.log("Sending location " + JSON.stringify(newAddress));
+
+        postLocation(newAddress);
+
+    }
 
 
     const handleTryAgain = () => {
@@ -108,9 +127,6 @@ const AddressSearch = () => {
     const renderAddress = (formData) => {
         return (
             <Grid container spacing={1}>
-                <Grid item xs={12} sx={{ fontWeight: 'bold' }}>
-                    Customer: {formData.get('customerName')}
-                </Grid>
                 <Grid item xs={8}>
                     <div><strong>Address:</strong></div>
                     <div>{formData.get('address-line1 address-search')}</div>
@@ -118,7 +134,7 @@ const AddressSearch = () => {
                     address search at the end */}
                     {formData.get('address-line2') && <div>{formData.get('address-line2')}</div>}
                     <div>
-                        {formData.get('address-level2')}, {formData.get('address-level1')} {formData.get('postal-code')}
+                        {formData.get('suburb')}, {formData.get('state')} {formData.get('postal-code')}
                     </div>
                 </Grid>
                 <Grid item xs={4}>
@@ -138,14 +154,7 @@ const AddressSearch = () => {
                 </Grid>
 
                 <form ref={formRef} onSubmit={handleFormSubmit}>
-                    <Grid item xs={12} sx={styleConstants.fieldSpacing}>
-                        <TextField
-                            name="customerName"
-                            label="Customer Name"
-                            required
-                            fullWidth
-                        />
-                    </Grid>
+                  
 
                     <Grid item xs={12} sx={styleConstants.fieldSpacing}>
                         <AddressAutofill accessToken={MAPBOX_ACCESS_TOKEN} onRetrieve={handleAutofillRetrieve}>
@@ -174,7 +183,7 @@ const AddressSearch = () => {
                         <Grid item xs={12} sm={6} md={3} sx={styleConstants.fieldSpacing}>
                             <TextField
                                 label="City"
-                                name="address-level2"
+                                name="suburb"
                                 variant='outlined'
                                 autoComplete='address-level2'
                                 required
@@ -185,7 +194,7 @@ const AddressSearch = () => {
                         <Grid item xs={12} sm={6} md={3} sx={styleConstants.fieldSpacing}>
                             <TextField
                                 label="State / Region"
-                                name="address-level1"
+                                name="state"
                                 variant='outlined'
                                 autoComplete='address-level1'
                                 required
@@ -235,7 +244,7 @@ const AddressSearch = () => {
                 </form>
             </Grid>
 
-
+{/* 
                 <Box sx={{ display: addresses.length === 0 ? 'none' : 'block' }}>
                     {addresses.map((address, index) => (
                         <Box key={index} sx={{ borderRadius: 1, border: 1, borderColor: 'grey.300', px: 2, py: 1, mb: 3 }}>
@@ -254,7 +263,7 @@ const AddressSearch = () => {
                     ))}
 
                    
-                </Box>
+                </Box> */}
             </Paper>
         </Box>
     );

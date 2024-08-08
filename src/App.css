@@ -57,3 +57,18 @@
 .read-the-docs {
   color: #888;
 }
+
+.nav-link {
+  padding: 10px;
+  border: 2px solid #000;
+  border-radius: 5px;
+  text-decoration: none; 
+  color: #000; 
+  background-color: #f0f0f0; 
+  margin: 5px;
+  display: inline-block;
+}
+
+.nav-link:hover {
+  background-color: #e0e0e0; 
+}

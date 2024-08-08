@@ -19,8 +19,6 @@ This project is a web application that represents the front end of a Quantum Del
 
 - Constants: contains the app's constant routes and router setup
 
-    > router.jsx - file to setup and initialize the router.
-
     > routes.js - file to initialize the routes to each component.
 
     

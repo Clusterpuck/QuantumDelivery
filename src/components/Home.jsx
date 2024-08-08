@@ -78,10 +78,10 @@ const FactGenerator = () => {
             <img src={QLogo} className="icon" alt="Quantum logo" />
             <h1>Route Finder</h1>
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <Link to="/viewroutes">View Routes</Link>
-                <Link to="/livetracking">Live Tracking</Link>
-                <Link to="/dailyreports">Daily Reports</Link>
-                <Link to="/uploadrunsheet">Upload Runsheet</Link>
+                <Link to="/viewroutes" className="nav-link">View Routes</Link>
+                <Link to="/livetracking" className="nav-link">Live Tracking</Link>
+                <Link to="/dailyreports" className="nav-link">Daily Reports</Link>
+                <Link to="/addorder" className="nav-link">Add Order</Link>
             </div>
             <div className="fact-container">
                 <div>

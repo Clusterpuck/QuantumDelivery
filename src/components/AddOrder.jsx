@@ -1,25 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { fetchCustomers, fetchLocations } from '../store/apiFunctions';
-import { Autocomplete, Button, Dialog, DialogActions, DialogContent, Box, Paper, Grid } from '@mui/material';
+import { fetchCustomers, fetchLocations, postMethod } from '../store/apiFunctions';
+import { Autocomplete, Button, Box, Paper, Grid, TextField, Snackbar, Alert } from '@mui/material';
 import AddressSearch from './AddressSearch';
 import AddCustomer from './AddCustomer';
 import ProductListForm from './ProductListForm';
-import TextField from '@mui/material/TextField';
-
+import OrdersTable from './OrdersTable';
 
 const styleConstants = {
     fieldSpacing: { mb: 2 }
 };
-
 
 const AddOrder = () => {
     const [customers, setCustomers] = useState(null);
     const [locations, setLocations] = useState(null);
     const [selectedCustomer, setSelectedCustomer] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('');
-    const [openAddress, setOpenAddress] = useState(false);
-    const [openCustomer, setOpenCustomer] = useState(false);
+    const [selectedProducts, setSelectedProducts] = useState('');
+    const [orderNote, setOrderNote] = useState('');
+    const [showAddressSearch, setShowAddressSearch] = useState(false);
+    const [showAddCustomer, setShowAddCustomer] = useState(false);
+    const [refreshOrders, setRefreshOrders] = useState(0);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success',
+    });
 
     useEffect(() => {
         const loadData = async () => {
@@ -33,27 +38,90 @@ const AddOrder = () => {
 
     const handleCustomerChange = (event, newValue) => {
         setSelectedCustomer(newValue);
-        console.log("Selected customer is  " + selectedCustomer.name);
+        //console.log("Selected customer is  " + selectedCustomer.name);
     };
 
     const handleLocationChange = (event, newValue) => {
         setSelectedLocation(newValue);
-        console.log("Selected location is  " + selectedLocation.address);
+        //console.log("Selected location is  " + selectedLocation.address);
     };
 
-
-    const handleClickOpenAddress = () => {
-        setOpenAddress(true);
+    const handleCustomerFormClose = async (newCustomer) => {
+        setShowAddCustomer(false);
+        const reloadedCustomers = await fetchCustomers();
+        setCustomers(reloadedCustomers);
+        //setSelectedCustomer(newCustomer);   
     };
 
-    const handleClickOpenCustomer = () => {
-        setOpenCustomer(true);
+    const handleAddressFormClose = async () => {
+        setShowAddressSearch(false);
+        const newAddress = await fetchLocations();
+        setLocations(newAddress);
+    };
+
+    const submitOrder = async (event) => {
+        event.preventDefault();
+        if (!selectedCustomer || !selectedLocation || selectedProducts.length === 0) {
+            setSnackbar({
+                open: true,
+                message: 'Please fill in all required fields.',
+                severity: 'error',
+            });
+            return;
+        }
+
+        console.log('Submitting order: customerObject ', JSON.stringify(selectedCustomer) )
+        console.log('locationObject ', JSON.stringify(selectedLocation) )
+        console.log('productlist :', JSON.stringify(selectedProducts))
+
+        const now = new Date().toISOString();  // Get the current date in ISO format
+
+        const orderObject = {
+            order: {
+                dateOrdered: now,
+                orderNotes: orderNote ? orderNote : "No Note",  // You can replace this with actual notes if needed
+                customerId: selectedCustomer.id,
+                locationId: selectedLocation.id,
+            },
+            products: selectedProducts.map(product => ({
+                productId: product.id,
+                quantity: product.quantity
+            }))
+        };
+
+        console.log('Order object to send is ', JSON.stringify(orderObject))
+        const result = await postMethod(orderObject, 'Orders');
+        if(result!= null )
+        {
+            setRefreshOrders(prev => prev + 1); // Change the trigger value to refresh data
+            setSnackbar({
+                open: true,
+                message: 'Order submitted successfully!',
+                severity: 'success',
+            });
+
+            // setTimeout(() => {
+            //     // Trigger page refresh
+            //     window.location.reload(); // Refresh the page programmatically
+            // }, 1500); // 2 seconds delay
+
+        }
+        else
+        {
+            setSnackbar({
+                open: true,
+                message: 'Failed to submit order.',
+                severity: 'error',
+            });
+
+        }
+
     }
 
-    const handleClose = () => {
-        setOpenAddress(false);
-        setOpenCustomer(false);
+    const handleSnackbarClose = () => {
+        setSnackbar(prev => ({ ...prev, open: false }));
     };
+
 
     return (
         <div
@@ -65,8 +133,9 @@ const AddOrder = () => {
                 gap: 8,
             }}
         >
-
             <h1>Add Order</h1>
+
+            <form onSubmit={submitOrder}>
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                 <Paper elevation={3} sx={{ padding: 3, maxWidth: 900, width: '100%' }}>
@@ -78,6 +147,7 @@ const AddOrder = () => {
                                 id="Customers"
                                 options={customers}
                                 getOptionLabel={(option) => option.name}
+                                getOptionKey={(option) => option.id}
                                 sx={{ width: 400 }}
                                 onChange={handleCustomerChange}
                                 renderInput={(params) => <TextField {...params} label="Select Customer" />}
@@ -94,66 +164,91 @@ const AddOrder = () => {
                                 id="Locations"
                                 options={locations}
                                 getOptionLabel={(option) => option.address}
+                                getOptionKey={ (option) => option.id }
                                 sx={{ width: 400 }}
                                 onChange={handleLocationChange}
                                 renderInput={(params) => <TextField {...params} label="Select Location" />}
                             />
                         ) : (
-                            <p>No Customers</p>
+                            <p>No Locations</p>
                         )}
                         </Grid>
 
                         <Grid item xs={6} sx={styleConstants.fieldSpacing}>
-
-                        {/* Button to open the modal */}
-                        <Button variant="contained" color="primary" onClick={handleClickOpenCustomer}>
-                            Add Customer
-                        </Button>
-
+                            <Button variant="contained" color="primary" onClick={() => setShowAddCustomer(!showAddCustomer)}>
+                                {showAddCustomer ? 'Hide Customer Form' : 'Add Customer'}
+                            </Button>
                         </Grid>
 
                         <Grid item xs={6} sx={styleConstants.fieldSpacing}>
-
-                        {/* Button to open the modal */}
-                        <Button variant="contained" color="primary" onClick={handleClickOpenAddress}>
-                            Add Address
-                        </Button>
-
+                            <Button variant="contained" color="primary" onClick={() => setShowAddressSearch(!showAddressSearch)}>
+                                {showAddressSearch ? 'Hide Address Form' : 'Add Address'}
+                            </Button>
                         </Grid>
                     </Grid>
+
+                    <TextField 
+                        id='order-notes'
+                        label="Order Comments"
+                        multiline
+                        fullWidth
+                        value = {orderNote}
+                        placeholder='Order Comments'
+                        onChange={(event) => {
+                            setOrderNote(event.target.value)}
+                        }
+
+                        />
+
+                    {/* Conditionally render the AddCustomer component */}
+                    {showAddCustomer && (
+                        <Box sx={{ mt: 4 }}>
+                            <AddCustomer onCloseForm={handleCustomerFormClose} />
+                        </Box>
+                    )}
+
+                    {/* Conditionally render the AddressSearch component */}
+                    {showAddressSearch && (
+                        <Box sx={{ mt: 4 }}>
+                            <AddressSearch onCloseForm={handleAddressFormClose} />
+                        </Box>
+                    )}
                 </Paper>
             </Box>
 
-            {/* Dialog for AddressSearch */}
-            <Dialog open={openAddress} onClose={handleClose} maxWidth="md" fullWidth>
-                <DialogContent>
-                    <AddressSearch />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <ProductListForm sendProductList={setSelectedProducts}/>
 
-            <Dialog open={openCustomer} onClose={handleClose} maxWidth="md" fullWidth>
-                <DialogContent>
-                    <AddCustomer />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            <Button
+                type = "submit" 
+                variant= {  selectedCustomer && selectedLocation && 
+                            selectedProducts && selectedProducts.length > 0
+                            ? "contained" : "disabled"}
+                color="primary" 
+                >
+                                Submit Order
+            </Button>
 
-            <ProductListForm/>
+            </form>
 
-            
+            <h2>All Orders</h2>
 
-
+            <OrdersTable updateData={refreshOrders}/>
 
             <a href="/">Back Home</a>
+
+
+            <Snackbar
+                open={snackbar.open}
+                anchorOrigin={{vertical:'top', horizontal: 'center'}}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
+            >
+                <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
+
+
         </div>
     );
 };

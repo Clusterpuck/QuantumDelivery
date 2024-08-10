@@ -1,0 +1,14 @@
+/* src/components/Navbar.css */
+/* style file for nav bar */
+.nav-link {
+    padding: 8px 16px;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: #0056b3;
+}

@@ -5,6 +5,7 @@ import {
     Routes,
     Route,
 } from 'react-router-dom';
+import PageLayout from './components/PageLayout';
 import RandomFactGenerator from './components/Home';
 import ViewRoutes from './components/ViewRoutes';
 import LiveTracking from './components/LiveTracking';
@@ -16,13 +17,15 @@ import './index.css';
 const App = () => {
     return (
         <Router>
-            <Routes> 
-                <Route path="/" element={<RandomFactGenerator />} />
-                <Route path="/viewroutes" element={<ViewRoutes />} />
-                <Route path="/livetracking" element={<LiveTracking />} />
-                <Route path="/dailyreports" element={<DailyReports />} />
-                <Route path="/addorder" element={<AddOrder />} />
-            </Routes>
+            <PageLayout>
+                <Routes> 
+                    <Route path="/" element={<RandomFactGenerator />} />
+                    <Route path="/viewroutes" element={<ViewRoutes />} />
+                    <Route path="/livetracking" element={<LiveTracking />} />
+                    <Route path="/dailyreports" element={<DailyReports />} />
+                    <Route path="/addorder" element={<AddOrder />} />
+                </Routes>
+            </PageLayout>
         </Router>
     );
 };

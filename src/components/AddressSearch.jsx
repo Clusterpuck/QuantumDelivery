@@ -16,7 +16,6 @@ const styleConstants = {
 
 
 const AddressSearch = () => {
-    const [addresses, setAddresses] = useState([]);
     const [defaultCoordinates, setDefaultCoordinates] = useState([0, 0])
     const [minimapFeature, setMinimapFeature] = useState({
         type: 'Feature',
@@ -47,14 +46,7 @@ const AddressSearch = () => {
         loadLocation();
     }, []);
 
-    const removeLocation = (index) => {
-        setAddresses(prevAddresses => {
-            const updatedAddresses = [...prevAddresses];
-            updatedAddresses.splice(index, 1);
-            return updatedAddresses;
-        });
-    };
-
+    
 
     const handleAutofillRetrieve = (response) => {
         setMinimapFeature(response.features[0]);
@@ -66,13 +58,12 @@ const AddressSearch = () => {
 
         if (result.type === 'nochange') {
             const newAddress = new FormData(e.target);
+            newAddress.append('latitude', minimapFeature.geometry.coordinates[0]);
+            newAddress.append('longitude', minimapFeature.geometry.coordinates[1]);
             sendLocation(newAddress);
             for (const pair of newAddress.entries()) {
                 console.log(`${pair[0]}: ${pair[1]}`);
             }
-            newAddress.append('latitude', minimapFeature.geometry.coordinates[0]);
-            newAddress.append('longitude', minimapFeature.geometry.coordinates[1]);
-            setAddresses(prevAddresses => [...prevAddresses, newAddress]);
             handleResetMap();
         }
     }, [showConfirm]);
@@ -124,26 +115,6 @@ const AddressSearch = () => {
         });
     };
 
-    const renderAddress = (formData) => {
-        return (
-            <Grid container spacing={1}>
-                <Grid item xs={8}>
-                    <div><strong>Address:</strong></div>
-                    <div>{formData.get('address-line1 address-search')}</div>
-                    {/*Frustratingly the name is set to automatically be appended with
-                    address search at the end */}
-                    {formData.get('address-line2') && <div>{formData.get('address-line2')}</div>}
-                    <div>
-                        {formData.get('suburb')}, {formData.get('state')} {formData.get('postal-code')}
-                    </div>
-                </Grid>
-                <Grid item xs={4}>
-                    <div><strong>Latitude:</strong> {formData.get('latitude')}</div>
-                    <div><strong>Longitude:</strong> {formData.get('longitude')}</div>
-                </Grid>
-            </Grid>
-        );
-    };
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -244,26 +215,7 @@ const AddressSearch = () => {
                 </form>
             </Grid>
 
-{/* 
-                <Box sx={{ display: addresses.length === 0 ? 'none' : 'block' }}>
-                    {addresses.map((address, index) => (
-                        <Box key={index} sx={{ borderRadius: 1, border: 1, borderColor: 'grey.300', px: 2, py: 1, mb: 3 }}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={8} id="shipping-address">
-                                {renderAddress(address)}
-                            </Grid>
-                            <Grid item xs={4} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                                <Button onClick={() => removeLocation(index)} variant="contained" color="secondary">
-                                    Remove
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </Box>
-                    
-                    ))}
 
-                   
-                </Box> */}
             </Paper>
         </Box>
     );

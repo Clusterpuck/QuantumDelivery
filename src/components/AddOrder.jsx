@@ -14,7 +14,8 @@ const AddOrder = () => {
     const [locations, setLocations] = useState(null);
     const [selectedCustomer, setSelectedCustomer] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('');
-    const [selectedProducts, setSelectedProducts] = useState('')
+    const [selectedProducts, setSelectedProducts] = useState('');
+    const [orderNote, setOrderNote] = useState('');
     const [showAddressSearch, setShowAddressSearch] = useState(false);
     const [showAddCustomer, setShowAddCustomer] = useState(false);
     const [snackbar, setSnackbar] = useState({
@@ -56,7 +57,8 @@ const AddOrder = () => {
         setLocations(newAddress);
     };
 
-    const submitOrder = async () => {
+    const submitOrder = async (event) => {
+        event.preventDefault();
         if (!selectedCustomer || !selectedLocation || selectedProducts.length === 0) {
             setSnackbar({
                 open: true,
@@ -75,7 +77,7 @@ const AddOrder = () => {
         const orderObject = {
             order: {
                 dateOrdered: now,
-                orderNotes: "To Be Added",  // You can replace this with actual notes if needed
+                orderNotes: orderNote ? orderNote : "No Note",  // You can replace this with actual notes if needed
                 customerId: selectedCustomer.id,
                 locationId: selectedLocation.id,
             },
@@ -94,11 +96,6 @@ const AddOrder = () => {
                 message: 'Order submitted successfully!',
                 severity: 'success',
             });
-            setSelectedCustomer(null);
-            setSelectedLocation(null);
-            setSelectedProducts([]);
-            setShowAddCustomer(false);
-            setShowAddressSearch(false);
 
         }
         else
@@ -181,6 +178,19 @@ const AddOrder = () => {
                         </Grid>
                     </Grid>
 
+                    <TextField 
+                        id='order-notes'
+                        label="Order Comments"
+                        multiline
+                        fullWidth
+                        value = {orderNote}
+                        placeholder='Order Comments'
+                        onChange={(event) => {
+                            setOrderNote(event.target.value)}
+                        }
+
+                        />
+
                     {/* Conditionally render the AddCustomer component */}
                     {showAddCustomer && (
                         <Box sx={{ mt: 4 }}>
@@ -205,7 +215,6 @@ const AddOrder = () => {
                             selectedProducts && selectedProducts.length > 0
                             ? "contained" : "disabled"}
                 color="primary" 
-                // onClick={() => submitOrder()}
                 >
                                 Submit Order
             </Button>
@@ -216,6 +225,7 @@ const AddOrder = () => {
 
             <Snackbar
                 open={snackbar.open}
+                anchorOrigin={{vertical:'top', horizontal: 'center'}}
                 autoHideDuration={6000}
                 onClose={handleSnackbarClose}
             >

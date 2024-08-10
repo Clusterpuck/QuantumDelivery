@@ -96,7 +96,7 @@ const ProductListForm = ({sendProductList}) => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 600, width: '100%' }}>
+            <Paper elevation={3} sx={{ padding: 3, maxWidth: 1200, width: '100%' }}>
                 <h3>Add Products to Order</h3>
                 <Grid container spacing={2}>
                     <Grid item xs={6}>

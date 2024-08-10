@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { fetchCustomers, fetchLocations, postMethod } from '../store/apiFunctions';
-import { Autocomplete, Button, Box, Paper, Grid } from '@mui/material';
+import { Autocomplete, Button, Box, Paper, Grid, TextField, Snackbar, Alert } from '@mui/material';
 import AddressSearch from './AddressSearch';
 import AddCustomer from './AddCustomer';
 import ProductListForm from './ProductListForm';
-import TextField from '@mui/material/TextField';
 
 const styleConstants = {
     fieldSpacing: { mb: 2 }
@@ -18,6 +17,11 @@ const AddOrder = () => {
     const [selectedProducts, setSelectedProducts] = useState('')
     const [showAddressSearch, setShowAddressSearch] = useState(false);
     const [showAddCustomer, setShowAddCustomer] = useState(false);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success',
+    });
 
     useEffect(() => {
         const loadData = async () => {
@@ -52,7 +56,16 @@ const AddOrder = () => {
         setLocations(newAddress);
     };
 
-    const submitOrder = () => {
+    const submitOrder = async () => {
+        if (!selectedCustomer || !selectedLocation || selectedProducts.length === 0) {
+            setSnackbar({
+                open: true,
+                message: 'Please fill in all required fields.',
+                severity: 'error',
+            });
+            return;
+        }
+
         console.log('Submitting order: customerObject ', JSON.stringify(selectedCustomer) )
         console.log('locationObject ', JSON.stringify(selectedLocation) )
         console.log('productlist :', JSON.stringify(selectedProducts))
@@ -73,10 +86,36 @@ const AddOrder = () => {
         };
 
         console.log('Order object to send is ', JSON.stringify(orderObject))
-        postMethod(orderObject, 'Orders');
+        const result = await postMethod(orderObject, 'Orders');
+        if(result!= null )
+        {
+            setSnackbar({
+                open: true,
+                message: 'Order submitted successfully!',
+                severity: 'success',
+            });
+            setSelectedCustomer(null);
+            setSelectedLocation(null);
+            setSelectedProducts([]);
+            setShowAddCustomer(false);
+            setShowAddressSearch(false);
 
+        }
+        else
+        {
+            setSnackbar({
+                open: true,
+                message: 'Failed to submit order.',
+                severity: 'error',
+            });
+
+        }
 
     }
+
+    const handleSnackbarClose = () => {
+        setSnackbar(prev => ({ ...prev, open: false }));
+    };
 
     return (
         <div
@@ -159,12 +198,25 @@ const AddOrder = () => {
             <ProductListForm sendProductList={setSelectedProducts}/>
 
             <Button 
-                variant= {showAddCustomer ? "disabled" : "contained"}
+                variant= {  selectedCustomer && selectedLocation && 
+                            selectedProducts && selectedProducts.length > 0
+                            ? "contained" : "disabled"}
                 color="primary" onClick={() => submitOrder()}>
                                 Submit Order
             </Button>
 
             <a href="/">Back Home</a>
+
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
+            >
+                <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
+
         </div>
     );
 };

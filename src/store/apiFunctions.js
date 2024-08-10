@@ -141,9 +141,11 @@ export const postMethod = async (newData, endPoint) => {
         // Handle the response if needed (e.g., display a success message)
         const responseData = await response.json();
         console.log('Successfully submitted data:', responseData, 'on end point ', endPoint);
+        return responseData;
 
     } catch (error) {
         console.error('Error submitting data: ', error, 'on end point ', endPoint);
+        return null;
     }
 }
 

@@ -35,12 +35,12 @@ const AddOrder = () => {
 
     const handleCustomerChange = (event, newValue) => {
         setSelectedCustomer(newValue);
-        console.log("Selected customer is  " + selectedCustomer.name);
+        //console.log("Selected customer is  " + selectedCustomer.name);
     };
 
     const handleLocationChange = (event, newValue) => {
         setSelectedLocation(newValue);
-        console.log("Selected location is  " + selectedLocation.address);
+        //console.log("Selected location is  " + selectedLocation.address);
     };
 
     const handleCustomerFormClose = async (newCustomer) => {
@@ -129,6 +129,8 @@ const AddOrder = () => {
         >
             <h1>Add Order</h1>
 
+            <form onSubmit={submitOrder}>
+
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                 <Paper elevation={3} sx={{ padding: 3, maxWidth: 900, width: '100%' }}>
                     <Grid container spacing={2} >
@@ -197,13 +199,18 @@ const AddOrder = () => {
 
             <ProductListForm sendProductList={setSelectedProducts}/>
 
-            <Button 
+            <Button
+                type = "submit" 
                 variant= {  selectedCustomer && selectedLocation && 
                             selectedProducts && selectedProducts.length > 0
                             ? "contained" : "disabled"}
-                color="primary" onClick={() => submitOrder()}>
+                color="primary" 
+                // onClick={() => submitOrder()}
+                >
                                 Submit Order
             </Button>
+
+            </form>
 
             <a href="/">Back Home</a>
 

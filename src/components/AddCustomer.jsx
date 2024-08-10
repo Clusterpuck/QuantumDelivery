@@ -8,7 +8,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import { postCustomer } from '../store/apiFunctions';
 
-const AddCustomer = () => {
+const AddCustomer = ( {onCloseForm} ) => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [error, setError] = useState('');
@@ -50,8 +50,9 @@ const AddCustomer = () => {
             setSnackbarSeverity('success');
             setName('');
             setPhone('');
+            onCloseForm();
         } catch (error) {
-            setSnackbarMessage('Failed to add customer');
+            setSnackbarMessage('Failed to add customer ' + error);
             setSnackbarSeverity('error');
         } finally {
             setSnackbarOpen(true);

@@ -1,25 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { fetchCustomers, fetchLocations } from '../store/apiFunctions';
-import { Autocomplete, Button, Dialog, DialogActions, DialogContent, Box, Paper, Grid } from '@mui/material';
+import { Autocomplete, Button, Box, Paper, Grid } from '@mui/material';
 import AddressSearch from './AddressSearch';
 import AddCustomer from './AddCustomer';
 import ProductListForm from './ProductListForm';
 import TextField from '@mui/material/TextField';
 
-
 const styleConstants = {
     fieldSpacing: { mb: 2 }
 };
-
 
 const AddOrder = () => {
     const [customers, setCustomers] = useState(null);
     const [locations, setLocations] = useState(null);
     const [selectedCustomer, setSelectedCustomer] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('');
-    const [openAddress, setOpenAddress] = useState(false);
-    const [openCustomer, setOpenCustomer] = useState(false);
+    const [showAddressSearch, setShowAddressSearch] = useState(false);
+    const [showAddCustomer, setShowAddCustomer] = useState(false);
 
     useEffect(() => {
         const loadData = async () => {
@@ -41,18 +38,16 @@ const AddOrder = () => {
         console.log("Selected location is  " + selectedLocation.address);
     };
 
-
-    const handleClickOpenAddress = () => {
-        setOpenAddress(true);
+    const handleCustomerFormClose = async () => {
+        setShowAddCustomer(false);
+        const newCustomers = await fetchCustomers();
+        setCustomers(newCustomers);   
     };
 
-    const handleClickOpenCustomer = () => {
-        setOpenCustomer(true);
-    }
-
-    const handleClose = () => {
-        setOpenAddress(false);
-        setOpenCustomer(false);
+    const handleAddressFormClose = async () => {
+        setShowAddressSearch(false);
+        const newAddress = await fetchLocations();
+        setLocations(newAddress);
     };
 
     return (
@@ -65,7 +60,6 @@ const AddOrder = () => {
                 gap: 8,
             }}
         >
-
             <h1>Add Order</h1>
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -99,59 +93,40 @@ const AddOrder = () => {
                                 renderInput={(params) => <TextField {...params} label="Select Location" />}
                             />
                         ) : (
-                            <p>No Customers</p>
+                            <p>No Locations</p>
                         )}
                         </Grid>
 
                         <Grid item xs={6} sx={styleConstants.fieldSpacing}>
-
-                        {/* Button to open the modal */}
-                        <Button variant="contained" color="primary" onClick={handleClickOpenCustomer}>
-                            Add Customer
-                        </Button>
-
+                            <Button variant="contained" color="primary" onClick={() => setShowAddCustomer(!showAddCustomer)}>
+                                {showAddCustomer ? 'Hide Customer Form' : 'Add Customer'}
+                            </Button>
                         </Grid>
 
                         <Grid item xs={6} sx={styleConstants.fieldSpacing}>
-
-                        {/* Button to open the modal */}
-                        <Button variant="contained" color="primary" onClick={handleClickOpenAddress}>
-                            Add Address
-                        </Button>
-
+                            <Button variant="contained" color="primary" onClick={() => setShowAddressSearch(!showAddressSearch)}>
+                                {showAddressSearch ? 'Hide Address Form' : 'Add Address'}
+                            </Button>
                         </Grid>
                     </Grid>
+
+                    {/* Conditionally render the AddCustomer component */}
+                    {showAddCustomer && (
+                        <Box sx={{ mt: 4 }}>
+                            <AddCustomer onCloseForm={handleCustomerFormClose} />
+                        </Box>
+                    )}
+
+                    {/* Conditionally render the AddressSearch component */}
+                    {showAddressSearch && (
+                        <Box sx={{ mt: 4 }}>
+                            <AddressSearch onCloseForm={handleAddressFormClose} />
+                        </Box>
+                    )}
                 </Paper>
             </Box>
 
-            {/* Dialog for AddressSearch */}
-            <Dialog open={openAddress} onClose={handleClose} maxWidth="md" fullWidth>
-                <DialogContent>
-                    <AddressSearch />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            <Dialog open={openCustomer} onClose={handleClose} maxWidth="md" fullWidth>
-                <DialogContent>
-                    <AddCustomer />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
             <ProductListForm/>
-
-            
-
-
 
             <a href="/">Back Home</a>
         </div>

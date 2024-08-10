@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import {fetchRegion, postLocation} from '../store/apiFunctions';
 import Grid from '@mui/material/Grid';
 
+
 // This is a public token, so it's okay to expose it here
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
@@ -15,7 +16,7 @@ const styleConstants = {
 };
 
 
-const AddressSearch = () => {
+const AddressSearch = ({onCloseForm}) => {
     const [defaultCoordinates, setDefaultCoordinates] = useState([0, 0])
     const [minimapFeature, setMinimapFeature] = useState({
         type: 'Feature',
@@ -33,6 +34,9 @@ const AddressSearch = () => {
 
 
     useEffect(() => {
+
+      
+
         const loadLocation = async () => {
             const region = await fetchRegion();
             if (region && region.latitude && region.longitude) {
@@ -47,11 +51,13 @@ const AddressSearch = () => {
     }, []);
 
     
-
+    //Handle for controlling map marker location here. 
     const handleAutofillRetrieve = (response) => {
         setMinimapFeature(response.features[0]);
     };
 
+
+    //for submission to extract to first verify present data to then later make and post in send method
     const handleFormSubmit = useCallback(async (e) => {
         e.preventDefault();
         const result = await showConfirm();
@@ -65,12 +71,14 @@ const AddressSearch = () => {
                 console.log(`${pair[0]}: ${pair[1]}`);
             }
             handleResetMap();
+            onCloseForm();
         }
     }, [showConfirm]);
 
-
+    //creates the location object and send to the post api method
     const sendLocation = (formData) => {
         const newAddress = {
+            //latitude added from map reference instead of object for safety. 
             longitude: minimapFeature.geometry.coordinates[0],
             latitude: minimapFeature.geometry.coordinates[1],
             address: formData.get('address-line1 address-search'),
@@ -87,10 +95,8 @@ const AddressSearch = () => {
     }
 
 
-    const handleTryAgain = () => {
-        handleResetMap();
-    };
 
+    //refreshes for the map to recenter the map marker
     const handleResetMap = () => {
         setMinimapFeature({
             type: 'Feature',
@@ -104,6 +110,8 @@ const AddressSearch = () => {
         setMapKey(prevKey => prevKey + 1); // Force re-render of AddressMinimap
     };
 
+
+    //extracts the final point location on the map to save to map
     const handleSaveMarkerLocation = (coordinate) => {
         setMinimapFeature({
             type: 'Feature',
@@ -201,7 +209,7 @@ const AddressSearch = () => {
 
                     <Grid container spacing={1}>
                     <Grid item xs={6} justifyContent={'flex-end'} >
-                        <Button onClick={handleTryAgain} variant="contained" color="secondary">
+                        <Button onClick={handleResetMap} variant="contained" color="secondary">
                             Clear Form
                         </Button>
                     </Grid>

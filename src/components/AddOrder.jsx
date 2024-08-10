@@ -97,6 +97,11 @@ const AddOrder = () => {
                 severity: 'success',
             });
 
+            setTimeout(() => {
+                // Trigger page refresh
+                window.location.reload(); // Refresh the page programmatically
+            }, 1500); // 2 seconds delay
+
         }
         else
         {

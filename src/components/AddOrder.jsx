@@ -4,6 +4,7 @@ import { Autocomplete, Button, Box, Paper, Grid, TextField, Snackbar, Alert } fr
 import AddressSearch from './AddressSearch';
 import AddCustomer from './AddCustomer';
 import ProductListForm from './ProductListForm';
+import OrdersTable from './OrdersTable';
 
 const styleConstants = {
     fieldSpacing: { mb: 2 }
@@ -18,6 +19,7 @@ const AddOrder = () => {
     const [orderNote, setOrderNote] = useState('');
     const [showAddressSearch, setShowAddressSearch] = useState(false);
     const [showAddCustomer, setShowAddCustomer] = useState(false);
+    const [refreshOrders, setRefreshOrders] = useState(0);
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: '',
@@ -91,16 +93,17 @@ const AddOrder = () => {
         const result = await postMethod(orderObject, 'Orders');
         if(result!= null )
         {
+            setRefreshOrders(prev => prev + 1); // Change the trigger value to refresh data
             setSnackbar({
                 open: true,
                 message: 'Order submitted successfully!',
                 severity: 'success',
             });
 
-            setTimeout(() => {
-                // Trigger page refresh
-                window.location.reload(); // Refresh the page programmatically
-            }, 1500); // 2 seconds delay
+            // setTimeout(() => {
+            //     // Trigger page refresh
+            //     window.location.reload(); // Refresh the page programmatically
+            // }, 1500); // 2 seconds delay
 
         }
         else
@@ -118,6 +121,7 @@ const AddOrder = () => {
     const handleSnackbarClose = () => {
         setSnackbar(prev => ({ ...prev, open: false }));
     };
+
 
     return (
         <div
@@ -226,7 +230,10 @@ const AddOrder = () => {
 
             </form>
 
+            <OrdersTable updateData={refreshOrders}/>
+
             <a href="/">Back Home</a>
+
 
             <Snackbar
                 open={snackbar.open}
@@ -238,6 +245,7 @@ const AddOrder = () => {
                     {snackbar.message}
                 </Alert>
             </Snackbar>
+
 
         </div>
     );

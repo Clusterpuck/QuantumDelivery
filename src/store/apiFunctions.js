@@ -62,7 +62,7 @@ export const fetchProducts = async () => {
     try {
         const ipResponse = await fetch( Constants.DATA_ENDPOINT + 'products');
         if (!ipResponse.ok) {
-            throw new Error('Failed to fetch IP address');
+            throw new Error('Failed to fetch product data');
         }
         ipData = await ipResponse.json();
         console.log("Data is " + JSON.stringify(ipData) );
@@ -148,4 +148,22 @@ export const postMethod = async (newData, endPoint) => {
         return null;
     }
 }
+
+
+
+export const fetchMethod = async (endpoint) => {
+    let ipData = null
+    try {
+        const ipResponse = await fetch( Constants.DATA_ENDPOINT + endpoint);
+        if (!ipResponse.ok) {
+            throw new Error('Failed to fetch from endpoint ', endpoint);
+        }
+        ipData = await ipResponse.json();
+        console.log("Data is " + JSON.stringify(ipData) );
+        // Use user's IP address to fetch region information
+    } catch (error) {
+        console.error('Error fetching from endpoint:', endpoint,' ', error.message);
+    }
+    return ipData
+};
 

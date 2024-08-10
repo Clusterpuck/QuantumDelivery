@@ -122,3 +122,28 @@ export const postCustomer = async (newCustomer) => {
     }
 }
 
+//generic post method that accepts data and string of endpoint to send to database
+//may need to change to throw exceptions further to give speicific call data
+export const postMethod = async (newData, endPoint) => {
+    try {
+        const response = await fetch( Constants.DATA_ENDPOINT + endPoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newData),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to submit data', 'on end point ', endPoint);
+        }
+
+        // Handle the response if needed (e.g., display a success message)
+        const responseData = await response.json();
+        console.log('Successfully submitted data:', responseData, 'on end point ', endPoint);
+
+    } catch (error) {
+        console.error('Error submitting data: ', error, 'on end point ', endPoint);
+    }
+}
+

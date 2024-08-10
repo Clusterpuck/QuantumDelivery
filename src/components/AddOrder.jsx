@@ -38,10 +38,11 @@ const AddOrder = () => {
         console.log("Selected location is  " + selectedLocation.address);
     };
 
-    const handleCustomerFormClose = async () => {
+    const handleCustomerFormClose = async (newCustomer) => {
         setShowAddCustomer(false);
-        const newCustomers = await fetchCustomers();
-        setCustomers(newCustomers);   
+        const reloadedCustomers = await fetchCustomers();
+        setCustomers(reloadedCustomers);
+        //setSelectedCustomer(newCustomer);   
     };
 
     const handleAddressFormClose = async () => {
@@ -72,6 +73,7 @@ const AddOrder = () => {
                                 id="Customers"
                                 options={customers}
                                 getOptionLabel={(option) => option.name}
+                                getOptionKey={(option) => option.id}
                                 sx={{ width: 400 }}
                                 onChange={handleCustomerChange}
                                 renderInput={(params) => <TextField {...params} label="Select Customer" />}
@@ -88,6 +90,7 @@ const AddOrder = () => {
                                 id="Locations"
                                 options={locations}
                                 getOptionLabel={(option) => option.address}
+                                getOptionKey={ (option) => option.id }
                                 sx={{ width: 400 }}
                                 onChange={handleLocationChange}
                                 renderInput={(params) => <TextField {...params} label="Select Location" />}

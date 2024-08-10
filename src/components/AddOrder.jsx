@@ -230,6 +230,8 @@ const AddOrder = () => {
 
             </form>
 
+            <h2>All Orders</h2>
+
             <OrdersTable updateData={refreshOrders}/>
 
             <a href="/">Back Home</a>

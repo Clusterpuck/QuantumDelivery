@@ -3,6 +3,8 @@ import { fetchMethod } from '../store/apiFunctions';
 import { DataGrid } from '@mui/x-data-grid';
 import { Snackbar, Alert, Paper, Box } from '@mui/material';
 
+//update data us a state object that when changed on the parent object
+//will trigger a refresh of the orders table data. 
 const OrdersTable = ({updateData}) => {
 
     const [orders, setOrders] = useState([]);

@@ -10,7 +10,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { DataGrid } from '@mui/x-data-grid';
 import { fetchProducts } from '../store/apiFunctions';
 
-const ProductListForm = () => {
+const ProductListForm = ({sendProductList}) => {
     const [products, setProducts] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
@@ -47,22 +47,23 @@ const ProductListForm = () => {
         if (selectedProduct) {
             setAddedProducts(prev => {
                 const existingProductIndex = prev.findIndex(product => product.id === selectedProduct.id);
-
+                var updatedProducts;
                 if (existingProductIndex !== -1) {
                     // Product already exists, update the quantity
-                    const updatedProducts = [...prev];
+                    updatedProducts = [...prev];
                     updatedProducts[existingProductIndex] = {
                         ...updatedProducts[existingProductIndex],
                         quantity: updatedProducts[existingProductIndex].quantity + quantity
                     };
-                    return updatedProducts;
                 } else {
-                    // Product does not exist, add new entry
-                    return [
+                    updatedProducts = [
                         ...prev,
                         { id: selectedProduct.id, name: selectedProduct.name, quantity: quantity }
                     ];
+                    // Product does not exist, add new entry
                 }
+                sendProductList( updatedProducts );
+                return updatedProducts;
             });
 
             setSelectedProduct(null);
@@ -126,7 +127,11 @@ const ProductListForm = () => {
                 </Grid>
 
                 <Box sx={{ height: 400, width: '100%', mt: 2 }}>
-                    <DataGrid rows={rows} columns={columns} pageSize={5} />
+                    <DataGrid 
+                        rows={rows} 
+                        columns={columns} 
+                        pageSize={10}
+                        checkboxSelection />
                 </Box>
             </Paper>
 

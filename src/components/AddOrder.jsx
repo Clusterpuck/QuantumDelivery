@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchCustomers, fetchLocations } from '../store/apiFunctions';
+import { fetchCustomers, fetchLocations, postMethod } from '../store/apiFunctions';
 import { Autocomplete, Button, Box, Paper, Grid } from '@mui/material';
 import AddressSearch from './AddressSearch';
 import AddCustomer from './AddCustomer';
@@ -15,6 +15,7 @@ const AddOrder = () => {
     const [locations, setLocations] = useState(null);
     const [selectedCustomer, setSelectedCustomer] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('');
+    const [selectedProducts, setSelectedProducts] = useState('')
     const [showAddressSearch, setShowAddressSearch] = useState(false);
     const [showAddCustomer, setShowAddCustomer] = useState(false);
 
@@ -50,6 +51,32 @@ const AddOrder = () => {
         const newAddress = await fetchLocations();
         setLocations(newAddress);
     };
+
+    const submitOrder = () => {
+        console.log('Submitting order: customerObject ', JSON.stringify(selectedCustomer) )
+        console.log('locationObject ', JSON.stringify(selectedLocation) )
+        console.log('productlist :', JSON.stringify(selectedProducts))
+
+        const now = new Date().toISOString();  // Get the current date in ISO format
+
+        const orderObject = {
+            order: {
+                dateOrdered: now,
+                orderNotes: "To Be Added",  // You can replace this with actual notes if needed
+                customerId: selectedCustomer.id,
+                locationId: selectedLocation.id,
+            },
+            products: selectedProducts.map(product => ({
+                productId: product.id,
+                quantity: product.quantity
+            }))
+        };
+
+        console.log('Order object to send is ', JSON.stringify(orderObject))
+        postMethod(orderObject, 'Orders');
+
+
+    }
 
     return (
         <div
@@ -129,7 +156,13 @@ const AddOrder = () => {
                 </Paper>
             </Box>
 
-            <ProductListForm/>
+            <ProductListForm sendProductList={setSelectedProducts}/>
+
+            <Button 
+                variant= {showAddCustomer ? "disabled" : "contained"}
+                color="primary" onClick={() => submitOrder()}>
+                                Submit Order
+            </Button>
 
             <a href="/">Back Home</a>
         </div>

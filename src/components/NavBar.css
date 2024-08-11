@@ -1,14 +1,86 @@
 /* src/components/Navbar.css */
 /* style file for nav bar */
-.nav-link {
-    padding: 8px 16px;
-    border-radius: 4px;
-    background-color: #007bff;
-    color: white;
+/* Source: https://www.codingnepalweb.com/sticky-navigation-bar-html-css/ */
+/* Google Font Import Link */
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap');
+  *{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: 'Ubuntu', sans-serif;
+}
+.nav-item {
     text-decoration: none;
-    transition: background-color 0.3s ease;
+    color: #0E2431;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 10px 4px;
+    transition: all 0.3s ease;
 }
 
-.nav-link:hover {
-    background-color: #0056b3;
+.nav-item:hover {
+    color: #4070f4;
 }
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    transition: all 0.4s ease;
+    background-color: #f8f9fa;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+}
+
+.navbar.sticky {
+    padding: 15px 20px;
+    background: #4070f4;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.nav-content {
+    height: 100%;
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    flex-grow: 1;
+    display: flex;
+    align-items: center; /* Center the text vertically if needed */
+}
+
+.logo a {
+    font-weight: 500;
+    font-size: 35px;
+    color: #4070f4;
+}
+
+.navbar.sticky .logo a {
+    color: #fff;
+}
+
+.nav-links {
+    display: flex;
+}
+
+.nav-links li {
+    list-style: none;
+    margin: 0 8px;
+}
+
+.navbar.sticky .nav-item {
+    color: #fff;
+    transition: all 0.4s ease;
+}
+
+.navbar.sticky .nav-item:hover {
+    color: #0E2431;
+}
+

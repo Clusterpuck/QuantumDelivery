@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import '../App.css';
+import './App.css';
 import { Link } from 'react-router-dom';
-import QLogo from '../assets/quantumicon.png';
+import QLogo from './assets/quantumicon.png';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import MapComponent from '../MapComponent.jsx';
-import AddressSearch from './AddressSearch.jsx';
-import * as Constants from '../Constants.js';
+import MapComponent from './MapComponent.jsx';
+import AddressSearch from './components/AddressSearch.jsx';
+import UploadRunsheet from './components/UploadRunsheet.jsx';
+import * as Constants from './Constants.js';
 
 const FactGenerator = () => {
     const [fact, setFact] = useState('');
@@ -75,7 +76,14 @@ const FactGenerator = () => {
 
     return (
         <div>
-            <h1 style={{ paddingTop: "50px" }}>Route Finder</h1>
+            <img src={QLogo} className="icon" alt="Quantum logo" />
+            <h1>Route Finder</h1>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <Link to="/viewroutes">View Routes</Link>
+                <Link to="/livetracking">Live Tracking</Link>
+                <Link to="/dailyreports">Daily Reports</Link>
+                <Link to="/uploadrunsheet">Upload Runsheet</Link>
+            </div>
             <div className="fact-container">
                 <div>
                     <p>Azure Branch Updated 6/05/24 03:21 pm</p>

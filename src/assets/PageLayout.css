@@ -1,0 +1,11 @@
+.page-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex-grow: 1;
+    margin-top: 64px; /* Adjust this based on your Navbar's height */
+    padding: 20px; /* Optional: Add some padding to the content */
+}

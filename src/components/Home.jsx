@@ -75,7 +75,7 @@ const FactGenerator = () => {
 
     return (
         <div>
-            <h1 style={{ paddingTop: "50px" }}>Route Finder</h1>
+            <h1>Route Finder</h1>
             <div className="fact-container">
                 <div>
                     <p>Azure Branch Updated 6/05/24 03:21 pm</p>

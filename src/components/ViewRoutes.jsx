@@ -48,9 +48,9 @@ const ViewRoutes = () =>
     { field: 'order_id', headerName: 'Order ID', width: 90 },
     { field: 'lat', headerName: 'Latitude', width: 150 },
     { field: 'long', headerName: 'Longitude', width: 150 },
-    { field: 'x', headerName: 'X', width: 150 },
-    { field: 'y', headerName: 'Y', width: 150 },
-    { field: 'z', headerName: 'Z', width: 150 }
+    { field: 'x', headerName: 'Address', width: 150 },
+    { field: 'y', headerName: 'Status', width: 150 },
+    { field: 'z', headerName: 'Product Names', width: 150 }
   ];
 
   return (

@@ -135,7 +135,6 @@ const AddOrder = () => {
         >
             <h1>Add Order</h1>
 
-            <form onSubmit={submitOrder}>
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                 <Paper elevation={3} sx={{ padding: 3, maxWidth: 900, width: '100%' }}>
@@ -228,7 +227,6 @@ const AddOrder = () => {
                                 Submit Order
             </Button>
 
-            </form>
 
             <h2>All Orders</h2>
 

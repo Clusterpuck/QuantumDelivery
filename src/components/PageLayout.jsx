@@ -5,7 +5,7 @@ import Navbar from './NavBar';
 const PageLayout = ({ children }) => {
     return (
         <div>
-            <Navbar /> 
+            <Navbar />
             <main>
                 {children} 
             </main>

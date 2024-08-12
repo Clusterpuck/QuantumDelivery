@@ -6,13 +6,14 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DataGrid } from '@mui/x-data-grid';
 
 // Dummy data
+//NW Proposed to change to a simple list of numbers instead
 const DUMMY_INPUT = {
   "num_vehicle": 3,
-  "orders": [
-    { "order_id": 3},
-    { "order_id": 2},
-    { "order_id": 1 }
-  ]
+  "orders": [ 3, 2, 1 ]
+  //   { "order_id": 3},
+  //   { "order_id": 2},
+  //   { "order_id": 1 }
+  // ]
 };
 
 const DUMMY_OUTPUT = [

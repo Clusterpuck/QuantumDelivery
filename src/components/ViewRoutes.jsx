@@ -9,16 +9,68 @@ import { DataGrid } from '@mui/x-data-grid';
 const DUMMY_INPUT = {
   "num_vehicle": 3,
   "orders": [
-    { "order_id": 3, "lat": -90, "long": -180 },
-    { "order_id": 2, "lat": -89, "long": -170 },
-    { "order_id": 1, "lat": -89, "long": -180 }
+    { "order_id": 3},
+    { "order_id": 2},
+    { "order_id": 1 }
   ]
 };
 
 const DUMMY_OUTPUT = [
-  [{ "order_id": 2, "lat": -89, "long": -170, "x": -109.5, "y": -19.3, "z": -6370.03 }],
-  [{ "order_id": 3, "lat": -90, "long": -180, "x": 0, "y": 0, "z": -6371 }],
-  [{ "order_id": 1, "lat": -89, "long": -180, "x": -111.19, "y": 0, "z": -6370.03 }]
+  {
+    vehicle_id: 1,
+    orders: [
+      { 
+        order_id: 1, 
+        addr: "123 Gloucester St", 
+        lat: 40.7128, 
+        long: -74.0060, 
+        status: "Delivered", 
+        prodNames: ["Product A", "Product B"] 
+      },
+      { 
+        order_id: 2, 
+        addr: "4 Rummer Way", 
+        lat: 40.7328, 
+        long: -74.0160, 
+        status: "Cancelled", 
+        prodNames: ["Product C"] 
+      }
+    ]
+  },
+  {
+    vehicle_id: 2,
+    orders: [
+      { 
+        order_id: 3, 
+        addr: "7 Kent St", 
+        lat: 40.7528, 
+        long: -74.0260, 
+        status: "On Route", 
+        prodNames: ["Product D", "Product E"] 
+      }
+    ]
+  },
+  {
+    vehicle_id: 3,
+    orders: [
+      { 
+        order_id: 4, 
+        addr: "101 Pine Rd", 
+        lat: 40.7728, 
+        long: -74.0360, 
+        status: "Delivered", 
+        prodNames: ["Product F"] 
+      },
+      { 
+        order_id: 5, 
+        addr: "202 Oak Dr", 
+        lat: 40.7928, 
+        long: -74.0460, 
+        status: "On Route", 
+        prodNames: ["Product G", "Product H"] 
+      }
+    ]
+  }
 ];
 
 // Page design for View Routes page
@@ -46,11 +98,12 @@ const ViewRoutes = () =>
   // Define columns for DataGrid
   const columns = [
     { field: 'order_id', headerName: 'Order ID', width: 90 },
-    { field: 'lat', headerName: 'Latitude', width: 150 },
-    { field: 'long', headerName: 'Longitude', width: 150 },
-    { field: 'x', headerName: 'Address', width: 150 },
-    { field: 'y', headerName: 'Status', width: 150 },
-    { field: 'z', headerName: 'Product Names', width: 150 }
+    //{ field: 'lat', headerName: 'Latitude', width: 150 },
+    //{ field: 'long', headerName: 'Longitude', width: 150 },
+    { field: 'addr', headerName: 'Address', width: 150 },
+    { field: 'status', headerName: 'Status', width: 150 },
+    { field: 'prodNames', headerName: 'Product Names', width: 500 , renderCell: (params) => params.value.join(', '
+    )}
   ];
 
   return (
@@ -90,20 +143,20 @@ const ViewRoutes = () =>
               Plan Routes
             </Button>
 
-          </Grid>
-
-          {routes.map((route, index) => (
-            <Grid item xs={12} key={index}>
-              <h3>Vehicle {index + 1}</h3>
-              <DataGrid
-                rows={route.map((row, idx) => ({ id: idx, ...row }))}
-                columns={columns}
-                pageSize={5}
-                autoHeight
-              />
             </Grid>
-          ))}
-        </Grid>
+
+            {routes.map((vehicle, index) => (
+              <Grid item xs={12} key={vehicle.vehicle_id}>
+                <h3>Vehicle {vehicle.vehicle_id}</h3>
+                <DataGrid
+                  rows={vehicle.orders.map((order, idx) => ({ id: order.order_id, ...order }))}
+                  columns={columns}
+                  pageSize={5}
+                  autoHeight
+                />
+              </Grid>
+            ))}
+            </Grid>
       </Paper>
     </div>
   );

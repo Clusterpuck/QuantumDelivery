@@ -26,7 +26,8 @@ const DUMMY_OUTPUT = [
         lat: 40.7128, 
         long: -74.0060, 
         status: "Delivered", 
-        prodNames: ["Product A", "Product B"] 
+        prodNames: ["Product A", "Product B"],
+        customerName: "Amira" 
       },
       { 
         order_id: 2, 
@@ -34,7 +35,8 @@ const DUMMY_OUTPUT = [
         lat: 40.7328, 
         long: -74.0160, 
         status: "Cancelled", 
-        prodNames: ["Product C"] 
+        prodNames: ["Product C"],
+        customerName: "Nick" 
       }
     ]
   },
@@ -47,7 +49,8 @@ const DUMMY_OUTPUT = [
         lat: 40.7528, 
         long: -74.0260, 
         status: "On Route", 
-        prodNames: ["Product D", "Product E"] 
+        prodNames: ["Product D", "Product E"] ,
+        customerName: "Amelie"
       }
     ]
   },
@@ -60,7 +63,8 @@ const DUMMY_OUTPUT = [
         lat: 40.7728, 
         long: -74.0360, 
         status: "Delivered", 
-        prodNames: ["Product F"] 
+        prodNames: ["Product F"],
+        customerName: "Agam"
       },
       { 
         order_id: 5, 
@@ -68,7 +72,8 @@ const DUMMY_OUTPUT = [
         lat: 40.7928, 
         long: -74.0460, 
         status: "On Route", 
-        prodNames: ["Product G", "Product H"] 
+        prodNames: ["Product G", "Product H"] ,
+        customerName: "Song Yi"
       }
     ]
   }
@@ -104,7 +109,9 @@ const ViewRoutes = () =>
     { field: 'addr', headerName: 'Address', width: 150 },
     { field: 'status', headerName: 'Status', width: 150 },
     { field: 'prodNames', headerName: 'Product Names', width: 500 , renderCell: (params) => params.value.join(', '
-    )}
+    )},
+    {field: 'customerName', headerName: 'Customer Name', width: 150}
+
   ];
 
   return (

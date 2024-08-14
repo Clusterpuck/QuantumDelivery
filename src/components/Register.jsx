@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import RegistrationForm from "./RegistrationForm"
 
 const Register = () => {
     return (
@@ -13,6 +14,7 @@ const Register = () => {
             }}
         >
             <h1>Register</h1>
+            <RegistrationForm/>
         </div>
     );
 };

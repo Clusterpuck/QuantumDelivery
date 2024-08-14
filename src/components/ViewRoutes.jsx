@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { TextField, Button, Grid, Paper } from '@mui/material';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DataGrid } from '@mui/x-data-grid';
+import { postDeliveryRoutes } from '../store/apiFunctions';
+
 
 // Dummy data
 //NW Proposed to change to a simple list of numbers instead
 const DUMMY_INPUT = {
-  "num_vehicle": 3,
+  "numVehicle": 3,
   "orders": [ 3, 2, 1 ]
   //   { "order_id": 3},
   //   { "order_id": 2},
@@ -80,10 +82,13 @@ const DUMMY_OUTPUT = [
 ];
 
 // Page design for View Routes page
-const ViewRoutes = () =>
+const ViewRoutes = ({updateData}) =>
 {
   const [selectedDate, setSelectedDate] = useState(null);
   const [routes, setRoutes] = useState([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   //can change in future for backend to handle this
   const [allOrders, setAllOrders] = useState([]);
 
@@ -92,14 +97,30 @@ const ViewRoutes = () =>
   {
     setSelectedDate(date);
     // Simulate sending date and input to a function to get the dummy output
-    loadRoutes(DUMMY_INPUT);
+    loadRoutes();
   };
 
-  const loadRoutes = (input) =>
+  const loadRoutes = useCallback(async() => {
+      const routesList = await postDeliveryRoutes(DUMMY_INPUT);
+      if (routesList)
+      {setRoutes(routesList);}
+      else{
+          console.error('Error fetching delivery routes: ', error);
+          setSnackbarMessage('Failed to load delivery routes');
+          setSnackbarSeverity('error');
+          setSnackbarOpen(true);
+      }
+  }, []); 
+  useEffect(() => {
+        
+    loadRoutes();
+
+}, [updateData, loadRoutes])
+/*
   {
     // You could process the input data here before setting routes
     setRoutes(DUMMY_OUTPUT);
-  };
+  };*/
 
   // Define columns for DataGrid
   const columns = [

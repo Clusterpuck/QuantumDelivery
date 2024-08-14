@@ -1,28 +1,24 @@
 import React from 'react';
 import { TextField, Box, Paper, Button, Grid } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-const RegistrationForm = () => {
-    const navigate = useNavigate();  // Initialize useNavigate hook
+// TO DO: make it so it stores user data here, right now it just a copy paste of the rego form
 
-    const handleSubmit = (event) => {
-        event.preventDefault();  // Prevent default form submission
-        navigate('/addorder');  // Redirect to /addorder
-    };
-
+const AccountDetailsForm = () => {
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
             <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
                 <Grid container spacing={2} direction="column" alignItems="center">
                     <Grid item>
-                        <AccountCircleIcon sx={{ fontSize: 80, mb: 2 }} />
+                        <AccountCircleIcon sx={{ fontSize: 80, mb: 2, alignItems: 'center'}}/>
                     </Grid>
                     <Grid item>
+
                     </Grid>
-                    <form onSubmit={handleSubmit} style={{ width: '80%', alignItems: 'center' }}>
+                    <form style={{ width: '80%', alignItems: 'center' }}>
                         <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={18} sm={6}>
                                 <TextField 
                                     label="Full Name"
                                     name="fullName"
@@ -81,16 +77,8 @@ const RegistrationForm = () => {
                         </Grid>
                         <Grid item xs={12} sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <Button type="submit" variant="contained" color="primary" sx={{ width: "250px" }}>
-                                Register
+                                Save Changes
                             </Button>
-                            <Box sx={{ mt: 2 }}>
-                                <p>
-                                    Already have an account?{' '}
-                                    <Link to="/login" style={{ color: '#1976d2', textDecoration: 'none' }}>
-                                        Login
-                                    </Link>
-                                </p>
-                            </Box>
                         </Grid>
                     </form>
                 </Grid>
@@ -99,4 +87,4 @@ const RegistrationForm = () => {
     );
 };
 
-export default RegistrationForm;
+export default AccountDetailsForm;

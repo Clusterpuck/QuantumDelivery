@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import AccountDetailsForm from './AccountDetailsForm';
 
 const AccountDetails = () => {
     return (
@@ -13,6 +14,7 @@ const AccountDetails = () => {
             }}
         >
             <h1>Account Details</h1>
+            <AccountDetailsForm/>
         </div>
     );
 };

@@ -37,8 +37,8 @@ function Navbar() {
           <Typography
             variant="h6"
             noWrap
-            component={Link}
-            to="/"
+            component={Link} // Ensures it's a link
+            to="/home" // Links to the home page
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -99,8 +99,8 @@ function Navbar() {
           <Typography
             variant="h6"
             noWrap
-            component={Link}
-            to="/"
+            component={Link} // Ensures it's a link
+            to="/home" // Links to the home page
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },

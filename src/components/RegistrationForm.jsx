@@ -1,22 +1,28 @@
 import React from 'react';
 import { TextField, Box, Paper, Button, Grid } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const RegistrationForm = () => {
+    const navigate = useNavigate();  // Initialize useNavigate hook
+
+    const handleSubmit = (event) => {
+        event.preventDefault();  // Prevent default form submission
+        navigate('/addorder');  // Redirect to /addorder
+    };
+
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
             <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
                 <Grid container spacing={2} direction="column" alignItems="center">
                     <Grid item>
-                        <AccountCircleIcon sx={{ fontSize: 80, mb: 2, alignItems: 'center'}}/>
+                        <AccountCircleIcon sx={{ fontSize: 80, mb: 2 }} />
                     </Grid>
                     <Grid item>
-
                     </Grid>
-                    <form style={{ width: '80%', alignItems: 'center' }}>
+                    <form onSubmit={handleSubmit} style={{ width: '80%', alignItems: 'center' }}>
                         <Grid container spacing={2}>
-                            <Grid item xs={18} sm={6}>
+                            <Grid item xs={12} sm={6}>
                                 <TextField 
                                     label="Full Name"
                                     name="fullName"

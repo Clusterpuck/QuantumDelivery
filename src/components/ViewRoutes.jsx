@@ -14,7 +14,6 @@ const ViewRoutes = () => {
         }}
     >
         <h1>View Routes</h1>
-        <a href="/">Back Home</a>
     </div>
 );
 };

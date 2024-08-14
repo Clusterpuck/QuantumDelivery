@@ -10,6 +10,7 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { Link } from 'react-router-dom';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const pages = [
   { name: 'View Routes', path: '/viewroutes' },
@@ -36,8 +37,8 @@ function Navbar() {
           <Typography
             variant="h6"
             noWrap
-            component="a"
-            href="/"
+            component={Link}
+            to="/"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -94,11 +95,12 @@ function Navbar() {
               ))}
             </Menu>
           </Box>
+
           <Typography
             variant="h6"
             noWrap
-            component="a"
-            href="/"
+            component={Link}
+            to="/"
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
@@ -112,6 +114,7 @@ function Navbar() {
           >
             QuantaPath
           </Typography>
+
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
@@ -124,6 +127,16 @@ function Navbar() {
                 {page.name}
               </Button>
             ))}
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton
+              component={Link}
+              to="/accountdetails"
+              sx={{ color: 'white', ml: 2, fontSize: 32 }} // Increased size of the icon
+            >
+              <AccountCircleIcon fontSize="inherit" />
+            </IconButton>
           </Box>
         </Toolbar>
       </Container>

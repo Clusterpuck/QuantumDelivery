@@ -16,7 +16,7 @@ const App = () => {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<RandomFactGenerator />} />
+                <Route path="/" element={<Login />} />
                 <Route path="/viewroutes" element={<ViewRoutes />} />
                 <Route path="/livetracking" element={<LiveTracking />} />
                 <Route path="/dailyreports" element={<DailyReports />} />
@@ -24,6 +24,7 @@ const App = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/accountdetails" element={<AccountDetails />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/home" element={<RandomFactGenerator />} />
             </Routes>
         </Router>
     );

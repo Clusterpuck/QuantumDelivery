@@ -1,4 +1,4 @@
-import Home from "../../components/Home";
+import RandomFactGenerator from "../../components/Home";
 import ViewRoutes from "../components/ViewRoutes";
 import LiveTracking from "../components/LiveTracking";
 import DailyReports from "../components/DailyReports";
@@ -40,6 +40,11 @@ export const ROUTES = [
     path: "/register",
     element: <Register />,
   },
+  {
+    path: "/home",
+    element: <RandomFactGenerator />,
+  },
+
   
 ];
 

@@ -42,7 +42,7 @@ export const ROUTES = [
   },
   {
     path: "/home",
-    element: <RandomFactGenerator />,
+    element: <AddOrder />,
   },
 
   

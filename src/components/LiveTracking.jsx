@@ -14,7 +14,6 @@ const LiveTracking = () => {
         }}
     >
         <h1>Live Tracking</h1>
-        <a href="/">Back Home</a>
     </div>
 );
 };

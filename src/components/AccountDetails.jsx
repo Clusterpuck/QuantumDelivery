@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const DailyReports = () => {
+const AccountDetails = () => {
     return (
         <div
             style={{
@@ -12,9 +12,9 @@ const DailyReports = () => {
                 gap: 8,
             }}
         >
-            <h1>Daily Reports</h1>
+            <h1>Account Details</h1>
         </div>
     );
 };
 
-export default DailyReports;
+export default AccountDetails;

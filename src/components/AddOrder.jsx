@@ -234,8 +234,6 @@ const AddOrder = () => {
 
             <OrdersTable updateData={refreshOrders}/>
 
-            <a href="/">Back Home</a>
-
 
             <Snackbar
                 open={snackbar.open}

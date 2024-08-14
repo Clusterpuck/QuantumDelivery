@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import LoginForm from './LoginForm';
 
 const Login = () => {
     return (
@@ -13,7 +14,7 @@ const Login = () => {
             }}
         >
             <h1>Login</h1>
-            <a href="/">Back Home</a>
+            <LoginForm/>
         </div>
     );
 };

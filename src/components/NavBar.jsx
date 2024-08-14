@@ -37,8 +37,8 @@ function Navbar() {
           <Typography
             variant="h6"
             noWrap
-            component={Link} // Ensures it's a link
-            to="/home" // Links to the home page
+            component={Link} 
+            to="/home" 
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -99,8 +99,8 @@ function Navbar() {
           <Typography
             variant="h6"
             noWrap
-            component={Link} // Ensures it's a link
-            to="/home" // Links to the home page
+            component={Link} 
+            to="/home" 
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
@@ -133,7 +133,7 @@ function Navbar() {
             <IconButton
               component={Link}
               to="/accountdetails"
-              sx={{ color: 'white', ml: 2, fontSize: 32 }} // Increased size of the icon
+              sx={{ color: 'white', ml: 2, fontSize: 32 }} 
             >
               <AccountCircleIcon fontSize="inherit" />
             </IconButton>

@@ -7,8 +7,9 @@ import ProductListForm from '../components/ProductListForm.jsx';
 import OrdersTable from '../components/OrdersTable.jsx';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import AddLocationIcon from '@mui/icons-material/AddLocation';
-import MoveToInboxIcon from '@mui/icons-material/MoveToInbox';
+import SendIcon from '@mui/icons-material/Send';
 import Typography from '@mui/material/Typography';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 
 const styleConstants = {
     fieldSpacing: { mb: 2 }
@@ -132,7 +133,7 @@ const AddOrder = () => {
            
         >
             <Typography variant="h3" component="h1" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <MoveToInboxIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
+                <LibraryAddIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
                 Add Order
             </Typography>
 
@@ -241,8 +242,11 @@ const AddOrder = () => {
                             selectedProducts && selectedProducts.length > 0
                             ? "contained" : "disabled"}
                 color="primary" 
+                onClick={submitOrder}
                 >
+                  
                                 Submit Order
+                    <SendIcon/>
             </Button>
 
             </Paper>

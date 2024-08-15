@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AccountDetails from './pages/AccountDetails';
 import './index.css';
+import './App.css';
 
 
 // Initializes the routes within the app

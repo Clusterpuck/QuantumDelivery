@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { TextField, Button, Grid, Paper, MenuItem } from '@mui/material';
+import { TextField, Button, Grid, Paper, MenuItem, Snackbar, Alert } from '@mui/material';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DataGrid } from '@mui/x-data-grid';
 import { postDeliveryRoutes , fetchMethod} from '../store/apiFunctions';
+import MapWithPins from './MapWithPins';
+import Divider from '@mui/material/Divider';
+import Typography from '@mui/material/Typography';
 
 const styleConstants = {
-  fieldSpacing: { mb: 2 }
+  fieldSpacing: { mb: 4 }
 };
 
 
@@ -16,9 +19,11 @@ const ViewRoutes = ({updateData}) =>
 {
   const [selectedDate, setSelectedDate] = useState(null);
   const [routes, setRoutes] = useState([]);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success',
+});
   //can change in future for backend to handle this
   const [allOrders, setAllOrders] = useState([]);
   const [unassignedOrders, setUnassignedOrders] = useState([]);
@@ -33,15 +38,22 @@ const ViewRoutes = ({updateData}) =>
     loadRoutes();
   };
 
+  const handleSnackbarClose = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+};
+
+
   const loadOrders = useCallback(async () => {
     const orderList = await fetchMethod("orders");
     if (orderList) {
         setAllOrders(orderList);
     } else {
         console.error('Error fetching orders:', error);
-        setSnackbarMessage('Failed to load orders');
-        setSnackbarSeverity('error');
-        setSnackbarOpen(true);
+        setSnackbar({
+          open: true,
+          message: 'Failed to load orders',
+          severity: 'error'
+        });
     }
 }, []);
 useEffect(() => {
@@ -65,6 +77,7 @@ useEffect(() => {
         // Separate unassigned orders (vehicleId: 0) from assigned routes
         const unassigned = routesList.filter(route => route.vehicleId === 0);
         const assigned = routesList.filter(route => route.vehicleId !== 0);
+        //console.log("Route object recieved is ", JSON.stringify(assigned));
 
         setUnassignedOrders(unassigned.flatMap(route => route.orders)); // Combine all unassigned orders
         setRoutes(assigned);
@@ -72,16 +85,20 @@ useEffect(() => {
       else {
         // throw error
         console.error('Error fetching delivery routes: ', error);
-        setSnackbarMessage('Failed to load delivery routes');
-        setSnackbarSeverity('error');
-        setSnackbarOpen(true);
+        setSnackbar({
+          open: true,
+          message: 'Failed to load orders',
+          severity: 'error'
+        });
       }
     } catch (error) {
       // catch error
       console.error('Error fetching delivery routes: ', error);
-      setSnackbarMessage('Failed to load delivery routes');
-      setSnackbarSeverity('error');
-      setSnackbarOpen(true);
+      setSnackbar({
+        open: true,
+        message: 'Failed to load orders',
+        severity: 'error'
+      });
     }
   }, [numVehicles, allOrders]); 
   useEffect(() => {
@@ -190,18 +207,40 @@ useEffect(() => {
 
           {/* Render assigned vehicles */}
           {routes.map((vehicle, index) => (
-            <Grid item xs={12} key={vehicle.vehicleId}>
-              <h3>Vehicle {vehicle.vehicleId}</h3>
+            <Grid item xs={12} key={vehicle.vehicleId} sx={styleConstants.fieldSpacing}>
+              <Divider>
+                <Typography variant="h4" component="h3" align="center">
+                  Vehicle {vehicle.vehicleId}
+                </Typography>
+              </Divider>
+              <Grid sx={styleConstants.fieldSpacing}>
               <DataGrid
                 rows={vehicle.orders.map((order, idx) => ({ id: order.orderId, ...order }))}
                 columns={columns}
                 pageSize={5}
                 autoHeight
               />
+              <MapWithPins inputLocations={vehicle.orders.map(order => ({
+                latitude: order.lat,
+                longitude: order.lon
+              }) )}/>
+              </Grid>
             </Grid>
           ))}
             </Grid>
       </Paper>
+
+      
+      <Snackbar
+                open={snackbar.open}
+                anchorOrigin={{vertical:'top', horizontal: 'center'}}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
+            >
+                <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
     </div>
   );
 };

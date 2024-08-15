@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import AccountDetailsForm from './AccountDetailsForm';
 
-const DailyReports = () => {
+const AccountDetails = () => {
     return (
         <div
             style={{
@@ -12,9 +13,10 @@ const DailyReports = () => {
                 gap: 8,
             }}
         >
-            <h1>Daily Reports</h1>
+            <h1>Account Details</h1>
+            <AccountDetailsForm/>
         </div>
     );
 };
 
-export default DailyReports;
+export default AccountDetails;

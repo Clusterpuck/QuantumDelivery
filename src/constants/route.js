@@ -1,8 +1,11 @@
-import Home from "../../components/Home";
+import RandomFactGenerator from "../../components/Home";
 import ViewRoutes from "../components/ViewRoutes";
 import LiveTracking from "../components/LiveTracking";
 import DailyReports from "../components/DailyReports";
 import UploadRunsheet from "../components/UploadRunsheet";
+import Login from "../components/Login";
+import Register from "../components/Register";
+import AccountDetails from "../components/AccountDetails";
 
 export const ROUTES = [
   {
@@ -25,6 +28,24 @@ export const ROUTES = [
     path: "/uploadrunsheet",
     element: <UploadRunsheet />,
   },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/accountdetails",
+    element: <AccountDetails />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "/home",
+    element: <AddOrder />,
+  },
+
+  
 ];
 
 export default function ViewRoutes() {

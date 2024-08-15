@@ -13,7 +13,6 @@ const UploadRunsheet = () => {
         }}
       >
         <h1>Upload Runsheet</h1>
-        <a href="/">Back Home</a>
       </div>
     );
 };

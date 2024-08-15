@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { fetchCustomers, fetchLocations, postMethod } from '../store/apiFunctions';
+import { fetchCustomers, fetchLocations, postMethod } from '../store/apiFunctions.js';
 import { Autocomplete, Button, Box, Paper, Grid, TextField, Snackbar, Alert } from '@mui/material';
-import AddressSearch from './AddressSearch';
-import AddCustomer from './AddCustomer';
-import ProductListForm from './ProductListForm';
-import OrdersTable from './OrdersTable';
+import AddressSearch from './AddressSearch.jsx';
+import AddCustomer from './AddCustomer.jsx';
+import ProductListForm from './ProductListForm.jsx';
+import OrdersTable from './OrdersTable.jsx';
 
 const styleConstants = {
     fieldSpacing: { mb: 2 }
@@ -231,8 +231,6 @@ const AddOrder = () => {
             <h2>All Orders</h2>
 
             <OrdersTable updateData={refreshOrders}/>
-
-            <a href="/">Back Home</a>
 
 
             <Snackbar

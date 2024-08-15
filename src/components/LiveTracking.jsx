@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import AddressSearch from "./AddressSearch.jsx"
 
 // Page design for live tracking page
+// address search is placeholder for directions API
 const LiveTracking = () => {
   return (
     <div
@@ -14,7 +16,7 @@ const LiveTracking = () => {
         }}
     >
         <h1>Live Tracking</h1>
-        <a href="/">Back Home</a>
+        <AddressSearch /> 
     </div>
 );
 };

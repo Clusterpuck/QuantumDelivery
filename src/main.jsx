@@ -11,6 +11,9 @@ import ViewRoutes from './components/ViewRoutes';
 import LiveTracking from './components/LiveTracking';
 import DailyReports from './components/DailyReports';
 import AddOrder from './components/AddOrder';
+import Login from "./components/Login";
+import Register from "./components/Register";
+import AccountDetails from './components/AccountDetails';
 import './index.css';
 
 // Initializes the routes within the app
@@ -19,11 +22,15 @@ const App = () => {
         <Router>
             <PageLayout>
                 <Routes> 
-                    <Route path="/" element={<RandomFactGenerator />} />
+                    <Route path="/" element={<Login />} />
                     <Route path="/viewroutes" element={<ViewRoutes />} />
                     <Route path="/livetracking" element={<LiveTracking />} />
                     <Route path="/dailyreports" element={<DailyReports />} />
                     <Route path="/addorder" element={<AddOrder />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/accountdetails" element={<AccountDetails />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/home" element={<AddOrder />} />
                 </Routes>
             </PageLayout>
         </Router>

@@ -18,68 +18,7 @@ const DUMMY_INPUT = {
   // ]
 };
 
-const DUMMY_OUTPUT = [
-  {
-    vehicle_id: 1,
-    orders: [
-      { 
-        order_id: 1, 
-        addr: "123 Gloucester St", 
-        lat: 40.7128, 
-        long: -74.0060, 
-        status: "Delivered", 
-        prodNames: ["Product A", "Product B"],
-        customerName: "Amira" 
-      },
-      { 
-        order_id: 2, 
-        addr: "4 Rummer Way", 
-        lat: 40.7328, 
-        long: -74.0160, 
-        status: "Cancelled", 
-        prodNames: ["Product C"],
-        customerName: "Nick" 
-      }
-    ]
-  },
-  {
-    vehicle_id: 2,
-    orders: [
-      { 
-        order_id: 3, 
-        addr: "7 Kent St", 
-        lat: 40.7528, 
-        long: -74.0260, 
-        status: "On Route", 
-        prodNames: ["Product D", "Product E"] ,
-        customerName: "Amelie"
-      }
-    ]
-  },
-  {
-    vehicle_id: 3,
-    orders: [
-      { 
-        order_id: 4, 
-        addr: "101 Pine Rd", 
-        lat: 40.7728, 
-        long: -74.0360, 
-        status: "Delivered", 
-        prodNames: ["Product F"],
-        customerName: "Agam"
-      },
-      { 
-        order_id: 5, 
-        addr: "202 Oak Dr", 
-        lat: 40.7928, 
-        long: -74.0460, 
-        status: "On Route", 
-        prodNames: ["Product G", "Product H"] ,
-        customerName: "Song Yi"
-      }
-    ]
-  }
-];
+
 
 // Page design for View Routes page
 const ViewRoutes = ({updateData}) =>
@@ -95,7 +34,7 @@ const ViewRoutes = ({updateData}) =>
 
   // Function to handle date change and load dummy output
   const handleDateChange = (date) =>
-  {
+  { // logic for showing orders from a specific date is still yet to be implemented.
     setSelectedDate(date);
     // Simulate sending date and input to a function to get the dummy output
     loadRoutes();
@@ -103,6 +42,7 @@ const ViewRoutes = ({updateData}) =>
 
   const loadRoutes = useCallback(async() => {
     try{
+      // using the dummy input to get route info from the database
       const routesList = await postDeliveryRoutes(DUMMY_INPUT);
       if (routesList)
       {
@@ -114,12 +54,14 @@ const ViewRoutes = ({updateData}) =>
         setRoutes(assigned);
       }
       else {
+        // throw error
         console.error('Error fetching delivery routes: ', error);
         setSnackbarMessage('Failed to load delivery routes');
         setSnackbarSeverity('error');
         setSnackbarOpen(true);
       }
     } catch (error) {
+      // catch error
       console.error('Error fetching delivery routes: ', error);
       setSnackbarMessage('Failed to load delivery routes');
       setSnackbarSeverity('error');
@@ -131,11 +73,6 @@ const ViewRoutes = ({updateData}) =>
     loadRoutes();
 
 }, [updateData, loadRoutes])
-/*
-  {
-    // You could process the input data here before setting routes
-    setRoutes(DUMMY_OUTPUT);
-  };*/
 
   // Define columns for DataGrid
   const columns = [

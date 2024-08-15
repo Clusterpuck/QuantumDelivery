@@ -91,6 +91,7 @@ const ViewRoutes = ({updateData}) =>
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
   //can change in future for backend to handle this
   const [allOrders, setAllOrders] = useState([]);
+  const [unassignedOrders, setUnassignedOrders] = useState([]);
 
   // Function to handle date change and load dummy output
   const handleDateChange = (date) =>
@@ -101,15 +102,29 @@ const ViewRoutes = ({updateData}) =>
   };
 
   const loadRoutes = useCallback(async() => {
+    try{
       const routesList = await postDeliveryRoutes(DUMMY_INPUT);
       if (routesList)
-      {setRoutes(routesList);}
-      else{
-          console.error('Error fetching delivery routes: ', error);
-          setSnackbarMessage('Failed to load delivery routes');
-          setSnackbarSeverity('error');
-          setSnackbarOpen(true);
+      {
+        // Separate unassigned orders (vehicleId: 0) from assigned routes
+        const unassigned = routesList.filter(route => route.vehicleId === 0);
+        const assigned = routesList.filter(route => route.vehicleId !== 0);
+
+        setUnassignedOrders(unassigned.flatMap(route => route.orders)); // Combine all unassigned orders
+        setRoutes(assigned);
       }
+      else {
+        console.error('Error fetching delivery routes: ', error);
+        setSnackbarMessage('Failed to load delivery routes');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+      }
+    } catch (error) {
+      console.error('Error fetching delivery routes: ', error);
+      setSnackbarMessage('Failed to load delivery routes');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    }
   }, []); 
   useEffect(() => {
         
@@ -124,7 +139,7 @@ const ViewRoutes = ({updateData}) =>
 
   // Define columns for DataGrid
   const columns = [
-    { field: 'order_id', headerName: 'Order ID', width: 90 },
+    { field: 'orderId', headerName: 'Order ID', width: 90 },
     //{ field: 'lat', headerName: 'Latitude', width: 150 },
     //{ field: 'long', headerName: 'Longitude', width: 150 },
     { field: 'addr', headerName: 'Address', width: 150 },
@@ -150,7 +165,7 @@ const ViewRoutes = ({updateData}) =>
 
       <Paper elevation={3} sx={{ padding: 3, maxWidth: 1200, width: '100%' }}>
         <Grid container spacing={2}>
-          <Grid xs = {6} >
+          <Grid item xs = {6} >
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DesktopDatePicker
@@ -174,17 +189,31 @@ const ViewRoutes = ({updateData}) =>
 
             </Grid>
 
-            {routes.map((vehicle, index) => (
-              <Grid item xs={12} key={vehicle.vehicle_id}>
-                <h3>Vehicle {vehicle.vehicle_id}</h3>
-                <DataGrid
-                  rows={vehicle.orders.map((order, idx) => ({ id: order.order_id, ...order }))}
-                  columns={columns}
-                  pageSize={5}
-                  autoHeight
-                />
-              </Grid>
-            ))}
+            {/* Render unassigned orders */}
+          {unassignedOrders.length > 0 && (
+            <Grid item xs={12}>
+              <h3>Unassigned</h3>
+              <DataGrid
+                rows={unassignedOrders.map((order, idx) => ({ id: order.orderId, ...order }))}
+                columns={columns}
+                pageSize={5}
+                autoHeight
+              />
+            </Grid>
+          )}
+
+          {/* Render assigned vehicles */}
+          {routes.map((vehicle, index) => (
+            <Grid item xs={12} key={vehicle.vehicleId}>
+              <h3>Vehicle {vehicle.vehicleId}</h3>
+              <DataGrid
+                rows={vehicle.orders.map((order, idx) => ({ id: order.orderId, ...order }))}
+                columns={columns}
+                pageSize={5}
+                autoHeight
+              />
+            </Grid>
+          ))}
             </Grid>
       </Paper>
     </div>

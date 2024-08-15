@@ -24,7 +24,7 @@ const App = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/accountdetails" element={<AccountDetails />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/home" element={<RandomFactGenerator />} />
+                <Route path="/home" element={<AddOrder />} />
             </Routes>
         </Router>
     );

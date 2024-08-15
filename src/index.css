@@ -3,7 +3,7 @@
   --highlight-colour: #f7d1cd;
   --action-colour: #582c4d;
   --secondary-colour: #e6e8ef;
-  --text-colour: #c1c6d7;
+  --text-colour: #2f2f2f;
 
   
 
@@ -28,7 +28,7 @@ a {
   text-decoration: inherit;
 }
 a:hover {
-  color: var(--action-colour);
+  color: var(--highlight-colour);
 }
 
 body {

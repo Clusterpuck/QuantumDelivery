@@ -153,27 +153,27 @@ const ViewRoutes = ({ updateData }) =>
       }}
     >
       <h1>View Routes</h1>
-      <a href="/">Back Home</a>
 
-      <Paper elevation={3} sx={{ padding: 3, maxWidth: 1200, width: '100%' }}>
+      <Paper elevation={3} sx={{ padding: 3, maxWidth: 1500, width: '100%' }}>
         <Grid container spacing={2}>
-          <Grid item xs={6} >
+          <Grid item xs={12} md={12} container spacing={2} alignItems="center">
+            <Grid item xs={6} md={6} >
 
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DesktopDatePicker
-                label="Date desktop"
-                inputFormat="MM/DD/YYYY"
-                //value={value}
-                onChange={handleDateChange}
-                renderInput={(params) => <TextField {...params} />}
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DesktopDatePicker
+                  label="Plan Date"
+                  inputFormat="MM/DD/YYYY"
+                  //value={value}
+                  onChange={handleDateChange}
+                  renderInput={(params) => <TextField {...params} fullWidth />}
+                />
 
-            </LocalizationProvider>
-          </Grid>
+              </LocalizationProvider>
 
-          {/* Dropdown for selecting number of vehicles and Regenerate button */}
-          <Grid item xs={12} md={6} container spacing={2} alignItems="center">
-            <Grid item xs={8}>
+
+            </Grid>
+            {/* Dropdown for selecting number of vehicles and Regenerate button */}
+            <Grid item xs={2}>
               <TextField
                 select
                 label="Number of Vehicles"
@@ -188,9 +188,9 @@ const ViewRoutes = ({ updateData }) =>
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={4} container justifyContent="flex-end">
               <Button
-                variant='outlined'
+                variant='contained'
                 onClick={loadRoutes} // Call loadRoutes on button click
               >
                 Regenerate Routes
@@ -201,12 +201,12 @@ const ViewRoutes = ({ updateData }) =>
 
 
           <Grid xs={6}>
-            <Button
-              variant='outlined'
-            //={loadOrders}
+            {/* <Button
+              variant='contained'
+              onClick={loadOrders}
             >
               Plan Routes
-            </Button>
+            </Button> */}
 
           </Grid>
 

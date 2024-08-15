@@ -6,14 +6,13 @@ import {
     Route,
 } from 'react-router-dom';
 import PageLayout from './components/PageLayout';
-import RandomFactGenerator from './components/Home';
-import ViewRoutes from './components/ViewRoutes';
-import LiveTracking from './components/LiveTracking';
-import DailyReports from './components/DailyReports';
-import AddOrder from './components/AddOrder';
-import Login from "./components/Login";
-import Register from "./components/Register";
-import AccountDetails from './components/AccountDetails';
+import ViewRoutes from './pages/ViewRoutes';
+import LiveTracking from './pages/LiveTracking';
+import DailyReports from './pages/DailyReports';
+import AddOrder from './pages/AddOrder';
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import AccountDetails from './pages/AccountDetails';
 import './index.css';
 
 // Initializes the routes within the app

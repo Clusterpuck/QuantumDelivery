@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import AccountDetailsForm from './AccountDetailsForm';
+import AccountDetailsForm from '../components/AccountDetailsForm';
 
 const AccountDetails = () => {
     return (

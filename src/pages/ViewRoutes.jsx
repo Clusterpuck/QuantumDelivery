@@ -5,7 +5,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DataGrid } from '@mui/x-data-grid';
 import { postDeliveryRoutes, fetchMethod } from '../store/apiFunctions';
-import MapWithPins from './MapWithPins';
+import MapWithPins from '../components/MapWithPins';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 

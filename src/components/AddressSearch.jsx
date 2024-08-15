@@ -35,8 +35,6 @@ const AddressSearch = ({onCloseForm}) => {
 
     useEffect(() => {
 
-      
-
         const loadLocation = async () => {
             const region = await fetchRegion();
             if (region && region.latitude && region.longitude) {

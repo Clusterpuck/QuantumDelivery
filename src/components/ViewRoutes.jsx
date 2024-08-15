@@ -6,9 +6,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DataGrid } from '@mui/x-data-grid';
 import { postDeliveryRoutes , fetchMethod} from '../store/apiFunctions';
 
-
-
-
 const styleConstants = {
   fieldSpacing: { mb: 2 }
 };

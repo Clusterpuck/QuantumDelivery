@@ -18,7 +18,6 @@ const LiveTracking = () => {
     >
         <h1>Live Tracking</h1>
         {/* <AddressSearch />  */}
-        <MapWithPins/>
     </div>
 );
 };

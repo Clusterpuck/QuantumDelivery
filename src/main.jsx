@@ -15,9 +15,11 @@ import Register from "./pages/Register";
 import AccountDetails from './pages/AccountDetails';
 import './index.css';
 
+
 // Initializes the routes within the app
 const App = () => {
     return (
+        
         <Router>
             <PageLayout>
                 <Routes> 

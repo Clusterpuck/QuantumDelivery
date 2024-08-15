@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import AddressSearch from "./AddressSearch.jsx";
-import MapWithPins from './MapWithPins.jsx';
+import AddressSearch from "../components/AddressSearch.jsx";
+import MapWithPins from '../components/MapWithPins.jsx';
 
 // Page design for live tracking page
 // address search is placeholder for directions API
@@ -18,7 +18,6 @@ const LiveTracking = () => {
     >
         <h1>Live Tracking</h1>
         {/* <AddressSearch />  */}
-        <MapWithPins/>
     </div>
 );
 };

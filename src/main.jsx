@@ -6,19 +6,41 @@ import {
     Route,
 } from 'react-router-dom';
 import PageLayout from './components/PageLayout';
-import RandomFactGenerator from './components/Home';
-import ViewRoutes from './components/ViewRoutes';
-import LiveTracking from './components/LiveTracking';
-import DailyReports from './components/DailyReports';
-import AddOrder from './components/AddOrder';
-import Login from "./components/Login";
-import Register from "./components/Register";
-import AccountDetails from './components/AccountDetails';
+import ViewRoutes from './pages/ViewRoutes';
+import LiveTracking from './pages/LiveTracking';
+import DailyReports from './pages/DailyReports';
+import AddOrder from './pages/AddOrder';
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import AccountDetails from './pages/AccountDetails';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import './index.css';
+import './App.css';
+
+const theme = createTheme({
+    palette: {
+      primary: {
+        main: '#582c4d',
+      },
+      secondary: {
+        main: '#f7d1cd',
+      },
+      background: {
+        default: '#819BC5',
+        paper: '#e6e8ef'
+      },
+      text: {
+        primary: '#2f2f2f',
+      },
+    },
+  });
+
 
 // Initializes the routes within the app
 const App = () => {
     return (
+        <ThemeProvider theme={theme}>
+        
         <Router>
             <PageLayout>
                 <Routes> 
@@ -34,6 +56,7 @@ const App = () => {
                 </Routes>
             </PageLayout>
         </Router>
+        </ThemeProvider>
     );
 };
 

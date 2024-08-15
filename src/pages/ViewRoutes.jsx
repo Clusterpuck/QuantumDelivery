@@ -4,10 +4,14 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DataGrid } from '@mui/x-data-grid';
-import { postDeliveryRoutes , fetchMethod} from '../store/apiFunctions';
-import MapWithPins from './MapWithPins';
+import { postDeliveryRoutes, fetchMethod } from '../store/apiFunctions';
+import MapWithPins from '../components/MapWithPins.jsx';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
+import RouteIcon from '@mui/icons-material/Route';
+import AltRouteIcon from '@mui/icons-material/AltRoute';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import InputAdornment from '@mui/material/InputAdornment';
 
 const styleConstants = {
   fieldSpacing: { mb: 4 }
@@ -15,7 +19,7 @@ const styleConstants = {
 
 
 // Page design for View Routes page
-const ViewRoutes = ({updateData}) =>
+const ViewRoutes = ({ updateData }) =>
 {
   const [selectedDate, setSelectedDate] = useState(null);
   const [routes, setRoutes] = useState([]);
@@ -23,11 +27,12 @@ const ViewRoutes = ({updateData}) =>
     open: false,
     message: '',
     severity: 'success',
-});
+  });
   //can change in future for backend to handle this
   const [allOrders, setAllOrders] = useState([]);
   const [unassignedOrders, setUnassignedOrders] = useState([]);
   const [numVehicles, setNumVehicles] = useState(1); // default to 1 vehicle
+  const [ordersLoaded, setOrdersLoaded] = useState(false); // Track if orders are loaded
 
 
   // Function to handle date change and load dummy output
@@ -38,33 +43,43 @@ const ViewRoutes = ({updateData}) =>
     loadRoutes();
   };
 
-  const handleSnackbarClose = () => {
+  const handleSnackbarClose = () =>
+  {
     setSnackbar(prev => ({ ...prev, open: false }));
-};
+  };
 
 
-  const loadOrders = useCallback(async () => {
+  const loadOrders = useCallback(async () =>
+  {
     const orderList = await fetchMethod("orders");
-    if (orderList) {
-        setAllOrders(orderList);
-    } else {
-        console.error('Error fetching orders:', error);
-        setSnackbar({
-          open: true,
-          message: 'Failed to load orders',
-          severity: 'error'
-        });
+    if (orderList)
+    {
+      setAllOrders(orderList);
+      setOrdersLoaded(true); // Mark orders as loaded
+    } else
+    {
+      console.error('Error fetching orders:', error);
+      setSnackbar({
+        open: true,
+        message: 'Failed to load orders',
+        severity: 'error'
+      });
     }
-}, []);
-useEffect(() => {
-        
-  loadOrders();
+  }, []);
 
-}, [updateData, loadOrders])
+  useEffect(() =>
+  {
 
-  const loadRoutes = useCallback(async() => {
-    try{
+    loadOrders();
+
+  }, [updateData, loadOrders])
+
+  const loadRoutes = useCallback(async () =>
+  {
+    try
+    {
       // using the dummy input to get route info from the database
+      if (!ordersLoaded) return; // Do not load routes if orders are not loaded
 
       const userInput = {
         numVehicle: numVehicles,
@@ -82,7 +97,8 @@ useEffect(() => {
         setUnassignedOrders(unassigned.flatMap(route => route.orders)); // Combine all unassigned orders
         setRoutes(assigned);
       }
-      else {
+      else
+      {
         // throw error
         console.error('Error fetching delivery routes: ', error);
         setSnackbar({
@@ -91,7 +107,8 @@ useEffect(() => {
           severity: 'error'
         });
       }
-    } catch (error) {
+    } catch (error)
+    {
       // catch error
       console.error('Error fetching delivery routes: ', error);
       setSnackbar({
@@ -100,12 +117,14 @@ useEffect(() => {
         severity: 'error'
       });
     }
-  }, [numVehicles, allOrders]); 
-  useEffect(() => {
-        
+  }, [numVehicles, allOrders]);
+
+  useEffect(() =>
+  {
+
     loadRoutes();
 
-}, [updateData, loadRoutes])
+  }, [updateData, loadRoutes])
 
   // Define columns for DataGrid
   const columns = [
@@ -114,15 +133,18 @@ useEffect(() => {
     //{ field: 'long', headerName: 'Longitude', width: 150 },
     { field: 'addr', headerName: 'Address', width: 150 },
     { field: 'status', headerName: 'Status', width: 150 },
-    { field: 'prodNames', headerName: 'Product Names', width: 500 , renderCell: (params) => params.value.join(', '
-    )},
-    {field: 'customerName', headerName: 'Customer Name', width: 150}
+    {
+      field: 'prodNames', headerName: 'Product Names', width: 500, renderCell: (params) => params.value.join(', '
+      )
+    },
+    { field: 'customerName', headerName: 'Customer Name', width: 150 }
 
   ];
 
-  const handleNumVehiclesChange = (event) => {
+  const handleNumVehiclesChange = (event) =>
+  {
     setNumVehicles(event.target.value);
-};
+  };
 
   return (
     <div
@@ -134,34 +156,45 @@ useEffect(() => {
         gap: 8,
       }}
     >
-      <h1>View Routes</h1>
-      <a href="/">Back Home</a>
 
-      <Paper elevation={3} sx={{ padding: 3, maxWidth: 1200, width: '100%' }}>
+      <Typography variant="h2" component="h1" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <RouteIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
+        View Routes
+      </Typography>
+
+      <Paper elevation={3} sx={{ padding: 3, maxWidth: 1500, width: '100%' }}>
         <Grid container spacing={2}>
-          <Grid item xs = {6} >
+          <Grid item xs={12} md={12} container spacing={2} alignItems="center">
+            <Grid item xs={6} md={6} >
 
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DesktopDatePicker
-              label="Date desktop"
-              inputFormat="MM/DD/YYYY"
-              //value={value}
-              onChange={handleDateChange}
-              renderInput={(params) => <TextField {...params} />}
-            />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DesktopDatePicker
+                  label="Plan Date"
+                  inputFormat="MM/DD/YYYY"
+                  //value={value}
+                  onChange={handleDateChange}
+                  renderInput={(params) => <TextField {...params}/>}
+                />
 
-          </LocalizationProvider>
-          </Grid>
+              </LocalizationProvider>
 
-         {/* Dropdown for selecting number of vehicles and Regenerate button */}
-         <Grid item xs={12} md={6} container spacing={2} alignItems="center">
-            <Grid item xs={8}>
+
+            </Grid>
+            {/* Dropdown for selecting number of vehicles and Regenerate button */}
+            <Grid item xs={2}>
               <TextField
                 select
                 label="Number of Vehicles"
                 value={numVehicles}
-                onChange={handleNumVehiclesChange}
                 fullWidth
+                onChange={handleNumVehiclesChange}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LocalShippingIcon />
+                    </InputAdornment>
+                  ),
+                }}
               >
                 {[...Array(10).keys()].map(i => (
                   <MenuItem key={i + 1} value={i + 1}>
@@ -170,29 +203,31 @@ useEffect(() => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={4} container justifyContent="flex-end">
               <Button
-                variant='outlined'
+                variant='contained'
+                sx={{ height: '100%' }}
                 onClick={loadRoutes} // Call loadRoutes on button click
               >
+                <AltRouteIcon/>
                 Regenerate Routes
               </Button>
             </Grid>
           </Grid>
 
-          
 
-          <Grid xs = {6}>
-            <Button
-              variant='outlined'
-              //={loadOrders}
+
+          <Grid xs={6}>
+            {/* <Button
+              variant='contained'
+              onClick={loadOrders}
             >
               Plan Routes
-            </Button>
+            </Button> */}
 
-            </Grid>
+          </Grid>
 
-            {/* Render unassigned orders */}
+          {/* Render unassigned orders */}
           {unassignedOrders.length > 0 && (
             <Grid item xs={12}>
               <h3>Unassigned</h3>
@@ -213,34 +248,34 @@ useEffect(() => {
                   Vehicle {vehicle.vehicleId}
                 </Typography>
               </Divider>
-              <Grid sx={styleConstants.fieldSpacing}>
-              <DataGrid
-                rows={vehicle.orders.map((order, idx) => ({ id: order.orderId, ...order }))}
-                columns={columns}
-                pageSize={5}
-                autoHeight
-              />
-              <MapWithPins inputLocations={vehicle.orders.map(order => ({
-                latitude: order.lat,
-                longitude: order.lon
-              }) )}/>
+              <Grid item sx={styleConstants.fieldSpacing}>
+                <DataGrid
+                  rows={vehicle.orders.map((order, idx) => ({ id: order.orderId, ...order }))}
+                  columns={columns}
+                  pageSize={5}
+                  autoHeight
+                />
+                <MapWithPins inputLocations={vehicle.orders.map(order => ({
+                  latitude: order.lat,
+                  longitude: order.lon
+                }))} />
               </Grid>
             </Grid>
           ))}
-            </Grid>
+        </Grid>
       </Paper>
 
-      
+
       <Snackbar
-                open={snackbar.open}
-                anchorOrigin={{vertical:'top', horizontal: 'center'}}
-                autoHideDuration={6000}
-                onClose={handleSnackbarClose}
-            >
-                <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
-                    {snackbar.message}
-                </Alert>
-            </Snackbar>
+        open={snackbar.open}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

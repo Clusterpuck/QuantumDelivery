@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { fetchCustomers, fetchLocations, postMethod } from '../store/apiFunctions.js';
-import { Autocomplete, Button, Box, Paper, Grid, TextField, Snackbar, Alert } from '@mui/material';
-import AddressSearch from './AddressSearch.jsx';
-import AddCustomer from './AddCustomer.jsx';
-import ProductListForm from './ProductListForm.jsx';
-import OrdersTable from './OrdersTable.jsx';
+import { Autocomplete, Button, Box, Paper, Grid, TextField, Snackbar, Alert, Divider } from '@mui/material';
+import AddressSearch from '../components/AddressSearch.jsx';
+import AddCustomer from '../components/AddCustomer.jsx';
+import ProductListForm from '../components/ProductListForm.jsx';
+import OrdersTable from '../components/OrdersTable.jsx';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import AddLocationIcon from '@mui/icons-material/AddLocation';
+import MoveToInboxIcon from '@mui/icons-material/MoveToInbox';
+import Typography from '@mui/material/Typography';
 
 const styleConstants = {
     fieldSpacing: { mb: 2 }
@@ -125,21 +129,31 @@ const AddOrder = () => {
 
     return (
         <div
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 8,
-            }}
+           
         >
-            <h1>Add Order</h1>
+            <Typography variant="h3" component="h1" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <MoveToInboxIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
+                Add Order
+            </Typography>
 
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                <Paper elevation={3} sx={{ padding: 3, maxWidth: 900, width: '100%' }}>
+                <Paper elevation={3} sx={{ padding: 4, maxWidth: 1500, width: '100%' }}>
                     <Grid container spacing={2} >
-                        <Grid item xs={6} sx={styleConstants.fieldSpacing}>
+                        
+                    <TextField 
+                        id='order-notes'
+                        label="Order Comments"
+                        multiline
+                        fullWidth
+                        value = {orderNote}
+                        placeholder='Order Comments'
+                        onChange={(event) => {
+                            setOrderNote(event.target.value)}
+                        }
+
+                        />
+                        <Grid item xs={4} sx={styleConstants.fieldSpacing}>
                         {customers ? (
                             <Autocomplete
                                 disablePortal
@@ -155,8 +169,23 @@ const AddOrder = () => {
                             <p>No Customers</p>
                         )}
                         </Grid>
-                        <Grid item xs={6} sx={styleConstants.fieldSpacing}>
 
+                        <Grid item xs={2} sx={styleConstants.fieldSpacing}>
+                            <Button
+                                variant="contained"
+                                sx={{ height: '100%' }}
+                                color="primary"
+                                onClick={() => setShowAddCustomer(!showAddCustomer)}>
+                                {showAddCustomer ? 'Hide Customer Form' : (
+                                    <>
+                                        <PersonAddIcon/>
+                                        {'New Customer'}
+                                    </>
+                                )}
+                            </Button>
+                        </Grid>
+
+                        <Grid item xs={4} sx={styleConstants.fieldSpacing}>
                         {locations ? (
                             <Autocomplete
                                 disablePortal
@@ -173,31 +202,21 @@ const AddOrder = () => {
                         )}
                         </Grid>
 
-                        <Grid item xs={6} sx={styleConstants.fieldSpacing}>
-                            <Button variant="contained" color="primary" onClick={() => setShowAddCustomer(!showAddCustomer)}>
-                                {showAddCustomer ? 'Hide Customer Form' : 'Add Customer'}
-                            </Button>
-                        </Grid>
-
-                        <Grid item xs={6} sx={styleConstants.fieldSpacing}>
-                            <Button variant="contained" color="primary" onClick={() => setShowAddressSearch(!showAddressSearch)}>
-                                {showAddressSearch ? 'Hide Address Form' : 'Add Address'}
+                        <Grid item xs={2} sx={styleConstants.fieldSpacing}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                sx={{ height: '100%' }}
+                                onClick={() => setShowAddressSearch(!showAddressSearch)}>
+                                {showAddressSearch ? 'Hide Address Form' : (
+                                    <>
+                                    <AddLocationIcon />
+                                    {'New Address'}</>
+                                )}
                             </Button>
                         </Grid>
                     </Grid>
 
-                    <TextField 
-                        id='order-notes'
-                        label="Order Comments"
-                        multiline
-                        fullWidth
-                        value = {orderNote}
-                        placeholder='Order Comments'
-                        onChange={(event) => {
-                            setOrderNote(event.target.value)}
-                        }
-
-                        />
 
                     {/* Conditionally render the AddCustomer component */}
                     {showAddCustomer && (
@@ -212,8 +231,7 @@ const AddOrder = () => {
                             <AddressSearch onCloseForm={handleAddressFormClose} />
                         </Box>
                     )}
-                </Paper>
-            </Box>
+              
 
             <ProductListForm sendProductList={setSelectedProducts}/>
 
@@ -227,11 +245,19 @@ const AddOrder = () => {
                                 Submit Order
             </Button>
 
+            </Paper>
+        </Box>
+
+        <Divider></Divider>
+
+
 
             <h2>All Orders</h2>
 
-            <OrdersTable updateData={refreshOrders}/>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
 
+            <OrdersTable updateData={refreshOrders}/>
+</Box>
 
             <Snackbar
                 open={snackbar.open}

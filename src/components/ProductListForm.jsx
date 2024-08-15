@@ -9,6 +9,8 @@ import Alert from '@mui/material/Alert';
 import Autocomplete from '@mui/material/Autocomplete';
 import { DataGrid } from '@mui/x-data-grid';
 import { fetchProducts } from '../store/apiFunctions';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 const ProductListForm = ({sendProductList}) => {
     const [products, setProducts] = useState([]);
@@ -96,8 +98,6 @@ const ProductListForm = ({sendProductList}) => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 1200, width: '100%' }}>
-                <h3>Add Products to Order</h3>
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
                         <Autocomplete
@@ -119,8 +119,15 @@ const ProductListForm = ({sendProductList}) => {
                             inputProps={{ min: 1 }}
                         />
                     </Grid>
-                    <Grid item xs={3}>
-                        <Button onClick={handleAddProduct} variant="contained" color="primary" fullWidth>
+                    <Grid item xs={2}>
+                        <Button 
+                            onClick={handleAddProduct} 
+                            variant="contained" 
+                            color="primary" 
+                            fullWidth
+                            sx={{ height: '100%' }} 
+                            >
+                            <AddIcon/>
                             Add Product
                         </Button>
                     </Grid>
@@ -133,7 +140,6 @@ const ProductListForm = ({sendProductList}) => {
                         pageSize={10}
                         checkboxSelection />
                 </Box>
-            </Paper>
 
             {/* Snackbar for feedback */}
             <Snackbar

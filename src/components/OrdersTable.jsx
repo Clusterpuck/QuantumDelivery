@@ -57,7 +57,7 @@ const OrdersTable = ({updateData}) => {
     };
 
     return (
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 1200, width: '100%' }}>
+            <Paper elevation={3} sx={{ padding: 3, width: '100%' }}>
                  <Box sx={{ height: 400, width: '100%', mt: 2 }}>
                     <DataGrid 
                         rows={rows} 

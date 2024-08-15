@@ -8,6 +8,10 @@ import { postDeliveryRoutes, fetchMethod } from '../store/apiFunctions';
 import MapWithPins from '../components/MapWithPins.jsx';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
+import RouteIcon from '@mui/icons-material/Route';
+import AltRouteIcon from '@mui/icons-material/AltRoute';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import InputAdornment from '@mui/material/InputAdornment';
 
 const styleConstants = {
   fieldSpacing: { mb: 4 }
@@ -152,7 +156,11 @@ const ViewRoutes = ({ updateData }) =>
         gap: 8,
       }}
     >
-      <h1>View Routes</h1>
+
+      <Typography variant="h2" component="h1" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <RouteIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
+        View Routes
+      </Typography>
 
       <Paper elevation={3} sx={{ padding: 3, maxWidth: 1500, width: '100%' }}>
         <Grid container spacing={2}>
@@ -165,7 +173,7 @@ const ViewRoutes = ({ updateData }) =>
                   inputFormat="MM/DD/YYYY"
                   //value={value}
                   onChange={handleDateChange}
-                  renderInput={(params) => <TextField {...params} fullWidth />}
+                  renderInput={(params) => <TextField {...params}/>}
                 />
 
               </LocalizationProvider>
@@ -178,8 +186,15 @@ const ViewRoutes = ({ updateData }) =>
                 select
                 label="Number of Vehicles"
                 value={numVehicles}
-                onChange={handleNumVehiclesChange}
                 fullWidth
+                onChange={handleNumVehiclesChange}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LocalShippingIcon />
+                    </InputAdornment>
+                  ),
+                }}
               >
                 {[...Array(10).keys()].map(i => (
                   <MenuItem key={i + 1} value={i + 1}>
@@ -188,11 +203,13 @@ const ViewRoutes = ({ updateData }) =>
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={4} container justifyContent="flex-end">
+            <Grid item xs={2} container justifyContent="flex-end">
               <Button
                 variant='contained'
+                sx={{ height: '100%' }}
                 onClick={loadRoutes} // Call loadRoutes on button click
               >
+                <AltRouteIcon/>
                 Regenerate Routes
               </Button>
             </Grid>

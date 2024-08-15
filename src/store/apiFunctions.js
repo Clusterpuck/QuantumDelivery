@@ -167,3 +167,29 @@ export const fetchMethod = async (endpoint) => {
     return ipData
 };
 
+export const postDeliveryRoutes = async (newInput) => {
+    try {
+        const response = await fetch(Constants.DATA_ENDPOINT + 'deliveryroutes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newInput),
+        });
+
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+            throw new Error('Failed to submit delivery route');
+        }
+
+        const responseData = await response.json();
+        console.log('Successfully submitted delivery route:', responseData);
+        return responseData; // Make sure to return the response data here
+
+    } catch (error) {
+        console.error('Error submitting delivery route:', error);
+        return null; // Return null or handle the error as needed
+    }
+};
+

@@ -1,23 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { TextField, Button, Grid, Paper } from '@mui/material';
+import { TextField, Button, Grid, Paper, MenuItem } from '@mui/material';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DataGrid } from '@mui/x-data-grid';
-import { postDeliveryRoutes } from '../store/apiFunctions';
+import { postDeliveryRoutes , fetchMethod} from '../store/apiFunctions';
 
 
-// Dummy data
-//NW Proposed to change to a simple list of numbers instead
-const DUMMY_INPUT = {
-  "numVehicle": 3,
-  "orders": [ 3, 2, 1 ]
-  //   { "order_id": 3},
-  //   { "order_id": 2},
-  //   { "order_id": 1 }
-  // ]
+
+
+const styleConstants = {
+  fieldSpacing: { mb: 2 }
 };
-
 
 
 // Page design for View Routes page
@@ -31,6 +25,8 @@ const ViewRoutes = ({updateData}) =>
   //can change in future for backend to handle this
   const [allOrders, setAllOrders] = useState([]);
   const [unassignedOrders, setUnassignedOrders] = useState([]);
+  const [numVehicles, setNumVehicles] = useState(1); // default to 1 vehicle
+
 
   // Function to handle date change and load dummy output
   const handleDateChange = (date) =>
@@ -40,10 +36,33 @@ const ViewRoutes = ({updateData}) =>
     loadRoutes();
   };
 
+  const loadOrders = useCallback(async () => {
+    const orderList = await fetchMethod("orders");
+    if (orderList) {
+        setAllOrders(orderList);
+    } else {
+        console.error('Error fetching orders:', error);
+        setSnackbarMessage('Failed to load orders');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
+    }
+}, []);
+useEffect(() => {
+        
+  loadOrders();
+
+}, [updateData, loadOrders])
+
   const loadRoutes = useCallback(async() => {
     try{
       // using the dummy input to get route info from the database
-      const routesList = await postDeliveryRoutes(DUMMY_INPUT);
+
+      const userInput = {
+        numVehicle: numVehicles,
+        orders: allOrders.map(order => order.id) // Placeholder, adjust as needed
+      };
+
+      const routesList = await postDeliveryRoutes(userInput);
       if (routesList)
       {
         // Separate unassigned orders (vehicleId: 0) from assigned routes
@@ -67,7 +86,7 @@ const ViewRoutes = ({updateData}) =>
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
     }
-  }, []); 
+  }, [numVehicles, allOrders]); 
   useEffect(() => {
         
     loadRoutes();
@@ -86,6 +105,10 @@ const ViewRoutes = ({updateData}) =>
     {field: 'customerName', headerName: 'Customer Name', width: 150}
 
   ];
+
+  const handleNumVehiclesChange = (event) => {
+    setNumVehicles(event.target.value);
+};
 
   return (
     <div
@@ -114,8 +137,37 @@ const ViewRoutes = ({updateData}) =>
             />
 
           </LocalizationProvider>
-
           </Grid>
+
+         {/* Dropdown for selecting number of vehicles and Regenerate button */}
+         <Grid item xs={12} md={6} container spacing={2} alignItems="center">
+            <Grid item xs={8}>
+              <TextField
+                select
+                label="Number of Vehicles"
+                value={numVehicles}
+                onChange={handleNumVehiclesChange}
+                fullWidth
+              >
+                {[...Array(10).keys()].map(i => (
+                  <MenuItem key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={4}>
+              <Button
+                variant='outlined'
+                onClick={loadRoutes} // Call loadRoutes on button click
+              >
+                Regenerate Routes
+              </Button>
+            </Grid>
+          </Grid>
+
+          
+
           <Grid xs = {6}>
             <Button
               variant='outlined'

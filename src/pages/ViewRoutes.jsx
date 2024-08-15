@@ -203,7 +203,7 @@ const ViewRoutes = ({ updateData }) =>
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={2} container justifyContent="flex-end">
+            <Grid item xs={4} container justifyContent="flex-end">
               <Button
                 variant='contained'
                 sx={{ height: '100%' }}

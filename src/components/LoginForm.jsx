@@ -57,8 +57,11 @@ const LoginForm = () => {
                         </form>
                     </Grid>
                     <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', marginTop: 8 }}>
-                        <Typography variant="body2">
-                            Don't have an account? <Link to="/register">Register</Link>
+                        <Typography variant="body2" color = "primary">
+                            Don't have an account? {' '}
+                            <Link to="/register" style={{ color: '#1976d2', textDecoration: 'none' }}>
+                                        Register
+                            </Link>
                         </Typography>
                     </Grid>
                 </Grid>

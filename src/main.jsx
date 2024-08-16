@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {
-    BrowserRouter as Router,
+    HashRouter as Router,
     Routes,
     Route,
 } from 'react-router-dom';
@@ -35,27 +35,25 @@ const theme = createTheme({
     },
   });
 
-
 // Initializes the routes within the app
 const App = () => {
     return (
         <ThemeProvider theme={theme}>
-        
-        <Router>
-            <PageLayout>
-                <Routes> 
-                    <Route path="/" element={<Login />} />
-                    <Route path="/viewroutes" element={<ViewRoutes />} />
-                    <Route path="/livetracking" element={<LiveTracking />} />
-                    <Route path="/dailyreports" element={<DailyReports />} />
-                    <Route path="/addorder" element={<AddOrder />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/accountdetails" element={<AccountDetails />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/home" element={<AddOrder />} />
-                </Routes>
-            </PageLayout>
-        </Router>
+            <Router>
+                <PageLayout>
+                    <Routes> 
+                        <Route path="/" element={<Login />} />
+                        <Route path="/viewroutes" element={<ViewRoutes />} />
+                        <Route path="/livetracking" element={<LiveTracking />} />
+                        <Route path="/dailyreports" element={<DailyReports />} />
+                        <Route path="/addorder" element={<AddOrder />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/accountdetails" element={<AccountDetails />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/home" element={<AddOrder />} />
+                    </Routes>
+                </PageLayout>
+            </Router>
         </ThemeProvider>
     );
 };

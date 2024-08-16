@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import RandomFactGenerator from './components/Home';
 import ViewRoutes from './components/ViewRoutes';
 import LiveTracking from './components/LiveTracking';

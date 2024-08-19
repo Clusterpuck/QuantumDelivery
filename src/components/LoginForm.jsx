@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -14,11 +14,42 @@ const styleConstants = {
 
 const LoginForm = () => {
     const navigate = useNavigate();
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [errors, setErrors] = useState({ username: '', password: '' });
+
+    const validate = () => {
+        let valid = true;
+        let tempErrors = { username: '', password: '' };
+
+        // Username validation
+        if (!username) {
+            tempErrors.username = 'Username is required';
+            valid = false;
+        } else if (!/\S+@\S+\.\S+/.test(username)) {
+            tempErrors.username = 'Username must be a valid email';
+            valid = false;
+        }
+
+        // Password validation
+        if (!password) {
+            tempErrors.password = 'Password is required';
+            valid = false;
+        } else if (password.length < 6) {
+            tempErrors.password = 'Password must be at least 6 characters';
+            valid = false;
+        }
+
+        setErrors(tempErrors);
+        return valid;
+    };
 
     const handleLogin = (e) => {
-        // TO DO: add user authentication logic here
         e.preventDefault();
-        navigate('/addorder');
+        if (validate()) {
+            // Add user authentication logic here
+            navigate('/addorder');
+        }
     };
 
     return (
@@ -37,6 +68,10 @@ const LoginForm = () => {
                                     variant="outlined"
                                     fullWidth
                                     label="Username"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    error={!!errors.username}
+                                    helperText={errors.username}
                                 />
                             </Grid>
                             <Grid item xs={12} sx={styleConstants.fieldSpacing}>
@@ -47,6 +82,10 @@ const LoginForm = () => {
                                     type="password"
                                     fullWidth
                                     label="Password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    error={!!errors.password}
+                                    helperText={errors.password}
                                 />
                             </Grid>
                             <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center' }}>
@@ -57,10 +96,10 @@ const LoginForm = () => {
                         </form>
                     </Grid>
                     <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', marginTop: 8 }}>
-                        <Typography variant="body2" color = "primary">
-                            Don't have an account? {' '}
+                        <Typography variant="body2" color="primary">
+                            Don't have an account?{' '}
                             <Link to="/register" style={{ color: '#1976d2', textDecoration: 'none' }}>
-                                        Register
+                                Register
                             </Link>
                         </Typography>
                     </Grid>

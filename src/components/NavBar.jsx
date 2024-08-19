@@ -17,6 +17,9 @@ const pages = [
   { name: 'Live Tracking', path: '/livetracking' },
   { name: 'Daily Reports', path: '/dailyreports' },
   { name: 'Add Order', path: '/addorder' },
+
+  // temporarily in the nav bar until authorisation is implemented
+  { name: 'Driver - View Routes', path: '/driverviewroutes'} 
 ];
 
 function Navbar() {

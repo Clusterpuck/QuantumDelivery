@@ -25,8 +25,8 @@ This project is a web application that represents the front end of a Quantum Del
 Testing pushing direct to main X2
 
 # How to add a new web page
-> Create .jsx file in the ‘pages’ folder
-> Create required components in the ‘components’ folder
-> Add route to both route.js and routes.js in the ‘constants’ folder
-> Update NavBar.jsx in the components folder (if required)
-> Check for necessary import statements
+- Create .jsx file in the ‘pages’ folder
+- Create required components in the ‘components’ folder
+- Add route to both route.js and routes.js in the ‘constants’ folder
+- Update NavBar.jsx in the components folder (if required)
+- Check for necessary import statements

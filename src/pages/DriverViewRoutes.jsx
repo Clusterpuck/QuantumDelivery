@@ -27,7 +27,7 @@ const DriverViewRoutes = ({updateData}) =>
                         width: '90vw', // Same width as above
                         boxSizing: 'border-box',
                         // Added background color for visibility
-                        backgroundColor: '#BBCDEB',
+                        backgroundColor: '#FFFFF',
                         // Added zIndex to ensure it's above other content
                         zIndex: 1200,
                     },
@@ -35,20 +35,60 @@ const DriverViewRoutes = ({updateData}) =>
             >
                 <Box
             sx={{
-                position: 'absolute', // Absolute positioning within the drawer
+                display: 'flex', // Absolute positioning within the drawer
                         top: 0, // Position at the top
                         left: 0, // Align to the left
                         width: '100%', // Full width of the drawer
                         p: 0, // Padding around the text
-                        backgroundColor: '#819bc5', // Optional: same as drawer background
+                        backgroundColor: '#819bc5', 
                         display: 'flex',
                         justifyContent: 'center', // Horizontally centers the content
                         alignItems: 'center',     // Vertically centers the content
-                        borderBottom: '1px solid black' // Optional: adds a bottom border
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                        borderRadius: '0 0 16px 16px', 
             }}
         >
             <Typography variant="h6" color="black" sx={{ p: 2, fontWeight: 'bold' }}>
                 Delivery Progress
+            </Typography>
+        </Box>
+       
+        <Box
+            sx={{
+                display: 'flex',
+                        top: 0, // Position at the top
+                        left: 0, // Align to the left
+                        width: '90%', // Full width of the drawer
+                        p: 0, // Padding around the text
+                        backgroundColor: '#BBCDEB', 
+                        justifyContent: 'center', // Horizontally centers the content
+                        alignItems: 'center',     // Vertically centers the content
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                        margin: 2,
+                        borderRadius: 4, 
+            }}
+        >
+            <Typography variant="h6" color="black" sx={{ p: 2, fontSize: '0.875rem' }}>
+                Current Delivery 
+            </Typography>
+        </Box>
+        <Box
+            sx={{
+                display: 'flex',
+                        top: 0, // Position at the top
+                        left: 0, // Align to the left
+                        width: '90%', // Full width of the drawer
+                        p: 0, // Padding around the text
+                        backgroundColor: '#BBCDEB', 
+                        justifyContent: 'center', // Horizontally centers the content
+                        alignItems: 'center',     // Vertically centers the content
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                        margin: 2,
+                        borderRadius: 4, 
+            }}
+        >
+            <Typography variant="h6" color="black" sx={{ p: 2, fontSize: '0.875rem' }}>
+                Next Deliveries 
             </Typography>
         </Box>
                 <IconButton
@@ -57,6 +97,8 @@ const DriverViewRoutes = ({updateData}) =>
                         position: 'absolute',
                         bottom: 16,
                         right: 16,
+                        backgroundColor: 'rgb(187, 205, 235)',
+                        color: 'black'
                     }}
                 >
                     <KeyboardArrowLeftIcon />

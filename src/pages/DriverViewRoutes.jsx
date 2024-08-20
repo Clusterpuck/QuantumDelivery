@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Drawer, IconButton, Typography, Button } from '@mui/material';import RouteIcon from '@mui/icons-material/Route';
+import { Box, Drawer, IconButton, Typography, Button, Link } from '@mui/material';import RouteIcon from '@mui/icons-material/Route';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -20,12 +20,20 @@ const DriverViewRoutes = ({updateData}) =>
         setDrawerOpen(open); //opens the drawer
     }
 
-        const rows = [
-          '243B Gloucester St, East Victoria Park',
-          'Amira Moriff',
-          'Order #9372',
+        // DUMMY DATA FOR NOW
+        const currentDelRows = [
+          '1140 Albany Highway',
+          'Spudshed Bentley',
+          'Order ID 872',
           'Product A, Product B, Product C',
         ];
+
+        const nextDelRows = [
+            { addr: '464 Fitzgerald St, North Perth', customer: 'Rosemount Bowling', orderId: '875'},
+            { addr: '1/41 Burrendah Blvd, Willetton', customer: 'Silver Sushi', orderId: '903'},
+            { addr: '311 William St, Northbridge', customer: 'Lucky Chans', orderId: '1001'},
+            { addr: '17/789 Albany Highway, East Vic Park', customer: 'T4 Vic Park', orderId: '799'}
+        ]
       
 
     return (
@@ -64,14 +72,14 @@ const DriverViewRoutes = ({updateData}) =>
             </Typography>
         </Box>
        
-        <Box
+        <Box 
             sx={{
                 display: 'flex',
                         top: 0, // Position at the top
                         left: 0, // Align to the left
                         width: 'calc(100% - 32px)%', // Full width of the drawer
                         p: 0, // Padding around the text
-                        backgroundColor: '#BBCDEB', 
+                        backgroundColor: '#582c4d', 
                         justifyContent: 'center', // Horizontally centers the content
                         alignItems: 'center',     // Vertically centers the content
                         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
@@ -79,7 +87,7 @@ const DriverViewRoutes = ({updateData}) =>
                         borderRadius: 4, 
             }}
         >
-            <Typography variant="h6" color="black" sx={{ p: 2, fontSize: '0.875rem' }}>
+            <Typography variant="h6" color="white" sx={{ p: 2, fontSize: '0.875rem', fontWeight: 'bold' }}>
                 Current Delivery 
             </Typography>
         </Box>
@@ -102,12 +110,13 @@ const DriverViewRoutes = ({updateData}) =>
             <TableContainer component={Paper}>
             <Table>
                 <TableBody>
-                {rows.map((row, index) => (
+                {currentDelRows.map((row, index) => (
                     <TableRow key={index}>
                     <TableCell>{row}</TableCell>
                     {index === 1 && (
                       <TableCell align="right">
                         <PhoneIcon />
+                        
                       </TableCell>
                     )}
                     </TableRow>
@@ -149,7 +158,7 @@ const DriverViewRoutes = ({updateData}) =>
                         left: 0, // Align to the left
                         width: 'calc(100% - 32px)', // Full width of the drawer
                         p: 0, // Padding around the text
-                        backgroundColor: '#BBCDEB', 
+                        backgroundColor: '#819bc5', 
                         justifyContent: 'center', // Horizontally centers the content
                         alignItems: 'center',     // Vertically centers the content
                         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
@@ -157,14 +166,51 @@ const DriverViewRoutes = ({updateData}) =>
                         borderRadius: 4, 
             }}
         >
-            <Typography variant="h6" color="black" sx={{ p: 2, fontSize: '0.875rem' }}>
+            <Typography variant="h6" color="white" sx={{ p: 2, fontSize: '0.875rem', fontWeight: 'bold' }}>
                 Next Deliveries 
             </Typography>
+        </Box>
+        <Box
+            sx={{
+                display: 'flex',
+                        top: 0, // Position at the top
+                        left: 0, // Align to the left
+                        width: 'calc(100% - 32px)', // Full width of the drawer
+                        p: 0, // Padding around the text
+                        backgroundColor: '#D7E1F0', 
+                        justifyContent: 'center', // Horizontally centers the content
+                        alignItems: 'center',     // Vertically centers the content
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                        marginLeft: 2,
+                        marginBottom: 2,
+                        borderRadius: 4, 
+            }}
+        >
+            <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Address</TableCell>
+                                    <TableCell>Customer Name</TableCell>
+                                    <TableCell>Order ID</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {nextDelRows.map((row, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell>{row.addr}</TableCell>
+                                        <TableCell>{row.customer}</TableCell>
+                                        <TableCell>{row.orderId}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
         </Box>
                 <IconButton
                     onClick={toggleDrawer(false)}
                     sx={{
-                        position: 'absolute',
+                        position: 'fixed',
                         bottom: 16,
                         right: 16,
                         backgroundColor: 'rgb(187, 205, 235)',

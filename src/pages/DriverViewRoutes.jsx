@@ -1,11 +1,17 @@
 import React from 'react';
-import { Box, Drawer, IconButton, Typography } from '@mui/material';import RouteIcon from '@mui/icons-material/Route';
+import { Box, Drawer, IconButton, Typography, Button } from '@mui/material';import RouteIcon from '@mui/icons-material/Route';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import PhoneIcon from '@mui/icons-material/Phone';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import {
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
+  } from '@mui/material';
 const DriverViewRoutes = ({updateData}) => 
 {
     // initialise drawer on the left (which shows delivery progress) to closed
-    const [drawerOpen, setDrawerOpen] = React.useState(true);
+    const [drawerOpen, setDrawerOpen] = React.useState(false);
 
     const toggleDrawer = (open) => (event)=>
     {
@@ -13,6 +19,14 @@ const DriverViewRoutes = ({updateData}) =>
         {return}
         setDrawerOpen(open); //opens the drawer
     }
+
+        const rows = [
+          '243B Gloucester St, East Victoria Park',
+          'Amira Moriff',
+          'Order #9372',
+          'Product A, Product B, Product C',
+        ];
+      
 
     return (
         <Box sx={{display: 'flex'}}>
@@ -36,12 +50,9 @@ const DriverViewRoutes = ({updateData}) =>
                 <Box
             sx={{
                 display: 'flex', // Absolute positioning within the drawer
-                        top: 0, // Position at the top
-                        left: 0, // Align to the left
                         width: '100%', // Full width of the drawer
                         p: 0, // Padding around the text
                         backgroundColor: '#819bc5', 
-                        display: 'flex',
                         justifyContent: 'center', // Horizontally centers the content
                         alignItems: 'center',     // Vertically centers the content
                         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
@@ -58,7 +69,7 @@ const DriverViewRoutes = ({updateData}) =>
                 display: 'flex',
                         top: 0, // Position at the top
                         left: 0, // Align to the left
-                        width: '90%', // Full width of the drawer
+                        width: 'calc(100% - 32px)%', // Full width of the drawer
                         p: 0, // Padding around the text
                         backgroundColor: '#BBCDEB', 
                         justifyContent: 'center', // Horizontally centers the content
@@ -77,7 +88,66 @@ const DriverViewRoutes = ({updateData}) =>
                 display: 'flex',
                         top: 0, // Position at the top
                         left: 0, // Align to the left
-                        width: '90%', // Full width of the drawer
+                        width: 'calc(100% - 32px)', // Full width of the drawer
+                        p: 0, // Padding around the text
+                        backgroundColor: '#D7E1F0', 
+                        justifyContent: 'center', // Horizontally centers the content
+                        alignItems: 'center',     // Vertically centers the content
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                        marginLeft: 2,
+                        marginBottom: 2,
+                        borderRadius: 4, 
+            }}
+        >
+            <TableContainer component={Paper}>
+            <Table>
+                <TableBody>
+                {rows.map((row, index) => (
+                    <TableRow key={index}>
+                    <TableCell>{row}</TableCell>
+                    {index === 1 && (
+                      <TableCell align="right">
+                        <PhoneIcon />
+                      </TableCell>
+                    )}
+                    </TableRow>
+                ))}
+                </TableBody>
+            </Table>
+            </TableContainer>
+        </Box>
+        <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        width: 'calc(100% - 32px)',
+                        p: 2,
+                    }}
+                >
+                    <Button variant="contained" color = "primary"
+                    sx={{
+                        flex: 1,
+                        marginRight: 2, // Optional: adds space between the buttons,
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)'
+                    }}>
+                        Mark as Delivered
+                        <CheckCircleIcon  />
+                    </Button>
+                    <Button variant="outlined" color="primary"
+                    sx={{
+                        flex: 1,
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)'
+                    }}>
+                        Report Issue
+                        <WarningAmberIcon  />
+                    </Button>
+                </Box>
+        <Box
+            sx={{
+                display: 'flex',
+                        top: 0, // Position at the top
+                        left: 0, // Align to the left
+                        width: 'calc(100% - 32px)', // Full width of the drawer
                         p: 0, // Padding around the text
                         backgroundColor: '#BBCDEB', 
                         justifyContent: 'center', // Horizontally centers the content

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Drawer, IconButton, Typography, Button, Link } from '@mui/material';import RouteIcon from '@mui/icons-material/Route';
+import { Box, Drawer, IconButton, Typography, Button, Modal, Backdrop, Fade } from '@mui/material';import RouteIcon from '@mui/icons-material/Route';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -12,6 +12,7 @@ const DriverViewRoutes = ({updateData}) =>
 {
     // initialise drawer on the left (which shows delivery progress) to closed
     const [drawerOpen, setDrawerOpen] = React.useState(false);
+    const [modalOpen, setModalOpen] = React.useState(false); // whether the phone number for current delivery is shown
 
     const toggleDrawer = (open) => (event)=>
     {
@@ -19,6 +20,12 @@ const DriverViewRoutes = ({updateData}) =>
         {return}
         setDrawerOpen(open); //opens the drawer
     }
+    const handlePhoneClick = () => {
+        setModalOpen(true);
+    };
+    const handleClose = () => {
+        setModalOpen(false);
+    };
 
         // DUMMY DATA FOR NOW
         const currentDelRows = [
@@ -114,10 +121,11 @@ const DriverViewRoutes = ({updateData}) =>
                     <TableRow key={index}>
                     <TableCell>{row}</TableCell>
                     {index === 1 && (
-                      <TableCell align="right">
-                        <PhoneIcon />
-                        
-                      </TableCell>
+                        <TableCell align="right">
+                             <IconButton onClick={handlePhoneClick}>
+                                <PhoneIcon />
+                            </IconButton>
+                        </TableCell>
                     )}
                     </TableRow>
                 ))}
@@ -126,12 +134,12 @@ const DriverViewRoutes = ({updateData}) =>
             </TableContainer>
         </Box>
         <Box
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        width: 'calc(100% - 32px)',
-                        p: 2,
-                    }}
+            sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                width: 'calc(100% - 32px)',
+                p: 2,
+                }}
                 >
                     <Button variant="contained" color = "primary"
                     sx={{
@@ -234,6 +242,40 @@ const DriverViewRoutes = ({updateData}) =>
                 )}
                 
             </Box>
+            <Modal
+                open={modalOpen}
+                onClose={handleClose}
+                closeAfterTransition
+                
+            >
+                <Fade in={modalOpen}>
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: 200,
+                            bgcolor: 'background.paper',
+                            boxShadow: 24,
+                            p: 0,
+                            textAlign: 'center',
+                            borderRadius: 2,
+                        }}
+                    >
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            href="tel:+123456789"
+                            fullWidth
+                            
+                            sx={{ mt: 0 , p: '12px',}}
+                        >
+                            +1 (234) 567-89
+                        </Button>
+                    </Box>
+                </Fade>
+            </Modal>
 
         </Box>
         

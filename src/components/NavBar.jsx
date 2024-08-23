@@ -9,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const pages = [
@@ -21,6 +21,10 @@ const pages = [
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const navigate = useNavigate();
+
+  // check if user is logged in by checking if token exists in localStorage
+  const isLoggedIn = Boolean(localStorage.getItem('token'));
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -28,6 +32,11 @@ function Navbar() {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // remove token on logout
+    navigate('/login'); // redirect to login page
   };
 
   return (
@@ -81,7 +90,7 @@ function Navbar() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
+              {isLoggedIn && pages.map((page) => (
                 <MenuItem key={page.name} onClick={handleCloseNavMenu}>
                   <Typography
                     textAlign="center"
@@ -116,7 +125,7 @@ function Navbar() {
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
+            {isLoggedIn && pages.map((page) => (
               <Button
                 key={page.name}
                 component={Link}
@@ -130,13 +139,28 @@ function Navbar() {
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton
-              component={Link}
-              to="/accountdetails"
-              sx={{ color: 'white', ml: 2, fontSize: 32 }} 
-            >
-              <AccountCircleIcon fontSize="inherit" />
-            </IconButton>
+            {isLoggedIn ? (
+              <>
+                <IconButton
+                  component={Link}
+                  to="/accountdetails"
+                  sx={{ color: 'white', ml: 2, fontSize: 32 }} 
+                >
+                  <AccountCircleIcon fontSize="inherit" />
+                </IconButton>
+                <Button onClick={handleLogout} sx={{ color: 'white' }}>
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Button
+                component={Link}
+                to="/login"
+                sx={{ color: 'white' }}
+              >
+                Login
+              </Button>
+            )}
           </Box>
         </Toolbar>
       </Container>

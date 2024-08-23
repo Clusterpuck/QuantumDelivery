@@ -22,7 +22,7 @@ const LoginForm = () => {
         let valid = true;
         let tempErrors = { username: '', password: '' };
 
-        // Username validation
+        // username text validation
         if (!username) {
             tempErrors.username = 'Username is required';
             valid = false;
@@ -31,7 +31,7 @@ const LoginForm = () => {
             valid = false;
         }
 
-        // Password validation
+        // password text validation
         if (!password) {
             tempErrors.password = 'Password is required';
             valid = false;
@@ -47,8 +47,21 @@ const LoginForm = () => {
     const handleLogin = (e) => {
         e.preventDefault();
         if (validate()) {
+
+            // hardcoded credentials for testing, will be removed once db connection is established
+            const testUsername = 'admin@example.com';
+            const testPassword = 'admin123';
+            const testToken = '12345abcdef';
+
+            if (username === testUsername && password === testPassword) {
+                localStorage.setItem('token', testToken); // store the token in local storage
+                navigate('/addorder'); // navigate to the desired page
+            } else {
+                setErrors({ ...errors, password: 'Invalid username or password' });
+            }
             // Add user authentication logic here
             navigate('/addorder');
+
         }
     };
 

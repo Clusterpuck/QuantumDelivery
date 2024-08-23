@@ -47,6 +47,7 @@ const LoginForm = () => {
     const handleLogin = (e) => {
         e.preventDefault();
         if (validate()) {
+
             // hardcoded credentials for testing, will be removed once db connection is established
             const testUsername = 'admin@example.com';
             const testPassword = 'admin123';
@@ -58,6 +59,9 @@ const LoginForm = () => {
             } else {
                 setErrors({ ...errors, password: 'Invalid username or password' });
             }
+            // Add user authentication logic here
+            navigate('/addorder');
+
         }
     };
 

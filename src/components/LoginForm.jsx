@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import { Link, useNavigate } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Typography from '@mui/material/Typography';
+import Cookies from 'js-cookie';
 
 const styleConstants = {
     fieldSpacing: { mb: 2 },
@@ -51,17 +52,14 @@ const LoginForm = () => {
             // hardcoded credentials for testing, will be removed once db connection is established
             const testUsername = 'admin@example.com';
             const testPassword = 'admin123';
-            const testToken = '12345abcdef';
 
             if (username === testUsername && password === testPassword) {
-                localStorage.setItem('token', testToken); // store the token in local storage
+                Cookies.set('authToken', 'fixed-token', { expires: 1 }); // sets cooking that expires in 1 day
                 navigate('/addorder'); // navigate to the desired page
             } else {
                 setErrors({ ...errors, password: 'Invalid username or password' });
             }
             // Add user authentication logic here
-            navigate('/addorder');
-
         }
     };
 

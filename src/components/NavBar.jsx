@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,8 +9,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Cookies from 'js-cookie';
 
 const pages = [
   { name: 'View Routes', path: '/viewroutes' },
@@ -21,10 +22,7 @@ const pages = [
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const navigate = useNavigate();
-
-  // check if user is logged in by checking if token exists in localStorage
-  const isLoggedIn = Boolean(localStorage.getItem('token'));
+  const token = Cookies.get('authToken');
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -32,11 +30,6 @@ function Navbar() {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token'); // remove token on logout
-    navigate('/login'); // redirect to login page
   };
 
   return (
@@ -90,18 +83,20 @@ function Navbar() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {isLoggedIn && pages.map((page) => (
-                <MenuItem key={page.name} onClick={handleCloseNavMenu}>
-                  <Typography
-                    textAlign="center"
-                    component={Link}
-                    to={page.path}
-                    sx={{ textDecoration: 'none', color: 'inherit' }}
-                  >
-                    {page.name}
-                  </Typography>
-                </MenuItem>
-              ))}
+              {token ? (
+                pages.map((page) => (
+                  <MenuItem key={page.name} onClick={handleCloseNavMenu}>
+                    <Typography
+                      textAlign="center"
+                      component={Link}
+                      to={page.path}
+                      sx={{ textDecoration: 'none', color: 'inherit' }}
+                    >
+                      {page.name}
+                    </Typography>
+                  </MenuItem>
+                ))
+              ) : null}
             </Menu>
           </Box>
 
@@ -125,42 +120,29 @@ function Navbar() {
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {isLoggedIn && pages.map((page) => (
-              <Button
-                key={page.name}
-                component={Link}
-                to={page.path}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page.name}
-              </Button>
-            ))}
+            {token ? (
+              pages.map((page) => (
+                <Button
+                  key={page.name}
+                  component={Link}
+                  to={page.path}
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  {page.name}
+                </Button>
+              ))
+            ) : null}
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {isLoggedIn ? (
-              <>
-                <IconButton
-                  component={Link}
-                  to="/accountdetails"
-                  sx={{ color: 'white', ml: 2, fontSize: 32 }} 
-                >
-                  <AccountCircleIcon fontSize="inherit" />
-                </IconButton>
-                <Button onClick={handleLogout} sx={{ color: 'white' }}>
-                  Logout
-                </Button>
-              </>
-            ) : (
-              <Button
-                component={Link}
-                to="/login"
-                sx={{ color: 'white' }}
-              >
-                Login
-              </Button>
-            )}
+            <IconButton
+              component={Link}
+              to="/accountdetails"
+              sx={{ color: 'white', ml: 2, fontSize: 32 }} 
+            >
+              <AccountCircleIcon fontSize="inherit" />
+            </IconButton>
           </Box>
         </Toolbar>
       </Container>

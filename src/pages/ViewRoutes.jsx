@@ -12,6 +12,10 @@ import RouteIcon from '@mui/icons-material/Route';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import InputAdornment from '@mui/material/InputAdornment';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
 
 const styleConstants = {
   fieldSpacing: { mb: 4 }
@@ -33,7 +37,7 @@ const ViewRoutes = ({ updateData }) =>
   const [unassignedOrders, setUnassignedOrders] = useState([]);
   const [numVehicles, setNumVehicles] = useState(1); // default to 1 vehicle
   const [ordersLoaded, setOrdersLoaded] = useState(false); // Track if orders are loaded
-
+  const [calcType, setCalcType] = useState("brute");
 
   // Function to handle date change and load dummy output
   const handleDateChange = (date) =>
@@ -42,6 +46,12 @@ const ViewRoutes = ({ updateData }) =>
     // Simulate sending date and input to a function to get the dummy output
     loadRoutes();
   };
+
+  const handleCalcChange = (event) => {
+    setCalcType(event.target.value)
+    console.log("Calc changed to ", event.target.value );
+
+  }
 
   const handleSnackbarClose = () =>
   {
@@ -82,6 +92,7 @@ const ViewRoutes = ({ updateData }) =>
       if (!ordersLoaded) return; // Do not load routes if orders are not loaded
 
       const userInput = {
+        calcType: calcType,
         numVehicle: numVehicles,
         orders: allOrders.map(order => order.id) // Placeholder, adjust as needed
       };
@@ -165,7 +176,7 @@ const ViewRoutes = ({ updateData }) =>
       <Paper elevation={3} sx={{ padding: 3, maxWidth: 1500, width: '100%' }}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={12} container spacing={2} alignItems="center">
-            <Grid item xs={6} md={6} >
+            <Grid item xs={5} md={3} >
 
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DesktopDatePicker
@@ -181,7 +192,7 @@ const ViewRoutes = ({ updateData }) =>
 
             </Grid>
             {/* Dropdown for selecting number of vehicles and Regenerate button */}
-            <Grid item xs={2}>
+            <Grid item xs={1} md={2}>
               <TextField
                 select
                 label="Number of Vehicles"
@@ -202,14 +213,25 @@ const ViewRoutes = ({ updateData }) =>
                   </MenuItem>
                 ))}
               </TextField>
-            </Grid>
-            <Grid item xs={4} container justifyContent="flex-end">
+                </Grid>
+              <Grid item xs={1} md={3}>
+                <RadioGroup
+                  aria-labelledby="demo-controlled-radio-buttons-group"
+                  name="controlled-radio-buttons-group"
+                  value={calcType}
+                  onChange={handleCalcChange}
+                >
+                  <FormControlLabel value="brute" control={<Radio />} label="Brute Force" />
+                  <FormControlLabel value="dwave" control={<Radio />} label="Quantum Computer" />
+                </RadioGroup>
+              </Grid>
+            <Grid item xs={4} md={4} container justifyContent="flex-end">
               <Button
                 variant='contained'
                 sx={{ height: '100%' }}
                 onClick={loadRoutes} // Call loadRoutes on button click
               >
-                <AltRouteIcon/>
+                <AltRouteIcon />
                 Regenerate Routes
               </Button>
             </Grid>

@@ -6,19 +6,19 @@ import {
     Route,
 } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import RandomFactGenerator from './components/Home';
-import ViewRoutes from './components/ViewRoutes';
-import LiveTracking from './components/LiveTracking';
-import DailyReports from './components/DailyReports';
-import AddOrder from './components/AddOrder';
-import Login from './components/Login';
-import Register from '../components/Register';
-import AccountDetails from '../components/AccountDetails';
-import PrivateRoute from './constants/PrivateRoute'; 
-import DriverViewRoutes from "../pages/DriverViewRoutes";
+import PageLayout from './components/PageLayout';
+import ViewRoutes from './pages/ViewRoutes';
+import LiveTracking from './pages/LiveTracking';
+import DailyReports from './pages/DailyReports';
+import AddOrder from './pages/AddOrder';
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import UploadRunsheet from '../pages/UploadRunsheet';
+import AccountDetails from './pages/AccountDetails';
+import PrivateRoute from './constants/PrivateRoute';
 import './index.css';
-
 import './App.css';
+import DriverViewRoutes from '../pages/DriverViewRoutes';
 
 const theme = createTheme({
     palette: {
@@ -42,41 +42,49 @@ const App = () => {
     return (
         <ThemeProvider theme={theme}>
             <Router>
-                <Routes>
-                    <Route path="/" element={<Login />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/home" element={
-                        <PrivateRoute>
-                            <AddOrder />
-                        </PrivateRoute>
-                    } />
-                    <Route path="/viewroutes" element={
-                        <PrivateRoute>
-                            <ViewRoutes />
-                        </PrivateRoute>
-                    } />
-                    <Route path="/livetracking" element={
-                        <PrivateRoute>
-                            <LiveTracking />
-                        </PrivateRoute>
-                    } />
-                    <Route path="/dailyreports" element={
-                        <PrivateRoute>
-                            <DailyReports />
-                        </PrivateRoute>
-                    } />
-                    <Route path="/accountdetails" element={
-                        <PrivateRoute>
-                            <AccountDetails />
-                        </PrivateRoute>
-                    } />
-                    <Route path="/driverviewroutes" element={
-                      <PrivateRoute>
-                          <DriverViewRoutes />
-                      </PrivateRoute>
-                    } />
-                </Routes>
+                <PageLayout>
+                    <Routes>
+                        <Route path="/" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/login" element={<Login />} />
+                        {/* protected routes */}
+                        <Route path="/viewroutes" element={
+                            <PrivateRoute>
+                                <ViewRoutes />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/livetracking" element={
+                            <PrivateRoute>
+                                <LiveTracking />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/dailyreports" element={
+                            <PrivateRoute>
+                                <DailyReports />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/addorder" element={
+                            <PrivateRoute>
+                                <AddOrder />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/accountdetails" element={
+                            <PrivateRoute>
+                                <AccountDetails />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/home" element={
+                            <PrivateRoute>
+                                <AddOrder />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/driverviewroutes" element={
+                            <PrivateRoute>
+                                <DriverViewRoutes />
+                            </PrivateRoute>
+                        } />                        
+                    </Routes>
+                </PageLayout>
             </Router>
         </ThemeProvider>
     );

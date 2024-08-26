@@ -5,6 +5,7 @@ import {
     Routes,
     Route,
 } from 'react-router-dom';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import PageLayout from './components/PageLayout';
 import ViewRoutes from './pages/ViewRoutes';
 import LiveTracking from './pages/LiveTracking';
@@ -14,29 +15,28 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AccountDetails from './pages/AccountDetails';
 import DriverViewRoutes from './pages/DriverViewRoutes';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import PrivateRoute from './constants/PrivateRoute'; 
 import './index.css';
 import './App.css';
 
 const theme = createTheme({
     palette: {
-      primary: {
-        main: '#582c4d',
-      },
-      secondary: {
-        main: '#f7d1cd',
-      },
-      background: {
-        default: '#819BC5',
-        paper: '#e6e8ef'
-      },
-      text: {
-        primary: '#2f2f2f',
-      },
+        primary: {
+            main: '#582c4d',
+        },
+        secondary: {
+            main: '#f7d1cd',
+        },
+        background: {
+            default: '#819BC5',
+            paper: '#e6e8ef'
+        },
+        text: {
+            primary: '#2f2f2f',
+        },
     },
-  });
+});
 
-//initializes the routes within the app
 const App = () => {
     return (
         <ThemeProvider theme={theme}>
@@ -44,16 +44,43 @@ const App = () => {
                 <PageLayout>
                     <Routes> 
                         <Route path="/" element={<Login />} />
-                        <Route path="/viewroutes" element={<ViewRoutes />} />
-                        <Route path="/livetracking" element={<LiveTracking />} />
-                        <Route path="/dailyreports" element={<DailyReports />} />
-                        <Route path="/addorder" element={<AddOrder />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/accountdetails" element={<AccountDetails />} />
                         <Route path="/register" element={<Register />} />
-                        <Route path="/home" element={<AddOrder />} />
-                        <Route path="/driverviewroutes" element={<DriverViewRoutes />} />
-        
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/home" element={
+                            <PrivateRoute>
+                                <AddOrder />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/viewroutes" element={
+                            <PrivateRoute>
+                                <ViewRoutes />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/livetracking" element={
+                            <PrivateRoute>
+                                <LiveTracking />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/dailyreports" element={
+                            <PrivateRoute>
+                                <DailyReports />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/accountdetails" element={
+                            <PrivateRoute>
+                                <AccountDetails />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/addorder" element={
+                            <PrivateRoute>
+                                <AddOrder />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/driverviewroutes" element={
+                            <PrivateRoute>
+                                <DriverViewRoutes />
+                            </PrivateRoute>
+                        } />                                                
                     </Routes>
                 </PageLayout>
             </Router>

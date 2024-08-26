@@ -1,14 +1,14 @@
-import RandomFactGenerator from "../../components/Home";
-import ViewRoutes from "../components/ViewRoutes";
-import LiveTracking from "../components/LiveTracking";
-import DailyReports from "../components/DailyReports";
-import UploadRunsheet from "../components/UploadRunsheet";
-import Login from "../components/Login";
 import Register from "../components/Register";
-import AccountDetails from "../components/AccountDetails";
-import { Link } from "react-router-dom";
-import DriverViewRoutes from "../pages/DriverViewRoutes";
+import AccountDetails from "../pages/AccountDetails" 
+import ViewRoutes from "../pages/ViewRoutes";
+import Login from "../pages/Login";
+import LiveTracking from "../pages/LiveTracking";
+import DailyReports from "../pages/DailyReports";
+import UploadRunsheet from "../pages/UploadRunsheet";
+import Register from "../pages/Register";
+import AddOrder from "../pages/AddOrder";
 import PrivateRoute from "./PrivateRoute";  
+import DriverViewRoutes from "../pages/DriverViewRoutes";
 
 export const ROUTES = [
   {
@@ -65,6 +65,14 @@ export const ROUTES = [
   },
   {
     path: "/home",
+    element: (
+      <PrivateRoute>
+        <AddOrder />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/addorder",
     element: (
       <PrivateRoute>
         <AddOrder />

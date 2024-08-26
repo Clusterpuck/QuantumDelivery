@@ -18,6 +18,7 @@ import AccountDetails from './pages/AccountDetails';
 import PrivateRoute from './constants/PrivateRoute';
 import './index.css';
 import './App.css';
+import DriverViewRoutes from '../pages/DriverViewRoutes';
 
 const theme = createTheme({
     palette: {
@@ -45,6 +46,7 @@ const App = () => {
                     <Routes>
                         <Route path="/" element={<Login />} />
                         <Route path="/register" element={<Register />} />
+                        <Route path="/login" element={<Login />} />
                         {/* protected routes */}
                         <Route path="/viewroutes" element={
                             <PrivateRoute>
@@ -76,6 +78,11 @@ const App = () => {
                                 <AddOrder />
                             </PrivateRoute>
                         } />
+                        <Route path="/driverviewroutes" element={
+                            <PrivateRoute>
+                                <DriverViewRoutes />
+                            </PrivateRoute>
+                        } />                        
                     </Routes>
                 </PageLayout>
             </Router>

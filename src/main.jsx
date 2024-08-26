@@ -45,6 +45,7 @@ const App = () => {
                     <Routes> 
                         <Route path="/" element={<Login />} />
                         <Route path="/register" element={<Register />} />
+                        <Route path="/login" element={<Login />} />
                         <Route path="/home" element={
                             <PrivateRoute>
                                 <AddOrder />
@@ -70,6 +71,16 @@ const App = () => {
                                 <AccountDetails />
                             </PrivateRoute>
                         } />
+                        <Route path="/addorder" element={
+                            <PrivateRoute>
+                                <AddOrder />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/driverviewroutes" element={
+                            <PrivateRoute>
+                                <DriverViewRoutes />
+                            </PrivateRoute>
+                        } />                                                
                     </Routes>
                 </PageLayout>
             </Router>

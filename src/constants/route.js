@@ -7,8 +7,8 @@ import DailyReports from "../pages/DailyReports";
 import UploadRunsheet from "../pages/UploadRunsheet";
 import Register from "../pages/Register";
 import AddOrder from "../pages/AddOrder";
-import { Link } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";  
+import DriverViewRoutes from "../pages/DriverViewRoutes";
 
 export const ROUTES = [
   {
@@ -76,6 +76,14 @@ export const ROUTES = [
     element: (
       <PrivateRoute>
         <AddOrder />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/driverviewroutes",
+    element: (
+      <PrivateRoute>
+        <DriverViewRoutes />
       </PrivateRoute>
     ),
   },

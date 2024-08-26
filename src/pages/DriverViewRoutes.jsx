@@ -30,7 +30,7 @@ const DriverViewRoutes = ({updateData}) =>
 
         // DUMMY DATA FOR NOW
         const currentDelRows = [
-          '1140 Albany Highway',
+          '1140 Albany Highway, Bentley',
           'Spudshed Bentley',
           'Order ID 872',
           'Product A, Product B, Product C',
@@ -39,10 +39,21 @@ const DriverViewRoutes = ({updateData}) =>
 
         const nextDelRows = [
             { addr: '464 Fitzgerald St, North Perth', customer: 'Rosemount Bowling', orderId: '875', status: 'On Time'},
-            { addr: '1/41 Burrendah Blvd, Willetton', customer: 'Silver Sushi', orderId: '903', status: 'On time'},
+            { addr: '1/41 Burrendah Blvd, Willetton', customer: 'Silver Sushi', orderId: '903', status: 'On Time'},
             { addr: '311 William St, Northbridge', customer: 'Lucky Chans', orderId: '1001', status: 'On Time'},
             { addr: '17/789 Albany Highway, East Vic Park', customer: 'T4 Vic Park', orderId: '799', status: 'Late'}
         ]
+
+        const getRowColor = (status) => {
+            switch (status) {
+                case 'On Time':
+                    return '#d4edda'; // Light green
+                case 'Late':
+                    return '#f8d7da'; // Light red
+                default:
+                    return 'white'; // Default color
+            }
+        };
       
     return (
         <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
@@ -211,7 +222,8 @@ const DriverViewRoutes = ({updateData}) =>
                             </TableHead>
                             <TableBody>
                                 {nextDelRows.map((row, index) => (
-                                    <TableRow key={index}>
+                                    <TableRow key={index}
+                                        sx={{ backgroundColor: getRowColor(row.status) }}>
                                         <TableCell>{row.addr}</TableCell>
                                         <TableCell>{row.customer}</TableCell>
                                         <TableCell>{row.orderId}</TableCell>
@@ -237,7 +249,7 @@ const DriverViewRoutes = ({updateData}) =>
             </Drawer>
             <Box
                 component="main"
-                sx={{ flexGrow: 1, overflow: 'hidden', height: '100%', width: '100%' }}
+                sx={{ flexGrow: 1, position: 'relative', height: '100%'}}
             >
                 {!drawerOpen && (
                     <IconButton

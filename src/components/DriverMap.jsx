@@ -113,7 +113,7 @@ const DriverMap = () =>
 
     return (
         <Box sx={{ position: 'relative', display: 'flex', height: '100vh', justifyContent: 'center',
-            alignItems: 'center' }}>
+            alignItems: 'center', flexDirection: 'column' }}>
             <Box
                 className="map-container"
                 ref={mapContainer}
@@ -123,17 +123,17 @@ const DriverMap = () =>
                 id="instructions"
                 sx={{
                     position: 'absolute',
-                    top: 0,
-                    left: 0,
+                    top:0,
                     width: '100%',
                     height: '15%',
                     padding: '20px',
                     backgroundColor: '#fff',
-                    overflowY: 'scroll',
+                    overflowY: 'auto',
                     fontFamily: 'sans-serif',
                     zIndex: 1,
                     justifyContent: 'center',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    flexDirection: 'column'
                 }}
             >
                 {steps.length > 0 && (

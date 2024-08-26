@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Cookies from 'js-cookie';
 
@@ -22,7 +22,8 @@ const pages = [
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const token = Cookies.get('authToken');
+  const navigate = useNavigate();
+  const authToken = Cookies.get('authToken');
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -30,6 +31,11 @@ function Navbar() {
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+  };
+
+  const handleLogout = () => {
+    Cookies.remove('authToken');
+    navigate('/login');
   };
 
   return (
@@ -54,37 +60,37 @@ function Navbar() {
             QuantaPath
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="menu"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: 'block', md: 'none' },
-              }}
-            >
-              {token ? (
-                pages.map((page) => (
+          {authToken && (
+            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+              <IconButton
+                size="large"
+                aria-label="menu"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleOpenNavMenu}
+                color="inherit"
+              >
+                <MenuIcon />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorElNav}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+                open={Boolean(anchorElNav)}
+                onClose={handleCloseNavMenu}
+                sx={{
+                  display: { xs: 'block', md: 'none' },
+                }}
+              >
+                {pages.map((page) => (
                   <MenuItem key={page.name} onClick={handleCloseNavMenu}>
                     <Typography
                       textAlign="center"
@@ -95,10 +101,13 @@ function Navbar() {
                       {page.name}
                     </Typography>
                   </MenuItem>
-                ))
-              ) : null}
-            </Menu>
-          </Box>
+                ))}
+                <MenuItem onClick={handleLogout}>
+                  <Typography textAlign="center">Logout</Typography>
+                </MenuItem>
+              </Menu>
+            </Box>
+          )}
 
           <Typography
             variant="h6"
@@ -119,9 +128,9 @@ function Navbar() {
             QuantaPath
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {token ? (
-              pages.map((page) => (
+          {authToken && (
+            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+              {pages.map((page) => (
                 <Button
                   key={page.name}
                   component={Link}
@@ -131,18 +140,24 @@ function Navbar() {
                 >
                   {page.name}
                 </Button>
-              ))
-            ) : null}
-          </Box>
-
+              ))}
+            </Box>
+          )}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton
-              component={Link}
-              to="/accountdetails"
-              sx={{ color: 'white', ml: 2, fontSize: 32 }} 
-            >
-              <AccountCircleIcon fontSize="inherit" />
-            </IconButton>
+            {authToken && (
+              <>
+                <IconButton
+                  component={Link}
+                  to="/accountdetails"
+                  sx={{ color: 'white', ml: 2, fontSize: 32 }} 
+                >
+                  <AccountCircleIcon fontSize="inherit" />
+                </IconButton>
+                <Button onClick={handleLogout} sx={{ color: 'white', ml: 2 }}>
+                  Logout
+                </Button>
+              </>
+            )}
           </Box>
         </Toolbar>
       </Container>

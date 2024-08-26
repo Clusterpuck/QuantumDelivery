@@ -45,6 +45,10 @@ export const ROUTES = [
     path: "/home",
     element: <AddOrder />,
   },
+  {
+    path: "/driverviewroutes",
+    element: <DriverViewRoutes />,
+  }
 
   
 ];

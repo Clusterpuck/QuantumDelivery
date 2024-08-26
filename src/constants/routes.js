@@ -10,6 +10,7 @@ import Login from './components/Login';
 import './index.css';
 import Register from "../components/Register";
 import AccountDetails from "../components/AccountDetails";
+import DriverViewRoutes from '../pages/DriverViewRoutes';
 
 // Initializes the routes within the app
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
                 <Route path="/accountdetails" element={<AccountDetails />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/home" element={<AddOrder />} />
+                <Route path="/driverviewroutes" element={<DriverViewRoutes />} />
             </Routes>
         </Router>
     );

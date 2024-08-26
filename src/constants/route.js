@@ -7,27 +7,45 @@ import Login from "../components/Login";
 import Register from "../components/Register";
 import AccountDetails from "../components/AccountDetails";
 import { Link } from "react-router-dom";
+import DriverViewRoutes from "../pages/DriverViewRoutes";
+import PrivateRoute from "./PrivateRoute";  
 
 export const ROUTES = [
   {
     path: "/",
-    element: <Home />,
+    element: <Login />,
   },
   {
     path: "/viewroutes",
-    element: <ViewRoutes />,
+    element: (
+      <PrivateRoute>
+        <ViewRoutes />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/livetracking",
-    element: <LiveTracking />,
+    element: (
+      <PrivateRoute>
+        <LiveTracking />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/dailyreports",
-    element: <DailyReports />,
+    element: (
+      <PrivateRoute>
+        <DailyReports />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/uploadrunsheet",
-    element: <UploadRunsheet />,
+    element: (
+      <PrivateRoute>
+        <UploadRunsheet />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/login",
@@ -35,7 +53,11 @@ export const ROUTES = [
   },
   {
     path: "/accountdetails",
-    element: <AccountDetails />,
+    element: (
+      <PrivateRoute>
+        <AccountDetails />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/register",
@@ -43,29 +65,18 @@ export const ROUTES = [
   },
   {
     path: "/home",
-    element: <AddOrder />,
+    element: (
+      <PrivateRoute>
+        <AddOrder />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/driverviewroutes",
-    element: <DriverViewRoutes />,
-  }
-
-  
+    element: (
+      <PrivateRoute>
+        <DriverViewRoutes />
+      </PrivateRoute>
+    ),
+  },
 ];
-
-export default function ViewRoutes() {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 8,
-      }}
-    >
-      <h1>Page 1</h1>
-      <Link to="/">Back Home</Link>
-    </div>
-  );
-}

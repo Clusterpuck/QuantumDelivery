@@ -1,13 +1,13 @@
-import RandomFactGenerator from "../../components/Home";
-import ViewRoutes from "../components/ViewRoutes";
-import LiveTracking from "../components/LiveTracking";
-import DailyReports from "../components/DailyReports";
-import UploadRunsheet from "../components/UploadRunsheet";
-import Login from "../components/Login";
 import Register from "../components/Register";
-import AccountDetails from "../components/AccountDetails";
+import AccountDetails from "../pages/AccountDetails" 
+import ViewRoutes from "../pages/ViewRoutes";
+import Login from "../pages/Login";
+import LiveTracking from "../pages/LiveTracking";
+import DailyReports from "../pages/DailyReports";
+import UploadRunsheet from "../pages/UploadRunsheet";
+import Register from "../pages/Register";
+import AddOrder from "../pages/AddOrder";
 import { Link } from "react-router-dom";
-import DriverViewRoutes from "../pages/DriverViewRoutes";
 import PrivateRoute from "./PrivateRoute";  
 
 export const ROUTES = [
@@ -72,10 +72,10 @@ export const ROUTES = [
     ),
   },
   {
-    path: "/driverviewroutes",
+    path: "/addorder",
     element: (
       <PrivateRoute>
-        <DriverViewRoutes />
+        <AddOrder />
       </PrivateRoute>
     ),
   },

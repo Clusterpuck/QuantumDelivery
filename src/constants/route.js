@@ -7,7 +7,8 @@ import Login from "../components/Login";
 import Register from "../components/Register";
 import AccountDetails from "../components/AccountDetails";
 import { Link } from "react-router-dom";
-import PrivateRoute from "./PrivateRoute";  // Adjust the import path as needed
+import DriverViewRoutes from "../pages/DriverViewRoutes";
+import PrivateRoute from "./PrivateRoute";  
 
 export const ROUTES = [
   {
@@ -67,6 +68,14 @@ export const ROUTES = [
     element: (
       <PrivateRoute>
         <AddOrder />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/driverviewroutes",
+    element: (
+      <PrivateRoute>
+        <DriverViewRoutes />
       </PrivateRoute>
     ),
   },

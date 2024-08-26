@@ -14,8 +14,10 @@ import AddOrder from './components/AddOrder';
 import Login from './components/Login';
 import Register from '../components/Register';
 import AccountDetails from '../components/AccountDetails';
-import PrivateRoute from './constants/PrivateRoute'; // Adjust the import path if necessary
+import PrivateRoute from './constants/PrivateRoute'; 
+import DriverViewRoutes from "../pages/DriverViewRoutes";
 import './index.css';
+
 import './App.css';
 
 const theme = createTheme({
@@ -68,6 +70,11 @@ const App = () => {
                         <PrivateRoute>
                             <AccountDetails />
                         </PrivateRoute>
+                    } />
+                    <Route path="/driverviewroutes" element={
+                      <PrivateRoute>
+                          <DriverViewRoutes />
+                      </PrivateRoute>
                     } />
                 </Routes>
             </Router>

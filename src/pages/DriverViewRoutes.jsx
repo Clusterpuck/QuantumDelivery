@@ -8,6 +8,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
   } from '@mui/material';
+  import DriverMap from '../components/DriverMap.jsx'; 
 const DriverViewRoutes = ({updateData}) => 
 {
     // initialise drawer on the left (which shows delivery progress) to closed
@@ -33,38 +34,39 @@ const DriverViewRoutes = ({updateData}) =>
           'Spudshed Bentley',
           'Order ID 872',
           'Product A, Product B, Product C',
+          'On Time'
         ];
 
         const nextDelRows = [
-            { addr: '464 Fitzgerald St, North Perth', customer: 'Rosemount Bowling', orderId: '875'},
-            { addr: '1/41 Burrendah Blvd, Willetton', customer: 'Silver Sushi', orderId: '903'},
-            { addr: '311 William St, Northbridge', customer: 'Lucky Chans', orderId: '1001'},
-            { addr: '17/789 Albany Highway, East Vic Park', customer: 'T4 Vic Park', orderId: '799'}
+            { addr: '464 Fitzgerald St, North Perth', customer: 'Rosemount Bowling', orderId: '875', status: 'On Time'},
+            { addr: '1/41 Burrendah Blvd, Willetton', customer: 'Silver Sushi', orderId: '903', status: 'On time'},
+            { addr: '311 William St, Northbridge', customer: 'Lucky Chans', orderId: '1001', status: 'On Time'},
+            { addr: '17/789 Albany Highway, East Vic Park', customer: 'T4 Vic Park', orderId: '799', status: 'Late'}
         ]
       
-
     return (
-        <Box sx={{display: 'flex'}}>
+        <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
             <Drawer
                 anchor="left"
                 open={drawerOpen}
                 onClose={toggleDrawer(false)}
                 sx={{
-                    width: '90vw', // Width of the drawer
+                    width: '95vw', // Width of the drawer
                     flexShrink: 0,
                     '& .MuiDrawer-paper': {
-                        width: '90vw', // Same width as above
+                        width: '95vw', // Same width as above
                         boxSizing: 'border-box',
                         // Added background color for visibility
                         backgroundColor: '#FFFFF',
                         // Added zIndex to ensure it's above other content
                         zIndex: 1200,
+                        overflowY: 'auto',
                     },
                 }}
             >
                 <Box
-            sx={{
-                display: 'flex', // Absolute positioning within the drawer
+                sx={{
+                display: 'flex', 
                         width: '100%', // Full width of the drawer
                         p: 0, // Padding around the text
                         backgroundColor: '#819bc5', 
@@ -72,69 +74,72 @@ const DriverViewRoutes = ({updateData}) =>
                         alignItems: 'center',     // Vertically centers the content
                         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
                         borderRadius: '0 0 16px 16px', 
-            }}
-        >
-            <Typography variant="h6" color="black" sx={{ p: 2, fontWeight: 'bold' }}>
-                Delivery Progress
-            </Typography>
-        </Box>
+                    }}
+                >
+                    <Typography variant="h6" color="black" sx={{ p: 2, fontWeight: 'bold' }}>
+                        Delivery Progress
+                    </Typography>
+                </Box>
        
-        <Box 
-            sx={{
+                <Box 
+                sx={{
+                    display: 'flex',
+                    top: 0, // Position at the top
+                    left: 0, // Align to the left
+                    width: 'calc(100% - 32px)%', // Full width of the drawer
+                    p: 0, // Padding around the text
+                    backgroundColor: '#582c4d', 
+                    justifyContent: 'center', // Horizontally centers the content
+                    alignItems: 'center',     // Vertically centers the content
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                    margin: 2,
+                    borderRadius: 4, 
+                    }}
+                >
+                    <Typography variant="h6" color="white" sx={{ p: 2, fontSize: '0.875rem', fontWeight: 'bold' }}>
+                        Current Delivery 
+                    </Typography>
+                </Box>
+
+                <Box
+                sx={{
                 display: 'flex',
-                        top: 0, // Position at the top
-                        left: 0, // Align to the left
-                        width: 'calc(100% - 32px)%', // Full width of the drawer
-                        p: 0, // Padding around the text
-                        backgroundColor: '#582c4d', 
-                        justifyContent: 'center', // Horizontally centers the content
-                        alignItems: 'center',     // Vertically centers the content
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
-                        margin: 2,
-                        borderRadius: 4, 
-            }}
-        >
-            <Typography variant="h6" color="white" sx={{ p: 2, fontSize: '0.875rem', fontWeight: 'bold' }}>
-                Current Delivery 
-            </Typography>
-        </Box>
-        <Box
-            sx={{
-                display: 'flex',
-                        top: 0, // Position at the top
-                        left: 0, // Align to the left
-                        width: 'calc(100% - 32px)', // Full width of the drawer
-                        p: 0, // Padding around the text
-                        backgroundColor: '#D7E1F0', 
-                        justifyContent: 'center', // Horizontally centers the content
-                        alignItems: 'center',     // Vertically centers the content
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
-                        marginLeft: 2,
-                        marginBottom: 2,
-                        borderRadius: 4, 
-            }}
-        >
-            <TableContainer component={Paper}>
-            <Table>
-                <TableBody>
-                {currentDelRows.map((row, index) => (
-                    <TableRow key={index}>
-                    <TableCell>{row}</TableCell>
-                    {index === 1 && (
-                        <TableCell align="right">
-                             <IconButton onClick={handlePhoneClick}>
-                                <PhoneIcon />
-                            </IconButton>
-                        </TableCell>
-                    )}
-                    </TableRow>
-                ))}
-                </TableBody>
-            </Table>
-            </TableContainer>
-        </Box>
-        <Box
-            sx={{
+                top: 0, // Position at the top
+                left: 0, // Align to the left
+                width: 'calc(100% - 32px)', // Full width of the drawer
+                p: 0, // Padding around the text
+                backgroundColor: '#D7E1F0', 
+                justifyContent: 'center', // Horizontally centers the content
+                alignItems: 'center',     // Vertically centers the content
+                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                marginLeft: 2,
+                marginBottom: 2,
+                borderRadius: 4, 
+                }}
+                >
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableBody>
+                                {currentDelRows.map((row, index) => (
+                                    <TableRow key={index}>
+                                        <TableCell>
+                                            {row}
+                                        </TableCell>
+                                        {index === 1 && (
+                                        <TableCell align="right">
+                                            <IconButton onClick={handlePhoneClick}>
+                                                <PhoneIcon />
+                                            </IconButton>
+                                        </TableCell>
+                                    )}
+                                    </TableRow>
+                                    ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Box>
+                <Box
+                sx={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 width: 'calc(100% - 32px)',
@@ -159,7 +164,7 @@ const DriverViewRoutes = ({updateData}) =>
                         <WarningAmberIcon  />
                     </Button>
                 </Box>
-        <Box
+            <Box
             sx={{
                 display: 'flex',
                         top: 0, // Position at the top
@@ -173,12 +178,12 @@ const DriverViewRoutes = ({updateData}) =>
                         margin: 2,
                         borderRadius: 4, 
             }}
-        >
+            >
             <Typography variant="h6" color="white" sx={{ p: 2, fontSize: '0.875rem', fontWeight: 'bold' }}>
                 Next Deliveries 
             </Typography>
-        </Box>
-        <Box
+            </Box>
+            <Box
             sx={{
                 display: 'flex',
                         top: 0, // Position at the top
@@ -193,7 +198,7 @@ const DriverViewRoutes = ({updateData}) =>
                         marginBottom: 2,
                         borderRadius: 4, 
             }}
-        >
+            >
             <TableContainer component={Paper}>
                         <Table>
                             <TableHead>
@@ -201,6 +206,7 @@ const DriverViewRoutes = ({updateData}) =>
                                     <TableCell>Address</TableCell>
                                     <TableCell>Customer Name</TableCell>
                                     <TableCell>Order ID</TableCell>
+                                    <TableCell>Status</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -209,12 +215,13 @@ const DriverViewRoutes = ({updateData}) =>
                                         <TableCell>{row.addr}</TableCell>
                                         <TableCell>{row.customer}</TableCell>
                                         <TableCell>{row.orderId}</TableCell>
+                                        <TableCell>{row.status}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
                         </Table>
                     </TableContainer>
-        </Box>
+            </Box>
                 <IconButton
                     onClick={toggleDrawer(false)}
                     sx={{
@@ -230,16 +237,25 @@ const DriverViewRoutes = ({updateData}) =>
             </Drawer>
             <Box
                 component="main"
-                sx={{ flexGrow: 1, p: 3 }}
+                sx={{ flexGrow: 1, overflow: 'hidden', height: '100%', width: '100%' }}
             >
                 {!drawerOpen && (
                     <IconButton
                         onClick={toggleDrawer(true)}
-                        sx={{ position: 'fixed', bottom: 16, left: 16, backgroundColor: 'rgba(255, 255, 255, 0.8)' }}
+                        sx={{ position: 'fixed', bottom: 16, left: 16, backgroundColor: 'rgba(255, 255, 255, 0.8)', zIndex: 1300, }}
                     >
                         <KeyboardArrowRightIcon />
                     </IconButton>
                 )}
+                <Box
+                    sx={{
+                        width: '100%',
+                        height: '100%',
+                        overflow: 'hidden'
+                    }}
+                    >
+                    <DriverMap />
+                </Box>
                 
             </Box>
             <Modal

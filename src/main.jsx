@@ -35,7 +35,7 @@ const theme = createTheme({
     },
   });
 
-// Initializes the routes within the app
+//initializes the routes within the app
 const App = () => {
     return (
         <ThemeProvider theme={theme}>

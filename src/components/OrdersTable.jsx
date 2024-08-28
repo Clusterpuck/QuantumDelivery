@@ -33,7 +33,7 @@ const OrdersTable = ({updateData}) => {
     // Function to format the date
     function formatDate(isoDate) {
         const date = new Date(isoDate);
-        return date.toLocaleDateString('en-US'); // Format as MM/DD/YYYY
+        return date.toLocaleDateString('en-GB'); // Format as MM/DD/YYYY
         // For DD/MM/YYYY use 'en-GB'
     }
 

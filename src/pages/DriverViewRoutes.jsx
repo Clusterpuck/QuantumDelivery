@@ -57,12 +57,10 @@ const DriverViewRoutes = ({updateData}) =>
 
         const getRowColor = (status) => {
             switch (status) {
-                case 'On Time':
-                    return '#d4edda'; // Light green
-                case 'Late':
+                case 'Delayed':
                     return '#f8d7da'; // Light red
                 default:
-                    return 'white'; // Default color
+                    return '#d4edda'; // Light green
             }
         };
 
@@ -271,11 +269,10 @@ const DriverViewRoutes = ({updateData}) =>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {dummyNextDelRows.map((row, index) => (
-                                    <TableRow key={index}
-                                        sx={{ backgroundColor: getRowColor(row.status) }}>
+                                {nextDeliveries.map((row, index) => (
+                                    <TableRow key={index} sx={{ backgroundColor: getRowColor(row.status) }}>
                                         <TableCell>{row.addr}</TableCell>
-                                        <TableCell>{row.customer}</TableCell>
+                                        <TableCell>{row.customerName}</TableCell>
                                         <TableCell>{row.orderId}</TableCell>
                                         <TableCell>{row.status}</TableCell>
                                     </TableRow>

@@ -69,29 +69,32 @@ const DriverViewRoutes = ({updateData}) =>
 
         useEffect(() => {
             const loadDeliveryRoute = async (driverUsername) => {
-                try {
-                    const routeData = await fetchDeliveryRoute(driverUsername);
-                    if (routeData) {
-                        console.log("Delivery route fetched", JSON.stringify(routeData));
-                        setCurrentDelivery(routeData.orders[0]);
-                        setNextDeliveries(routeData.orders.slice(1));
-                    } else {
-                        console.error("No route data returned");
-                    }
-                } catch (error) {
-                    console.error("Error fetching delivery route:", error);
-                    setSnackbar({
-                        open: true,
-                        message: 'Failed to load delivery routes',
-                        severity: 'error'
-                    });
+              try {
+                const routeData = await fetchDeliveryRoute(driverUsername);
+                if (routeData) {
+                  console.log("Delivery route fetched", JSON.stringify(routeData));
+                  const sortedDeliveries = routeData.orders.sort(
+                    (a, b) => a.position - b.position
+                  );
+                  setCurrentDelivery(sortedDeliveries[0]);
+                  setNextDeliveries(sortedDeliveries.slice(1));
+                } else {
+                  console.error("No route data returned");
                 }
+              } catch (error) {
+                console.error("Error fetching delivery route:", error);
+                setSnackbar({
+                  open: true,
+                  message: 'Failed to load delivery routes',
+                  severity: 'error'
+                });
+              }
             };
         
             if (driverUsername) {
-                loadDeliveryRoute(driverUsername);
+              loadDeliveryRoute(driverUsername);
             }
-        }, [driverUsername]);
+          }, [driverUsername]);
       
     return (
         <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>

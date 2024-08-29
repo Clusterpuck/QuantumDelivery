@@ -7,13 +7,10 @@ import {Box} from '@mui/material';
 // Set your Mapbox access token here
 mapboxgl.accessToken = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
-const DriverMap = () => 
+const DriverMap = ({start,end}) => 
 {
     const mapContainer = useRef(null);
     const map = useRef(null);
-
-    const start = [115.84778740497089, -32.051015859146226] ;
-    const end = [115.89784472278699, -31.98420998389418];
 
     const [steps, setSteps] = useState([]); // State to hold all the steps
     const [currentStepIndex, setCurrentStepIndex] = useState(0);

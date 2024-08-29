@@ -35,25 +35,9 @@ const DriverViewRoutes = ({updateData}) =>
 
     const [currentDelivery, setCurrentDelivery] = useState(null);
     const [nextDeliveries, setNextDeliveries] = useState([]);
+    const [currentLocation, setCurrentLocation] = useState([]);
 
-
-        // DUMMY DATA FOR NOW
-        const dummyCurrentDelRows = [
-          '1140 Albany Highway, Bentley',
-          'Spudshed Bentley',
-          'Order ID 872',
-          'Product A, Product B, Product C',
-          'On Time'
-        ];
-
-        const dummyNextDelRows = [
-            { addr: '464 Fitzgerald St, North Perth', customer: 'Rosemount Bowling', orderId: '875', status: 'On Time'},
-            { addr: '1/41 Burrendah Blvd, Willetton', customer: 'Silver Sushi', orderId: '903', status: 'On Time'},
-            { addr: '311 William St, Northbridge', customer: 'Lucky Chans', orderId: '1001', status: 'On Time'},
-            { addr: '17/789 Albany Highway, East Vic Park', customer: 'T4 Vic Park', orderId: '799', status: 'Late'}
-        ]
-
-        const driverUsername = 'Bob1';
+        const driverUsername = 'Bob1'; // hard coded for now
 
         const getRowColor = (status) => {
             switch (status) {
@@ -63,6 +47,25 @@ const DriverViewRoutes = ({updateData}) =>
                     return '#d4edda'; // Light green
             }
         };
+
+        useEffect(() => {
+            // Fetch current location when component mounts
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        setCurrentLocation([longitude, latitude]); // Update state with current location
+                        console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                    },
+                    (error) => {
+                        console.error("Error fetching location:", error);
+                    }
+                );
+            } else {
+                console.log("Geolocation is not supported by this browser.");
+            }
+        }, []);
 
         useEffect(() => {
             const loadDeliveryRoute = async (driverUsername) => {
@@ -313,7 +316,12 @@ const DriverViewRoutes = ({updateData}) =>
                         overflow: 'hidden'
                     }}
                     >
-                    <DriverMap />
+                    {currentLocation.length > 0 && (  // Check if currentLocation has values
+                    <DriverMap
+                        start={currentLocation}
+                        end={[currentDelivery?.lon, currentDelivery?.lat]}>
+                    </DriverMap>
+    )}
                 </Box>
                 
             </Box>

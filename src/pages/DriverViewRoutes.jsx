@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from 'react';
-import { Box, Drawer, IconButton, Typography, Button, Modal, Backdrop, Fade } from '@mui/material';import RouteIcon from '@mui/icons-material/Route';
+import { Box, Drawer, IconButton, Typography, Button, Modal, Backdrop, Fade, CircularProgress } from '@mui/material';import RouteIcon from '@mui/icons-material/Route';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -10,6 +10,7 @@ import {
   } from '@mui/material';
   import DriverMap from '../components/DriverMap.jsx'; 
   import { fetchDeliveryRoute } from '../store/apiFunctions';
+
 const DriverViewRoutes = ({updateData}) => 
 {
     // initialise drawer on the left (which shows delivery progress) to closed
@@ -36,6 +37,7 @@ const DriverViewRoutes = ({updateData}) =>
     const [currentDelivery, setCurrentDelivery] = useState(null);
     const [nextDeliveries, setNextDeliveries] = useState([]);
     const [currentLocation, setCurrentLocation] = useState([]);
+    const [isLoading, setIsLoading] = useState(true); 
 
         const driverUsername = 'Bob1'; // hard coded for now
 
@@ -49,21 +51,26 @@ const DriverViewRoutes = ({updateData}) =>
         };
 
         useEffect(() => {
+            setIsLoading(true); 
             // Fetch current location when component mounts
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         const latitude = position.coords.latitude;
                         const longitude = position.coords.longitude;
-                        setCurrentLocation([longitude, latitude]); // Update state with current location
+                        
+                            setCurrentLocation([longitude, latitude]); // Update state with valid location
                         console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                        setIsLoading(false);
                     },
                     (error) => {
                         console.error("Error fetching location:", error);
+                        setIsLoading(false);
                     }
                 );
             } else {
                 console.log("Geolocation is not supported by this browser.");
+                setIsLoading(false);
             }
         }, []);
 
@@ -319,12 +326,22 @@ const DriverViewRoutes = ({updateData}) =>
                         overflow: 'hidden'
                     }}
                     >
-                    {currentLocation.length > 0 && (  // Check if currentLocation has values
-                    <DriverMap
-                        start={currentLocation}
-                        end={[currentDelivery?.lon, currentDelivery?.lat]}>
-                    </DriverMap>
-    )}
+                    {isLoading ? (
+                    <Box
+                        sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100%',
+                        }}
+                    >
+                        <CircularProgress /> {/* Show loading icon */}
+                    </Box>
+                    ) : (
+                        currentLocation.length > 0 && (
+                        <DriverMap start={currentLocation} end={[currentDelivery?.lon, currentDelivery?.lat]} />
+                    )
+                    )}
                 </Box>
                 
             </Box>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect, useState} from 'react';
 import { Box, Drawer, IconButton, Typography, Button, Modal, Backdrop, Fade } from '@mui/material';import RouteIcon from '@mui/icons-material/Route';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
@@ -9,12 +9,17 @@ import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
   } from '@mui/material';
   import DriverMap from '../components/DriverMap.jsx'; 
+  import { fetchDeliveryRoute } from '../store/apiFunctions';
 const DriverViewRoutes = ({updateData}) => 
 {
     // initialise drawer on the left (which shows delivery progress) to closed
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     const [modalOpen, setModalOpen] = React.useState(false); // whether the phone number for current delivery is shown
-
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success',
+      });
     const toggleDrawer = (open) => (event)=>
     {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift'))
@@ -28,32 +33,68 @@ const DriverViewRoutes = ({updateData}) =>
         setModalOpen(false);
     };
 
-        // DUMMY DATA FOR NOW
-        const currentDelRows = [
-          '1140 Albany Highway, Bentley',
-          'Spudshed Bentley',
-          'Order ID 872',
-          'Product A, Product B, Product C',
-          'On Time'
-        ];
+    const [currentDelivery, setCurrentDelivery] = useState(null);
+    const [nextDeliveries, setNextDeliveries] = useState([]);
+    const [currentLocation, setCurrentLocation] = useState([]);
 
-        const nextDelRows = [
-            { addr: '464 Fitzgerald St, North Perth', customer: 'Rosemount Bowling', orderId: '875', status: 'On Time'},
-            { addr: '1/41 Burrendah Blvd, Willetton', customer: 'Silver Sushi', orderId: '903', status: 'On Time'},
-            { addr: '311 William St, Northbridge', customer: 'Lucky Chans', orderId: '1001', status: 'On Time'},
-            { addr: '17/789 Albany Highway, East Vic Park', customer: 'T4 Vic Park', orderId: '799', status: 'Late'}
-        ]
+        const driverUsername = 'Bob1'; // hard coded for now
 
         const getRowColor = (status) => {
             switch (status) {
-                case 'On Time':
-                    return '#d4edda'; // Light green
-                case 'Late':
+                case 'Delayed':
                     return '#f8d7da'; // Light red
                 default:
-                    return 'white'; // Default color
+                    return '#d4edda'; // Light green
             }
         };
+
+        useEffect(() => {
+            // Fetch current location when component mounts
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        setCurrentLocation([longitude, latitude]); // Update state with current location
+                        console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                    },
+                    (error) => {
+                        console.error("Error fetching location:", error);
+                    }
+                );
+            } else {
+                console.log("Geolocation is not supported by this browser.");
+            }
+        }, []);
+
+        useEffect(() => {
+            const loadDeliveryRoute = async (driverUsername) => {
+              try {
+                const routeData = await fetchDeliveryRoute(driverUsername);
+                if (routeData) {
+                  console.log("Delivery route fetched", JSON.stringify(routeData));
+                  const sortedDeliveries = routeData.orders.sort(
+                    (a, b) => a.position - b.position
+                  );
+                  setCurrentDelivery(sortedDeliveries[0]);
+                  setNextDeliveries(sortedDeliveries.slice(1));
+                } else {
+                  console.error("No route data returned");
+                }
+              } catch (error) {
+                console.error("Error fetching delivery route:", error);
+                setSnackbar({
+                  open: true,
+                  message: 'Failed to load delivery routes',
+                  severity: 'error'
+                });
+              }
+            };
+        
+            if (driverUsername) {
+              loadDeliveryRoute(driverUsername);
+            }
+          }, [driverUsername]);
       
     return (
         <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
@@ -130,21 +171,34 @@ const DriverViewRoutes = ({updateData}) =>
                 >
                     <TableContainer component={Paper}>
                         <Table>
-                            <TableBody>
-                                {currentDelRows.map((row, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell>
-                                            {row}
-                                        </TableCell>
-                                        {index === 1 && (
-                                        <TableCell align="right">
-                                            <IconButton onClick={handlePhoneClick}>
+                        <TableBody>
+                                <TableRow>
+                                    <TableCell sx={{ width: 120 }}>Address</TableCell>
+                                    <TableCell>{currentDelivery?.addr}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ width: 120 }}>Customer Name</TableCell>
+                                    <TableCell>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <Typography sx={{ fontSize: '0.875rem' }}>{currentDelivery?.customerName}</Typography>
+                                            <IconButton onClick={handlePhoneClick} sx={{ ml: 2 }}>
                                                 <PhoneIcon />
                                             </IconButton>
-                                        </TableCell>
-                                    )}
-                                    </TableRow>
-                                    ))}
+                                        </Box>
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ width: 120 }}>Order ID</TableCell>
+                                    <TableCell>{currentDelivery?.orderId}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ width: 120 }}>Products</TableCell>
+                                    <TableCell>{currentDelivery?.prodNames.join(', ')}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ width: 120 }}>Status</TableCell>
+                                    <TableCell>{currentDelivery?.status}</TableCell>
+                                </TableRow>
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -221,11 +275,10 @@ const DriverViewRoutes = ({updateData}) =>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {nextDelRows.map((row, index) => (
-                                    <TableRow key={index}
-                                        sx={{ backgroundColor: getRowColor(row.status) }}>
+                                {nextDeliveries.map((row, index) => (
+                                    <TableRow key={index} sx={{ backgroundColor: getRowColor(row.status) }}>
                                         <TableCell>{row.addr}</TableCell>
-                                        <TableCell>{row.customer}</TableCell>
+                                        <TableCell>{row.customerName}</TableCell>
                                         <TableCell>{row.orderId}</TableCell>
                                         <TableCell>{row.status}</TableCell>
                                     </TableRow>
@@ -266,7 +319,12 @@ const DriverViewRoutes = ({updateData}) =>
                         overflow: 'hidden'
                     }}
                     >
-                    <DriverMap />
+                    {currentLocation.length > 0 && (  // Check if currentLocation has values
+                    <DriverMap
+                        start={currentLocation}
+                        end={[currentDelivery?.lon, currentDelivery?.lat]}>
+                    </DriverMap>
+    )}
                 </Box>
                 
             </Box>
@@ -299,7 +357,7 @@ const DriverViewRoutes = ({updateData}) =>
                             
                             sx={{ mt: 0 , p: '12px',}}
                         >
-                            +1 (234) 567-89
+                            {currentDelivery?.phone}
                         </Button>
                     </Box>
                 </Fade>

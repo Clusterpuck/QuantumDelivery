@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import LoginForm from '../components/LoginForm';
 
+//This branch is now protected
+
 const Login = () => {
     return (
         <div

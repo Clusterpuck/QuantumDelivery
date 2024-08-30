@@ -55,7 +55,7 @@ const LoginForm = () => {
                 const response = await login(username, password);
                 if (response && response.token) {
                     Cookies.set('authToken', response.token, { expires: 1 });
-                    navigate('/addorder');
+                    navigate('/accountdetails');
                 } else {
                     setErrorMessage('Invalid username or password');
                 }

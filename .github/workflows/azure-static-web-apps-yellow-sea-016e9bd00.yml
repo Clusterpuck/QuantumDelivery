@@ -11,7 +11,7 @@ on:
 
 jobs:
   build_and_deploy_job:
-    if: github.event_name == 'push' && github.ref == 'refs/head/master')
+    if: github.event_name == 'push' && github.ref == 'refs/head/master'
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:

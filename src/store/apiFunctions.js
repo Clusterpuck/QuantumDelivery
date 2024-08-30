@@ -193,3 +193,29 @@ export const postDeliveryRoutes = async (newInput) => {
     }
 };
 
+export const login = async (username, password) => {
+    try {
+        const response = await fetch(Constants.DATA_ENDPOINT + 'adminAccounts/authenticate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ Username: username, Password: password }),
+        });
+
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+            throw new Error('Failed to login');
+        }
+
+        const responseData = await response.json();
+        console.log('Successfully logged in:', responseData);
+        return responseData; // Return the response data (e.g., JWT token)
+
+    } catch (error) {
+        console.error('Error logging in:', error);
+        return null; // Return null or handle the error as needed
+    }
+};
+

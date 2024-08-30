@@ -7,6 +7,8 @@ import Grid from '@mui/material/Grid';
 import { Link, useNavigate } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Typography from '@mui/material/Typography';
+import { login } from '../store/apiFunctions';
+import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const styleConstants = {
@@ -18,12 +20,13 @@ const LoginForm = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({ username: '', password: '' });
+    const [errorMessage, setErrorMessage] = useState('');
 
     const validate = () => {
         let valid = true;
         let tempErrors = { username: '', password: '' };
 
-        // username text validation
+        // Username validation
         if (!username) {
             tempErrors.username = 'Username is required';
             valid = false;
@@ -32,7 +35,7 @@ const LoginForm = () => {
             valid = false;
         }
 
-        // password text validation
+        // Password validation
         if (!password) {
             tempErrors.password = 'Password is required';
             valid = false;
@@ -45,21 +48,21 @@ const LoginForm = () => {
         return valid;
     };
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         if (validate()) {
-
-            // hardcoded credentials for testing, will be removed once db connection is established
-            const testUsername = 'admin@example.com';
-            const testPassword = 'admin123';
-
-            if (username === testUsername && password === testPassword) {
-                Cookies.set('authToken', 'fixed-token', { expires: 1 }); // sets cooking that expires in 1 day
-                navigate('/addorder'); // navigate to the desired page
-            } else {
-                setErrors({ ...errors, password: 'Invalid username or password' });
+            try {
+                const response = await login(username, password);
+                if (response && response.token) {
+                    Cookies.set('authToken', response.token, { expires: 1 });
+                    navigate('/addorder');
+                } else {
+                    setErrorMessage('Invalid username or password');
+                }
+            } catch (error) {
+                console.error('Login failed:', error);
+                setErrorMessage('Invalid username or password');
             }
-            // Add user authentication logic here
         }
     };
 
@@ -99,6 +102,11 @@ const LoginForm = () => {
                                     helperText={errors.password}
                                 />
                             </Grid>
+                            {errorMessage && (
+                                <Grid item xs={12} style={{ marginBottom: 16 }}>
+                                    <Typography color="error">{errorMessage}</Typography>
+                                </Grid>
+                            )}
                             <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center' }}>
                                 <Button type="submit" variant="contained" color="primary">
                                     Login

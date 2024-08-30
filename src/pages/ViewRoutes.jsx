@@ -16,6 +16,7 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
+import dayjs from 'dayjs';
 
 const styleConstants = {
   fieldSpacing: { mb: 4 }
@@ -25,7 +26,7 @@ const styleConstants = {
 // Page design for View Routes page
 const ViewRoutes = ({ updateData }) =>
 {
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(dayjs());
   const [routes, setRoutes] = useState([]);
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -92,11 +93,13 @@ const ViewRoutes = ({ updateData }) =>
       if (!ordersLoaded) return; // Do not load routes if orders are not loaded
 
       const userInput = {
-        calcType: calcType,
         numVehicle: numVehicles,
-        orders: allOrders.map(order => order.id) // Placeholder, adjust as needed
+        calcType: calcType,
+        deliveryDate: selectedDate,
+        orders: allOrders.map(order => order.orderId) // all orders
       };
 
+      console.log("Payload being sent: ", JSON.stringify(userInput));
       const routesList = await postDeliveryRoutes(userInput);
       if (routesList)
       {
@@ -114,7 +117,7 @@ const ViewRoutes = ({ updateData }) =>
         console.error('Error fetching delivery routes: ', error);
         setSnackbar({
           open: true,
-          message: 'Failed to load orders',
+          message: 'Failed to load delivery routes',
           severity: 'error'
         });
       }
@@ -124,7 +127,7 @@ const ViewRoutes = ({ updateData }) =>
       console.error('Error fetching delivery routes: ', error);
       setSnackbar({
         open: true,
-        message: 'Failed to load orders',
+        message: 'Failed to load delivery routes',
         severity: 'error'
       });
     }
@@ -182,7 +185,7 @@ const ViewRoutes = ({ updateData }) =>
                 <DesktopDatePicker
                   label="Plan Date"
                   inputFormat="MM/DD/YYYY"
-                  //value={value}
+                  value={selectedDate}
                   onChange={handleDateChange}
                   renderInput={(params) => <TextField {...params}/>}
                 />

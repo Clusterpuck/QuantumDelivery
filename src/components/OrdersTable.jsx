@@ -30,26 +30,32 @@ const OrdersTable = ({updateData}) => {
 
     }, [updateData, loadOrders])
 
+    // Function to format the date
+    function formatDate(isoDate) {
+        const date = new Date(isoDate);
+        return date.toLocaleDateString('en-GB'); // Format as MM/DD/YYYY
+        // For DD/MM/YYYY use 'en-GB'
+    }
+
     
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
-        { field: 'dateOrdered', headerName: 'Date Ordered', width: 180 },
-        { field: 'orderNotes', headerName: 'Order Notes', width: 200 },
-        { field: 'customerId', headerName: 'Customer ID', width: 150 },
-        { field: 'locationId', headerName: 'Location ID', width: 150 },
-        { field: 'deliveryRouteId', headerName: 'Delivery Route ID', width: 180 },
-        { field: 'positionNumber', headerName: 'Position Number', width: 180 }
+        { field: 'DeliveryDate', headerName: 'Date', width: 150 },
+        { field: 'Address', headerName: 'Address', width: 180 },
+        { field: 'customerName', headerName: 'Customer Name', width: 150 },
+        { field: 'status', headerName: 'Status', width: 150 },
+        { field: 'notes', headerName: 'Notes', width: 150 },
     ];
 
     // The rows should be based on the fetched orders data
     const rows = orders.map(order => ({
-        id: order.id,
-        dateOrdered: order.dateOrdered,
-        orderNotes: order.orderNotes,
-        customerId: order.customerId,
-        locationId: order.locationId,
-        deliveryRouteId: order.deliveryRouteId,
-        positionNumber: order.positionNumber
+        id: order.orderId,
+        Address: order.addr,
+        status: order.status,
+        customerName: order.customerName,
+        notes: order.notes,
+        DeliveryDate: formatDate(order.deliveryDate),
+
     }));
 
     const handleSnackbarClose = () => {

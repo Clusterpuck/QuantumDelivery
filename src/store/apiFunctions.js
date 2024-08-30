@@ -167,6 +167,30 @@ export const fetchMethod = async (endpoint) => {
     return ipData
 };
 
+export const fetchDeliveryRoute = async (driverUsername) => {
+    let deliveryRouteData = null;
+    try {
+        const endpoint = `DeliveryRoutes/driver/${driverUsername}`;
+        const response = await fetch(`${Constants.DATA_ENDPOINT}${endpoint}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch from endpoint ${endpoint}: ${response.statusText}`);
+        }
+
+        deliveryRouteData = await response.json();
+        console.log("Delivery route data is: ", JSON.stringify(deliveryRouteData));
+    } catch (error) {
+        console.error('Error fetching from endpoint:', error.message);
+    }
+
+    return deliveryRouteData;
+};
+
 export const postDeliveryRoutes = async (newInput) => {
     try {
         const response = await fetch(Constants.DATA_ENDPOINT + 'deliveryroutes', {

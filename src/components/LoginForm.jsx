@@ -8,7 +8,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Typography from '@mui/material/Typography';
 import { login } from '../store/apiFunctions';
-import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const styleConstants = {

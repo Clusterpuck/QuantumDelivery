@@ -159,7 +159,7 @@ export const fetchMethod = async (endpoint) => {
             throw new Error('Failed to fetch from endpoint ', endpoint);
         }
         ipData = await ipResponse.json();
-        console.log("Data is " + JSON.stringify(ipData) );
+        console.log("Fetch Method. Data is " + JSON.stringify(ipData) );
         // Use user's IP address to fetch region information
     } catch (error) {
         console.error('Error fetching from endpoint:', endpoint,' ', error.message);
@@ -213,6 +213,27 @@ export const postDeliveryRoutes = async (newInput) => {
     } catch (error) {
         console.error('Error submitting delivery route:', error);
         return null; // Return null or handle the error as needed
+    }
+};
+
+export const startDeliveryRoute = async(routeId) => {
+    try {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}deliveryroutes/start/${routeId}`, {
+            method: 'PUT',
+            headers: {
+                'accept': '*/*'
+            }
+        });
+
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+            throw new Error('Failed to start delivery route');
+        } else {
+            console.log("Started delivery route!");
+        }
+    } catch (error) {
+        console.error('Error starting delivery route:', error);
     }
 };
 

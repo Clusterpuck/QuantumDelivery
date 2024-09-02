@@ -5,12 +5,10 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import PhoneIcon from '@mui/icons-material/Phone';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import {
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
-  } from '@mui/material';
-  import DriverMap from '../components/DriverMap.jsx'; 
-  import { fetchDeliveryRoute } from '../store/apiFunctions';
-  import NoRouteFound from '../components/NoRouteFound.jsx';
+import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper} from '@mui/material';
+import DriverMap from '../components/DriverMap.jsx'; 
+import { fetchDeliveryRoute, fetchMethod, startDeliveryRoute } from '../store/apiFunctions';
+import NoRouteFound from '../components/NoRouteFound.jsx';
 
 const DriverViewRoutes = ({updateData}) => 
 {
@@ -18,48 +16,39 @@ const DriverViewRoutes = ({updateData}) =>
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     const [modalOpen, setModalOpen] = React.useState(false); // whether the phone number for current delivery is shown
     const toggleDrawer = (open) => (event)=>
-    {
-        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift'))
-        {return}
-        setDrawerOpen(open); //opens the drawer
-    }
-    const handlePhoneClick = () => {
-        setModalOpen(true);
-    };
-    const handleClose = () => {
-        setModalOpen(false);
-    };
-
+    { setDrawerOpen(open); }
+    const handlePhoneClick = () => 
+    { setModalOpen(true); };
+    const handleClose = () => 
+    { setModalOpen(false); };
     const [currentDelivery, setCurrentDelivery] = useState(null);
     const [nextDeliveries, setNextDeliveries] = useState([]);
     const [currentLocation, setCurrentLocation] = useState([]);
     const [isLoading, setIsLoading] = useState(false); 
     const [noRoutesFound, setNoRoutesFound] = React.useState(false); 
+    const [routeId, setRouteId] = React.useState(null);
 
-        const driverUsername = 'Bob1'; // hard coded for now
+    const driverUsername = 'Bob1'; // hard coded for now
 
-        const getRowColor = (status) => {
-            switch (status) {
-                case 'Delayed':
-                    return '#f8d7da'; // Light red
-                default:
-                    return '#d4edda'; // Light green
-            }
-        };
+    const getRowColor = (status) => {
+        switch (status) {
+            case 'Delayed':
+                return '#f8d7da'; // Light red
+            default:
+                return '#d4edda'; // Light green
+        }
+    };
 
-        useEffect(() => {
-            if (!noRoutesFound)
-            {
+    useEffect(() => { // use effect for fetching the current location
+        if (!noRoutesFound)
+        {
             setIsLoading(true);
-          
-            console.log(noRoutesFound);
             // Only fetch location if routes found
             if (navigator.geolocation) {
               navigator.geolocation.getCurrentPosition(
                 (position) => {
                   const latitude = position.coords.latitude;
                   const longitude = position.coords.longitude;   
-          
           
                   setCurrentLocation([longitude, latitude]); // Update state with valid location
                   console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
@@ -74,12 +63,12 @@ const DriverViewRoutes = ({updateData}) =>
               console.log("Geolocation is not supported by this browser.");
               setIsLoading(false);
             }
-            }
-          }, [noRoutesFound]);
+        }
+    }, [noRoutesFound]);
 
-        useEffect(() => {
-            const loadDeliveryRoute = async (driverUsername) => {
-              try {
+    useEffect(() => { // use effect for fetching delivery route
+        const loadDeliveryRoute = async (driverUsername) => {
+            try {
                 const routeData = await fetchDeliveryRoute(driverUsername);
 
                 if (routeData?.status === 404) {
@@ -87,32 +76,45 @@ const DriverViewRoutes = ({updateData}) =>
                     return;
                 }
                 if (routeData) {
-                  console.log("Delivery route fetched", JSON.stringify(routeData));
-                  const sortedDeliveries = routeData.orders.sort(
-                    (a, b) => a.position - b.position
-                  );
-                  setCurrentDelivery(sortedDeliveries[0]);
-                  setNextDeliveries(sortedDeliveries.slice(1));
-                  console.log("Current delivery in use effect is ", sortedDeliveries[0]);
+                    console.log("Delivery route fetched", JSON.stringify(routeData));
+                    const sortedDeliveries = routeData.orders.sort((a, b) => a.position - b.position);
+                    setCurrentDelivery(sortedDeliveries[0]);
+                    setNextDeliveries(sortedDeliveries.slice(1));
+                    console.log("Current delivery in use effect is ", sortedDeliveries[0]);
                 } else {
-                  console.error("No route data returned");
-                  setNoRoutesFound(true);
+                    console.error("No route data returned");
+                    setNoRoutesFound(true);
                 }
-              } catch (error) {
+            } catch (error) {
                 console.error("Error fetching delivery route:", error);
                 setSnackbar({
-                  open: true,
-                  message: 'Failed to load delivery routes',
-                  severity: 'error'
+                    open: true,
+                    message: 'Failed to load delivery routes',
+                    severity: 'error'
                 });
                 setNoRoutesFound(true);
-              }
-            };
-        
-            if (driverUsername) {
-              loadDeliveryRoute(driverUsername);
             }
-          }, [driverUsername]);
+        };
+        
+        const loadRouteIdAndStartDelivery = async () => {
+            const allRoutesData = await fetchMethod("deliveryroutes");
+            if (allRoutesData) {
+                const route = allRoutesData.find(route => route.driverUsername === driverUsername);
+                const routeId = route ? route.id : null;
+                setRouteId(routeId);
+                if (routeId) {
+                    console.log("route ID: ", routeId);
+                    await startDeliveryRoute(routeId);
+                }
+            }
+        };
+
+        if (driverUsername) {
+            loadDeliveryRoute(driverUsername);
+            
+            loadRouteIdAndStartDelivery();
+        }
+    }, [driverUsername]);
       
     return (
         <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
@@ -126,9 +128,7 @@ const DriverViewRoutes = ({updateData}) =>
                     '& .MuiDrawer-paper': {
                         width: '95vw', // Same width as above
                         boxSizing: 'border-box',
-                        // Added background color for visibility
                         backgroundColor: '#FFFFF',
-                        // Added zIndex to ensure it's above other content
                         zIndex: 1200,
                         overflowY: 'auto',
                     },
@@ -170,7 +170,6 @@ const DriverViewRoutes = ({updateData}) =>
                         Current Delivery 
                     </Typography>
                 </Box>
-
                 <Box
                 sx={{
                 display: 'flex',

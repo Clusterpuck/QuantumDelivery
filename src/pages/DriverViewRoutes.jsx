@@ -48,7 +48,7 @@ const DriverViewRoutes = ({updateData}) =>
         };
 
         useEffect(() => {
-            if (!noRoutesFound && currentDelivery)
+            if (!noRoutesFound)
             {
             setIsLoading(true);
           
@@ -336,7 +336,7 @@ const DriverViewRoutes = ({updateData}) =>
                         height: '100%',
                         overflow: 'hidden'
                     }}
-                    >
+                >
                     {isLoading ? (
                     <Box
                         sx={{
@@ -353,7 +353,6 @@ const DriverViewRoutes = ({updateData}) =>
                      sx={{
                     position: 'absolute',
                     top: '20%', // Adjust this value to move the component up or down
-                    
                     width: '100%',
                     textAlign: 'center',
                     }}

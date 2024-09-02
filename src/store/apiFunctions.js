@@ -187,8 +187,20 @@ export const fetchDeliveryRoute = async (driverUsername) => {
     } catch (error) {
         console.error('Error fetching from endpoint:', error.message);
     }
-
     return deliveryRouteData;
+
+    // TEMPORARY FOR TESTING: have this method return not found
+
+    /*return {
+        status: 404,
+        statusText: "Not Found",
+        json: async () => ({
+            "type": "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+            "title": "Not Found",
+            "status": 404,
+            "traceId": "00-a9a672ced0b49e460e823439d1a2346e-0aad78326d0cadfb-00"
+        }),
+    };*/
 };
 
 export const postDeliveryRoutes = async (newInput) => {

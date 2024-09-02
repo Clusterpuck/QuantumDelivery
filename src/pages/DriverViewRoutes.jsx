@@ -10,17 +10,13 @@ import {
   } from '@mui/material';
   import DriverMap from '../components/DriverMap.jsx'; 
   import { fetchDeliveryRoute } from '../store/apiFunctions';
+  import NoRouteFound from '../components/NoRouteFound.jsx';
 
 const DriverViewRoutes = ({updateData}) => 
 {
     // initialise drawer on the left (which shows delivery progress) to closed
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     const [modalOpen, setModalOpen] = React.useState(false); // whether the phone number for current delivery is shown
-    const [snackbar, setSnackbar] = useState({
-        open: false,
-        message: '',
-        severity: 'success',
-      });
     const toggleDrawer = (open) => (event)=>
     {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift'))
@@ -37,7 +33,8 @@ const DriverViewRoutes = ({updateData}) =>
     const [currentDelivery, setCurrentDelivery] = useState(null);
     const [nextDeliveries, setNextDeliveries] = useState([]);
     const [currentLocation, setCurrentLocation] = useState([]);
-    const [isLoading, setIsLoading] = useState(true); 
+    const [isLoading, setIsLoading] = useState(false); 
+    const [noRoutesFound, setNoRoutesFound] = React.useState(false); 
 
         const driverUsername = 'Bob1'; // hard coded for now
 
@@ -51,33 +48,44 @@ const DriverViewRoutes = ({updateData}) =>
         };
 
         useEffect(() => {
-            setIsLoading(true); 
-            // Fetch current location when component mounts
+            if (!noRoutesFound && currentDelivery)
+            {
+            setIsLoading(true);
+          
+            console.log(noRoutesFound);
+            // Only fetch location if routes found
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const latitude = position.coords.latitude;
-                        const longitude = position.coords.longitude;
-                        
-                            setCurrentLocation([longitude, latitude]); // Update state with valid location
-                        console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-                        setIsLoading(false);
-                    },
-                    (error) => {
-                        console.error("Error fetching location:", error);
-                        setIsLoading(false);
-                    }
-                );
+              navigator.geolocation.getCurrentPosition(
+                (position) => {
+                  const latitude = position.coords.latitude;
+                  const longitude = position.coords.longitude;   
+          
+          
+                  setCurrentLocation([longitude, latitude]); // Update state with valid location
+                  console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                  setIsLoading(false);
+                },
+                (error) => {
+                  console.error("Error fetching location:", error);
+                  setIsLoading(false);
+                }
+              );
             } else {
-                console.log("Geolocation is not supported by this browser.");
-                setIsLoading(false);
+              console.log("Geolocation is not supported by this browser.");
+              setIsLoading(false);
             }
-        }, []);
+            }
+          }, [noRoutesFound]);
 
         useEffect(() => {
             const loadDeliveryRoute = async (driverUsername) => {
               try {
                 const routeData = await fetchDeliveryRoute(driverUsername);
+
+                if (routeData?.status === 404) {
+                    setNoRoutesFound(true);
+                    return;
+                }
                 if (routeData) {
                   console.log("Delivery route fetched", JSON.stringify(routeData));
                   const sortedDeliveries = routeData.orders.sort(
@@ -88,6 +96,7 @@ const DriverViewRoutes = ({updateData}) =>
                   console.log("Current delivery in use effect is ", sortedDeliveries[0]);
                 } else {
                   console.error("No route data returned");
+                  setNoRoutesFound(true);
                 }
               } catch (error) {
                 console.error("Error fetching delivery route:", error);
@@ -96,6 +105,7 @@ const DriverViewRoutes = ({updateData}) =>
                   message: 'Failed to load delivery routes',
                   severity: 'error'
                 });
+                setNoRoutesFound(true);
               }
             };
         
@@ -338,13 +348,24 @@ const DriverViewRoutes = ({updateData}) =>
                     >
                         <CircularProgress /> {/* Show loading icon */}
                     </Box>
+                    ) : noRoutesFound ? (
+                        <Box
+                     sx={{
+                    position: 'absolute',
+                    top: '20%', // Adjust this value to move the component up or down
+                    
+                    width: '100%',
+                    textAlign: 'center',
+                    }}
+                >
+                        <NoRouteFound />
+                        </Box>
                     ) : (
                         currentLocation.length > 0 && (
-                        <DriverMap start={currentLocation} end={[currentDelivery?.lon, currentDelivery?.lat]} />
-                    )
+                            <DriverMap start={currentLocation} end={[currentDelivery?.lon, currentDelivery?.lat]} />
+                        )
                     )}
                 </Box>
-                
             </Box>
             <Modal
                 open={modalOpen}

@@ -115,7 +115,7 @@ const LoginForm = () => {
                     </Grid>
                     <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', marginTop: 8 }}>
                         <Typography variant="body2" color="primary">
-                            Don't have an account?{' '}
+                            Don't have an QuantaPath account?{' '}
                             <Link to="/register" style={{ color: '#1976d2', textDecoration: 'none' }}>
                                 Register
                             </Link>

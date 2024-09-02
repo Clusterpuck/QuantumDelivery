@@ -186,7 +186,11 @@ const DriverViewRoutes = ({updateData}) =>
                 marginBottom: 2,
                 borderRadius: 4, 
                 }}
-                >
+                > {noRoutesFound ? (
+                    <Typography variant="body1" color="textSecondary">
+                        No deliveries
+                    </Typography>
+                ) : (
                     <TableContainer component={Paper}>
                         <Table>
                         <TableBody>
@@ -219,7 +223,7 @@ const DriverViewRoutes = ({updateData}) =>
                                 </TableRow>
                             </TableBody>
                         </Table>
-                    </TableContainer>
+                    </TableContainer>)}
                 </Box>
                 <Box
                 sx={{

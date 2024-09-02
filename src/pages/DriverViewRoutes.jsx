@@ -85,6 +85,7 @@ const DriverViewRoutes = ({updateData}) =>
                   );
                   setCurrentDelivery(sortedDeliveries[0]);
                   setNextDeliveries(sortedDeliveries.slice(1));
+                  console.log("Current delivery in use effect is ", sortedDeliveries[0]);
                 } else {
                   console.error("No route data returned");
                 }

@@ -17,6 +17,7 @@ const DriverMap = ({start,end}) =>
 
     const getRoute = async(map, start, end) =>
     {
+        console.log( "Start and end in getRoute is ", start, end);
         const query = await fetch(
             `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
             { method: 'GET' }
@@ -70,7 +71,9 @@ const DriverMap = ({start,end}) =>
     };
 
     useEffect(() => {
-        if (map.current) return; // initialize map only once
+        console.log("Start and end in Driver Map is ", start, end);
+        if( !start || !end ) return;
+        //if (map.current) return; // initialize map only once
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/streets-v11',

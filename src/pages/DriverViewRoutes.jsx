@@ -5,6 +5,7 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import PhoneIcon from '@mui/icons-material/Phone';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper} from '@mui/material';
 import DriverMap from '../components/DriverMap.jsx'; 
 import { fetchDeliveryRoute, fetchMethod, startDeliveryRoute } from '../store/apiFunctions';
@@ -39,6 +40,7 @@ const DriverViewRoutes = ({updateData}) =>
         }
     };
 
+
     useEffect(() => { // use effect for fetching the current location
         if (!noRoutesFound)
         {
@@ -66,55 +68,61 @@ const DriverViewRoutes = ({updateData}) =>
         }
     }, [noRoutesFound]);
 
-    useEffect(() => { // use effect for fetching delivery route
-        const loadDeliveryRoute = async (driverUsername) => {
-            try {
-                const routeData = await fetchDeliveryRoute(driverUsername);
+    const fetchDeliveryData = async () => {
+        try {
+            const routeData = await fetchDeliveryRoute(driverUsername);
 
-                if (routeData?.status === 404) {
-                    setNoRoutesFound(true);
-                    return;
-                }
-                if (routeData) {
-                    console.log("Delivery route fetched", JSON.stringify(routeData));
-                    const sortedDeliveries = routeData.orders.sort((a, b) => a.position - b.position);
-                    setCurrentDelivery(sortedDeliveries[0]);
-                    setNextDeliveries(sortedDeliveries.slice(1));
-                    console.log("Current delivery in use effect is ", sortedDeliveries[0]);
-                } else {
-                    console.error("No route data returned");
-                    setNoRoutesFound(true);
-                }
-            } catch (error) {
-                console.error("Error fetching delivery route:", error);
-                setSnackbar({
-                    open: true,
-                    message: 'Failed to load delivery routes',
-                    severity: 'error'
-                });
+            if (routeData?.status === 404) {
+                setNoRoutesFound(true);
+                return;
+            }
+            if (routeData) {
+                console.log("Delivery route fetched", JSON.stringify(routeData));
+                const sortedDeliveries = routeData.orders.sort((a, b) => a.position - b.position);
+                setCurrentDelivery(sortedDeliveries[0]);
+                setNextDeliveries(sortedDeliveries.slice(1));
+                console.log("Current delivery in use effect is ", sortedDeliveries[0]);
+            } else {
+                console.error("No route data returned");
                 setNoRoutesFound(true);
             }
-        };
+        } catch (error) {
+            console.error("Error fetching delivery route:", error);
+            setSnackbar({
+                open: true,
+                message: 'Failed to load delivery routes',
+                severity: 'error'
+            });
+            setNoRoutesFound(true);
+        }
+    };
+
+    useEffect(() => { // use effect for fetching delivery route
         
-        const loadRouteIdAndStartDelivery = async () => {
+        const loadRouteId = async () => {
             const allRoutesData = await fetchMethod("deliveryroutes");
             if (allRoutesData) {
                 const route = allRoutesData.find(route => route.driverUsername === driverUsername);
                 const routeId = route ? route.id : null;
                 setRouteId(routeId);
-                if (routeId) {
-                    console.log("route ID: ", routeId);
-                    await startDeliveryRoute(routeId);
-                }
             }
         };
 
         if (driverUsername) {
-            loadDeliveryRoute(driverUsername);
-            
-            loadRouteIdAndStartDelivery();
+            fetchDeliveryData();
+            loadRouteId();
         }
     }, [driverUsername]);
+
+    const handleStartDelivery = async () => {
+        if (routeId) {
+            await startDeliveryRoute(routeId);
+            await fetchDeliveryData();
+        }
+        else {
+            console.error("No route ID found.")
+        }
+    };
       
     return (
         <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
@@ -149,6 +157,27 @@ const DriverViewRoutes = ({updateData}) =>
                     <Typography variant="h6" color="black" sx={{ p: 2, fontWeight: 'bold' }}>
                         Delivery Progress
                     </Typography>
+                </Box>
+                <Box 
+                sx={{
+                    display: 'flex',
+                    top: 0, // Position at the top
+                    left: 0, // Align to the left
+                    width: 'calc(100% - 32px)%', // Full width of the drawer
+                    justifyContent: 'center', // Horizontally centers the content
+                    alignItems: 'center',     // Vertically centers the content
+                    margin: 2,
+                    borderRadius: 4, 
+                    }}
+                >
+                    <Button variant="outlined" color="primary" onClick={handleStartDelivery}
+                    sx={{
+                        flex: 1,
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)'
+                    }}>
+                        Start Delivery
+                        <LocalShippingIcon  sx={{ marginLeft: 2 }} />
+                    </Button>
                 </Box>
        
                 <Box 

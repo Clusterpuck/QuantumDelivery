@@ -78,7 +78,8 @@ const DriverViewRoutes = ({}) =>
             }
             if (routeData) {
                 console.log("Delivery route fetched", JSON.stringify(routeData));
-                const sortedDeliveries = routeData.orders.sort((a, b) => a.position - b.position);
+                const pendingDeliveries = routeData.orders.filter(order => order.status !== 'delivered');
+                const sortedDeliveries = pendingDeliveries.sort((a, b) => a.position - b.position);
                 setCurrentDelivery(sortedDeliveries[0]);
                 setNextDeliveries(sortedDeliveries.slice(1));
                 console.log("Current delivery in use effect is ", sortedDeliveries[0]);
@@ -132,6 +133,13 @@ const DriverViewRoutes = ({}) =>
                 status: "delivered"
             };
             const result = await updateOrderStatus(input);
+
+            if (result)
+            {
+                const remainingDeliveries = nextDeliveries.slice(1);
+                setCurrentDelivery(nextDeliveries[0] || null);
+                setNextDeliveries(remainingDeliveries);
+            }
         }
     };
       

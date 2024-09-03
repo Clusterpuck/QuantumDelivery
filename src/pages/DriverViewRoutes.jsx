@@ -8,10 +8,10 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper} from '@mui/material';
 import DriverMap from '../components/DriverMap.jsx'; 
-import { fetchDeliveryRoute, fetchMethod, startDeliveryRoute } from '../store/apiFunctions';
+import { fetchDeliveryRoute, fetchMethod, startDeliveryRoute, updateOrderStatus } from '../store/apiFunctions';
 import NoRouteFound from '../components/NoRouteFound.jsx';
 
-const DriverViewRoutes = ({updateData}) => 
+const DriverViewRoutes = ({}) => 
 {
     // initialise drawer on the left (which shows delivery progress) to closed
     const [drawerOpen, setDrawerOpen] = React.useState(false);
@@ -121,6 +121,17 @@ const DriverViewRoutes = ({updateData}) =>
         }
         else {
             console.error("No route ID found.")
+        }
+    };
+
+    const handleMarkAsDelivered = async () => {
+        if (currentDelivery) {
+            const input = {
+                username: driverUsername,
+                orderId: currentDelivery.orderId,
+                status: "delivered"
+            };
+            const result = await updateOrderStatus(input);
         }
     };
       
@@ -261,7 +272,7 @@ const DriverViewRoutes = ({updateData}) =>
                 p: 2,
                 }}
                 >
-                    <Button variant="contained" color = "primary"
+                    <Button variant="contained" color = "primary" onClick={handleMarkAsDelivered} 
                     sx={{
                         flex: 1,
                         marginRight: 2, // Optional: adds space between the buttons,

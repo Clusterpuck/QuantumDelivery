@@ -208,11 +208,11 @@ export const postDeliveryRoutes = async (newInput) => {
 
         const responseData = await response.json();
         console.log('Successfully submitted delivery route:', responseData);
-        return responseData; // Make sure to return the response data here
+        return responseData; 
 
     } catch (error) {
         console.error('Error submitting delivery route:', error);
-        return null; // Return null or handle the error as needed
+        return null; 
     }
 };
 
@@ -236,6 +236,31 @@ export const startDeliveryRoute = async(routeId) => {
         console.error('Error starting delivery route:', error);
     }
 };
+
+export const updateOrderStatus = async(input) =>{
+    try{
+        const response = await fetch(Constants.DATA_ENDPOINT + 'deliveryroutes/update-status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(input),
+        });
+
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+            throw new Error('Failed to update order status.');
+        }
+        const responseData = await response.json();
+        console.log('Successfully updated order status: ', responseData);
+        return responseData; 
+
+    } catch (error) {
+        console.error('Error updating order status: ', error);
+        return null; 
+    }
+}
 
 export const login = async (username, password) => {
     try {

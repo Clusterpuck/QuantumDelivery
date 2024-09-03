@@ -5,61 +5,52 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import PhoneIcon from '@mui/icons-material/Phone';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import {
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
-  } from '@mui/material';
-  import DriverMap from '../components/DriverMap.jsx'; 
-  import { fetchDeliveryRoute } from '../store/apiFunctions';
-  import NoRouteFound from '../components/NoRouteFound.jsx';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper} from '@mui/material';
+import DriverMap from '../components/DriverMap.jsx'; 
+import { fetchDeliveryRoute, fetchMethod, startDeliveryRoute, updateOrderStatus } from '../store/apiFunctions';
+import NoRouteFound from '../components/NoRouteFound.jsx';
 
-const DriverViewRoutes = ({updateData}) => 
+const DriverViewRoutes = ({}) => 
 {
     // initialise drawer on the left (which shows delivery progress) to closed
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     const [modalOpen, setModalOpen] = React.useState(false); // whether the phone number for current delivery is shown
     const toggleDrawer = (open) => (event)=>
-    {
-        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift'))
-        {return}
-        setDrawerOpen(open); //opens the drawer
-    }
-    const handlePhoneClick = () => {
-        setModalOpen(true);
-    };
-    const handleClose = () => {
-        setModalOpen(false);
-    };
-
+    { setDrawerOpen(open); }
+    const handlePhoneClick = () => 
+    { setModalOpen(true); };
+    const handleClose = () => 
+    { setModalOpen(false); };
     const [currentDelivery, setCurrentDelivery] = useState(null);
     const [nextDeliveries, setNextDeliveries] = useState([]);
     const [currentLocation, setCurrentLocation] = useState([]);
     const [isLoading, setIsLoading] = useState(false); 
     const [noRoutesFound, setNoRoutesFound] = React.useState(false); 
+    const [routeId, setRouteId] = React.useState(null);
 
-        const driverUsername = 'Bob1'; // hard coded for now
+    const driverUsername = 'Bob1'; // hard coded for now
 
-        const getRowColor = (status) => {
-            switch (status) {
-                case 'Delayed':
-                    return '#f8d7da'; // Light red
-                default:
-                    return '#d4edda'; // Light green
-            }
-        };
+    const getRowColor = (status) => {
+        switch (status) {
+            case 'Delayed':
+                return '#f8d7da'; // Light red
+            default:
+                return '#d4edda'; // Light green
+        }
+    };
 
-        useEffect(() => {
-            if (!noRoutesFound)
-            {
+
+    useEffect(() => { // use effect for fetching the current location
+        if (!noRoutesFound)
+        {
             setIsLoading(true);
-          
-            console.log(noRoutesFound);
             // Only fetch location if routes found
             if (navigator.geolocation) {
               navigator.geolocation.getCurrentPosition(
                 (position) => {
                   const latitude = position.coords.latitude;
                   const longitude = position.coords.longitude;   
-          
           
                   setCurrentLocation([longitude, latitude]); // Update state with valid location
                   console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
@@ -74,45 +65,83 @@ const DriverViewRoutes = ({updateData}) =>
               console.log("Geolocation is not supported by this browser.");
               setIsLoading(false);
             }
-            }
-          }, [noRoutesFound]);
+        }
+    }, [noRoutesFound]);
 
-        useEffect(() => {
-            const loadDeliveryRoute = async (driverUsername) => {
-              try {
-                const routeData = await fetchDeliveryRoute(driverUsername);
+    const fetchDeliveryData = async () => {
+        try {
+            const routeData = await fetchDeliveryRoute(driverUsername);
 
-                if (routeData?.status === 404) {
-                    setNoRoutesFound(true);
-                    return;
-                }
-                if (routeData) {
-                  console.log("Delivery route fetched", JSON.stringify(routeData));
-                  const sortedDeliveries = routeData.orders.sort(
-                    (a, b) => a.position - b.position
-                  );
-                  setCurrentDelivery(sortedDeliveries[0]);
-                  setNextDeliveries(sortedDeliveries.slice(1));
-                  console.log("Current delivery in use effect is ", sortedDeliveries[0]);
-                } else {
-                  console.error("No route data returned");
-                  setNoRoutesFound(true);
-                }
-              } catch (error) {
-                console.error("Error fetching delivery route:", error);
-                setSnackbar({
-                  open: true,
-                  message: 'Failed to load delivery routes',
-                  severity: 'error'
-                });
+            if (routeData?.status === 404) {
                 setNoRoutesFound(true);
-              }
-            };
-        
-            if (driverUsername) {
-              loadDeliveryRoute(driverUsername);
+                return;
             }
-          }, [driverUsername]);
+            if (routeData) {
+                console.log("Delivery route fetched", JSON.stringify(routeData));
+                const pendingDeliveries = routeData.orders.filter(order => order.status !== 'delivered');
+                const sortedDeliveries = pendingDeliveries.sort((a, b) => a.position - b.position);
+                setCurrentDelivery(sortedDeliveries[0]);
+                setNextDeliveries(sortedDeliveries.slice(1));
+                console.log("Current delivery in use effect is ", sortedDeliveries[0]);
+            } else {
+                console.error("No route data returned");
+                setNoRoutesFound(true);
+            }
+        } catch (error) {
+            console.error("Error fetching delivery route:", error);
+            setSnackbar({
+                open: true,
+                message: 'Failed to load delivery routes',
+                severity: 'error'
+            });
+            setNoRoutesFound(true);
+        }
+    };
+
+    useEffect(() => { // use effect for fetching delivery route
+        
+        const loadRouteId = async () => {
+            const allRoutesData = await fetchMethod("deliveryroutes");
+            if (allRoutesData) {
+                const route = allRoutesData.find(route => route.driverUsername === driverUsername);
+                const routeId = route ? route.id : null;
+                setRouteId(routeId);
+            }
+        };
+
+        if (driverUsername) {
+            fetchDeliveryData();
+            loadRouteId();
+        }
+    }, [driverUsername]);
+
+    const handleStartDelivery = async () => {
+        if (routeId) {
+            await startDeliveryRoute(routeId);
+            await fetchDeliveryData();
+        }
+        else {
+            console.error("No route ID found.")
+        }
+    };
+
+    const handleMarkAsDelivered = async () => {
+        if (currentDelivery) {
+            const input = {
+                username: driverUsername,
+                orderId: currentDelivery.orderId,
+                status: "delivered"
+            };
+            const result = await updateOrderStatus(input);
+
+            if (result)
+            {
+                const remainingDeliveries = nextDeliveries.slice(1);
+                setCurrentDelivery(nextDeliveries[0] || null);
+                setNextDeliveries(remainingDeliveries);
+            }
+        }
+    };
       
     return (
         <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
@@ -126,9 +155,7 @@ const DriverViewRoutes = ({updateData}) =>
                     '& .MuiDrawer-paper': {
                         width: '95vw', // Same width as above
                         boxSizing: 'border-box',
-                        // Added background color for visibility
                         backgroundColor: '#FFFFF',
-                        // Added zIndex to ensure it's above other content
                         zIndex: 1200,
                         overflowY: 'auto',
                     },
@@ -150,6 +177,27 @@ const DriverViewRoutes = ({updateData}) =>
                         Delivery Progress
                     </Typography>
                 </Box>
+                <Box 
+                sx={{
+                    display: 'flex',
+                    top: 0, // Position at the top
+                    left: 0, // Align to the left
+                    width: 'calc(100% - 32px)%', // Full width of the drawer
+                    justifyContent: 'center', // Horizontally centers the content
+                    alignItems: 'center',     // Vertically centers the content
+                    margin: 2,
+                    borderRadius: 4, 
+                    }}
+                >
+                    <Button variant="outlined" color="primary" onClick={handleStartDelivery}
+                    sx={{
+                        flex: 1,
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)'
+                    }}>
+                        Start Delivery
+                        <LocalShippingIcon  sx={{ marginLeft: 2 }} />
+                    </Button>
+                </Box>
        
                 <Box 
                 sx={{
@@ -170,7 +218,6 @@ const DriverViewRoutes = ({updateData}) =>
                         Current Delivery 
                     </Typography>
                 </Box>
-
                 <Box
                 sx={{
                 display: 'flex',
@@ -233,7 +280,7 @@ const DriverViewRoutes = ({updateData}) =>
                 p: 2,
                 }}
                 >
-                    <Button variant="contained" color = "primary"
+                    <Button variant="contained" color = "primary" onClick={handleMarkAsDelivered} 
                     sx={{
                         flex: 1,
                         marginRight: 2, // Optional: adds space between the buttons,

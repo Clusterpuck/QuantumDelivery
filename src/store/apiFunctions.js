@@ -264,7 +264,7 @@ export const updateOrderStatus = async(input) =>{
 
 export const login = async (username, password) => {
     try {
-        const response = await fetch(Constants.DATA_ENDPOINT + 'adminAccounts/authenticate', {
+        const response = await fetch(Constants.DATA_ENDPOINT + 'accounts/authenticate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

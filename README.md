@@ -30,3 +30,11 @@ Testing pushing direct to main X2
 - Add route to both route.js and routes.js in the ‘constants’ folder
 - Update NavBar.jsx in the components folder (if required)
 - Check for necessary import statements
+
+
+# Developing process for database usage limitations  
+- Run a local version of the C# with OFFLINE_DATA set as a conditional compilation field in RoutingData.csproj file
+- Ensure endpoint in Constants.js is set to localhost. (Confirm Port number same)
+- When done with all changes, switch Constants.js to live database
+- DO NOT LEAVE PAGE OPEN WHEN MAKING CHANGES ON THE CONNECTION
+- Once all changes ready, confirm Constants.js is set to live database endpoint and merge. 

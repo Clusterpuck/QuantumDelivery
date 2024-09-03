@@ -8,6 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Typography from '@mui/material/Typography';
 import { login } from '../store/apiFunctions';
+import {fetchMethod} from '../store/apiFunctions';
 import Cookies from 'js-cookie';
 
 const styleConstants = {
@@ -21,6 +22,7 @@ const LoginForm = () => {
     const [errors, setErrors] = useState({ username: '', password: '' });
     const [errorMessage, setErrorMessage] = useState('');
 
+    
     const validate = () => {
         let valid = true;
         let tempErrors = { username: '', password: '' };
@@ -47,10 +49,14 @@ const LoginForm = () => {
         return valid;
     };
 
+
+
     const handleLogin = async (e) => {
         e.preventDefault();
         if (validate()) {
             try {
+                const factTest = await fetchMethod('QuantumFacts');
+                console.log("***XXxxSuccessfully got factxxXX** ", factTest);
                 const response = await login(username, password);
                 if (response && response.token) {
                     Cookies.set('authToken', response.token, { expires: 1 });

@@ -159,7 +159,7 @@ export const fetchMethod = async (endpoint) => {
             throw new Error('Failed to fetch from endpoint ', endpoint);
         }
         ipData = await ipResponse.json();
-        console.log("Data is " + JSON.stringify(ipData) );
+        console.log("Fetch Method. Data is " + JSON.stringify(ipData) );
         // Use user's IP address to fetch region information
     } catch (error) {
         console.error('Error fetching from endpoint:', endpoint,' ', error.message);
@@ -167,9 +167,32 @@ export const fetchMethod = async (endpoint) => {
     return ipData
 };
 
+export const fetchDeliveryRoute = async (driverUsername) => {
+    let deliveryRouteData = null;
+    try {
+        const endpoint = `DeliveryRoutes/driver/${driverUsername}`;
+        const response = await fetch(`${Constants.DATA_ENDPOINT}${endpoint}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch from endpoint ${endpoint}: ${response.statusText}`);
+        }
+
+        deliveryRouteData = await response.json();
+        console.log("Delivery route data is: ", JSON.stringify(deliveryRouteData));
+    } catch (error) {
+        console.error('Error fetching from endpoint:', error.message);
+    }
+    return deliveryRouteData;
+};
+
 export const postDeliveryRoutes = async (newInput) => {
     try {
-        const response = await fetch(Constants.DATA_ENDPOINT + 'deliveryroutes', {
+        const response = await fetch(Constants.DATA_ENDPOINT + 'deliveryroutes/calculate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -185,10 +208,82 @@ export const postDeliveryRoutes = async (newInput) => {
 
         const responseData = await response.json();
         console.log('Successfully submitted delivery route:', responseData);
-        return responseData; // Make sure to return the response data here
+        return responseData; 
 
     } catch (error) {
         console.error('Error submitting delivery route:', error);
+        return null; 
+    }
+};
+
+export const startDeliveryRoute = async(routeId) => {
+    try {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}deliveryroutes/start/${routeId}`, {
+            method: 'PUT',
+            headers: {
+                'accept': '*/*'
+            }
+        });
+
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+            throw new Error('Failed to start delivery route');
+        } else {
+            console.log("Started delivery route!");
+        }
+    } catch (error) {
+        console.error('Error starting delivery route:', error);
+    }
+};
+
+export const updateOrderStatus = async(input) =>{
+    try{
+        const response = await fetch(Constants.DATA_ENDPOINT + 'deliveryroutes/update-status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(input),
+        });
+
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+            throw new Error('Failed to update order status.');
+        }
+        const responseData = await response.json();
+        console.log('Successfully updated order status: ', responseData);
+        return responseData; 
+
+    } catch (error) {
+        console.error('Error updating order status: ', error);
+        return null; 
+    }
+}
+
+export const login = async (username, password) => {
+    try {
+        const response = await fetch(Constants.DATA_ENDPOINT + 'accounts/authenticate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ Username: username, Password: password }),
+        });
+
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+            throw new Error('Failed to login');
+        }
+
+        const responseData = await response.json();
+        console.log('Successfully logged in:', responseData);
+        return responseData; // Return the response data (e.g., JWT token)
+
+    } catch (error) {
+        console.error('Error logging in:', error);
         return null; // Return null or handle the error as needed
     }
 };

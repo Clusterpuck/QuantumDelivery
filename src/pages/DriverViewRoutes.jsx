@@ -1,59 +1,147 @@
-import React from 'react';
-import { Box, Drawer, IconButton, Typography, Button, Modal, Backdrop, Fade } from '@mui/material';import RouteIcon from '@mui/icons-material/Route';
+import React,{useEffect, useState} from 'react';
+import { Box, Drawer, IconButton, Typography, Button, Modal, Backdrop, Fade, CircularProgress } from '@mui/material';import RouteIcon from '@mui/icons-material/Route';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import PhoneIcon from '@mui/icons-material/Phone';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import {
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
-  } from '@mui/material';
-  import DriverMap from '../components/DriverMap.jsx'; 
-const DriverViewRoutes = ({updateData}) => 
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper} from '@mui/material';
+import DriverMap from '../components/DriverMap.jsx'; 
+import { fetchDeliveryRoute, fetchMethod, startDeliveryRoute, updateOrderStatus } from '../store/apiFunctions';
+import NoRouteFound from '../components/NoRouteFound.jsx';
+
+const DriverViewRoutes = ({}) => 
 {
     // initialise drawer on the left (which shows delivery progress) to closed
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     const [modalOpen, setModalOpen] = React.useState(false); // whether the phone number for current delivery is shown
-
     const toggleDrawer = (open) => (event)=>
-    {
-        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift'))
-        {return}
-        setDrawerOpen(open); //opens the drawer
-    }
-    const handlePhoneClick = () => {
-        setModalOpen(true);
+    { setDrawerOpen(open); }
+    const handlePhoneClick = () => 
+    { setModalOpen(true); };
+    const handleClose = () => 
+    { setModalOpen(false); };
+    const [currentDelivery, setCurrentDelivery] = useState(null);
+    const [nextDeliveries, setNextDeliveries] = useState([]);
+    const [currentLocation, setCurrentLocation] = useState([]);
+    const [isLoading, setIsLoading] = useState(false); 
+    const [noRoutesFound, setNoRoutesFound] = React.useState(false); 
+    const [routeId, setRouteId] = React.useState(null);
+
+    const driverUsername = 'Bob1'; // hard coded for now
+
+    const getRowColor = (status) => {
+        switch (status) {
+            case 'Delayed':
+                return '#f8d7da'; // Light red
+            default:
+                return '#d4edda'; // Light green
+        }
     };
-    const handleClose = () => {
-        setModalOpen(false);
+
+
+    useEffect(() => { // use effect for fetching the current location
+        if (!noRoutesFound)
+        {
+            setIsLoading(true);
+            // Only fetch location if routes found
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                (position) => {
+                  const latitude = position.coords.latitude;
+                  const longitude = position.coords.longitude;   
+          
+                  setCurrentLocation([longitude, latitude]); // Update state with valid location
+                  console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                  setIsLoading(false);
+                },
+                (error) => {
+                  console.error("Error fetching location:", error);
+                  setIsLoading(false);
+                }
+              );
+            } else {
+              console.log("Geolocation is not supported by this browser.");
+              setIsLoading(false);
+            }
+        }
+    }, [noRoutesFound]);
+
+    const fetchDeliveryData = async () => {
+        try {
+            const routeData = await fetchDeliveryRoute(driverUsername);
+
+            if (routeData?.status === 404) {
+                setNoRoutesFound(true);
+                return;
+            }
+            if (routeData) {
+                console.log("Delivery route fetched", JSON.stringify(routeData));
+                const pendingDeliveries = routeData.orders.filter(order => order.status !== 'delivered');
+                const sortedDeliveries = pendingDeliveries.sort((a, b) => a.position - b.position);
+                setCurrentDelivery(sortedDeliveries[0]);
+                setNextDeliveries(sortedDeliveries.slice(1));
+                console.log("Current delivery in use effect is ", sortedDeliveries[0]);
+            } else {
+                console.error("No route data returned");
+                setNoRoutesFound(true);
+            }
+        } catch (error) {
+            console.error("Error fetching delivery route:", error);
+            setSnackbar({
+                open: true,
+                message: 'Failed to load delivery routes',
+                severity: 'error'
+            });
+            setNoRoutesFound(true);
+        }
     };
 
-        // DUMMY DATA FOR NOW
-        const currentDelRows = [
-          '1140 Albany Highway, Bentley',
-          'Spudshed Bentley',
-          'Order ID 872',
-          'Product A, Product B, Product C',
-          'On Time'
-        ];
-
-        const nextDelRows = [
-            { addr: '464 Fitzgerald St, North Perth', customer: 'Rosemount Bowling', orderId: '875', status: 'On Time'},
-            { addr: '1/41 Burrendah Blvd, Willetton', customer: 'Silver Sushi', orderId: '903', status: 'On Time'},
-            { addr: '311 William St, Northbridge', customer: 'Lucky Chans', orderId: '1001', status: 'On Time'},
-            { addr: '17/789 Albany Highway, East Vic Park', customer: 'T4 Vic Park', orderId: '799', status: 'Late'}
-        ]
-
-        const getRowColor = (status) => {
-            switch (status) {
-                case 'On Time':
-                    return '#d4edda'; // Light green
-                case 'Late':
-                    return '#f8d7da'; // Light red
-                default:
-                    return 'white'; // Default color
+    useEffect(() => { // use effect for fetching delivery route
+        
+        const loadRouteId = async () => {
+            const allRoutesData = await fetchMethod("deliveryroutes");
+            if (allRoutesData) {
+                const route = allRoutesData.find(route => route.driverUsername === driverUsername);
+                const routeId = route ? route.id : null;
+                setRouteId(routeId);
             }
         };
+
+        if (driverUsername) {
+            fetchDeliveryData();
+            loadRouteId();
+        }
+    }, [driverUsername]);
+
+    const handleStartDelivery = async () => {
+        if (routeId) {
+            await startDeliveryRoute(routeId);
+            await fetchDeliveryData();
+        }
+        else {
+            console.error("No route ID found.")
+        }
+    };
+
+    const handleMarkAsDelivered = async () => {
+        if (currentDelivery) {
+            const input = {
+                username: driverUsername,
+                orderId: currentDelivery.orderId,
+                status: "delivered"
+            };
+            const result = await updateOrderStatus(input);
+
+            if (result)
+            {
+                const remainingDeliveries = nextDeliveries.slice(1);
+                setCurrentDelivery(nextDeliveries[0] || null);
+                setNextDeliveries(remainingDeliveries);
+            }
+        }
+    };
       
     return (
         <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
@@ -67,9 +155,7 @@ const DriverViewRoutes = ({updateData}) =>
                     '& .MuiDrawer-paper': {
                         width: '95vw', // Same width as above
                         boxSizing: 'border-box',
-                        // Added background color for visibility
                         backgroundColor: '#FFFFF',
-                        // Added zIndex to ensure it's above other content
                         zIndex: 1200,
                         overflowY: 'auto',
                     },
@@ -91,6 +177,27 @@ const DriverViewRoutes = ({updateData}) =>
                         Delivery Progress
                     </Typography>
                 </Box>
+                <Box 
+                sx={{
+                    display: 'flex',
+                    top: 0, // Position at the top
+                    left: 0, // Align to the left
+                    width: 'calc(100% - 32px)%', // Full width of the drawer
+                    justifyContent: 'center', // Horizontally centers the content
+                    alignItems: 'center',     // Vertically centers the content
+                    margin: 2,
+                    borderRadius: 4, 
+                    }}
+                >
+                    <Button variant="outlined" color="primary" onClick={handleStartDelivery}
+                    sx={{
+                        flex: 1,
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)'
+                    }}>
+                        Start Delivery
+                        <LocalShippingIcon  sx={{ marginLeft: 2 }} />
+                    </Button>
+                </Box>
        
                 <Box 
                 sx={{
@@ -111,7 +218,6 @@ const DriverViewRoutes = ({updateData}) =>
                         Current Delivery 
                     </Typography>
                 </Box>
-
                 <Box
                 sx={{
                 display: 'flex',
@@ -127,27 +233,44 @@ const DriverViewRoutes = ({updateData}) =>
                 marginBottom: 2,
                 borderRadius: 4, 
                 }}
-                >
+                > {noRoutesFound ? (
+                    <Typography variant="body1" color="textSecondary">
+                        No deliveries
+                    </Typography>
+                ) : (
                     <TableContainer component={Paper}>
                         <Table>
-                            <TableBody>
-                                {currentDelRows.map((row, index) => (
-                                    <TableRow key={index}>
-                                        <TableCell>
-                                            {row}
-                                        </TableCell>
-                                        {index === 1 && (
-                                        <TableCell align="right">
-                                            <IconButton onClick={handlePhoneClick}>
+                        <TableBody>
+                                <TableRow>
+                                    <TableCell sx={{ width: 120 }}>Address</TableCell>
+                                    <TableCell>{currentDelivery?.addr}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ width: 120 }}>Customer Name</TableCell>
+                                    <TableCell>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <Typography sx={{ fontSize: '0.875rem' }}>{currentDelivery?.customerName}</Typography>
+                                            <IconButton onClick={handlePhoneClick} sx={{ ml: 2 }}>
                                                 <PhoneIcon />
                                             </IconButton>
-                                        </TableCell>
-                                    )}
-                                    </TableRow>
-                                    ))}
+                                        </Box>
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ width: 120 }}>Order ID</TableCell>
+                                    <TableCell>{currentDelivery?.orderId}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ width: 120 }}>Products</TableCell>
+                                    <TableCell>{currentDelivery?.prodNames.join(', ')}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ width: 120 }}>Status</TableCell>
+                                    <TableCell>{currentDelivery?.status}</TableCell>
+                                </TableRow>
                             </TableBody>
                         </Table>
-                    </TableContainer>
+                    </TableContainer>)}
                 </Box>
                 <Box
                 sx={{
@@ -157,7 +280,7 @@ const DriverViewRoutes = ({updateData}) =>
                 p: 2,
                 }}
                 >
-                    <Button variant="contained" color = "primary"
+                    <Button variant="contained" color = "primary" onClick={handleMarkAsDelivered} 
                     sx={{
                         flex: 1,
                         marginRight: 2, // Optional: adds space between the buttons,
@@ -221,11 +344,10 @@ const DriverViewRoutes = ({updateData}) =>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {nextDelRows.map((row, index) => (
-                                    <TableRow key={index}
-                                        sx={{ backgroundColor: getRowColor(row.status) }}>
+                                {nextDeliveries.map((row, index) => (
+                                    <TableRow key={index} sx={{ backgroundColor: getRowColor(row.status) }}>
                                         <TableCell>{row.addr}</TableCell>
-                                        <TableCell>{row.customer}</TableCell>
+                                        <TableCell>{row.customerName}</TableCell>
                                         <TableCell>{row.orderId}</TableCell>
                                         <TableCell>{row.status}</TableCell>
                                     </TableRow>
@@ -265,10 +387,35 @@ const DriverViewRoutes = ({updateData}) =>
                         height: '100%',
                         overflow: 'hidden'
                     }}
+                >
+                    {isLoading ? (
+                    <Box
+                        sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100%',
+                        }}
                     >
-                    <DriverMap />
+                        <CircularProgress /> {/* Show loading icon */}
+                    </Box>
+                    ) : noRoutesFound ? (
+                        <Box
+                     sx={{
+                    position: 'absolute',
+                    top: '20%', // Adjust this value to move the component up or down
+                    width: '100%',
+                    textAlign: 'center',
+                    }}
+                >
+                        <NoRouteFound />
+                        </Box>
+                    ) : (
+                        currentLocation.length > 0 && (
+                            <DriverMap start={currentLocation} end={[currentDelivery?.lon, currentDelivery?.lat]} />
+                        )
+                    )}
                 </Box>
-                
             </Box>
             <Modal
                 open={modalOpen}
@@ -299,7 +446,7 @@ const DriverViewRoutes = ({updateData}) =>
                             
                             sx={{ mt: 0 , p: '12px',}}
                         >
-                            +1 (234) 567-89
+                            {currentDelivery?.phone}
                         </Button>
                     </Box>
                 </Fade>

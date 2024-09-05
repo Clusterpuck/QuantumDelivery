@@ -7,19 +7,17 @@ import {Box} from '@mui/material';
 // Set your Mapbox access token here
 mapboxgl.accessToken = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
-const DriverMap = () => 
+const DriverMap = ({start,end}) => 
 {
     const mapContainer = useRef(null);
     const map = useRef(null);
-
-    const start = [115.84778740497089, -32.051015859146226] ;
-    const end = [115.89784472278699, -31.98420998389418];
 
     const [steps, setSteps] = useState([]); // State to hold all the steps
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
 
     const getRoute = async(map, start, end) =>
     {
+        console.log( "Start and end in getRoute is ", start, end);
         const query = await fetch(
             `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
             { method: 'GET' }
@@ -73,7 +71,9 @@ const DriverMap = () =>
     };
 
     useEffect(() => {
-        if (map.current) return; // initialize map only once
+        console.log("Start and end in Driver Map is ", start, end);
+        if( !start || !end ) return;
+        //if (map.current) return; // initialize map only once
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/streets-v11',

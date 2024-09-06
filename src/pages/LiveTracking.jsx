@@ -1,22 +1,59 @@
-import React from 'react';
-import {Drawer, Box, IconButton, Tabs, Tab, Typography} from '@mui/material';
+import React, {useEffect, useState} from 'react';
+import {Drawer, Box, IconButton, Tabs, Tab, Typography, Table, TableBody, TableCell, TableHead, TableRow, Checkbox} from '@mui/material';
 import { Link } from 'react-router-dom';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import AddressSearch from "../components/AddressSearch.jsx";
 import MapWithPins from '../components/MapWithPins.jsx';
+import {fetchMethod} from '../store/apiFunctions.js';
 
 // Page design for live tracking page
 // address search is placeholder for directions API
 const LiveTracking = () => {
-    const [drawerOpen, setDrawerOpen] = React.useState(false);
+    const [drawerOpen, setDrawerOpen] = React.useState(true);
     const [activeTab, setActiveTab] = React.useState(0);
+    const [routesData, setRoutesData] = React.useState(null);
+    const [checkedRoutes, setCheckedRoutes] = useState({});
 
     const toggleDrawer = (open) => (event)=>
         { setDrawerOpen(open); }
     const handleTabChange = (event, newValue) => {
         setActiveTab(newValue);
     };
+
+    const fetchRouteData = async () =>
+    {
+            const fetchedRoutes = await fetchMethod("deliveryroutes");
+            if (fetchedRoutes) {
+                console.log("Delivery routes fetched", JSON.stringify(fetchedRoutes));
+                setRoutesData(fetchedRoutes);
+            } else {
+                console.error("No routes data returned");
+            }
+    };
+
+    const handleCheckboxChange = (routeId) => (event) => {
+        setCheckedRoutes((prevCheckedRoutes) => ({
+            ...prevCheckedRoutes,
+            [routeId]: event.target.checked,
+        }))
+        console.log("checkboxes: ", checkedRoutes);
+    };
+
+    useEffect(() =>
+    {
+        fetchRouteData();
+    }, []);
+
+    useEffect(() => {
+        if (routesData) {
+            const initialCheckedRoutes = {};
+            routesData.forEach(route => {
+                initialCheckedRoutes[route.id] = true;  // Set all checkboxes to checked
+            });
+            setCheckedRoutes(initialCheckedRoutes);
+        }
+    }, [routesData]);
 
   return (
     <Box  sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
@@ -52,9 +89,38 @@ const LiveTracking = () => {
                 </Tabs>
                 <Box sx={{ padding: 2 }}>
                     {activeTab === 0 && (
-                        <Typography variant="body1">
-                            Filter Routes goes here
-                        </Typography>
+                         <Box>
+                         <Typography variant="h6">Routes</Typography>
+                         {routesData ? (
+                             <Table>
+                                 <TableHead>
+                                     <TableRow>
+                                         <TableCell></TableCell>
+                                         <TableCell>Route ID</TableCell>
+                                         <TableCell>Driver</TableCell>
+                                         <TableCell>Vehicle ID</TableCell>
+                                     </TableRow>
+                                 </TableHead>
+                                 <TableBody>
+                                     {routesData.map((route) => (
+                                         <TableRow key={route.id}>
+                                             <TableCell>
+                                                 <Checkbox 
+                                                    checked={!!checkedRoutes[route.id]}
+                                                    onChange={handleCheckboxChange(route.id)}
+                                                 />
+                                             </TableCell>
+                                             <TableCell>{route.id}</TableCell>
+                                             <TableCell>{route.driverUsername}</TableCell>
+                                             <TableCell>{route.vehicleId}</TableCell>
+                                         </TableRow>
+                                     ))}
+                                 </TableBody>
+                             </Table>
+                         ) : (
+                             <Typography>No routes available</Typography>
+                         )}
+                     </Box>
                     )}
                     {activeTab === 1 && (
                         <Typography variant="body1">

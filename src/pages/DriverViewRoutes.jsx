@@ -33,7 +33,7 @@ const DriverViewRoutes = ({}) =>
 
     const getRowColor = (status) => {
         switch (status) {
-            case 'Delayed':
+            case 'delayed':
                 return '#f8d7da'; // Light red
             default:
                 return '#d4edda'; // Light green

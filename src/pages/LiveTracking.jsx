@@ -14,7 +14,6 @@ import {fetchMethod, fetchDeliveryRoute} from '../store/apiFunctions.js';
 // address search is placeholder for directions API
 const LiveTracking = () => {
     const [drawerOpen, setDrawerOpen] = React.useState(true);
-    const [activeTab, setActiveTab] = React.useState(0);
     const [routesData, setRoutesData] = React.useState(null);
     const [checkedRoutes, setCheckedRoutes] = useState({});
     const [openRow, setOpenRow] = useState({});
@@ -22,9 +21,6 @@ const LiveTracking = () => {
 
     const toggleDrawer = (open) => (event)=>
         { setDrawerOpen(open); }
-    const handleTabChange = (event, newValue) => {
-        setActiveTab(newValue);
-    };
 
     const fetchRouteData = async () =>
     {
@@ -91,6 +87,15 @@ const LiveTracking = () => {
         }
     };
 
+    const getRowColor = (status) => {
+        switch (status) {
+            case 'delayed':
+                return '#f8d7da'; // Light red
+            default:
+                return '#d4edda'; // Light green
+        }
+    };
+
   return (
     <Box  sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
         <Drawer
@@ -98,109 +103,113 @@ const LiveTracking = () => {
                 open={drawerOpen}
                 onClose={toggleDrawer(false)}
                 sx={{
+                    width: '40vw', // Width of the drawer
                     flexShrink: 0,
                     '& .MuiDrawer-paper': {
                         width: '40vw', // Same width as above
                         boxSizing: 'border-box',
                         backgroundColor: '#FFFFF',
                         overflowY: 'auto',
-                        paddingTop: '70px',
+                        paddingTop: '48px',
                     },
                 }}
                 ModalProps={{
-
                     BackdropProps: {
                         style: { backgroundColor: 'transparent' }, // Removes the dark overlay
                     },
                 }}
             >
-                <Tabs 
-                    value={activeTab} 
-                    onChange={handleTabChange} 
-                    sx={{ borderBottom: 1, borderColor: 'divider' }}
-                    centered
+            <Box sx={{paddingBottom: '50px'}}>
+                <Box
+                sx={{
+                    display: 'flex', 
+                    width: '100%', // Full width of the drawer
+                    marginTop: '20px',
+                    backgroundColor: '#819bc5', 
+                    justifyContent: 'center', // Horizontally centers the content
+                    alignItems: 'center',     // Vertically centers the content
+                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                    borderRadius: '0 0 16px 16px', 
+                    }}
                 >
-                    <Tab label="Filter Routes" />
-                    <Tab label="Route Details" />
-                </Tabs>
-                <Box sx={{ padding: 2 }}>
-                    {activeTab === 0 && (
-                         <Box>
-                         <Typography variant="h6">Routes</Typography>
-                         {routesData ? (
-                             <Table>
-                                 <TableHead>
-                                     <TableRow>
-                                         <TableCell></TableCell>
-                                         <TableCell>Route ID</TableCell>
-                                         <TableCell>Driver</TableCell>
-                                         <TableCell>Vehicle ID</TableCell>
-                                         <TableCell></TableCell>
-                                     </TableRow>
-                                 </TableHead>
-                                 <TableBody>
-                                     {routesData.map((route) => (
-                                         <React.Fragment key={route.id}>
-                                         <TableRow>
-                                             <TableCell>
-                                                 <Checkbox
-                                                     checked={!!checkedRoutes[route.id]}
-                                                     onChange={handleCheckboxChange(route.id)}
-                                                 />
-                                             </TableCell>
-                                             <TableCell>{route.id}</TableCell>
-                                             <TableCell>{route.driverUsername}</TableCell>
-                                             <TableCell>{route.vehicleId}</TableCell>
-                                             <TableCell>
-                                                 <IconButton
-                                                     size="small"
-                                                     onClick={() => handleRowToggle(route.id)}
-                                                 >
-                                                     {openRow[route.id] ? (
-                                                         <KeyboardArrowUpIcon />
-                                                     ) : (
-                                                         <KeyboardArrowDownIcon />
-                                                     )}
-                                                 </IconButton>
-                                             </TableCell>
-                                         </TableRow>
-                                         <TableRow>
-                                             <TableCell
-                                                 style={{ paddingBottom: 0, paddingTop: 0 }}
-                                                 colSpan={5}
-                                             >
-                                                 <Collapse
-                                                     in={openRow[route.id]}
-                                                     timeout="auto"
-                                                     unmountOnExit
-                                                 >
-                                                     <Box margin={1}>
-                                                     {ordersData[route.id] ? (
-                                                                    <Table>
-                                                                        <TableHead>
-                                                                            <TableRow>
-                                                                                <TableCell>Order ID</TableCell>
-                                                                                <TableCell>Address</TableCell>
-                                                                                <TableCell>Customer Name</TableCell>
-                                                                                <TableCell>Products</TableCell>
-                                                                                <TableCell>Status</TableCell>
-                                                                            </TableRow>
-                                                                        </TableHead>
-                                                                        <TableBody>
-                                                                            {ordersData[route.id].map((order) => (
-                                                                                <TableRow key={order.orderId}>
-                                                                                    <TableCell>{order.orderId}</TableCell>
-                                                                                    <TableCell>{order.addr}</TableCell>
-                                                                                    <TableCell>{order.customerName}</TableCell>
-                                                                                    <TableCell>{order.prodNames.join(", ")}</TableCell>
-                                                                                    <TableCell>{order.status}</TableCell>
-                                                                                </TableRow>
-                                                                            ))}
-                                                                        </TableBody>
-                                                                    </Table>
-                                                                ) : (
-                                                                    <Typography>No orders available</Typography>
-                                                                )}
+                    <Typography variant="h6" color="black" sx={{ p: 2, fontWeight: 'bold' }}>
+                        Route Details
+                    </Typography>
+                </Box>
+                        {routesData ? (
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell></TableCell>
+                                        <TableCell>Route ID</TableCell>
+                                        <TableCell>Driver</TableCell>
+                                        <TableCell>Vehicle ID</TableCell>
+                                        <TableCell></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {routesData.map((route) => (
+                                        <React.Fragment key={route.id}>
+                                        <TableRow>
+                                            <TableCell>
+                                                <Checkbox
+                                                    checked={!!checkedRoutes[route.id]}
+                                                    onChange={handleCheckboxChange(route.id)}
+                                                />
+                                            </TableCell>
+                                            <TableCell>{route.id}</TableCell>
+                                            <TableCell>{route.driverUsername}</TableCell>
+                                            <TableCell>{route.vehicleId}</TableCell>
+                                            <TableCell>
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={() => handleRowToggle(route.id)}
+                                                >
+                                                    {openRow[route.id] ? (
+                                                        <KeyboardArrowUpIcon />
+                                                    ) : (
+                                                        <KeyboardArrowDownIcon />
+                                                    )}
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell
+                                                style={{ paddingBottom: 0, paddingTop: 0 }}
+                                                colSpan={5}
+                                            >
+                                                <Collapse
+                                                    in={openRow[route.id]}
+                                                    timeout="auto"
+                                                    unmountOnExit
+                                                >
+                                                    <Box margin={1}>
+                                                    {ordersData[route.id] ? (
+                                                        <Table size="small">
+                                                            <TableHead>
+                                                                <TableRow>
+                                                                    <TableCell>Order ID</TableCell>
+                                                                    <TableCell>Address</TableCell>
+                                                                    <TableCell>Customer</TableCell>
+                                                                    <TableCell>Products</TableCell>
+                                                                    <TableCell>Status</TableCell>
+                                                                </TableRow>
+                                                            </TableHead>
+                                                            <TableBody>
+                                                                {ordersData[route.id].map((order) => (
+                                                                    <TableRow key={order.orderId} sx={{ backgroundColor: getRowColor(order.status) }}>
+                                                                        <TableCell>{order.orderId}</TableCell>
+                                                                        <TableCell>{order.addr}</TableCell>
+                                                                        <TableCell>{order.customerName}</TableCell>
+                                                                        <TableCell>{order.prodNames.join(", ")}</TableCell>
+                                                                        <TableCell>{order.status}</TableCell>
+                                                                    </TableRow>
+                                                                    ))}
+                                                            </TableBody>
+                                                        </Table>
+                                                        ) : (
+                                                            <Typography></Typography>
+                                                        )}
                                                      </Box>
                                                  </Collapse>
                                              </TableCell>
@@ -212,23 +221,15 @@ const LiveTracking = () => {
                          ) : (
                              <Typography>No routes available</Typography>
                          )}
-                     </Box>
-                    )}
-                    {activeTab === 1 && (
-                        <Typography variant="body1">
-                            Route Details goes here
-                        </Typography>
-                    )}
                 </Box>
                 <IconButton
                     onClick={toggleDrawer(false)}
                     sx={{
-                        position: 'absolute', 
-                        top: '95%',           
-                        transform: 'translateY(-50%)', 
-                        right: '10px',       
+                        position: 'fixed',
+                        bottom: 16,
+                        right: '61%',
                         backgroundColor: 'rgb(187, 205, 235)',
-                        color: 'black',
+                        color: 'black'
                     }}
                 >
                     <KeyboardArrowLeftIcon />

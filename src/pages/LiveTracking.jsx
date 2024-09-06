@@ -1,11 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {Drawer, Box, IconButton, Tabs, Tab, Typography, Table, TableBody, TableCell, TableHead, TableRow, Checkbox} from '@mui/material';
+import {Drawer, Box, IconButton, Tabs, Tab, Typography, Table, TableBody, TableCell,
+    TableHead, TableRow, Checkbox, Collapse} from '@mui/material';
 import { Link } from 'react-router-dom';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import AddressSearch from "../components/AddressSearch.jsx";
 import MapWithPins from '../components/MapWithPins.jsx';
-import {fetchMethod} from '../store/apiFunctions.js';
+import {fetchMethod, fetchDeliveryRoute} from '../store/apiFunctions.js';
 
 // Page design for live tracking page
 // address search is placeholder for directions API
@@ -14,6 +17,8 @@ const LiveTracking = () => {
     const [activeTab, setActiveTab] = React.useState(0);
     const [routesData, setRoutesData] = React.useState(null);
     const [checkedRoutes, setCheckedRoutes] = useState({});
+    const [openRow, setOpenRow] = useState({});
+    const [ordersData, setOrdersData] = React.useState({});
 
     const toggleDrawer = (open) => (event)=>
         { setDrawerOpen(open); }
@@ -31,6 +36,18 @@ const LiveTracking = () => {
                 console.error("No routes data returned");
             }
     };
+
+    const fetchOrdersFromDriver = async (username) =>
+    {
+        const fetchedOrders = await fetchDeliveryRoute(username);
+        if (fetchedOrders) {
+            console.log("Orders for driver ", username, JSON.stringify(fetchedOrders));
+            return fetchedOrders.orders.sort((a, b) => a.position - b.position);
+        } else {
+            console.error("No route data returned");
+            setNoRoutesFound(true);
+        }
+    }
 
     const handleCheckboxChange = (routeId) => (event) => {
         setCheckedRoutes((prevCheckedRoutes) => ({
@@ -55,6 +72,25 @@ const LiveTracking = () => {
         }
     }, [routesData]);
 
+    const handleRowToggle = async (routeId) => {
+        setOpenRow((prevState) => ({
+            ...prevState,
+            [routeId]: !prevState[routeId], // Toggle the open state for the specific route
+        }));
+
+        // Fetch orders if the row is expanding
+        if (!openRow[routeId]) {
+            const route = routesData.find(r => r.id === routeId);
+            if (route) {
+                const orders = await fetchOrdersFromDriver(route.driverUsername);
+                setOrdersData((prevOrders) => ({
+                    ...prevOrders,
+                    [routeId]: orders
+                }));
+            }
+        }
+    };
+
   return (
     <Box  sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
         <Drawer
@@ -64,7 +100,7 @@ const LiveTracking = () => {
                 sx={{
                     flexShrink: 0,
                     '& .MuiDrawer-paper': {
-                        width: '30vw', // Same width as above
+                        width: '40vw', // Same width as above
                         boxSizing: 'border-box',
                         backgroundColor: '#FFFFF',
                         overflowY: 'auto',
@@ -72,7 +108,7 @@ const LiveTracking = () => {
                     },
                 }}
                 ModalProps={{
-                    disableBackdropClick: true, // Disables clicking on the backdrop to close the drawer
+
                     BackdropProps: {
                         style: { backgroundColor: 'transparent' }, // Removes the dark overlay
                     },
@@ -99,21 +135,77 @@ const LiveTracking = () => {
                                          <TableCell>Route ID</TableCell>
                                          <TableCell>Driver</TableCell>
                                          <TableCell>Vehicle ID</TableCell>
+                                         <TableCell></TableCell>
                                      </TableRow>
                                  </TableHead>
                                  <TableBody>
                                      {routesData.map((route) => (
-                                         <TableRow key={route.id}>
+                                         <React.Fragment key={route.id}>
+                                         <TableRow>
                                              <TableCell>
-                                                 <Checkbox 
-                                                    checked={!!checkedRoutes[route.id]}
-                                                    onChange={handleCheckboxChange(route.id)}
+                                                 <Checkbox
+                                                     checked={!!checkedRoutes[route.id]}
+                                                     onChange={handleCheckboxChange(route.id)}
                                                  />
                                              </TableCell>
                                              <TableCell>{route.id}</TableCell>
                                              <TableCell>{route.driverUsername}</TableCell>
                                              <TableCell>{route.vehicleId}</TableCell>
+                                             <TableCell>
+                                                 <IconButton
+                                                     size="small"
+                                                     onClick={() => handleRowToggle(route.id)}
+                                                 >
+                                                     {openRow[route.id] ? (
+                                                         <KeyboardArrowUpIcon />
+                                                     ) : (
+                                                         <KeyboardArrowDownIcon />
+                                                     )}
+                                                 </IconButton>
+                                             </TableCell>
                                          </TableRow>
+                                         <TableRow>
+                                             <TableCell
+                                                 style={{ paddingBottom: 0, paddingTop: 0 }}
+                                                 colSpan={5}
+                                             >
+                                                 <Collapse
+                                                     in={openRow[route.id]}
+                                                     timeout="auto"
+                                                     unmountOnExit
+                                                 >
+                                                     <Box margin={1}>
+                                                     {ordersData[route.id] ? (
+                                                                    <Table>
+                                                                        <TableHead>
+                                                                            <TableRow>
+                                                                                <TableCell>Order ID</TableCell>
+                                                                                <TableCell>Address</TableCell>
+                                                                                <TableCell>Customer Name</TableCell>
+                                                                                <TableCell>Products</TableCell>
+                                                                                <TableCell>Status</TableCell>
+                                                                            </TableRow>
+                                                                        </TableHead>
+                                                                        <TableBody>
+                                                                            {ordersData[route.id].map((order) => (
+                                                                                <TableRow key={order.orderId}>
+                                                                                    <TableCell>{order.orderId}</TableCell>
+                                                                                    <TableCell>{order.addr}</TableCell>
+                                                                                    <TableCell>{order.customerName}</TableCell>
+                                                                                    <TableCell>{order.prodNames.join(", ")}</TableCell>
+                                                                                    <TableCell>{order.status}</TableCell>
+                                                                                </TableRow>
+                                                                            ))}
+                                                                        </TableBody>
+                                                                    </Table>
+                                                                ) : (
+                                                                    <Typography>No orders available</Typography>
+                                                                )}
+                                                     </Box>
+                                                 </Collapse>
+                                             </TableCell>
+                                         </TableRow>
+                                     </React.Fragment>
                                      ))}
                                  </TableBody>
                              </Table>

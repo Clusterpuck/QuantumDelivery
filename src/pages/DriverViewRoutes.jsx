@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from 'react';
-import { Box, Drawer, IconButton, Typography, Button, Modal, Backdrop, Fade, CircularProgress } from '@mui/material';import RouteIcon from '@mui/icons-material/Route';
+import { Box, Drawer, IconButton, Typography, Button, Modal, Fade, CircularProgress } from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -144,7 +144,7 @@ const DriverViewRoutes = ({}) =>
     };
       
     return (
-        <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+        <Box  sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
             <Drawer
                 anchor="left"
                 open={drawerOpen}
@@ -158,6 +158,7 @@ const DriverViewRoutes = ({}) =>
                         backgroundColor: '#FFFFF',
                         zIndex: 1200,
                         overflowY: 'auto',
+                        paddingTop: '56px',
                     },
                 }}
             >

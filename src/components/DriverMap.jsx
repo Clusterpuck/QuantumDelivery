@@ -78,7 +78,9 @@ const DriverMap = ({start,end}) =>
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/streets-v11',
             center: start, // Set the initial center coordinates (to Perth)
-            zoom: 15 // Set the initial zoom level
+            zoom: 15, // Set the initial zoom level
+            width: '100vw',
+            height: '100vh'
         });
 
         map.current.on('load', () => {

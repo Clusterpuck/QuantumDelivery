@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {Drawer, Box, IconButton, Tabs, Tab, Typography, Table, TableBody, TableCell,
     TableHead, TableRow, Checkbox, Collapse} from '@mui/material';
 import { Link } from 'react-router-dom';
@@ -6,9 +6,9 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import AddressSearch from "../components/AddressSearch.jsx";
-import MapWithPins from '../components/MapWithPins.jsx';
 import {fetchMethod, fetchDeliveryRoute} from '../store/apiFunctions.js';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 // Page design for live tracking page
 // address search is placeholder for directions API
@@ -18,9 +18,18 @@ const LiveTracking = () => {
     const [checkedRoutes, setCheckedRoutes] = useState({});
     const [openRow, setOpenRow] = useState({});
     const [ordersData, setOrdersData] = React.useState({});
+    const [checkedOrdersData, setCheckedOrdersData] = useState({});
+    const mapContainer = useRef(null);
+    const map = useRef(null);
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg'; 
 
     const toggleDrawer = (open) => (event)=>
         { setDrawerOpen(open); }
+
+    useEffect(() => {
+        console.log("Updated checkedRoutes: ", checkedRoutes);
+    }, [checkedRoutes]);
 
     const fetchRouteData = async () =>
     {
@@ -50,7 +59,6 @@ const LiveTracking = () => {
             ...prevCheckedRoutes,
             [routeId]: event.target.checked,
         }))
-        console.log("checkboxes: ", checkedRoutes);
     };
 
     useEffect(() =>
@@ -96,8 +104,105 @@ const LiveTracking = () => {
         }
     };
 
+    useEffect(() => {
+        if (map.current) return; // If map already exists, do nothing
+
+        map.current = new mapboxgl.Map({
+            container: mapContainer.current,
+            style: 'mapbox://styles/mapbox/streets-v11', // Style of the map
+            center: [115.8575, -31.9505], // Initial coordinates, e.g., Perth
+            zoom: 10,
+        });
+    }, []);
+
+     // Fetch orders for all checked routes whenever checkedRoutes changes
+    useEffect(() => {
+        const fetchOrdersForCheckedRoutes = async () => {
+            const newCheckedOrdersData = {};
+        
+            for (const routeId of Object.keys(checkedRoutes)) {
+                if (checkedRoutes[routeId]) {
+                    console.log("checked routes -> ", JSON.stringify(checkedRoutes));
+                    console.log("routes data -> ", JSON.stringify(routesData));
+                    const route = routesData.find(r => r.id === Number(routeId));
+
+                    console.log("routeId type:", typeof routeId, "value:", routeId);
+                    console.log("route.id type:", typeof route.id, "value:", route.id);
+
+                    console.log("the route: ", JSON.stringify(routesData));
+                    if (route) {
+                        console.log("hello");
+                        const orders = await fetchOrdersFromDriver(route.driverUsername);
+                        newCheckedOrdersData[routeId] = orders;
+                        console.log("fetched order -> ", JSON.stringify(newCheckedOrdersData));
+                    }
+                }
+            }
+            setCheckedOrdersData(newCheckedOrdersData);
+        };
+
+        if (routesData) {
+            fetchOrdersForCheckedRoutes();  
+        }
+    }, [checkedRoutes, routesData]);
+
+    // Draw routes on the map based on the orders data
+    useEffect(() => {
+        if (map.current && Object.keys(checkedOrdersData).length > 0) {
+            // Check if map has loaded
+            map.current.on('load', () => {
+                // Clear existing layers if they exist
+                if (map.current.getLayer('route-layer')) {
+                    map.current.removeLayer('route-layer');
+                    map.current.removeSource('route-source');
+                }
+    
+                // Combine coordinates of all orders from checked routes
+                const allCoordinates = [];
+                for (const routeId in checkedOrdersData) {
+                    const orders = checkedOrdersData[routeId];
+                    const routeCoordinates = orders.map(order => [order.lon, order.lat]);
+                    allCoordinates.push(...routeCoordinates);
+    
+                    // Add markers for each order
+                    orders.forEach(order => {
+                        new mapboxgl.Marker().setLngLat([order.lon, order.lat]).addTo(map.current);
+                    });
+                }
+    
+                if (allCoordinates.length > 0) {
+                    // Add the route line on the map
+                    map.current.addSource('route-source', {
+                        type: 'geojson',
+                        data: {
+                            type: 'Feature',
+                            geometry: {
+                                type: 'LineString',
+                                coordinates: allCoordinates,
+                            },
+                        },
+                    });
+    
+                    map.current.addLayer({
+                        id: 'route-layer',
+                        type: 'line',
+                        source: 'route-source',
+                        layout: {
+                            'line-join': 'round',
+                            'line-cap': 'round',
+                        },
+                        paint: {
+                            'line-color': '#888',
+                            'line-width': 6,
+                        },
+                    });
+                }
+            });
+        }
+    }, [checkedOrdersData]);
+
   return (
-    <Box  sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <Box  sx={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>
         <Drawer
                 anchor="left"
                 open={drawerOpen}
@@ -235,14 +340,21 @@ const LiveTracking = () => {
                     <KeyboardArrowLeftIcon />
                 </IconButton>
             </Drawer>
-            <Box
-                component="main"
-                sx={{ flexGrow: 1, position: 'relative', height: '100%'}}
-            >
+            <Box component="main" sx={{ flexGrow: 1, position: 'relative', height: '100%', width: '100%' }}>
+                <div
+                    ref={mapContainer}
+                    style={{ width: '100vw', height: '100vh', position: 'absolute', top: 0, left: 0 }}
+                />
                 {!drawerOpen && (
                     <IconButton
                         onClick={toggleDrawer(true)}
-                        sx={{ position: 'fixed', bottom: 16, left: 16, backgroundColor: 'rgba(255, 255, 255, 0.8)', zIndex: 1300, }}
+                        sx={{
+                            position: 'fixed',
+                            bottom: 16,
+                            left: 16,
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            zIndex: 1300,
+                        }}
                     >
                         <KeyboardArrowRightIcon />
                     </IconButton>

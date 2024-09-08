@@ -31,6 +31,10 @@ const LiveTracking = () => {
         console.log("Updated checkedRoutes: ", checkedRoutes);
     }, [checkedRoutes]);
 
+    useEffect(() => {
+        console.log("Updated checkedOrdersDAta: ", checkedOrdersData);
+    }, [checkedOrdersData]);
+
     const fetchRouteData = async () =>
     {
             const fetchedRoutes = await fetchMethod("deliveryroutes");
@@ -104,16 +108,6 @@ const LiveTracking = () => {
         }
     };
 
-    useEffect(() => {
-        if (map.current) return; // If map already exists, do nothing
-
-        map.current = new mapboxgl.Map({
-            container: mapContainer.current,
-            style: 'mapbox://styles/mapbox/streets-v11', // Style of the map
-            center: [115.8575, -31.9505], // Initial coordinates, e.g., Perth
-            zoom: 10,
-        });
-    }, []);
 
      // Fetch orders for all checked routes whenever checkedRoutes changes
     useEffect(() => {
@@ -146,60 +140,76 @@ const LiveTracking = () => {
         }
     }, [checkedRoutes, routesData]);
 
+    useEffect(() => {
+        if (map.current) return;
+        map.current = new mapboxgl.Map({
+            container: mapContainer.current,
+            style: 'mapbox://styles/mapbox/streets-v11', // Style of the map
+            center: [115.8575, -31.9505], // Initial coordinates, e.g., Perth
+            zoom: 10,
+        });
+    }, [])
+
     // Draw routes on the map based on the orders data
     useEffect(() => {
-        if (map.current && Object.keys(checkedOrdersData).length > 0) {
-            // Check if map has loaded
-            map.current.on('load', () => {
-                // Clear existing layers if they exist
-                if (map.current.getLayer('route-layer')) {
-                    map.current.removeLayer('route-layer');
-                    map.current.removeSource('route-source');
-                }
     
-                // Combine coordinates of all orders from checked routes
-                const allCoordinates = [];
-                for (const routeId in checkedOrdersData) {
-                    const orders = checkedOrdersData[routeId];
-                    const routeCoordinates = orders.map(order => [order.lon, order.lat]);
-                    allCoordinates.push(...routeCoordinates);
-    
-                    // Add markers for each order
-                    orders.forEach(order => {
-                        new mapboxgl.Marker().setLngLat([order.lon, order.lat]).addTo(map.current);
-                    });
-                }
-    
-                if (allCoordinates.length > 0) {
-                    // Add the route line on the map
-                    map.current.addSource('route-source', {
-                        type: 'geojson',
-                        data: {
-                            type: 'Feature',
-                            geometry: {
-                                type: 'LineString',
-                                coordinates: allCoordinates,
-                            },
-                        },
-                    });
-    
-                    map.current.addLayer({
-                        id: 'route-layer',
-                        type: 'line',
-                        source: 'route-source',
-                        layout: {
-                            'line-join': 'round',
-                            'line-cap': 'round',
-                        },
-                        paint: {
-                            'line-color': '#888',
-                            'line-width': 6,
-                        },
-                    });
-                }
+        console.log("Map loaded successfully.");
+
+        // Clear existing layers if they exist
+        if (map.current.getLayer('route-layer')) {
+            map.current.removeLayer('route-layer');
+            map.current.removeSource('route-source');
+        }
+
+        // Combine coordinates of all orders from checked routes
+        const allCoordinates = [];
+        for (const routeId in checkedOrdersData) {
+            const orders = checkedOrdersData[routeId];
+            const routeCoordinates = orders.map(order => [order.lon, order.lat]);
+            allCoordinates.push(...routeCoordinates);
+
+            // Add markers for each order
+            orders.forEach(order => {
+                new mapboxgl.Marker().setLngLat([order.lon, order.lat]).addTo(map.current);
             });
         }
-    }, [checkedOrdersData]);
+
+        console.log("all coordinates -> ", allCoordinates);
+
+        if (allCoordinates.length > 0) {
+            // Add the route line on the map
+            map.current.addSource('route-source', {
+                type: 'geojson',
+                data: {
+                    type: 'Feature',
+                    geometry: {
+                        type: 'LineString',
+                        coordinates: allCoordinates,
+                    },
+                },
+            });
+
+            map.current.addLayer({
+                id: 'route-layer',
+                type: 'line',
+                source: 'route-source',
+                layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round',
+                },
+                paint: {
+                    'line-color': '#888',
+                    'line-width': 6,
+                },
+            });
+        }
+
+    // Add error event listener for map
+    map.current.on('error', (e) => {
+        console.error('Map error:', e);
+    });
+
+}, [checkedOrdersData]);
 
   return (
     <Box  sx={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>

@@ -265,7 +265,9 @@ const AddOrder = () => {
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
 
-            <OrdersTable updateData={refreshOrders}/>
+            { refreshOrders ? (<OrdersTable updateData={refreshOrders}/>) : (
+            <p>No Orders</p>
+            )}
 </Box>
 
             <Snackbar

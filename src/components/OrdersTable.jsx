@@ -16,6 +16,7 @@ const OrdersTable = ({updateData}) => {
         const orderList = await fetchMethod("orders");
         if (orderList) {
             setOrders(orderList);
+            console.log("Orders recieved are ", JSON.stringify(orderList));
         } else {
             console.error('Error fetching orders:', error);
             setSnackbarMessage('Failed to load orders');
@@ -49,11 +50,11 @@ const OrdersTable = ({updateData}) => {
 
     // The rows should be based on the fetched orders data
     const rows = orders.map(order => ({
-        id: order.orderId,
-        Address: order.addr,
+        id: order.orderID,
+        Address: order.address,
         status: order.status,
         customerName: order.customerName,
-        notes: order.notes,
+        notes: order.orderNotes,
         DeliveryDate: formatDate(order.deliveryDate),
 
     }));

@@ -103,6 +103,7 @@ const AddOrder = () => {
         const result = await postMethod(orderObject, 'Orders');
         if(result!= null )
         {
+            console.log("Orders recieved are ", JSON.stringify(result));
             setRefreshOrders(prev => prev + 1); // Change the trigger value to refresh data
             setSnackbar({
                 open: true,
@@ -265,9 +266,7 @@ const AddOrder = () => {
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
 
-            { refreshOrders ? (<OrdersTable updateData={refreshOrders}/>) : (
-            <p>No Orders</p>
-            )}
+            { refreshOrders ?  (<p>No Orders</p>) : (<OrdersTable updateData={refreshOrders}/>) }
 </Box>
 
             <Snackbar

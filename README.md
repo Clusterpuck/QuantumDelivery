@@ -22,7 +22,7 @@ This project is a web application that represents the front end of a Quantum Del
     > routes.js - file to initialize the routes to each component.
 
     
-Testing pushing direct to main X2
+Testing pushing direct to main X3
 
 # How to add a new web page
 - Create .jsx file in the ‘pages’ folder

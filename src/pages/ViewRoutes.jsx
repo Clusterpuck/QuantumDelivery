@@ -17,6 +17,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import dayjs from 'dayjs';
+import {enableScroll} from '../assets/scroll.js';
 
 const styleConstants = {
   fieldSpacing: { mb: 4 }
@@ -58,6 +59,10 @@ const ViewRoutes = ({ updateData }) =>
   {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
+
+  useEffect(() => {
+    enableScroll();
+}, []);
 
 
   const loadOrders = useCallback(async () =>

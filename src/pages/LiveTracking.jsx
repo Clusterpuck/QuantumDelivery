@@ -9,9 +9,12 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import {fetchMethod, fetchDeliveryRoute} from '../store/apiFunctions.js';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import {disableScroll} from '../assets/scroll.js';
 
 // Page design for live tracking page
 // address search is placeholder for directions API
+
+
 const LiveTracking = () => {
     const [drawerOpen, setDrawerOpen] = React.useState(true);
     const [routesData, setRoutesData] = React.useState(null);
@@ -21,6 +24,7 @@ const LiveTracking = () => {
     const [checkedOrdersData, setCheckedOrdersData] = useState({});
     const mapContainer = useRef(null);
     const map = useRef(null);
+
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg'; 
 
@@ -67,6 +71,7 @@ const LiveTracking = () => {
 
     useEffect(() =>
     {
+        disableScroll();
         fetchRouteData();
     }, []);
 

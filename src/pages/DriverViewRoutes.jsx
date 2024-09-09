@@ -10,6 +10,7 @@ import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper}
 import DriverMap from '../components/DriverMap.jsx'; 
 import { fetchDeliveryRoute, fetchMethod, startDeliveryRoute, updateOrderStatus } from '../store/apiFunctions';
 import NoRouteFound from '../components/NoRouteFound.jsx';
+import {disableScroll} from '../assets/scroll.js';
 
 const DriverViewRoutes = ({}) => 
 {
@@ -39,6 +40,10 @@ const DriverViewRoutes = ({}) =>
                 return '#d4edda'; // Light green
         }
     };
+
+    useEffect(() => {
+        disableScroll();
+    }, []);
 
 
     useEffect(() => { // use effect for fetching the current location

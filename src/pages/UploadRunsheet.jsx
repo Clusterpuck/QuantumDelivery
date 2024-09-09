@@ -1,7 +1,13 @@
-import React from 'react';
+
+import React, {useEffect} from 'react';
+import {enableScroll} from '../assets/scroll.js';
 
 // Page design for upload runsheets page
 const UploadRunsheet = () => {
+  useEffect(() => {
+    enableScroll();
+}, []);
+
     return (
       <div
         style={{

@@ -1,8 +1,13 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import RegistrationForm from "../components/RegistrationForm"
+import {enableScroll} from '../assets/scroll.js';
 
 const Register = () => {
+    useEffect(() => {
+        enableScroll();
+    }, []);
+
     return (
         <div
             style={{

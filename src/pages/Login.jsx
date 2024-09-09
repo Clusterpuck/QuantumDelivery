@@ -1,10 +1,15 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import LoginForm from '../components/LoginForm';
+import {enableScroll} from '../assets/scroll.js';
 
 //This branch is now protected
 
 const Login = () => {
+    useEffect(() => {
+        enableScroll();
+    }, []);
+
     return (
         <div
             style={{

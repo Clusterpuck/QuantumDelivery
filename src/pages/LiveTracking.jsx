@@ -355,10 +355,10 @@ const LiveTracking = () => {
                     <KeyboardArrowLeftIcon />
                 </IconButton>
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, position: 'relative', height: '100%', width: '100%' }}>
+            <Box component="main" sx={{ flexGrow: 1, position: 'fixed', height: '100vh', width: '100vw',  margin: 0, padding: 0  }}>
                 <div
                     ref={mapContainer}
-                    style={{ width: '100vw', height: '100vh', position: 'absolute', top: 0, left: 0 }}
+                    style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, margin: 0, padding: 0  }}
                 />
                 {!drawerOpen && (
                     <IconButton

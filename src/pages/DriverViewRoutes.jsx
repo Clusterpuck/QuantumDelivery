@@ -377,7 +377,7 @@ const DriverViewRoutes = ({}) =>
             </Drawer>
             <Box
                 component="main"
-                sx={{ flexGrow: 1, position: 'relative', height: '100%'}}
+                sx={{ flexGrow: 1, position: 'fixed', height: '100vh', width: '100vw',  margin: 0, padding: 0 }}
             >
                 {!drawerOpen && (
                     <IconButton
@@ -389,9 +389,11 @@ const DriverViewRoutes = ({}) =>
                 )}
                 <Box
                     sx={{
-                        width: '100%',
-                        height: '100%',
-                        overflow: 'hidden'
+                        width: '100vw',
+                        height: '100vh',
+                        overflow: 'hidden',
+                        position: 'fixed',
+                        margin: 0, padding: 0
                     }}
                 >
                     {isLoading ? (
@@ -413,7 +415,7 @@ const DriverViewRoutes = ({}) =>
                     width: '100%',
                     textAlign: 'center',
                     }}
-                >
+                    >
                         <NoRouteFound />
                         </Box>
                     ) : (

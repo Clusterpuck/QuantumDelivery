@@ -192,7 +192,7 @@ export const fetchDeliveryRoute = async (driverUsername) => {
 
 export const postDeliveryRoutes = async (newInput) => {
     try {
-        const response = await fetch(Constants.DATA_ENDPOINT + 'deliveryroutes/calculate', {
+        const response = await fetch(Constants.DATA_ENDPOINT + 'deliveryroutes', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

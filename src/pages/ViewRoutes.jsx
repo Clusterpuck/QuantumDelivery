@@ -101,7 +101,7 @@ const ViewRoutes = ({ updateData }) =>
         numVehicle: numVehicles,
         calcType: calcType,
         deliveryDate: selectedDate,
-        orders: allOrders.map(order => order.orderId) // all orders
+        orders: allOrders.map(order => order.orderID) // all orders
       };
 
       console.log("Payload being sent: ", JSON.stringify(userInput));
@@ -111,7 +111,7 @@ const ViewRoutes = ({ updateData }) =>
         // Separate unassigned orders (vehicleId: 0) from assigned routes
         const unassigned = routesList.filter(route => route.vehicleId === 0);
         const assigned = routesList.filter(route => route.vehicleId !== 0);
-        //console.log("Route object recieved is ", JSON.stringify(assigned));
+        console.log("Route object recieved is ", JSON.stringify(assigned));
 
         setUnassignedOrders(unassigned.flatMap(route => route.orders)); // Combine all unassigned orders
         setRoutes(assigned);
@@ -147,13 +147,13 @@ const ViewRoutes = ({ updateData }) =>
 
   // Define columns for DataGrid
   const columns = [
-    { field: 'orderId', headerName: 'Order ID', width: 90 },
+    { field: 'orderID', headerName: 'Order ID', width: 90 },
     //{ field: 'lat', headerName: 'Latitude', width: 150 },
     //{ field: 'long', headerName: 'Longitude', width: 150 },
-    { field: 'addr', headerName: 'Address', width: 150 },
+    { field: 'address', headerName: 'Address', width: 150 },
     { field: 'status', headerName: 'Status', width: 150 },
     {
-      field: 'prodNames', headerName: 'Product Names', width: 500, renderCell: (params) => params.value.join(', '
+      field: 'productNames', headerName: 'Product Names', width: 500, renderCell: (params) => params.value.join(', '
       )
     },
     { field: 'customerName', headerName: 'Customer Name', width: 150 }
@@ -262,7 +262,7 @@ const ViewRoutes = ({ updateData }) =>
             <Grid item xs={12}>
               <h3>Unassigned</h3>
               <DataGrid
-                rows={unassignedOrders.map((order, idx) => ({ id: order.orderId, ...order }))}
+                rows={unassignedOrders.map((order, idx) => ({ id: order.orderID, ...order }))}
                 columns={columns}
                 pageSize={5}
                 autoHeight
@@ -280,14 +280,14 @@ const ViewRoutes = ({ updateData }) =>
               </Divider>
               <Grid item sx={styleConstants.fieldSpacing}>
                 <DataGrid
-                  rows={vehicle.orders.map((order, idx) => ({ id: order.orderId, ...order }))}
+                  rows={vehicle.orders.map((order, idx) => ({ id: order.orderID, ...order }))}
                   columns={columns}
                   pageSize={5}
                   autoHeight
                 />
                 <MapWithPins inputLocations={vehicle.orders.map(order => ({
-                  latitude: order.lat,
-                  longitude: order.lon
+                  latitude: order.latitude,
+                  longitude: order.longitude
                 }))} />
               </Grid>
             </Grid>

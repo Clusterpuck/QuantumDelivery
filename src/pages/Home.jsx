@@ -7,6 +7,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import MapComponent from '../MapComponent.jsx';
 import AddressSearch from '../components/AddressSearch.jsx';
 import * as Constants from '../Constants.js';
+import {enableScroll} from '../assets/scroll.js';
 
 const FactGenerator = () => {
     const [fact, setFact] = useState('');
@@ -15,6 +16,10 @@ const FactGenerator = () => {
     const [location, setLocation] = useState('Not Found');
     const [latitude, setLatitude] = useState(-70);
     const [longitude, setLongitude] = useState(115);
+
+    useEffect(() => {
+        enableScroll();
+    }, []);
 
     useEffect(() => {
         fetchRandomFact();

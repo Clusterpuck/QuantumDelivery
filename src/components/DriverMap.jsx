@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {Box} from '@mui/material';
+import {disableScroll} from '../assets/scroll.js';
 
 // Set your Mapbox access token here
 mapboxgl.accessToken = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
@@ -78,7 +79,9 @@ const DriverMap = ({start,end}) =>
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/streets-v11',
             center: start, // Set the initial center coordinates (to Perth)
-            zoom: 15 // Set the initial zoom level
+            zoom: 15, // Set the initial zoom level
+            width: '100vw',
+            height: '100vh'
         });
 
         map.current.on('load', () => {
@@ -111,22 +114,26 @@ const DriverMap = ({start,end}) =>
         });
     }, [start, end]);
 
+    useEffect(() => {
+        disableScroll();
+    }, []);
+
     return (
-        <Box sx={{ position: 'relative', display: 'flex', height: '100vh', justifyContent: 'center',
-            alignItems: 'center', flexDirection: 'column' }}>
+        <Box sx={{ position: 'relative',  height: '100vh', width: '100vw', margin: 0, padding: 0 }}>
             <Box
                 className="map-container"
                 ref={mapContainer}
-                sx={{ width: '100%', height: '85%' }}
+                sx={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, margin: 0, padding: 0 }}
             />
             <Box
                 id="instructions"
                 sx={{
-                    position: 'absolute',
+                    position: 'fixed',
                     top:0,
-                    width: '100%',
-                    height: '15%',
-                    padding: '20px',
+                    left: 0,
+                    width: '100vw',
+                    height: '20vh',
+                    paddingTop: '80px',
                     backgroundColor: '#fff',
                     overflowY: 'auto',
                     fontFamily: 'sans-serif',

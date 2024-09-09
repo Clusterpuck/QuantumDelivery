@@ -10,6 +10,7 @@ import AddLocationIcon from '@mui/icons-material/AddLocation';
 import SendIcon from '@mui/icons-material/Send';
 import Typography from '@mui/material/Typography';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
+import {enableScroll} from '../assets/scroll.js';
 
 const styleConstants = {
     fieldSpacing: { mb: 2 }
@@ -30,6 +31,10 @@ const AddOrder = () => {
         message: '',
         severity: 'success',
     });
+
+    useEffect(() => {
+        enableScroll();
+    }, []);
 
     useEffect(() => {
         const loadData = async () => {

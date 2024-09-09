@@ -10,6 +10,7 @@ import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper}
 import DriverMap from '../components/DriverMap.jsx'; 
 import { fetchDeliveryRoute, fetchMethod, startDeliveryRoute, updateOrderStatus } from '../store/apiFunctions';
 import NoRouteFound from '../components/NoRouteFound.jsx';
+import {disableScroll} from '../assets/scroll.js';
 
 const DriverViewRoutes = ({}) => 
 {
@@ -39,6 +40,10 @@ const DriverViewRoutes = ({}) =>
                 return '#d4edda'; // Light green
         }
     };
+
+    useEffect(() => {
+        disableScroll();
+    }, []);
 
 
     useEffect(() => { // use effect for fetching the current location
@@ -372,7 +377,7 @@ const DriverViewRoutes = ({}) =>
             </Drawer>
             <Box
                 component="main"
-                sx={{ flexGrow: 1, position: 'relative', height: '100%'}}
+                sx={{ flexGrow: 1, position: 'fixed', height: '100vh', width: '100vw',  margin: 0, padding: 0 }}
             >
                 {!drawerOpen && (
                     <IconButton
@@ -384,9 +389,11 @@ const DriverViewRoutes = ({}) =>
                 )}
                 <Box
                     sx={{
-                        width: '100%',
-                        height: '100%',
-                        overflow: 'hidden'
+                        width: '100vw',
+                        height: '100vh',
+                        overflow: 'hidden',
+                        position: 'fixed',
+                        margin: 0, padding: 0
                     }}
                 >
                     {isLoading ? (
@@ -408,7 +415,7 @@ const DriverViewRoutes = ({}) =>
                     width: '100%',
                     textAlign: 'center',
                     }}
-                >
+                    >
                         <NoRouteFound />
                         </Box>
                     ) : (

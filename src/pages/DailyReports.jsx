@@ -1,7 +1,14 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Link } from 'react-router-dom';
+import {enableScroll} from '../assets/scroll.js';
+
 
 const DailyReports = () => {
+
+    useEffect(() => {
+        enableScroll();
+    }, []);
+
     return (
         <div
             style={{

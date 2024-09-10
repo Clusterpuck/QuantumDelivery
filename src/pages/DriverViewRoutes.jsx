@@ -30,6 +30,7 @@ const DriverViewRoutes = ({}) =>
     const [noRoutesFound, setNoRoutesFound] = React.useState(false); 
     const [routeId, setRouteId] = React.useState(null);
     const [anyPlanned, setAnyPlanned] = React.useState(true);
+    const [finishedDelivery, setFinishedDelivery] = React.useState(false);
 
     const driverUsername = 'Bob1'; // hard coded for now
 
@@ -90,7 +91,9 @@ const DriverViewRoutes = ({}) =>
                 setNextDeliveries(sortedDeliveries.slice(1));
 
                 const anyPlanned = sortedDeliveries.some(order => order.status === 'planned');
+                const finishedDelivery = sortedDeliveries.every(order => order.status === 'delivered');
                 setAnyPlanned(anyPlanned);
+                setFinishedDelivery(finishedDelivery)
                 console.log("Current delivery in use effect is ", sortedDeliveries[0]);
             } else {
                 console.error("No route data returned");
@@ -142,6 +145,7 @@ const DriverViewRoutes = ({}) =>
                 status: "delivered"
             };
             const result = await updateOrderStatus(input);
+            await fetchDeliveryData();
 
             if (result)
             {
@@ -187,164 +191,166 @@ const DriverViewRoutes = ({}) =>
                         Delivery Progress
                     </Typography>
                 </Box>
-                <Box 
-                sx={{
-                    display: 'flex',
-                    top: 0, // Position at the top
-                    left: 0, // Align to the left
-                    width: 'calc(100% - 32px)%', // Full width of the drawer
-                    justifyContent: 'center', // Horizontally centers the content
-                    alignItems: 'center',     // Vertically centers the content
-                    margin: 2,
-                    borderRadius: 4, 
-                    }}
-                >
-                    {anyPlanned && (
-                    <Button variant="outlined" color="primary" onClick={handleStartDelivery}
+                {!finishedDelivery && (
+                <Box>
+                    <Box 
                     sx={{
-                        flex: 1,
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)'
-                    }}>
-                        Start Delivery
-                        <LocalShippingIcon  sx={{ marginLeft: 2 }} />
-                    </Button>
-                    ) }
-                    {!anyPlanned && (
-                    <Box sx={{
                         display: 'flex',
                         top: 0, // Position at the top
                         left: 0, // Align to the left
-                        width: '100%', // Full width of the drawer
-                        height: '32px',
+                        width: 'calc(100% - 32px)%', // Full width of the drawer
+                        justifyContent: 'center', // Horizontally centers the content
+                        alignItems: 'center',     // Vertically centers the content
+                        margin: 2,
+                        borderRadius: 4, 
+                        }}
+                    >
+                        {anyPlanned && (
+                        <Button variant="outlined" color="primary" onClick={handleStartDelivery}
+                        sx={{
+                            flex: 1,
+                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)'
+                        }}>
+                            Start Delivery
+                            <LocalShippingIcon  sx={{ marginLeft: 2 }} />
+                        </Button>
+                        ) }
+                        {!anyPlanned && (
+                        <Box sx={{
+                            display: 'flex',
+                            top: 0, // Position at the top
+                            left: 0, // Align to the left
+                            width: '100%', // Full width of the drawer
+                            height: '32px',
+                            p: 0, // Padding around the text
+                            backgroundColor: '#fffff', 
+                            justifyContent: 'center', // Horizontally centers the content
+                            alignItems: 'center',     // Vertically centers the content
+                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                            marginTop: 1,
+                            borderRadius: 2, 
+                            }}
+                        >
+                            <Typography variant="body2" color="textSecondary" sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                fontSize: '0.875rem',
+                            }}>
+                                Delivery Started
+                                <LocalShippingIcon sx={{ marginLeft: 1, verticalAlign: 'middle' }} />
+                            </Typography>
+                        </Box>
+                        )}
+                        
+                    </Box>
+        
+                    <Box 
+                    sx={{
+                        display: 'flex',
+                        top: 0, // Position at the top
+                        left: 0, // Align to the left
+                        width: 'calc(100% - 32px)%', // Full width of the drawer
                         p: 0, // Padding around the text
-                        backgroundColor: '#fffff', 
+                        backgroundColor: '#582c4d', 
                         justifyContent: 'center', // Horizontally centers the content
                         alignItems: 'center',     // Vertically centers the content
                         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                        margin: 2,
                         marginTop: 1,
-                        borderRadius: 2, 
+                        borderRadius: 4, 
                         }}
                     >
-                        <Typography variant="body2" color="textSecondary" sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            fontSize: '0.875rem',
-                        }}>
-                            Delivery Started
-                            <LocalShippingIcon sx={{ marginLeft: 1, verticalAlign: 'middle' }} />
+                        <Typography variant="h6" color="white" sx={{ p: 2, fontSize: '0.875rem', fontWeight: 'bold' }}>
+                            Current Delivery 
                         </Typography>
                     </Box>
-)}
-                    
-                </Box>
-       
-                <Box 
-                sx={{
+                    <Box
+                    sx={{
                     display: 'flex',
                     top: 0, // Position at the top
                     left: 0, // Align to the left
-                    width: 'calc(100% - 32px)%', // Full width of the drawer
+                    width: 'calc(100% - 32px)', // Full width of the drawer
                     p: 0, // Padding around the text
-                    backgroundColor: '#582c4d', 
+                    backgroundColor: '#D7E1F0', 
                     justifyContent: 'center', // Horizontally centers the content
                     alignItems: 'center',     // Vertically centers the content
                     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
-                    margin: 2,
-                    marginTop: 1,
+                    marginLeft: 2,
+                    marginBottom: 2,
                     borderRadius: 4, 
                     }}
-                >
-                    <Typography variant="h6" color="white" sx={{ p: 2, fontSize: '0.875rem', fontWeight: 'bold' }}>
-                        Current Delivery 
-                    </Typography>
-                </Box>
-                <Box
-                sx={{
-                display: 'flex',
-                top: 0, // Position at the top
-                left: 0, // Align to the left
-                width: 'calc(100% - 32px)', // Full width of the drawer
-                p: 0, // Padding around the text
-                backgroundColor: '#D7E1F0', 
-                justifyContent: 'center', // Horizontally centers the content
-                alignItems: 'center',     // Vertically centers the content
-                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
-                marginLeft: 2,
-                marginBottom: 2,
-                borderRadius: 4, 
-                }}
-                > {noRoutesFound ? (
-                    <Typography variant="body1" color="textSecondary">
-                        No deliveries
-                    </Typography>
-                ) : (
-                    <TableContainer component={Paper}>
-                        <Table>
-                        <TableBody>
-                                <TableRow>
-                                    <TableCell sx={{ width: 120 }}>Address</TableCell>
-                                    <TableCell>{currentDelivery?.addr}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell sx={{ width: 120 }}>Customer Name</TableCell>
-                                    <TableCell>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                            <Typography sx={{ fontSize: '0.875rem' }}>{currentDelivery?.customerName}</Typography>
-                                            <IconButton onClick={handlePhoneClick} sx={{ ml: 2 }}>
-                                                <PhoneIcon />
-                                            </IconButton>
-                                        </Box>
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell sx={{ width: 120 }}>Order ID</TableCell>
-                                    <TableCell>{currentDelivery?.orderId}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell sx={{ width: 120 }}>Products</TableCell>
-                                    <TableCell>{currentDelivery?.prodNames.join(', ')}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell sx={{ width: 120 }}>Status</TableCell>
-                                    <TableCell>{currentDelivery?.status}</TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </TableContainer>)}
-                </Box>
-                <Box
-                sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                width: 'calc(100% - 32px)',
-                p: 2,
-                }}
-                >
-                    {!anyPlanned && (
-                        <>
-                    <Button variant="contained" color = "primary" onClick={handleMarkAsDelivered} 
+                    > {noRoutesFound ? (
+                        <Typography variant="body1" color="textSecondary">
+                            No deliveries
+                        </Typography>
+                    ) : (
+                        <TableContainer component={Paper}>
+                            <Table>
+                            <TableBody>
+                                    <TableRow>
+                                        <TableCell sx={{ width: 120 }}>Address</TableCell>
+                                        <TableCell>{currentDelivery?.addr}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell sx={{ width: 120 }}>Customer Name</TableCell>
+                                        <TableCell>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                <Typography sx={{ fontSize: '0.875rem' }}>{currentDelivery?.customerName}</Typography>
+                                                <IconButton onClick={handlePhoneClick} sx={{ ml: 2 }}>
+                                                    <PhoneIcon />
+                                                </IconButton>
+                                            </Box>
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell sx={{ width: 120 }}>Order ID</TableCell>
+                                        <TableCell>{currentDelivery?.orderId}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell sx={{ width: 120 }}>Products</TableCell>
+                                        <TableCell>{currentDelivery?.prodNames.join(', ')}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell sx={{ width: 120 }}>Status</TableCell>
+                                        <TableCell>{currentDelivery?.status}</TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </TableContainer>)}
+                    </Box>
+                    <Box
                     sx={{
-                        flex: 1,
-                        marginRight: 2, 
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)'
-                    }}>
-                        Mark as Delivered
-                        <CheckCircleIcon  />
-                    </Button>
-                    <Button variant="outlined" color="primary"
-                    sx={{
-                        flex: 1,
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)'
-                    }}>
-                        Report Issue
-                        <WarningAmberIcon  />
-                    </Button>
-                    </>
-                    )}
-                </Box>
-            <Box
-            sx={{
-                display: 'flex',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    width: 'calc(100% - 32px)',
+                    p: 2,
+                    }}
+                    >
+                        {!anyPlanned && (
+                            <>
+                        <Button variant="contained" color = "primary" onClick={handleMarkAsDelivered} 
+                        sx={{
+                            flex: 1,
+                            marginRight: 2, 
+                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)'
+                        }}>
+                            Mark as Delivered
+                            <CheckCircleIcon  />
+                        </Button>
+                        <Button variant="outlined" color="primary"
+                        sx={{
+                            flex: 1,
+                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)'
+                        }}>
+                            Report Issue
+                            <WarningAmberIcon  />
+                        </Button>
+                        </>
+                        )}
+                    </Box>
+                    <Box
+                        sx={{
+                        display: 'flex',
                         top: 0, // Position at the top
                         left: 0, // Align to the left
                         width: 'calc(100% - 32px)', // Full width of the drawer
@@ -355,15 +361,15 @@ const DriverViewRoutes = ({}) =>
                         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
                         margin: 2,
                         borderRadius: 4, 
-            }}
-            >
-            <Typography variant="h6" color="white" sx={{ p: 2, fontSize: '0.875rem', fontWeight: 'bold' }}>
-                Next Deliveries 
-            </Typography>
-            </Box>
-            <Box
-            sx={{
-                display: 'flex',
+                        }}
+                    >
+                        <Typography variant="h6" color="white" sx={{ p: 2, fontSize: '0.875rem', fontWeight: 'bold' }}>
+                            Next Deliveries 
+                        </Typography>
+                    </Box>
+                    <Box
+                        sx={{
+                        display: 'flex',
                         top: 0, // Position at the top
                         left: 0, // Align to the left
                         width: 'calc(100% - 32px)', // Full width of the drawer
@@ -375,43 +381,71 @@ const DriverViewRoutes = ({}) =>
                         marginLeft: 2,
                         marginBottom: 2,
                         borderRadius: 4, 
-            }}
-            >
-            <TableContainer component={Paper}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Address</TableCell>
-                                    <TableCell>Customer Name</TableCell>
-                                    <TableCell>Order ID</TableCell>
-                                    <TableCell>Status</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {nextDeliveries.map((row, index) => (
-                                    <TableRow key={index} sx={{ backgroundColor: getRowColor(row.status) }}>
-                                        <TableCell>{row.addr}</TableCell>
-                                        <TableCell>{row.customerName}</TableCell>
-                                        <TableCell>{row.orderId}</TableCell>
-                                        <TableCell>{row.status}</TableCell>
+                        }}
+                    >
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Address</TableCell>
+                                        <TableCell>Customer Name</TableCell>
+                                        <TableCell>Order ID</TableCell>
+                                        <TableCell>Status</TableCell>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-            </Box>
-                <IconButton
-                    onClick={toggleDrawer(false)}
-                    sx={{
-                        position: 'fixed',
-                        bottom: 16,
-                        right: 16,
-                        backgroundColor: 'rgb(187, 205, 235)',
-                        color: 'black'
-                    }}
-                >
-                    <KeyboardArrowLeftIcon />
-                </IconButton>
+                                </TableHead>
+                                <TableBody>
+                                    {nextDeliveries.map((row, index) => (
+                                        <TableRow key={index} sx={{ backgroundColor: getRowColor(row.status) }}>
+                                            <TableCell>{row.addr}</TableCell>
+                                            <TableCell>{row.customerName}</TableCell>
+                                            <TableCell>{row.orderId}</TableCell>
+                                            <TableCell>{row.status}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Box>
+                </Box>
+                )}
+                {finishedDelivery && (
+                        <Box sx={{
+                            display: 'flex',
+                            top: 0, // Position at the top
+                            left: 0, // Align to the left
+                            width: '100% -32px', // Full width of the drawer
+                            height: '32px',
+                            p: 0, // Padding around the text
+                            backgroundColor: '#fffff', 
+                            justifyContent: 'center', // Horizontally centers the content
+                            alignItems: 'center',     // Vertically centers the content
+                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                            margin: 2,
+                            borderRadius: 2, 
+                            }}
+                        >
+                            <Typography variant="body2" color="textSecondary" sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                fontSize: '0.875rem',
+                            }}>
+                                Delivery Finished!
+                                <LocalShippingIcon sx={{ marginLeft: 1, verticalAlign: 'middle' }} />
+                            </Typography>
+                        </Box>
+                        )}
+                    <IconButton
+                        onClick={toggleDrawer(false)}
+                        sx={{
+                            position: 'fixed',
+                            bottom: 16,
+                            right: 30,
+                            backgroundColor: 'rgb(187, 205, 235)',
+                            color: 'black'
+                        }}
+                    >
+                        <KeyboardArrowLeftIcon />
+                    </IconButton>
             </Drawer>
             <Box
                 component="main"
@@ -437,21 +471,27 @@ const DriverViewRoutes = ({}) =>
                     {isLoading ? (
                     <Box
                         sx={{
-                        display: 'flex',
+                        position: 'fixed',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        height: '100%',
+                        height: '100vh',
+                        width: '100vw',
+                        left: '0%',
+                        top: '50%'
                         }}
                     >
-                        <CircularProgress /> {/* Show loading icon */}
+                        <CircularProgress /> {/* loading icon */}
                     </Box>
-                    ) : noRoutesFound ? (
+                    ) : noRoutesFound || finishedDelivery ? (
                         <Box
                      sx={{
-                    position: 'absolute',
-                    top: '20%', // Adjust this value to move the component up or down
-                    width: '100%',
-                    textAlign: 'center',
+                        position: 'fixed',
+                        justifyContent: 'center', // Center horizontally
+                        alignItems: 'center', // Center vertically
+                        height: '100vh', // Full viewport height
+                        width: '100vw',
+                        left: '-2%',
+                        top: '-5%'
                     }}
                     >
                         <NoRouteFound />

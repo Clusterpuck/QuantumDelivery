@@ -29,6 +29,7 @@ const DriverViewRoutes = ({}) =>
     const [isLoading, setIsLoading] = useState(false); 
     const [noRoutesFound, setNoRoutesFound] = React.useState(false); 
     const [routeId, setRouteId] = React.useState(null);
+    const [anyPlanned, setAnyPlanned] = React.useState(true);
 
     const driverUsername = 'Bob1'; // hard coded for now
 
@@ -87,6 +88,9 @@ const DriverViewRoutes = ({}) =>
                 const sortedDeliveries = pendingDeliveries.sort((a, b) => a.position - b.position);
                 setCurrentDelivery(sortedDeliveries[0]);
                 setNextDeliveries(sortedDeliveries.slice(1));
+
+                const anyPlanned = sortedDeliveries.some(order => order.status !== 'planned');
+                setAnyPlanned(anyPlanned);
                 console.log("Current delivery in use effect is ", sortedDeliveries[0]);
             } else {
                 console.error("No route data returned");
@@ -286,6 +290,8 @@ const DriverViewRoutes = ({}) =>
                 p: 2,
                 }}
                 >
+                    {anyPlanned && (
+                        <>
                     <Button variant="contained" color = "primary" onClick={handleMarkAsDelivered} 
                     sx={{
                         flex: 1,
@@ -303,6 +309,8 @@ const DriverViewRoutes = ({}) =>
                         Report Issue
                         <WarningAmberIcon  />
                     </Button>
+                    </>
+                    )}
                 </Box>
             <Box
             sx={{

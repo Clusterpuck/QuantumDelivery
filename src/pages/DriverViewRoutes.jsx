@@ -29,6 +29,7 @@ const DriverViewRoutes = ({}) =>
     const [isLoading, setIsLoading] = useState(false); 
     const [noRoutesFound, setNoRoutesFound] = React.useState(false); 
     const [routeId, setRouteId] = React.useState(null);
+    const [anyPlanned, setAnyPlanned] = React.useState(true);
 
     const driverUsername = 'Bob1'; // hard coded for now
 
@@ -87,6 +88,9 @@ const DriverViewRoutes = ({}) =>
                 const sortedDeliveries = pendingDeliveries.sort((a, b) => a.position - b.position);
                 setCurrentDelivery(sortedDeliveries[0]);
                 setNextDeliveries(sortedDeliveries.slice(1));
+
+                const anyPlanned = sortedDeliveries.some(order => order.status === 'planned');
+                setAnyPlanned(anyPlanned);
                 console.log("Current delivery in use effect is ", sortedDeliveries[0]);
             } else {
                 console.error("No route data returned");
@@ -195,6 +199,7 @@ const DriverViewRoutes = ({}) =>
                     borderRadius: 4, 
                     }}
                 >
+                    {anyPlanned && (
                     <Button variant="outlined" color="primary" onClick={handleStartDelivery}
                     sx={{
                         flex: 1,
@@ -203,6 +208,34 @@ const DriverViewRoutes = ({}) =>
                         Start Delivery
                         <LocalShippingIcon  sx={{ marginLeft: 2 }} />
                     </Button>
+                    ) }
+                    {!anyPlanned && (
+                    <Box sx={{
+                        display: 'flex',
+                        top: 0, // Position at the top
+                        left: 0, // Align to the left
+                        width: '100%', // Full width of the drawer
+                        height: '32px',
+                        p: 0, // Padding around the text
+                        backgroundColor: '#fffff', 
+                        justifyContent: 'center', // Horizontally centers the content
+                        alignItems: 'center',     // Vertically centers the content
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                        marginTop: 1,
+                        borderRadius: 2, 
+                        }}
+                    >
+                        <Typography variant="body2" color="textSecondary" sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontSize: '0.875rem',
+                        }}>
+                            Delivery Started
+                            <LocalShippingIcon sx={{ marginLeft: 1, verticalAlign: 'middle' }} />
+                        </Typography>
+                    </Box>
+)}
+                    
                 </Box>
        
                 <Box 
@@ -217,6 +250,7 @@ const DriverViewRoutes = ({}) =>
                     alignItems: 'center',     // Vertically centers the content
                     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
                     margin: 2,
+                    marginTop: 1,
                     borderRadius: 4, 
                     }}
                 >
@@ -286,10 +320,12 @@ const DriverViewRoutes = ({}) =>
                 p: 2,
                 }}
                 >
+                    {!anyPlanned && (
+                        <>
                     <Button variant="contained" color = "primary" onClick={handleMarkAsDelivered} 
                     sx={{
                         flex: 1,
-                        marginRight: 2, // Optional: adds space between the buttons,
+                        marginRight: 2, 
                         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)'
                     }}>
                         Mark as Delivered
@@ -303,6 +339,8 @@ const DriverViewRoutes = ({}) =>
                         Report Issue
                         <WarningAmberIcon  />
                     </Button>
+                    </>
+                    )}
                 </Box>
             <Box
             sx={{

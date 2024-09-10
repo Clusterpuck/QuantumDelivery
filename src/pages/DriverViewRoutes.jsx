@@ -30,7 +30,7 @@ const DriverViewRoutes = ({}) =>
     const [noRoutesFound, setNoRoutesFound] = React.useState(false); 
     const [routeId, setRouteId] = React.useState(null);
 
-    const driverUsername = 'Bob1'; // hard coded for now
+    const driverUsername = 'driver1@email.com'; // hard coded for now
 
     const getRowColor = (status) => {
         switch (status) {
@@ -350,6 +350,7 @@ const DriverViewRoutes = ({}) =>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
+                                {nextDeliveries? <p>has Deliveries</p> : <p>No Deliveries</p>}
                                 {nextDeliveries.map((row, index) => (
                                     <TableRow key={index} sx={{ backgroundColor: getRowColor(row.status) }}>
                                         <TableCell>{row.addr}</TableCell>
@@ -420,7 +421,7 @@ const DriverViewRoutes = ({}) =>
                         </Box>
                     ) : (
                         currentLocation.length > 0 && (
-                            <DriverMap start={currentLocation} end={[currentDelivery?.lon, currentDelivery?.lat]} />
+                           {/* <DriverMap start={currentLocation} end={[currentDelivery?.longitude, currentDelivery?.latitude]} /> */}
                         )
                     )}
                 </Box>

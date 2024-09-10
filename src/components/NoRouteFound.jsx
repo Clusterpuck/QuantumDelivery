@@ -1,5 +1,5 @@
 import React from 'react';
-import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
+import MinorCrashIcon from '@mui/icons-material/MinorCrash';
 import { Box, Typography } from '@mui/material';
 import { LineWeight } from '@mui/icons-material';
 
@@ -11,14 +11,15 @@ const NoRouteFound = () => {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-                height: '100%',
+                height: '100vh',
+                width: '100vw',
                 textAlign: 'center',
                 p: 2
             }}
         >
-            <SentimentVeryDissatisfiedIcon sx={{ fontSize: 100, color: '#582c4d', fontWeight:'bold' }} />
+            <MinorCrashIcon sx={{ fontSize: 100, color: '#582c4d', fontWeight:'bold' }} />
             <Typography variant="h6" color="textSecondary" sx={{ mt: 2 } }>
-                Sorry, there was no route found.
+                No routes to display.
             </Typography>
         </Box>
     );

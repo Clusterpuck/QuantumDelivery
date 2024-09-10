@@ -200,7 +200,7 @@ const LiveTracking = () => {
         if (map.current.getLayer('route-layer')) {
           map.current.removeLayer('route-layer');
           map.current.removeSource('route-source');
-          // I WANT TO CLEAR ALL THE MARKERS HERE AS WELL
+          
         }
       
         const allCoordinates = [];

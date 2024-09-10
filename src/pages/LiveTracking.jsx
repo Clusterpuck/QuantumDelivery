@@ -24,7 +24,7 @@ const LiveTracking = () => {
     const [checkedOrdersData, setCheckedOrdersData] = useState({});
     const mapContainer = useRef(null);
     const map = useRef(null);
-
+    const [markers, setMarkers] = useState([]);
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg'; 
 
@@ -151,70 +151,104 @@ const LiveTracking = () => {
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/streets-v11', // Style of the map
             center: [115.8575, -31.9505], // Initial coordinates, e.g., Perth
-            zoom: 10,
+            zoom: 11,
         });
     }, [])
 
-    // Draw routes on the map based on the orders data
+    const fetchDirections = async (coordinates) => {
+
+        
+        const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates.join(';')}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+      
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`Error fetching directions: ${response.statusText}`);
+          }
+      
+          const data = await response.json();
+          return data.routes[0].geometry.coordinates;
+        } catch (error) {
+          console.error('Error fetching directions:', error);
+        }
+    };
+      
     useEffect(() => {
-    
+        if (!map.current) return;
+
         console.log("Map loaded successfully.");
 
+            // Remove existing markers
+        markers.forEach(marker => marker.remove());
+
+        const newMarkers = [];
+        for (const routeId in checkedOrdersData) {
+            const unsortedorders = checkedOrdersData[routeId];
+            const orders = unsortedorders.sort((a, b) => a.position - b.position);
+            orders.forEach(order => {
+                const marker = new mapboxgl.Marker()
+                    .setLngLat([order.lon, order.lat])
+                    .addTo(map.current);
+                newMarkers.push(marker);
+            });
+        }
+
+        // Update the state with the new markers
+        setMarkers(newMarkers);
+      
         // Clear existing layers if they exist
         if (map.current.getLayer('route-layer')) {
-            map.current.removeLayer('route-layer');
-            map.current.removeSource('route-source');
+          map.current.removeLayer('route-layer');
+          map.current.removeSource('route-source');
+          // I WANT TO CLEAR ALL THE MARKERS HERE AS WELL
         }
-
-        // Combine coordinates of all orders from checked routes
+      
         const allCoordinates = [];
         for (const routeId in checkedOrdersData) {
-            const orders = checkedOrdersData[routeId];
-            const routeCoordinates = orders.map(order => [order.lon, order.lat]);
-            allCoordinates.push(...routeCoordinates);
-
-            // Add markers for each order
-            orders.forEach(order => {
-                new mapboxgl.Marker().setLngLat([order.lon, order.lat]).addTo(map.current);
-            });
+          const orders = checkedOrdersData[routeId];
+          const routeCoordinates = orders.map(order => [order.lon, order.lat]);
+          allCoordinates.push(...routeCoordinates);
         }
-
-        console.log("all coordinates -> ", allCoordinates);
-
+      
         if (allCoordinates.length > 0) {
-            // Add the route line on the map
-            map.current.addSource('route-source', {
+      
+          // Fetch directions using the fetchDirections function
+          fetchDirections(allCoordinates).then((route) => {
+            if (route) {
+              // Add the route line on the map
+              map.current.addSource('route-source', {
                 type: 'geojson',
                 data: {
-                    type: 'Feature',
-                    geometry: {
-                        type: 'LineString',
-                        coordinates: allCoordinates,
-                    },
+                  type: 'Feature',
+                  geometry: {
+                    type: 'LineString',
+                    coordinates: route,
+                  },
                 },
-            });
-
-            map.current.addLayer({
+              });
+      
+              map.current.addLayer({
                 id: 'route-layer',
                 type: 'line',
                 source: 'route-source',
                 layout: {
-                    'line-join': 'round',
-                    'line-cap': 'round',
+                  'line-join': 'round',
+                  'line-cap': 'round',
                 },
                 paint: {
-                    'line-color': '#888',
-                    'line-width': 6,
+                  'line-color': '#7d84b2',
+                  'line-width': 6,
                 },
-            });
+              });
+            }
+          });
         }
-
-    // Add error event listener for map
-    map.current.on('error', (e) => {
-        console.error('Map error:', e);
-    });
-
-}, [checkedOrdersData]);
+      
+        // Add error event listener for map
+        map.current.on('error', (e) => {
+          console.error('Map error:', e);
+        });
+      }, [checkedOrdersData]);
 
   return (
     <Box  sx={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>
@@ -231,12 +265,14 @@ const LiveTracking = () => {
                         backgroundColor: '#FFFFF',
                         overflowY: 'auto',
                         paddingTop: '48px',
+                        pointerEvents: 'auto',
                     },
                 }}
                 ModalProps={{
                     BackdropProps: {
                         style: { backgroundColor: 'transparent' }, // Removes the dark overlay
                     },
+                    disableScrollLock: true,
                 }}
             >
             <Box sx={{paddingBottom: '50px'}}>
@@ -355,10 +391,10 @@ const LiveTracking = () => {
                     <KeyboardArrowLeftIcon />
                 </IconButton>
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, position: 'fixed', height: '100vh', width: '100vw',  margin: 0, padding: 0  }}>
+            <Box component="main" sx={{ flexGrow: 1, position: 'fixed', height: '100vh', width: '100vw',  margin: 0, padding: 0 , pointerEvents: 'auto', }}>
                 <div
                     ref={mapContainer}
-                    style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, margin: 0, padding: 0  }}
+                    style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, margin: 0, padding: 0, pointerEvents: 'auto', }}
                 />
                 {!drawerOpen && (
                     <IconButton

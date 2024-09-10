@@ -325,7 +325,7 @@ const DriverViewRoutes = ({}) =>
                     <Button variant="contained" color = "primary" onClick={handleMarkAsDelivered} 
                     sx={{
                         flex: 1,
-                        marginRight: 2, // Optional: adds space between the buttons,
+                        marginRight: 2, 
                         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)'
                     }}>
                         Mark as Delivered

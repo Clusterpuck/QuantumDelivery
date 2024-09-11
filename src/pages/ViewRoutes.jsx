@@ -4,7 +4,7 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DataGrid } from '@mui/x-data-grid';
-import { postDeliveryRoutes, fetchMethod } from '../store/apiFunctions';
+import { postDeliveryRoutes, fetchMethod, deleteMethod } from '../store/apiFunctions';
 import MapWithPins from '../components/MapWithPins.jsx';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
@@ -46,7 +46,7 @@ const ViewRoutes = ({ updateData }) =>
   { // logic for showing orders from a specific date is still yet to be implemented.
     setSelectedDate(date);
     // Simulate sending date and input to a function to get the dummy output
-    loadRoutes();
+    //loadRoutes();
   };
 
   const handleCalcChange = (event) => {
@@ -65,33 +65,7 @@ const ViewRoutes = ({ updateData }) =>
 }, []);
 
 
-  const loadOrders = useCallback(async () =>
-  {
-    const orderList = await fetchMethod("orders");
-    if (orderList)
-    {
-      setAllOrders(orderList);
-      setOrdersLoaded(true); // Mark orders as loaded
-    } else
-    {
-      console.error('Error fetching orders:', error);
-      setSnackbar({
-        open: true,
-        message: 'Failed to load orders',
-        severity: 'error'
-      });
-    }
-  }, []);
-
-  useEffect(() =>
-  {
-
-    loadOrders();
-
-  }, [updateData, loadOrders])
-
-  const loadRoutes = useCallback(async () =>
-  {
+  const calcRoutes = async () => {
     try
     {
       // using the dummy input to get route info from the database
@@ -101,7 +75,9 @@ const ViewRoutes = ({ updateData }) =>
         numVehicle: numVehicles,
         calcType: calcType,
         deliveryDate: selectedDate,
-        orders: allOrders.map(order => order.orderID) // all orders
+        orders: allOrders.
+        filter(order => order.status === "PLANNED").
+        map(order => order.orderID) // all orders
       };
 
       console.log("Payload being sent: ", JSON.stringify(userInput));
@@ -136,14 +112,91 @@ const ViewRoutes = ({ updateData }) =>
         severity: 'error'
       });
     }
-  }, [numVehicles, allOrders]);
+
+  }
+
+  const loadOrders = async () =>
+  {
+    const orderList = await fetchMethod("orders");
+    if (orderList)
+    {
+      console.log("Order list is " + JSON.stringify(orderList));
+      setAllOrders(orderList);
+      //orderList.filter() //what was this empty filter doing?
+      setOrdersLoaded(true); // Mark orders as loaded
+    } else
+    {
+      console.error('Error fetching orders:', error);
+      setSnackbar({
+        open: true,
+        message: 'Failed to load orders',
+        severity: 'error'
+      });
+    }
+  };
 
   useEffect(() =>
   {
 
+    loadOrders();
     loadRoutes();
 
-  }, [updateData, loadRoutes])
+  }, [])
+
+  const deleteRoute = async (id) =>
+  {
+    console.log("id sent to delete is " + id);
+    const result = await deleteMethod(id, 'DeliveryRoutes');
+    if (result)
+    {
+      console.log('Item deleted successfully:', result);
+    } else
+    {
+      console.log('Failed to delete item.');
+    }
+    loadOrders();
+    loadRoutes();
+
+  }
+
+
+  const loadRoutes = async () =>
+  {//need to update get route to manage getting existing orders
+    //should return the same as CalcRoute
+    try
+    {
+      const routesList = await fetchMethod('DeliveryRoutes');
+      if (routesList)
+      {
+        // Separate unassigned orders (vehicleId: 0) from assigned routes
+        const unassigned = routesList.filter(route => route.vehicleId === 0);
+        const assigned = routesList.filter(route => route.vehicleId !== 0);
+        console.log("Route object recieved is ", JSON.stringify(assigned));
+
+        setUnassignedOrders(unassigned.flatMap(route => route.orders)); // Combine all unassigned orders
+        setRoutes(assigned);
+      }
+      else
+      {
+        // throw error
+        console.error('Error fetching delivery routes: ', error);
+        setSnackbar({
+          open: true,
+          message: 'Failed to load delivery routes',
+          severity: 'error'
+        });
+      }
+    } catch (error)
+    {
+      // catch error
+      console.error('Error fetching delivery routes: ', error);
+      setSnackbar({
+        open: true,
+        message: 'Failed to load delivery routes',
+        severity: 'error'
+      });
+    }
+  };
 
   // Define columns for DataGrid
   const columns = [
@@ -237,7 +290,7 @@ const ViewRoutes = ({ updateData }) =>
               <Button
                 variant='contained'
                 sx={{ height: '100%' }}
-                onClick={loadRoutes} // Call loadRoutes on button click
+                onClick={calcRoutes} // Call loadRoutes on button click
               >
                 <AltRouteIcon />
                 Regenerate Routes
@@ -289,6 +342,9 @@ const ViewRoutes = ({ updateData }) =>
                   latitude: order.latitude,
                   longitude: order.longitude
                 }))} />
+                <Button
+                  onClick={()=>deleteRoute(vehicle.deliveryRouteID)}
+                >Delete Route</Button>
               </Grid>
             </Grid>
           ))}

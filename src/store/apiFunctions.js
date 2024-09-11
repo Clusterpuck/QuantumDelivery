@@ -167,6 +167,30 @@ export const fetchMethod = async (endpoint) => {
     return ipData
 };
 
+export const deleteMethod = async (id, endPoint) => {
+    try {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}${endPoint}/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete data with ID: ' + id + ' on end point ' + endPoint);
+        }
+
+        // Handle the response if needed (e.g., confirm successful deletion)
+        const responseData = await response.json();
+        console.log('Successfully deleted data with ID:', id, 'on end point', endPoint);
+        return responseData;
+
+    } catch (error) {
+        console.error('Error deleting data with ID:', id, 'on end point', endPoint, ' ', error.message);
+        return null;
+    }
+};
+
 export const fetchDeliveryRoute = async (driverUsername) => {
     let deliveryRouteData = null;
     try {

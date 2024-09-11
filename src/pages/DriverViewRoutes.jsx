@@ -32,7 +32,7 @@ const DriverViewRoutes = ({}) =>
     const [anyPlanned, setAnyPlanned] = React.useState(true);
     const [finishedDelivery, setFinishedDelivery] = React.useState(false);
 
-    const driverUsername = 'Bob1'; // hard coded for now
+    const driverUsername = 'driver1@email.com'; // hard coded for now
 
     const getRowColor = (status) => {
         switch (status) {
@@ -78,46 +78,52 @@ const DriverViewRoutes = ({}) =>
     const fetchDeliveryData = async () => {
         try {
             const routeData = await fetchDeliveryRoute(driverUsername);
-
             if (routeData?.status === 404) {
                 setNoRoutesFound(true);
                 return;
             }
             if (routeData) {
-                console.log("Delivery route fetched", JSON.stringify(routeData));
-                const pendingDeliveries = routeData.orders.filter(order => order.status !== 'delivered');
+                console.log("Delivery route fetched", routeData);
+                setRouteId(routeData.deliveryRouteID);
+                console.log("Route ID set to:", routeData.deliveryRouteID); 
+                const pendingDeliveries = routeData.orders.filter(order => order.status !== 'DELIVERED');
                 const sortedDeliveries = pendingDeliveries.sort((a, b) => a.position - b.position);
                 setCurrentDelivery(sortedDeliveries[0]);
                 setNextDeliveries(sortedDeliveries.slice(1));
-
-                const anyPlanned = sortedDeliveries.some(order => order.status === 'planned');
-                const finishedDelivery = sortedDeliveries.every(order => order.status === 'delivered');
+    
+                const anyPlanned = sortedDeliveries.some(order => order.status === 'ASSIGNED');
+                const finishedDelivery = sortedDeliveries.every(order => order.status === 'DELIVERED');
                 setAnyPlanned(anyPlanned);
-                setFinishedDelivery(finishedDelivery)
-                console.log("Current delivery in use effect is ", sortedDeliveries[0]);
+                setFinishedDelivery(finishedDelivery);
             } else {
-                console.error("No route data returned");
+                console.error("xxXXNo route data returned");
                 setNoRoutesFound(true);
             }
         } catch (error) {
-            console.error("Error fetching delivery route:", error);
-            setSnackbar({
-                open: true,
-                message: 'Failed to load delivery routes',
-                severity: 'error'
-            });
-            setNoRoutesFound(true);
+            console.error("xxXXError fetching delivery route:", error);
         }
     };
+    
 
     useEffect(() => { // use effect for fetching delivery route
         
         const loadRouteId = async () => {
-            const allRoutesData = await fetchMethod("deliveryroutes");
-            if (allRoutesData) {
-                const route = allRoutesData.find(route => route.driverUsername === driverUsername);
-                const routeId = route ? route.id : null;
-                setRouteId(routeId);
+            try {
+                const allRoutesData = await fetchMethod("deliveryroutes");
+                if (allRoutesData) {
+                    const route = allRoutesData.find(route => route.driverUsername === driverUsername);
+                    if (route) {
+                        const routeId = route.deliveryRouteID;
+                        console.log("xxXXSetting route ID to", routeId);
+                        setRouteId(routeId);
+                    } else {
+                        console.error("xxXXNo route found for the given driver username.");
+                    }
+                } else {
+                    console.error("xxXXNo data returned from the deliveryroutes endpoint.");
+                }
+            } catch (error) {
+                console.error("xxXXError fetching route data:", error);
             }
         };
 
@@ -133,7 +139,7 @@ const DriverViewRoutes = ({}) =>
             await fetchDeliveryData();
         }
         else {
-            console.error("No route ID found.")
+            console.error("xxXXNo route ID found.")
         }
     };
 
@@ -142,7 +148,7 @@ const DriverViewRoutes = ({}) =>
             const input = {
                 username: driverUsername,
                 orderId: currentDelivery.orderId,
-                status: "delivered"
+                status: "DELIVERED"
             };
             const result = await updateOrderStatus(input);
             await fetchDeliveryData();
@@ -308,7 +314,7 @@ const DriverViewRoutes = ({}) =>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell sx={{ width: 120 }}>Products</TableCell>
-                                        <TableCell>{currentDelivery?.prodNames.join(', ')}</TableCell>
+                                        <TableCell>{currentDelivery?.productNames.join(', ')}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell sx={{ width: 120 }}>Status</TableCell>
@@ -498,7 +504,7 @@ const DriverViewRoutes = ({}) =>
                         </Box>
                     ) : (
                         currentLocation.length > 0 && (
-                            <DriverMap start={currentLocation} end={[currentDelivery?.lon, currentDelivery?.lat]} />
+                           ( <DriverMap start={currentLocation} end={[currentDelivery?.longitude, currentDelivery?.latitude]} /> )
                         )
                     )}
                 </Box>

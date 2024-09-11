@@ -11,6 +11,10 @@ import SendIcon from '@mui/icons-material/Send';
 import Typography from '@mui/material/Typography';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import {enableScroll} from '../assets/scroll.js';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const styleConstants = {
     fieldSpacing: { mb: 2 }
@@ -31,6 +35,7 @@ const AddOrder = () => {
         message: '',
         severity: 'success',
     });
+    const [selectedDate, setSelectedDate] = useState(dayjs());
 
     useEffect(() => {
         enableScroll();
@@ -69,6 +74,13 @@ const AddOrder = () => {
         setLocations(newAddress);
     };
 
+    
+  // Function to handle date change and load dummy output
+  const handleDateChange = (date) =>
+    { // logic for showing orders from a specific date is still yet to be implemented.
+      setSelectedDate(date);
+    };
+
     const submitOrder = async (event) => {
         event.preventDefault();
         if (!selectedCustomer || !selectedLocation || selectedProducts.length === 0) {
@@ -92,6 +104,7 @@ const AddOrder = () => {
                 orderNotes: orderNote ? orderNote : "No Note",  // You can replace this with actual notes if needed
                 customerId: selectedCustomer.id,
                 locationId: selectedLocation.id,
+                deliveryDate: selectedDate,
             },
             products: selectedProducts.map(product => ({
                 productId: product.id,
@@ -103,17 +116,13 @@ const AddOrder = () => {
         const result = await postMethod(orderObject, 'Orders');
         if(result!= null )
         {
+            console.log("Orders recieved are ", JSON.stringify(result));
             setRefreshOrders(prev => prev + 1); // Change the trigger value to refresh data
             setSnackbar({
                 open: true,
                 message: 'Order submitted successfully!',
                 severity: 'success',
             });
-
-            // setTimeout(() => {
-            //     // Trigger page refresh
-            //     window.location.reload(); // Refresh the page programmatically
-            // }, 1500); // 2 seconds delay
 
         }
         else
@@ -145,7 +154,22 @@ const AddOrder = () => {
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                 <Paper elevation={3} sx={{ padding: 4, maxWidth: 1500, width: '100%' }}>
-                    <Grid container spacing={2} >
+                    <Grid item xs={12} md= {6} container spacing={2} >
+                    <Grid item xs={6} md= {6} container spacing={2} >
+
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DesktopDatePicker
+                  label="Date Required"
+                  inputFormat="MM/DD/YYYY"
+                  value={selectedDate}
+                  onChange={handleDateChange}
+                  renderInput={(params) => <TextField {...params}/>}
+                />
+
+              </LocalizationProvider>
+              </Grid>
+              <Grid item xs={6} md= {6} container spacing={2} >
+
                         
                     <TextField 
                         id='order-notes'
@@ -159,6 +183,7 @@ const AddOrder = () => {
                         }
 
                         />
+                    </Grid>
                         <Grid item xs={4} sx={styleConstants.fieldSpacing}>
                         {customers ? (
                             <Autocomplete
@@ -265,7 +290,7 @@ const AddOrder = () => {
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
 
-            <OrdersTable updateData={refreshOrders}/>
+            { refreshOrders ?  (<p>No Orders</p>) : (<OrdersTable updateData={refreshOrders}/>) }
 </Box>
 
             <Snackbar

@@ -4,7 +4,7 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DataGrid } from '@mui/x-data-grid';
-import { postDeliveryRoutes, fetchMethod } from '../store/apiFunctions';
+import { postDeliveryRoutes, fetchMethod, deleteMethod } from '../store/apiFunctions';
 import MapWithPins from '../components/MapWithPins.jsx';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
@@ -46,7 +46,7 @@ const ViewRoutes = ({ updateData }) =>
   { // logic for showing orders from a specific date is still yet to be implemented.
     setSelectedDate(date);
     // Simulate sending date and input to a function to get the dummy output
-    loadRoutes();
+    //loadRoutes();
   };
 
   const handleCalcChange = (event) => {
@@ -65,33 +65,7 @@ const ViewRoutes = ({ updateData }) =>
 }, []);
 
 
-  const loadOrders = useCallback(async () =>
-  {
-    const orderList = await fetchMethod("orders");
-    if (orderList)
-    {
-      setAllOrders(orderList);
-      setOrdersLoaded(true); // Mark orders as loaded
-    } else
-    {
-      console.error('Error fetching orders:', error);
-      setSnackbar({
-        open: true,
-        message: 'Failed to load orders',
-        severity: 'error'
-      });
-    }
-  }, []);
-
-  useEffect(() =>
-  {
-
-    loadOrders();
-
-  }, [updateData, loadOrders])
-
-  const loadRoutes = useCallback(async () =>
-  {
+  const calcRoutes = async () => {
     try
     {
       // using the dummy input to get route info from the database
@@ -101,7 +75,9 @@ const ViewRoutes = ({ updateData }) =>
         numVehicle: numVehicles,
         calcType: calcType,
         deliveryDate: selectedDate,
-        orders: allOrders.map(order => order.orderId) // all orders
+        orders: allOrders.
+        filter(order => order.status === "PLANNED").
+        map(order => order.orderID) // all orders
       };
 
       console.log("Payload being sent: ", JSON.stringify(userInput));
@@ -111,7 +87,7 @@ const ViewRoutes = ({ updateData }) =>
         // Separate unassigned orders (vehicleId: 0) from assigned routes
         const unassigned = routesList.filter(route => route.vehicleId === 0);
         const assigned = routesList.filter(route => route.vehicleId !== 0);
-        //console.log("Route object recieved is ", JSON.stringify(assigned));
+        console.log("Route object recieved is ", JSON.stringify(assigned));
 
         setUnassignedOrders(unassigned.flatMap(route => route.orders)); // Combine all unassigned orders
         setRoutes(assigned);
@@ -136,24 +112,101 @@ const ViewRoutes = ({ updateData }) =>
         severity: 'error'
       });
     }
-  }, [numVehicles, allOrders]);
+
+  }
+
+  const loadOrders = async () =>
+  {
+    const orderList = await fetchMethod("orders");
+    if (orderList)
+    {
+      console.log("Order list is " + JSON.stringify(orderList));
+      setAllOrders(orderList);
+      //orderList.filter() //what was this empty filter doing?
+      setOrdersLoaded(true); // Mark orders as loaded
+    } else
+    {
+      console.error('Error fetching orders:', error);
+      setSnackbar({
+        open: true,
+        message: 'Failed to load orders',
+        severity: 'error'
+      });
+    }
+  };
 
   useEffect(() =>
   {
 
+    loadOrders();
     loadRoutes();
 
-  }, [updateData, loadRoutes])
+  }, [])
+
+  const deleteRoute = async (id) =>
+  {
+    console.log("id sent to delete is " + id);
+    const result = await deleteMethod(id, 'DeliveryRoutes');
+    if (result)
+    {
+      console.log('Item deleted successfully:', result);
+    } else
+    {
+      console.log('Failed to delete item.');
+    }
+    loadOrders();
+    loadRoutes();
+
+  }
+
+
+  const loadRoutes = async () =>
+  {//need to update get route to manage getting existing orders
+    //should return the same as CalcRoute
+    try
+    {
+      const routesList = await fetchMethod('DeliveryRoutes');
+      if (routesList)
+      {
+        // Separate unassigned orders (vehicleId: 0) from assigned routes
+        const unassigned = routesList.filter(route => route.vehicleId === 0);
+        const assigned = routesList.filter(route => route.vehicleId !== 0);
+        console.log("Route object recieved is ", JSON.stringify(assigned));
+
+        setUnassignedOrders(unassigned.flatMap(route => route.orders)); // Combine all unassigned orders
+        setRoutes(assigned);
+      }
+      else
+      {
+        // throw error
+        console.error('Error fetching delivery routes: ', error);
+        setSnackbar({
+          open: true,
+          message: 'Failed to load delivery routes',
+          severity: 'error'
+        });
+      }
+    } catch (error)
+    {
+      // catch error
+      console.error('Error fetching delivery routes: ', error);
+      setSnackbar({
+        open: true,
+        message: 'Failed to load delivery routes',
+        severity: 'error'
+      });
+    }
+  };
 
   // Define columns for DataGrid
   const columns = [
-    { field: 'orderId', headerName: 'Order ID', width: 90 },
+    { field: 'orderID', headerName: 'Order ID', width: 90 },
     //{ field: 'lat', headerName: 'Latitude', width: 150 },
     //{ field: 'long', headerName: 'Longitude', width: 150 },
-    { field: 'addr', headerName: 'Address', width: 150 },
+    { field: 'address', headerName: 'Address', width: 150 },
     { field: 'status', headerName: 'Status', width: 150 },
     {
-      field: 'prodNames', headerName: 'Product Names', width: 500, renderCell: (params) => params.value.join(', '
+      field: 'productNames', headerName: 'Product Names', width: 500, renderCell: (params) => params.value.join(', '
       )
     },
     { field: 'customerName', headerName: 'Customer Name', width: 150 }
@@ -184,7 +237,7 @@ const ViewRoutes = ({ updateData }) =>
       <Paper elevation={3} sx={{ padding: 3, maxWidth: 1500, width: '100%' }}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={12} container spacing={2} alignItems="center">
-            <Grid item xs={5} md={3} >
+            <Grid item xs={6} md={3} >
 
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DesktopDatePicker
@@ -200,7 +253,7 @@ const ViewRoutes = ({ updateData }) =>
 
             </Grid>
             {/* Dropdown for selecting number of vehicles and Regenerate button */}
-            <Grid item xs={1} md={2}>
+            <Grid item xs={6} md={2}>
               <TextField
                 select
                 label="Number of Vehicles"
@@ -222,7 +275,7 @@ const ViewRoutes = ({ updateData }) =>
                 ))}
               </TextField>
                 </Grid>
-              <Grid item xs={1} md={3}>
+              <Grid item xs={6} md={3}>
                 <RadioGroup
                   aria-labelledby="demo-controlled-radio-buttons-group"
                   name="controlled-radio-buttons-group"
@@ -233,11 +286,11 @@ const ViewRoutes = ({ updateData }) =>
                   <FormControlLabel value="dwave" control={<Radio />} label="Quantum Computer" />
                 </RadioGroup>
               </Grid>
-            <Grid item xs={4} md={4} container justifyContent="flex-end">
+            <Grid item xs={6} md={4} container justifyContent="flex-end">
               <Button
                 variant='contained'
                 sx={{ height: '100%' }}
-                onClick={loadRoutes} // Call loadRoutes on button click
+                onClick={calcRoutes} // Call loadRoutes on button click
               >
                 <AltRouteIcon />
                 Regenerate Routes
@@ -248,13 +301,7 @@ const ViewRoutes = ({ updateData }) =>
 
 
           <Grid xs={6}>
-            {/* <Button
-              variant='contained'
-              onClick={loadOrders}
-            >
-              Plan Routes
-            </Button> */}
-
+          
           </Grid>
 
           {/* Render unassigned orders */}
@@ -262,7 +309,7 @@ const ViewRoutes = ({ updateData }) =>
             <Grid item xs={12}>
               <h3>Unassigned</h3>
               <DataGrid
-                rows={unassignedOrders.map((order, idx) => ({ id: order.orderId, ...order }))}
+                rows={unassignedOrders.map((order, idx) => ({ id: order.orderID, ...order }))}
                 columns={columns}
                 pageSize={5}
                 autoHeight
@@ -280,15 +327,20 @@ const ViewRoutes = ({ updateData }) =>
               </Divider>
               <Grid item sx={styleConstants.fieldSpacing}>
                 <DataGrid
-                  rows={vehicle.orders.map((order, idx) => ({ id: order.orderId, ...order }))}
+                  rows={vehicle.orders.map((order) => ({ id: order.orderID, ...order }))}
                   columns={columns}
                   pageSize={5}
                   autoHeight
                 />
                 <MapWithPins inputLocations={vehicle.orders.map(order => ({
-                  latitude: order.lat,
-                  longitude: order.lon
+                  latitude: order.latitude,
+                  longitude: order.longitude
                 }))} />
+                <Button
+                  onClick={()=>deleteRoute(vehicle.deliveryRouteID)}
+                  color = "error"
+                  variant = "contained"
+                >Delete Route</Button>
               </Grid>
             </Grid>
           ))}

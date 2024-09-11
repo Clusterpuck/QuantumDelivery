@@ -308,7 +308,7 @@ const DriverViewRoutes = ({}) =>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell sx={{ width: 120 }}>Products</TableCell>
-                                        <TableCell>{currentDelivery?.prodNames.join(', ')}</TableCell>
+                                        <TableCell>{currentDelivery?.productNames.join(', ')}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell sx={{ width: 120 }}>Status</TableCell>
@@ -498,7 +498,7 @@ const DriverViewRoutes = ({}) =>
                         </Box>
                     ) : (
                         currentLocation.length > 0 && (
-                           {/* <DriverMap start={currentLocation} end={[currentDelivery?.longitude, currentDelivery?.latitude]} /> */}
+                           ( <DriverMap start={currentLocation} end={[currentDelivery?.longitude, currentDelivery?.latitude]} /> )
                         )
                     )}
                 </Box>

@@ -50,7 +50,7 @@ const MapWithPins = ({inputLocations}) =>
 
         // Clean up on unmount
         return () => map.remove();
-    }, []);
+    }, [inputLocations]);
 
     return <div className="map-container" ref={mapContainerRef} />;
 };

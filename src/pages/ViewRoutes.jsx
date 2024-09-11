@@ -237,7 +237,7 @@ const ViewRoutes = ({ updateData }) =>
       <Paper elevation={3} sx={{ padding: 3, maxWidth: 1500, width: '100%' }}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={12} container spacing={2} alignItems="center">
-            <Grid item xs={5} md={3} >
+            <Grid item xs={6} md={3} >
 
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DesktopDatePicker
@@ -253,7 +253,7 @@ const ViewRoutes = ({ updateData }) =>
 
             </Grid>
             {/* Dropdown for selecting number of vehicles and Regenerate button */}
-            <Grid item xs={1} md={2}>
+            <Grid item xs={6} md={2}>
               <TextField
                 select
                 label="Number of Vehicles"
@@ -275,7 +275,7 @@ const ViewRoutes = ({ updateData }) =>
                 ))}
               </TextField>
                 </Grid>
-              <Grid item xs={1} md={3}>
+              <Grid item xs={6} md={3}>
                 <RadioGroup
                   aria-labelledby="demo-controlled-radio-buttons-group"
                   name="controlled-radio-buttons-group"
@@ -286,7 +286,7 @@ const ViewRoutes = ({ updateData }) =>
                   <FormControlLabel value="dwave" control={<Radio />} label="Quantum Computer" />
                 </RadioGroup>
               </Grid>
-            <Grid item xs={4} md={4} container justifyContent="flex-end">
+            <Grid item xs={6} md={4} container justifyContent="flex-end">
               <Button
                 variant='contained'
                 sx={{ height: '100%' }}
@@ -301,13 +301,7 @@ const ViewRoutes = ({ updateData }) =>
 
 
           <Grid xs={6}>
-            {/* <Button
-              variant='contained'
-              onClick={loadOrders}
-            >
-              Plan Routes
-            </Button> */}
-
+          
           </Grid>
 
           {/* Render unassigned orders */}
@@ -333,7 +327,7 @@ const ViewRoutes = ({ updateData }) =>
               </Divider>
               <Grid item sx={styleConstants.fieldSpacing}>
                 <DataGrid
-                  rows={vehicle.orders.map((order, idx) => ({ id: order.orderID, ...order }))}
+                  rows={vehicle.orders.map((order) => ({ id: order.orderID, ...order }))}
                   columns={columns}
                   pageSize={5}
                   autoHeight
@@ -344,6 +338,8 @@ const ViewRoutes = ({ updateData }) =>
                 }))} />
                 <Button
                   onClick={()=>deleteRoute(vehicle.deliveryRouteID)}
+                  color = "error"
+                  variant = "contained"
                 >Delete Route</Button>
               </Grid>
             </Grid>

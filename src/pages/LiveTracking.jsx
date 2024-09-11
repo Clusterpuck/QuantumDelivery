@@ -156,10 +156,15 @@ const LiveTracking = () => {
     }, [])
 
     const fetchDirections = async (coordinates) => {
-
+        const validCoordinates = coordinates.filter(coord => !isNaN(coord[0]) && !isNaN(coord[1]))
         
         const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates.join(';')}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
-      
+        
+        if (validCoordinates.length === 0) {
+            console.error('No valid coordinates available for route.');
+            return;
+          }
+
         try {
           const response = await fetch(url);
           if (!response.ok) {
@@ -186,10 +191,16 @@ const LiveTracking = () => {
             const unsortedorders = checkedOrdersData[routeId];
             const orders = unsortedorders.sort((a, b) => a.position - b.position);
             orders.forEach(order => {
+            if (order.lon && order.lat) {  
                 const marker = new mapboxgl.Marker()
                     .setLngLat([order.lon, order.lat])
                     .addTo(map.current);
                 newMarkers.push(marker);
+            }
+            else
+            {
+                console.error("Invalid coordinates for order:", order);
+            }
             });
         }
 

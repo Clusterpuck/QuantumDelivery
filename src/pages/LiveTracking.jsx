@@ -191,9 +191,9 @@ const LiveTracking = () => {
             const unsortedorders = checkedOrdersData[routeId];
             const orders = unsortedorders.sort((a, b) => a.position - b.position);
             orders.forEach(order => {
-            if (order.lon && order.lat) {  
+            if (order.longitude && order.latitude) {  
                 const marker = new mapboxgl.Marker()
-                    .setLngLat([order.lon, order.lat])
+                    .setLngLat([order.longitude, order.latitude])
                     .addTo(map.current);
                 newMarkers.push(marker);
             }
@@ -217,7 +217,7 @@ const LiveTracking = () => {
         const allCoordinates = [];
         for (const routeId in checkedOrdersData) {
           const orders = checkedOrdersData[routeId];
-          const routeCoordinates = orders.map(order => [order.lon, order.lat]);
+          const routeCoordinates = orders.map(order => [order.longitude, order.latitude]);
           allCoordinates.push(...routeCoordinates);
         }
       

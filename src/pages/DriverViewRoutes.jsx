@@ -85,13 +85,14 @@ const DriverViewRoutes = ({}) =>
             }
             if (routeData) {
                 console.log("Delivery route fetched", JSON.stringify(routeData));
-                const pendingDeliveries = routeData.orders.filter(order => order.status !== 'delivered');
+                setRouteId(routeData.deliveryRouteID);
+                const pendingDeliveries = routeData.orders.filter(order => order.status !== 'DELIVERED');
                 const sortedDeliveries = pendingDeliveries.sort((a, b) => a.position - b.position);
                 setCurrentDelivery(sortedDeliveries[0]);
                 setNextDeliveries(sortedDeliveries.slice(1));
 
-                const anyPlanned = sortedDeliveries.some(order => order.status === 'planned');
-                const finishedDelivery = sortedDeliveries.every(order => order.status === 'delivered');
+                const anyPlanned = sortedDeliveries.some(order => order.status === 'ASSIGNED');
+                const finishedDelivery = sortedDeliveries.every(order => order.status === 'DELIVERED');
                 setAnyPlanned(anyPlanned);
                 setFinishedDelivery(finishedDelivery)
                 console.log("Current delivery in use effect is ", sortedDeliveries[0]);
@@ -113,10 +114,14 @@ const DriverViewRoutes = ({}) =>
     useEffect(() => { // use effect for fetching delivery route
         
         const loadRouteId = async () => {
+            //change to use get route by username endpoint
             const allRoutesData = await fetchMethod("deliveryroutes");
             if (allRoutesData) {
                 const route = allRoutesData.find(route => route.driverUsername === driverUsername);
-                const routeId = route ? route.id : null;
+                console.log("****XXxxAll route filtered is " + JSON.stringify(route));
+
+                const routeId = route ? route.deliveryRouteID : null;
+                console.log("****XXxxSetting route ID to " + routeId);
                 setRouteId(routeId);
             }
         };
@@ -142,7 +147,7 @@ const DriverViewRoutes = ({}) =>
             const input = {
                 username: driverUsername,
                 orderId: currentDelivery.orderId,
-                status: "delivered"
+                status: "DELIVERED"
             };
             const result = await updateOrderStatus(input);
             await fetchDeliveryData();

@@ -10,6 +10,7 @@ import {fetchMethod, fetchDeliveryRoute} from '../store/apiFunctions.js';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {disableScroll} from '../assets/scroll.js';
+import '../assets/Marker.css'
 
 // Page design for live tracking page
 // address search is placeholder for directions API
@@ -218,8 +219,12 @@ const LiveTracking = () => {
 
         // Add markers for every order
         orders.forEach(order => {
+            const el = document.createElement('div');
+            el.className = 'marker'; // Add the CSS class
+            el.textContent = order.position; // Add the position number to the mark
+
             if (order.longitude && order.latitude) {
-                const marker = new mapboxgl.Marker()
+                const marker = new mapboxgl.Marker(el)
                     .setLngLat([order.longitude, order.latitude])
                     .addTo(map.current);
                 newMarkers.push(marker);

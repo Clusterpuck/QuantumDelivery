@@ -25,6 +25,7 @@ const LiveTracking = () => {
     const mapContainer = useRef(null);
     const map = useRef(null);
     const [markers, setMarkers] = useState([]);
+    const [noRoutesFound, setNoRoutesFound] = useState(false);
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg'; 
 
@@ -65,9 +66,10 @@ const LiveTracking = () => {
     const handleCheckboxChange = (routeId) => (event) => {
         setCheckedRoutes((prevCheckedRoutes) => ({
             ...prevCheckedRoutes,
-            [routeId]: event.target.checked,
-        }))
+            [routeId]: event.target.checked, 
+        }));
     };
+    
 
     useEffect(() =>
     {
@@ -79,7 +81,7 @@ const LiveTracking = () => {
         if (routesData) {
             const initialCheckedRoutes = {};
             routesData.forEach(route => {
-                initialCheckedRoutes[route.id] = true;  // Set all checkboxes to checked
+                initialCheckedRoutes[route.deliveryRouteID] = true;  // Set all checkboxes to checked
             });
             setCheckedRoutes(initialCheckedRoutes);
         }
@@ -90,16 +92,21 @@ const LiveTracking = () => {
             ...prevState,
             [routeId]: !prevState[routeId], // Toggle the open state for the specific route
         }));
-
-        // Fetch orders if the row is expanding
+        
         if (!openRow[routeId]) {
-            const route = routesData.find(r => r.id === routeId);
+            const route = routesData.find((r) => r.id === routeId);
             if (route) {
                 const orders = await fetchOrdersFromDriver(route.driverUsername);
+                if (!route.driverUsername) {
+                    console.error("Driver username is undefined for route:", route);
+                    return;
+                }
                 setOrdersData((prevOrders) => ({
                     ...prevOrders,
-                    [routeId]: orders
+                    [routeId]: orders,
                 }));
+            } else {
+                console.error(`Route with ID ${routeId} not found.`);
             }
         }
     };
@@ -114,7 +121,7 @@ const LiveTracking = () => {
     };
 
 
-     // Fetch orders for all checked routes whenever checkedRoutes changes
+    // Fetch orders for all checked routes whenever checkedRoutes changes
     useEffect(() => {
         const fetchOrdersForCheckedRoutes = async () => {
             const newCheckedOrdersData = {};
@@ -123,22 +130,22 @@ const LiveTracking = () => {
                 if (checkedRoutes[routeId]) {
                     console.log("checked routes -> ", JSON.stringify(checkedRoutes));
                     console.log("routes data -> ", JSON.stringify(routesData));
-                    const route = routesData.find(r => r.id === Number(routeId));
-
+                    const route = routesData.find((r) => r.deliveryRouteID === Number(routeId));
+        
                     console.log("routeId type:", typeof routeId, "value:", routeId);
-                    console.log("route.id type:", typeof route.id, "value:", route.id);
-
+                    console.log("route.deliveryRouteID type:", typeof route, "value:", route);
+        
                     console.log("the route: ", JSON.stringify(routesData));
                     if (route) {
-                        console.log("hello");
+                        console.log("xxXXhello route for driver username is " + JSON.stringify(route));
                         const orders = await fetchOrdersFromDriver(route.driverUsername);
                         newCheckedOrdersData[routeId] = orders;
-                        console.log("fetched order -> ", JSON.stringify(newCheckedOrdersData));
+                        console.log("xxXXfetched order -> ", JSON.stringify(newCheckedOrdersData));
                     }
                 }
             }
             setCheckedOrdersData(newCheckedOrdersData);
-        };
+        };        
 
         if (routesData) {
             fetchOrdersForCheckedRoutes();  
@@ -316,23 +323,23 @@ const LiveTracking = () => {
                                 </TableHead>
                                 <TableBody>
                                     {routesData.map((route) => (
-                                        <React.Fragment key={route.id}>
+                                        <React.Fragment key={route.deliveryRouteID}>
                                         <TableRow>
                                             <TableCell>
                                                 <Checkbox
-                                                    checked={!!checkedRoutes[route.id]}
-                                                    onChange={handleCheckboxChange(route.id)}
+                                                    checked={!!checkedRoutes[route.deliveryRouteID]}
+                                                    onChange={handleCheckboxChange(route.deliveryRouteID)}
                                                 />
                                             </TableCell>
-                                            <TableCell>{route.id}</TableCell>
+                                            <TableCell>{route.deliveryRouteID}</TableCell>
                                             <TableCell>{route.driverUsername}</TableCell>
                                             <TableCell>{route.vehicleId}</TableCell>
                                             <TableCell>
                                                 <IconButton
                                                     size="small"
-                                                    onClick={() => handleRowToggle(route.id)}
+                                                    onClick={() => handleRowToggle(route.deliveryRouteID)}
                                                 >
-                                                    {openRow[route.id] ? (
+                                                    {openRow[route.deliveryRouteID] ? (
                                                         <KeyboardArrowUpIcon />
                                                     ) : (
                                                         <KeyboardArrowDownIcon />
@@ -346,12 +353,12 @@ const LiveTracking = () => {
                                                 colSpan={5}
                                             >
                                                 <Collapse
-                                                    in={openRow[route.id]}
+                                                    in={openRow[route.deliveryRouteID]}
                                                     timeout="auto"
                                                     unmountOnExit
                                                 >
                                                     <Box margin={1}>
-                                                    {ordersData[route.id] ? (
+                                                    {ordersData[route.deliveryRouteID] ? (
                                                         <Table size="small">
                                                             <TableHead>
                                                                 <TableRow>
@@ -363,7 +370,7 @@ const LiveTracking = () => {
                                                                 </TableRow>
                                                             </TableHead>
                                                             <TableBody>
-                                                                {ordersData[route.id].map((order) => (
+                                                                {ordersData[route.deliveryRouteID].map((order) => (
                                                                     <TableRow key={order.orderId} sx={{ backgroundColor: getRowColor(order.status) }}>
                                                                         <TableCell>{order.orderId}</TableCell>
                                                                         <TableCell>{order.addr}</TableCell>

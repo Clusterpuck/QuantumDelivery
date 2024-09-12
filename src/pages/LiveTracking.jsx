@@ -130,17 +130,17 @@ const LiveTracking = () => {
                 if (checkedRoutes[routeId]) {
                     console.log("checked routes -> ", JSON.stringify(checkedRoutes));
                     console.log("routes data -> ", JSON.stringify(routesData));
-                    const route = routesData.find((r) => r.id === Number(routeId));
+                    const route = routesData.find((r) => r.deliveryRouteID === Number(routeId));
         
                     console.log("routeId type:", typeof routeId, "value:", routeId);
-                    console.log("route.deliveryRouteID type:", typeof route?.id, "value:", route?.id);
+                    console.log("route.deliveryRouteID type:", typeof route, "value:", route);
         
                     console.log("the route: ", JSON.stringify(routesData));
                     if (route) {
-                        console.log("hello");
+                        console.log("xxXXhello route for driver username is " + JSON.stringify(route));
                         const orders = await fetchOrdersFromDriver(route.driverUsername);
                         newCheckedOrdersData[routeId] = orders;
-                        console.log("fetched order -> ", JSON.stringify(newCheckedOrdersData));
+                        console.log("xxXXfetched order -> ", JSON.stringify(newCheckedOrdersData));
                     }
                 }
             }

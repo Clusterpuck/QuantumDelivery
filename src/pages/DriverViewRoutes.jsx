@@ -539,7 +539,7 @@ const DriverViewRoutes = ({}) =>
                             
                             sx={{ mt: 0 , p: '12px',}}
                         >
-                            {currentDelivery?.phone}
+                            {currentDelivery?.customerPhone}
                         </Button>
                     </Box>
                 </Fade>

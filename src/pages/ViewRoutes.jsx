@@ -42,7 +42,6 @@ const ViewRoutes = ({ updateData }) =>
   });
   //can change in future for backend to handle this
   const [allOrders, setAllOrders] = useState([]);
-  const [unassignedOrders, setUnassignedOrders] = useState([]);
   const [numVehicles, setNumVehicles] = useState(1); // default to 1 vehicle
   const [ordersLoaded, setOrdersLoaded] = useState(false); // Track if orders are loaded
   const [calcType, setCalcType] = useState("brute");
@@ -91,13 +90,7 @@ const ViewRoutes = ({ updateData }) =>
       if (routesList)
       {
         const routesList = unsortedRoutesList.sort((a, b) => a.position - b.position);
-        // Separate unassigned orders (vehicleId: 0) from assigned routes
-        const unassigned = routesList.filter(route => route.vehicleId === 0);
-        const assigned = routesList.filter(route => route.vehicleId !== 0);
-        console.log("Route object recieved is ", JSON.stringify(assigned));
-
-        setUnassignedOrders(unassigned.flatMap(route => route.orders)); // Combine all unassigned orders
-        setRoutes(assigned);
+        setRoutes(routesList);
       }
       else
       {
@@ -176,13 +169,7 @@ const ViewRoutes = ({ updateData }) =>
       const routesList = await fetchMethod('DeliveryRoutes');
       if (routesList)
       {
-        // Separate unassigned orders (vehicleId: 0) from assigned routes
-        const unassigned = routesList.filter(route => route.vehicleId === 0);
-        const assigned = routesList.filter(route => route.vehicleId !== 0);
-        console.log("Route object recieved is ", JSON.stringify(assigned));
-
-        setUnassignedOrders(unassigned.flatMap(route => route.orders)); // Combine all unassigned orders
-        setRoutes(assigned);
+        setRoutes(routesList);
       }
       else
       {
@@ -210,8 +197,6 @@ const ViewRoutes = ({ updateData }) =>
   const columns = [
     { field: 'orderID', headerName: 'Order ID', width: 90 },
     { field: 'deliveryDate', headerName: 'Delivery Date', width: 100, renderCell: (params) => formatDate(params.value) },
-    //{ field: 'lat', headerName: 'Latitude', width: 150 },
-    //{ field: 'long', headerName: 'Longitude', width: 150 },
     { field: 'position', headerName: 'Position', width: 90},
     { field: 'address', headerName: 'Address', width: 150 },
     { field: 'status', headerName: 'Status', width: 150 },
@@ -326,19 +311,7 @@ const ViewRoutes = ({ updateData }) =>
           
           </Grid>
 
-          {/* Render unassigned orders */}
-          {unassignedOrders.length > 0 && (
-            <Grid item xs={12}>
-              <h3>Unassigned</h3>
-              <DataGrid
-                rows={unassignedOrders.map((order, idx) => ({ id: order.orderID, ...order }))}
-                columns={columns}
-                pageSize={5}
-                autoHeight
-              />
-            </Grid>
-          )}
-
+         
           {/* Render assigned vehicles */}
           {routes.map((vehicle, index) => (
             <Grid item xs={12} key={vehicle.vehicleId} sx={styleConstants.fieldSpacing}>

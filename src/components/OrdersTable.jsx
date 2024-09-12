@@ -2,10 +2,11 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { fetchMethod } from '../store/apiFunctions';
 import { DataGrid } from '@mui/x-data-grid';
 import { Snackbar, Alert, Paper, Box } from '@mui/material';
+import {formatDate} from '../store/helperFunctions';
 
 //update data us a state object that when changed on the parent object
 //will trigger a refresh of the orders table data. 
-const OrdersTable = ({updateData}) => {
+const OrdersTable = ({updateData, filterBy}) => {
 
     const [orders, setOrders] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -31,12 +32,11 @@ const OrdersTable = ({updateData}) => {
 
     }, [updateData, loadOrders])
 
-    // Function to format the date
-    function formatDate(isoDate) {
-        const date = new Date(isoDate);
-        return date.toLocaleDateString('en-GB'); 
-        // For DD/MM/YYYY use 'en-GB'
-    }
+    
+
+      // Manually filter the orders based on 'filterBy' prop (or hardcoded value for testing)
+      const filteredOrders = orders.filter(order => filterBy.includes(order.status));
+
 
     
     const columns = [
@@ -51,7 +51,7 @@ const OrdersTable = ({updateData}) => {
     ];
 
     // The rows should be based on the fetched orders data
-    const rows = orders.map(order => ({
+    const rows = filteredOrders.map(order => ({
         id: order.orderID,
         Address: order.address,
         status: order.status,
@@ -73,6 +73,7 @@ const OrdersTable = ({updateData}) => {
                         rows={rows} 
                         columns={columns} 
                         pageSize={10} 
+                       
                     />
             </Box>
             <Snackbar

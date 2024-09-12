@@ -290,7 +290,7 @@ const AddOrder = () => {
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
 
-            { refreshOrders ?  (<p>No Orders</p>) : (<OrdersTable updateData={refreshOrders}/>) }
+            { refreshOrders ?  (<p>No Orders</p>) : (<OrdersTable updateData={refreshOrders} filterBy={['PLANNED', 'ASSIGNED', 'ON-ROUTE', 'DELAYED', 'DELIVERED']}/>) }
 </Box>
 
             <Snackbar

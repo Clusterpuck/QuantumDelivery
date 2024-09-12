@@ -163,6 +163,7 @@ const LiveTracking = () => {
         });
     }, [])
 
+    // gets directions for the route, takes in route coordinates
     const fetchDirections = async (coordinates) => {
         const validCoordinates = coordinates.filter(coord => !isNaN(coord[0]) && !isNaN(coord[1]))
         
@@ -187,87 +188,84 @@ const LiveTracking = () => {
     };
       
     useEffect(() => {
-        if (!map.current) return;
+    if (!map.current) return;
 
-        console.log("Map loaded successfully.");
+    // Clear existing markers and routes
+    markers.forEach(marker => marker.remove());
+    setMarkers([]);
 
-            // Remove existing markers
-        markers.forEach(marker => marker.remove());
+    // clears all previous route layers
+    Object.keys(checkedRoutes).forEach((routeId) => {
+        if (map.current.getLayer(`route-layer-${routeId}`)) {
+            map.current.removeLayer(`route-layer-${routeId}`);
+        }
+        if (map.current.getSource(`route-source-${routeId}`)) {
+            map.current.removeSource(`route-source-${routeId}`);
+        }
+    });
 
-        const newMarkers = [];
-        for (const routeId in checkedOrdersData) {
-            const unsortedorders = checkedOrdersData[routeId];
-            const orders = unsortedorders.sort((a, b) => a.position - b.position);
-            orders.forEach(order => {
-            if (order.longitude && order.latitude) {  
+    // ddd markers and fetch routes for all checked routes
+    const newMarkers = [];
+    const allRoutePromises = [];
+
+    
+    for (const routeId in checkedOrdersData) {
+        const unsortedOrders = checkedOrdersData[routeId];
+        const orders = unsortedOrders.sort((a, b) => a.position - b.position);
+        
+        const routeCoordinates = orders.map(order => [order.longitude, order.latitude]);
+
+        // Add markers for every order
+        orders.forEach(order => {
+            if (order.longitude && order.latitude) {
                 const marker = new mapboxgl.Marker()
                     .setLngLat([order.longitude, order.latitude])
                     .addTo(map.current);
                 newMarkers.push(marker);
             }
-            else
-            {
-                console.error("Invalid coordinates for order:", order);
-            }
-            });
-        }
-
-        // Update the state with the new markers
-        setMarkers(newMarkers);
-      
-        // Clear existing layers if they exist
-        if (map.current.getLayer('route-layer')) {
-          map.current.removeLayer('route-layer');
-          map.current.removeSource('route-source');
-          
-        }
-      
-        const allCoordinates = [];
-        for (const routeId in checkedOrdersData) {
-          const orders = checkedOrdersData[routeId];
-          const routeCoordinates = orders.map(order => [order.longitude, order.latitude]);
-          allCoordinates.push(...routeCoordinates);
-        }
-      
-        if (allCoordinates.length > 0) {
-      
-          // Fetch directions using the fetchDirections function
-          fetchDirections(allCoordinates).then((route) => {
-            if (route) {
-              // Add the route line on the map
-              map.current.addSource('route-source', {
-                type: 'geojson',
-                data: {
-                  type: 'Feature',
-                  geometry: {
-                    type: 'LineString',
-                    coordinates: route,
-                  },
-                },
-              });
-      
-              map.current.addLayer({
-                id: 'route-layer',
-                type: 'line',
-                source: 'route-source',
-                layout: {
-                  'line-join': 'round',
-                  'line-cap': 'round',
-                },
-                paint: {
-                  'line-color': '#7d84b2',
-                  'line-width': 6,
-                },
-              });
-            }
-          });
-        }
-      
-        // Add error event listener for map
-        map.current.on('error', (e) => {
-          console.error('Map error:', e);
         });
-      }, [checkedOrdersData]);
+
+        // fetch directions called for each route. returns promise which is stored in allRoutePromises array
+        allRoutePromises.push(fetchDirections(routeCoordinates));
+    }
+
+    setMarkers(newMarkers); 
+
+    // wait for all routes to be fetched and then draw them on the map
+    Promise.all(allRoutePromises).then((allRoutes) => {
+        allRoutes.forEach((route, index) => {
+            if (route) {
+                // Add a unique source and layer for each route
+                const routeId = Object.keys(checkedOrdersData)[index]; // Get the routeId for each set of directions
+                map.current.addSource(`route-source-${routeId}`, {
+                    type: 'geojson',
+                    data: {
+                        type: 'Feature',
+                        geometry: {
+                            type: 'LineString',
+                            coordinates: route,
+                        },
+                    },
+                });
+
+                map.current.addLayer({
+                    id: `route-layer-${routeId}`,
+                    type: 'line',
+                    source: `route-source-${routeId}`,
+                    layout: {
+                        'line-join': 'round',
+                        'line-cap': 'round',
+                    },
+                    paint: {
+                        'line-color': '#7d84b2',
+                        'line-width': 6,
+                    },
+                });
+            }
+        });
+    });
+
+}, [checkedOrdersData]);
 
   return (
     <Box  sx={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>

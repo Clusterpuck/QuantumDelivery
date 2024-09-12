@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "../assets/Map.css";
+import '../assets/marker.css';
 
 mapboxgl.accessToken =
     'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
@@ -29,17 +30,7 @@ const MapWithPins = ({inputLocations}) =>
             const el = document.createElement('div');
             el.className = 'marker';
             el.textContent = i + 1; // Add the number to the marker
-            el.style.width = '30px';
-            el.style.height = '30px';
-            el.style.backgroundColor = '#3FB1CE';
-            el.style.color = 'white';
-            el.style.display = 'flex';
-            el.style.justifyContent = 'center';
-            el.style.alignItems = 'center';
-            el.style.borderRadius = '50%';
-            el.style.fontSize = '16px';
-            el.style.fontWeight = 'bold';
-            el.style.cursor = 'pointer';
+            
             new mapboxgl.Marker(el)
                 .setLngLat([inputLocations[i].longitude, inputLocations[i].latitude])
                 .addTo(map);

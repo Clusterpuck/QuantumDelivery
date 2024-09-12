@@ -104,6 +104,7 @@ const DriverViewRoutes = ({}) =>
         }
     };
     
+//TODO Look at removing and still getting page to work
 
     useEffect(() => { // use effect for fetching delivery route
         
@@ -147,7 +148,7 @@ const DriverViewRoutes = ({}) =>
         if (currentDelivery) {
             const input = {
                 username: driverUsername,
-                orderId: currentDelivery.orderId,
+                orderID: currentDelivery.orderID,
                 status: "DELIVERED"
             };
             const result = await updateOrderStatus(input);
@@ -295,7 +296,7 @@ const DriverViewRoutes = ({}) =>
                             <TableBody>
                                     <TableRow>
                                         <TableCell sx={{ width: 120 }}>Address</TableCell>
-                                        <TableCell>{currentDelivery?.addr}</TableCell>
+                                        <TableCell>{currentDelivery?.address}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell sx={{ width: 120 }}>Customer Name</TableCell>
@@ -310,7 +311,7 @@ const DriverViewRoutes = ({}) =>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell sx={{ width: 120 }}>Order ID</TableCell>
-                                        <TableCell>{currentDelivery?.orderId}</TableCell>
+                                        <TableCell>{currentDelivery?.orderID}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell sx={{ width: 120 }}>Products</TableCell>
@@ -402,9 +403,9 @@ const DriverViewRoutes = ({}) =>
                                 <TableBody>
                                     {nextDeliveries.map((row, index) => (
                                         <TableRow key={index} sx={{ backgroundColor: getRowColor(row.status) }}>
-                                            <TableCell>{row.addr}</TableCell>
+                                            <TableCell>{row.address}</TableCell>
                                             <TableCell>{row.customerName}</TableCell>
-                                            <TableCell>{row.orderId}</TableCell>
+                                            <TableCell>{row.orderID}</TableCell>
                                             <TableCell>{row.status}</TableCell>
                                         </TableRow>
                                     ))}

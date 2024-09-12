@@ -94,7 +94,8 @@ const LiveTracking = () => {
         }));
         
         if (!openRow[routeId]) {
-            const route = routesData.find((r) => r.id === routeId);
+            console.log("zzzzzz routes data: ", routesData)
+            const route = routesData.find((r) => r.deliveryRouteID === routeId);
             if (route) {
                 const orders = await fetchOrdersFromDriver(route.driverUsername);
                 if (!route.driverUsername) {
@@ -373,9 +374,9 @@ const LiveTracking = () => {
                                                                 {ordersData[route.deliveryRouteID].map((order) => (
                                                                     <TableRow key={order.orderId} sx={{ backgroundColor: getRowColor(order.status) }}>
                                                                         <TableCell>{order.orderId}</TableCell>
-                                                                        <TableCell>{order.addr}</TableCell>
+                                                                        <TableCell>{order.address}</TableCell>
                                                                         <TableCell>{order.customerName}</TableCell>
-                                                                        <TableCell>{order.prodNames.join(", ")}</TableCell>
+                                                                        <TableCell>{order.productNames.join(", ")}</TableCell>
                                                                         <TableCell>{order.status}</TableCell>
                                                                     </TableRow>
                                                                     ))}

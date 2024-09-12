@@ -38,3 +38,6 @@ Testing pushing direct to main X3
 - When done with all changes, switch Constants.js to live database
 - DO NOT LEAVE PAGE OPEN WHEN MAKING CHANGES ON THE CONNECTION
 - Once all changes ready, confirm Constants.js is set to live database endpoint and merge. 
+
+# Store file  
+- Constants and helper functions stores in here when used over multiple jsx files.

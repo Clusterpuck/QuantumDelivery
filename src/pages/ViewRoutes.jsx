@@ -205,11 +205,8 @@ const ViewRoutes = ({ updateData }) =>
     //{ field: 'long', headerName: 'Longitude', width: 150 },
     { field: 'address', headerName: 'Address', width: 150 },
     { field: 'status', headerName: 'Status', width: 150 },
-    {
-      field: 'productNames', headerName: 'Product Names', width: 500, renderCell: (params) => params.value.join(', '
-      )
-    },
-    { field: 'customerName', headerName: 'Customer Name', width: 150 }
+    { field: 'customerName', headerName: 'Customer Name', width: 150 },
+    { field: 'productNames', headerName: 'Product Names', width: 500, renderCell: (params) => params.value.join(', ') },
 
   ];
 
@@ -336,7 +333,7 @@ const ViewRoutes = ({ updateData }) =>
                   latitude: order.latitude,
                   longitude: order.longitude
                 }))} />
-                <Button
+                <Button 
                   onClick={()=>deleteRoute(vehicle.deliveryRouteID)}
                   color = "error"
                   variant = "contained"

@@ -154,13 +154,13 @@ const AddOrder = () => {
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                 <Paper elevation={3} sx={{ padding: 4, maxWidth: 1500, width: '100%' }}>
-                    <Grid item xs={12} md= {6} container spacing={2} >
+                    <Grid item xs={12} md= {12} container spacing={2} >
                     <Grid item xs={6} md= {6} container spacing={2} >
 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DesktopDatePicker
                   label="Date Required"
-                  inputFormat="MM/DD/YYYY"
+                  inputFormat="DD/MM/YYYY"
                   value={selectedDate}
                   onChange={handleDateChange}
                   renderInput={(params) => <TextField {...params}/>}

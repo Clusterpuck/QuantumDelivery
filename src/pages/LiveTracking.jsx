@@ -25,6 +25,7 @@ const LiveTracking = () => {
     const mapContainer = useRef(null);
     const map = useRef(null);
     const [markers, setMarkers] = useState([]);
+    const [noRoutesFound, setNoRoutesFound] = useState(false);
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg'; 
 
@@ -65,9 +66,10 @@ const LiveTracking = () => {
     const handleCheckboxChange = (routeId) => (event) => {
         setCheckedRoutes((prevCheckedRoutes) => ({
             ...prevCheckedRoutes,
-            [routeId]: event.target.checked,
-        }))
+            [routeId]: event.target.checked, 
+        }));
     };
+    
 
     useEffect(() =>
     {
@@ -90,16 +92,21 @@ const LiveTracking = () => {
             ...prevState,
             [routeId]: !prevState[routeId], // Toggle the open state for the specific route
         }));
-
-        // Fetch orders if the row is expanding
+    
         if (!openRow[routeId]) {
-            const route = routesData.find(r => r.id === routeId);
+            const route = routesData.find((r) => r.id === routeId);
             if (route) {
                 const orders = await fetchOrdersFromDriver(route.driverUsername);
+                if (!route.driverUsername) {
+                    console.error("Driver username is undefined for route:", route);
+                    return;
+                }
                 setOrdersData((prevOrders) => ({
                     ...prevOrders,
-                    [routeId]: orders
+                    [routeId]: orders,
                 }));
+            } else {
+                console.error(`Route with ID ${routeId} not found.`);
             }
         }
     };
@@ -114,7 +121,7 @@ const LiveTracking = () => {
     };
 
 
-     // Fetch orders for all checked routes whenever checkedRoutes changes
+    // Fetch orders for all checked routes whenever checkedRoutes changes
     useEffect(() => {
         const fetchOrdersForCheckedRoutes = async () => {
             const newCheckedOrdersData = {};
@@ -123,11 +130,11 @@ const LiveTracking = () => {
                 if (checkedRoutes[routeId]) {
                     console.log("checked routes -> ", JSON.stringify(checkedRoutes));
                     console.log("routes data -> ", JSON.stringify(routesData));
-                    const route = routesData.find(r => r.id === Number(routeId));
-
+                    const route = routesData.find((r) => r.id === Number(routeId));
+        
                     console.log("routeId type:", typeof routeId, "value:", routeId);
-                    console.log("route.id type:", typeof route.id, "value:", route.id);
-
+                    console.log("route.id type:", typeof route?.id, "value:", route?.id);
+        
                     console.log("the route: ", JSON.stringify(routesData));
                     if (route) {
                         console.log("hello");
@@ -138,7 +145,7 @@ const LiveTracking = () => {
                 }
             }
             setCheckedOrdersData(newCheckedOrdersData);
-        };
+        };        
 
         if (routesData) {
             fetchOrdersForCheckedRoutes();  

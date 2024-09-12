@@ -23,6 +23,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import OrdersTable from '../components/OrdersTable.jsx';
+import {formatDate} from '../store/helperFunctions';
 
 const styleConstants = {
   fieldSpacing: { mb: 4 }
@@ -208,6 +209,7 @@ const ViewRoutes = ({ updateData }) =>
   // Define columns for DataGrid
   const columns = [
     { field: 'orderID', headerName: 'Order ID', width: 90 },
+    { field: 'deliveryDate', headerName: 'Delivery Date', width: 100, renderCell: (params) => formatDate(params.value) },
     //{ field: 'lat', headerName: 'Latitude', width: 150 },
     //{ field: 'long', headerName: 'Longitude', width: 150 },
     { field: 'position', headerName: 'Position', width: 90},
@@ -310,7 +312,8 @@ const ViewRoutes = ({ updateData }) =>
                 aria-controls="panel1-content"
                 id="panel1-header"
               >
-                Unassigned Orders
+                Unassigned Orders 
+                {allOrders ? <p>No Orders</p> : <p>Orders</p>}
               </AccordionSummary>
               <AccordionDetails>
                 <OrdersTable updateData={false} filterBy={['PLANNED']}/>

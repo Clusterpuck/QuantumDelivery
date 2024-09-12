@@ -20,7 +20,7 @@ const DriverMap = ({start,end}) =>
     {
         console.log( "Start and end in getRoute is ", start, end);
         const query = await fetch(
-            `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
+            `https://api.mapbox.com/directions/v5/mapbox/driving/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}&overview=full`,
             { method: 'GET' }
         )
         const json = await query.json();

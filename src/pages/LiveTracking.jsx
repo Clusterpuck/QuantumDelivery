@@ -10,7 +10,7 @@ import {fetchMethod, fetchDeliveryRoute} from '../store/apiFunctions.js';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {disableScroll} from '../assets/scroll.js';
-import '../assets/marker.css';
+import '../assets/Marker.css'
 
 // Page design for live tracking page
 // address search is placeholder for directions API

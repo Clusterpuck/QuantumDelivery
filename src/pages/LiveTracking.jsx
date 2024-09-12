@@ -81,7 +81,7 @@ const LiveTracking = () => {
         if (routesData) {
             const initialCheckedRoutes = {};
             routesData.forEach(route => {
-                initialCheckedRoutes[route.id] = true;  // Set all checkboxes to checked
+                initialCheckedRoutes[route.deliveryRouteID] = true;  // Set all checkboxes to checked
             });
             setCheckedRoutes(initialCheckedRoutes);
         }
@@ -92,7 +92,7 @@ const LiveTracking = () => {
             ...prevState,
             [routeId]: !prevState[routeId], // Toggle the open state for the specific route
         }));
-    
+        
         if (!openRow[routeId]) {
             const route = routesData.find((r) => r.id === routeId);
             if (route) {
@@ -133,7 +133,7 @@ const LiveTracking = () => {
                     const route = routesData.find((r) => r.id === Number(routeId));
         
                     console.log("routeId type:", typeof routeId, "value:", routeId);
-                    console.log("route.id type:", typeof route?.id, "value:", route?.id);
+                    console.log("route.deliveryRouteID type:", typeof route?.id, "value:", route?.id);
         
                     console.log("the route: ", JSON.stringify(routesData));
                     if (route) {
@@ -323,23 +323,23 @@ const LiveTracking = () => {
                                 </TableHead>
                                 <TableBody>
                                     {routesData.map((route) => (
-                                        <React.Fragment key={route.id}>
+                                        <React.Fragment key={route.deliveryRouteID}>
                                         <TableRow>
                                             <TableCell>
                                                 <Checkbox
-                                                    checked={!!checkedRoutes[route.id]}
-                                                    onChange={handleCheckboxChange(route.id)}
+                                                    checked={!!checkedRoutes[route.deliveryRouteID]}
+                                                    onChange={handleCheckboxChange(route.deliveryRouteID)}
                                                 />
                                             </TableCell>
-                                            <TableCell>{route.id}</TableCell>
+                                            <TableCell>{route.deliveryRouteID}</TableCell>
                                             <TableCell>{route.driverUsername}</TableCell>
                                             <TableCell>{route.vehicleId}</TableCell>
                                             <TableCell>
                                                 <IconButton
                                                     size="small"
-                                                    onClick={() => handleRowToggle(route.id)}
+                                                    onClick={() => handleRowToggle(route.deliveryRouteID)}
                                                 >
-                                                    {openRow[route.id] ? (
+                                                    {openRow[route.deliveryRouteID] ? (
                                                         <KeyboardArrowUpIcon />
                                                     ) : (
                                                         <KeyboardArrowDownIcon />
@@ -353,12 +353,12 @@ const LiveTracking = () => {
                                                 colSpan={5}
                                             >
                                                 <Collapse
-                                                    in={openRow[route.id]}
+                                                    in={openRow[route.deliveryRouteID]}
                                                     timeout="auto"
                                                     unmountOnExit
                                                 >
                                                     <Box margin={1}>
-                                                    {ordersData[route.id] ? (
+                                                    {ordersData[route.deliveryRouteID] ? (
                                                         <Table size="small">
                                                             <TableHead>
                                                                 <TableRow>
@@ -370,7 +370,7 @@ const LiveTracking = () => {
                                                                 </TableRow>
                                                             </TableHead>
                                                             <TableBody>
-                                                                {ordersData[route.id].map((order) => (
+                                                                {ordersData[route.deliveryRouteID].map((order) => (
                                                                     <TableRow key={order.orderId} sx={{ backgroundColor: getRowColor(order.status) }}>
                                                                         <TableCell>{order.orderId}</TableCell>
                                                                         <TableCell>{order.addr}</TableCell>

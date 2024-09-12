@@ -18,6 +18,11 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import dayjs from 'dayjs';
 import {enableScroll} from '../assets/scroll.js';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import OrdersTable from '../components/OrdersTable.jsx';
 
 const styleConstants = {
   fieldSpacing: { mb: 4 }
@@ -81,9 +86,10 @@ const ViewRoutes = ({ updateData }) =>
       };
 
       console.log("Payload being sent: ", JSON.stringify(userInput));
-      const routesList = await postDeliveryRoutes(userInput);
+      const unsortedRoutesList = await postDeliveryRoutes(userInput);
       if (routesList)
       {
+        const routesList = unsortedRoutesList.sort((a, b) => a.position - b.position);
         // Separate unassigned orders (vehicleId: 0) from assigned routes
         const unassigned = routesList.filter(route => route.vehicleId === 0);
         const assigned = routesList.filter(route => route.vehicleId !== 0);
@@ -117,11 +123,12 @@ const ViewRoutes = ({ updateData }) =>
 
   const loadOrders = async () =>
   {
-    const orderList = await fetchMethod("orders");
-    if (orderList)
+    const unsortedRoutesList = await fetchMethod("orders");
+    if (unsortedRoutesList)
     {
-      console.log("Order list is " + JSON.stringify(orderList));
-      setAllOrders(orderList);
+      console.log("Order list is " + JSON.stringify(unsortedRoutesList));
+      const routesList = unsortedRoutesList.sort((a, b) => a.position - b.position);
+      setAllOrders(routesList);
       //orderList.filter() //what was this empty filter doing?
       setOrdersLoaded(true); // Mark orders as loaded
     } else
@@ -203,6 +210,7 @@ const ViewRoutes = ({ updateData }) =>
     { field: 'orderID', headerName: 'Order ID', width: 90 },
     //{ field: 'lat', headerName: 'Latitude', width: 150 },
     //{ field: 'long', headerName: 'Longitude', width: 150 },
+    { field: 'position', headerName: 'Position', width: 90},
     { field: 'address', headerName: 'Address', width: 150 },
     { field: 'status', headerName: 'Status', width: 150 },
     { field: 'customerName', headerName: 'Customer Name', width: 150 },
@@ -295,6 +303,20 @@ const ViewRoutes = ({ updateData }) =>
             </Grid>
           </Grid>
 
+          <Grid item xs={12} md={12} container spacing={2} alignItems="center">
+            <Accordion style={{ width: '100%' }}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1-content"
+                id="panel1-header"
+              >
+                Unassigned Orders
+              </AccordionSummary>
+              <AccordionDetails>
+                <OrdersTable updateData={false} filterBy={['PLANNED']}/>
+              </AccordionDetails>
+            </Accordion>
+          </Grid>
 
 
           <Grid xs={6}>
@@ -324,16 +346,24 @@ const ViewRoutes = ({ updateData }) =>
               </Divider>
               <Grid item sx={styleConstants.fieldSpacing}>
                 <DataGrid
-                  rows={vehicle.orders.map((order) => ({ id: order.orderID, ...order }))}
+                  rows={vehicle.orders
+                    .slice() // Copy to avoid mutating original array
+                    .sort((a, b) => a.position - b.position) // Sort by position
+                    .map((order) => ({ id: order.orderID, ...order }))}
                   columns={columns}
                   pageSize={5}
                   autoHeight
                 />
-                <MapWithPins inputLocations={vehicle.orders.map(order => ({
-                  latitude: order.latitude,
-                  longitude: order.longitude
-                }))} />
-                <Button 
+                <MapWithPins
+                  inputLocations={vehicle.orders
+                    .slice() // Copy to avoid mutating original array
+                    .sort((a, b) => a.position - b.position) // Sort by position
+                    .map(order => ({
+                      latitude: order.latitude,
+                      longitude: order.longitude
+                    }))}
+                />
+                <Button
                   onClick={()=>deleteRoute(vehicle.deliveryRouteID)}
                   color = "error"
                   variant = "contained"

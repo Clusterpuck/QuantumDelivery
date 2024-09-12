@@ -5,7 +5,7 @@ import { Snackbar, Alert, Paper, Box } from '@mui/material';
 
 //update data us a state object that when changed on the parent object
 //will trigger a refresh of the orders table data. 
-const OrdersTable = ({updateData}) => {
+const OrdersTable = ({updateData, filterBy}) => {
 
     const [orders, setOrders] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -38,6 +38,11 @@ const OrdersTable = ({updateData}) => {
         // For DD/MM/YYYY use 'en-GB'
     }
 
+
+      // Manually filter the orders based on 'filterBy' prop (or hardcoded value for testing)
+      const filteredOrders = orders.filter(order => filterBy.includes(order.status));
+
+
     
     const columns = [
         { field: 'id', headerName: 'ID', width: 90 },
@@ -51,7 +56,7 @@ const OrdersTable = ({updateData}) => {
     ];
 
     // The rows should be based on the fetched orders data
-    const rows = orders.map(order => ({
+    const rows = filteredOrders.map(order => ({
         id: order.orderID,
         Address: order.address,
         status: order.status,
@@ -73,6 +78,7 @@ const OrdersTable = ({updateData}) => {
                         rows={rows} 
                         columns={columns} 
                         pageSize={10} 
+                       
                     />
             </Box>
             <Snackbar

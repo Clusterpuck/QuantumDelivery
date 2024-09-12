@@ -44,7 +44,7 @@ const LiveTracking = () => {
     {
             const fetchedRoutes = await fetchMethod("deliveryroutes");
             if (fetchedRoutes) {
-                console.log("Delivery routes fetched", JSON.stringify(fetchedRoutes));
+                console.log("xxXXDelivery routes fetched", JSON.stringify(fetchedRoutes));
                 setRoutesData(fetchedRoutes);
             } else {
                 console.error("No routes data returned");
@@ -95,6 +95,7 @@ const LiveTracking = () => {
         
         if (!openRow[routeId]) {
             console.log("zzzzzz routes data: ", routesData)
+
             const route = routesData.find((r) => r.deliveryRouteID === routeId);
             if (route) {
                 const orders = await fetchOrdersFromDriver(route.driverUsername);
@@ -138,10 +139,10 @@ const LiveTracking = () => {
         
                     console.log("the route: ", JSON.stringify(routesData));
                     if (route) {
-                        console.log("xxXXhello route for driver username is " + JSON.stringify(route));
+                        console.log("hello route for driver username is " + JSON.stringify(route));
                         const orders = await fetchOrdersFromDriver(route.driverUsername);
                         newCheckedOrdersData[routeId] = orders;
-                        console.log("xxXXfetched order -> ", JSON.stringify(newCheckedOrdersData));
+                        console.log("fetched order -> ", JSON.stringify(newCheckedOrdersData));
                     }
                 }
             }

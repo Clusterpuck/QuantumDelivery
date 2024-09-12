@@ -34,7 +34,7 @@ const OrdersTable = ({updateData}) => {
     // Function to format the date
     function formatDate(isoDate) {
         const date = new Date(isoDate);
-        return date.toLocaleDateString('en-GB'); // Format as MM/DD/YYYY
+        return date.toLocaleDateString('en-GB'); 
         // For DD/MM/YYYY use 'en-GB'
     }
 
@@ -46,6 +46,8 @@ const OrdersTable = ({updateData}) => {
         { field: 'customerName', headerName: 'Customer Name', width: 150 },
         { field: 'status', headerName: 'Status', width: 150 },
         { field: 'notes', headerName: 'Notes', width: 150 },
+        { field: 'Products', headerName: 'Products', width: 500, renderCell: (params) => params.value.join(', '
+        )},
     ];
 
     // The rows should be based on the fetched orders data
@@ -56,6 +58,7 @@ const OrdersTable = ({updateData}) => {
         customerName: order.customerName,
         notes: order.orderNotes,
         DeliveryDate: formatDate(order.deliveryDate),
+        Products: order.productNames,
 
     }));
 

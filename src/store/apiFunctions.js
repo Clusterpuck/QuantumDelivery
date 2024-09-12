@@ -261,7 +261,13 @@ export const startDeliveryRoute = async(routeId) => {
     }
 };
 
+///Input is: const input = {
+//     username: driverUsername,
+//     orderId: currentDelivery.orderId,
+//     status: "DELIVERED"
+// };
 export const updateOrderStatus = async(input) =>{
+    console.log("xxXXBody to send to update status " + JSON.stringify(input))
     try{
         const response = await fetch(Constants.DATA_ENDPOINT + 'deliveryroutes/update-status', {
             method: 'POST',
@@ -272,16 +278,16 @@ export const updateOrderStatus = async(input) =>{
         });
 
         if (!response.ok) {
-            console.error('Response status:', response.status);
-            console.error('Response status text:', response.statusText);
+            console.error('xxXXResponse status:', response.status);
+            console.error('xxXXResponse status text:', response.statusText);
             throw new Error('Failed to update order status.');
         }
         const responseData = await response.json();
-        console.log('Successfully updated order status: ', responseData);
+        console.log('xxXXSuccessfully updated order status: ', responseData);
         return responseData; 
 
     } catch (error) {
-        console.error('Error updating order status: ', error);
+        console.error('xxXXError updating order status: ', error);
         return null; 
     }
 }

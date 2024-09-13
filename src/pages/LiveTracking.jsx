@@ -17,16 +17,27 @@ import '../assets/Marker.css'
 
 
 const LiveTracking = () => {
-    const [drawerOpen, setDrawerOpen] = React.useState(true);
-    const [routesData, setRoutesData] = React.useState(null);
+    const [drawerOpen, setDrawerOpen] = React.useState(true); // state for whether drawer is open
+    const [routesData, setRoutesData] = React.useState(null); // routes data, returned by 'get delivery routes'
+
+    // state to keep track of which routes are checked. Format: {<RouteID>: <boolean>, <RouteID>: <boolean>}
+    // eg. {8: true, 9: true, 12: false, 18: true} means routes 8, 9 and 18 are checked, 12 is not.
     const [checkedRoutes, setCheckedRoutes] = useState({});
+
+    // state to keep track of which rows are expanded to show order details. Format: {<RouteID>: <boolean>, <RouteID>: <boolean>}
+    // eg. {8: true, 9: true, 12: false, 18: true} means that the rows for routes 8, 9 and 18 are expanded, 12 is not.
     const [openRow, setOpenRow] = useState({});
+
+    // keeps track of orders data for each route. used for toggling the rows. Format: {<RouteID>: <OrdersArray>, <RouteID>: <OrdersArray>}
     const [ordersData, setOrdersData] = React.useState({});
+    // keeps track of orders data for each route. used for displaying routes. Format: {<RouteID>: <OrdersArray>, <RouteID>: <OrdersArray>}
     const [checkedOrdersData, setCheckedOrdersData] = useState({});
-    const mapContainer = useRef(null);
-    const map = useRef(null);
-    const [markers, setMarkers] = useState([]);
-    const [noRoutesFound, setNoRoutesFound] = useState(false);
+    // note. i think that ordersData and checkedOrdersData can be consolidated into one. will work on it -amira
+
+    const mapContainer = useRef(null); // state for map container 
+    const map = useRef(null); // state for map
+    const [markers, setMarkers] = useState([]); // state for markers on the map
+    const [noRoutesFound, setNoRoutesFound] = useState(false); // state for whether there are routes to display
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg'; 
 
@@ -34,12 +45,12 @@ const LiveTracking = () => {
         { setDrawerOpen(open); }
 
     useEffect(() => {
-        console.log("Updated checkedRoutes: ", checkedRoutes);
-    }, [checkedRoutes]);
+        console.log("Updated OpenRow: ", openRow);
+    }, [openRow]);
 
     useEffect(() => {
-        console.log("Updated checkedOrdersDAta: ", checkedOrdersData);
-    }, [checkedOrdersData]);
+        console.log("Updated ordersdata: ", ordersData);
+    }, [ordersData]);
 
     const fetchRouteData = async () =>
     {
@@ -212,6 +223,7 @@ const LiveTracking = () => {
 
     
     for (const routeId in checkedOrdersData) {
+
         const unsortedOrders = checkedOrdersData[routeId];
         const orders = unsortedOrders.sort((a, b) => a.position - b.position);
         
@@ -222,6 +234,14 @@ const LiveTracking = () => {
             const el = document.createElement('div');
             el.className = 'marker'; // Add the CSS class
             el.textContent = order.position; // Add the position number to the mark
+            if (order.status == 'DELIVERED')
+            {
+                el.style.backgroundColor ='#379e34';
+            }
+            else
+            {
+                el.style.backgroundColor  = '#e0983a';
+            }
 
             if (order.longitude && order.latitude) {
                 const marker = new mapboxgl.Marker(el)
@@ -237,12 +257,15 @@ const LiveTracking = () => {
 
     setMarkers(newMarkers); 
 
+    const colors = ['#b31746' /*red*/ ,'#293fab' /*blue*/,'#6f2aad' /*purple*/, '#b82ab3' /*pink*/ ];
+
     // wait for all routes to be fetched and then draw them on the map
     Promise.all(allRoutePromises).then((allRoutes) => {
         allRoutes.forEach((route, index) => {
             if (route) {
-                // Add a unique source and layer for each route
-                const routeId = Object.keys(checkedOrdersData)[index]; // Get the routeId for each set of directions
+                // adds source and layer for each route
+                const routeId = Object.keys(checkedOrdersData)[index]; // get the routeId for each set of directions
+                const routeColor = colors[index % colors.length]; // cycles through the 'colors' array
                 map.current.addSource(`route-source-${routeId}`, {
                     type: 'geojson',
                     data: {
@@ -263,7 +286,7 @@ const LiveTracking = () => {
                         'line-cap': 'round',
                     },
                     paint: {
-                        'line-color': '#7d84b2',
+                        'line-color': routeColor,
                         'line-width': 6,
                     },
                 });

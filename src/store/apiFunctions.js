@@ -292,6 +292,36 @@ export const updateOrderStatus = async(input) =>{
     }
 }
 
+///Input is: const input = {
+//     username: driverUsername,
+//     orderId: currentDelivery.orderId,
+//     delayed: "true"
+// };
+export const updateOrderDelayed = async(input) =>{
+    try{
+        const response = await fetch(Constants.DATA_ENDPOINT + 'deliveryroutes/update-delayed', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(input),
+        });
+
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+            throw new Error('Failed to set order as delayed.');
+        }
+        const responseData = await response.json();
+        console.log('Successfully set order as delayed ', responseData);
+        return responseData; 
+
+    } catch (error) {
+        console.error('Error setting order as delayed: ', error);
+        return null; 
+    }
+}
+
 export const login = async (username, password) => {
     try {
         const response = await fetch(Constants.DATA_ENDPOINT + 'accounts/authenticate', {

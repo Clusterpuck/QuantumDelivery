@@ -11,6 +11,7 @@ import DriverMap from '../components/DriverMap.jsx';
 import { fetchDeliveryRoute, fetchMethod, startDeliveryRoute, updateOrderStatus } from '../store/apiFunctions';
 import NoRouteFound from '../components/NoRouteFound.jsx';
 import {disableScroll} from '../assets/scroll.js';
+import ReportIssue from '../components/ReportIssue.jsx'; 
 
 const DriverViewRoutes = ({}) => 
 {
@@ -31,6 +32,15 @@ const DriverViewRoutes = ({}) =>
     const [routeId, setRouteId] = React.useState(null);
     const [anyPlanned, setAnyPlanned] = React.useState(true);
     const [finishedDelivery, setFinishedDelivery] = React.useState(false);
+    const [issueDialogOpen, setIssueDialogOpen] = useState(false);
+
+    const handleIssueDialogOpen = () => {
+        setIssueDialogOpen(true);
+      };
+    
+      const handleIssueDialogClose = () => {
+        setIssueDialogOpen(false);
+      };
 
     const driverUsername = 'driver1@email.com'; // hard coded for now
 
@@ -344,7 +354,7 @@ const DriverViewRoutes = ({}) =>
                             Mark as Delivered
                             <CheckCircleIcon  />
                         </Button>
-                        <Button variant="outlined" color="primary"
+                        <Button variant="outlined" color="primary" onClick={handleIssueDialogOpen}
                         sx={{
                             flex: 1,
                             boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)'
@@ -352,6 +362,7 @@ const DriverViewRoutes = ({}) =>
                             Report Issue
                             <WarningAmberIcon  />
                         </Button>
+                        <ReportIssue open={issueDialogOpen} onClose={handleIssueDialogClose} driverUsername={driverUsername} orderId={currentDelivery.orderID} />
                         </>
                         )}
                     </Box>

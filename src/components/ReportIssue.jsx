@@ -1,7 +1,32 @@
 import React from 'react';
-import { Dialog, DialogTitle, DialogContent, Button, Box } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, Button, Box, Typography } from '@mui/material';
+import { updateOrderDelayed } from '../store/apiFunctions.js';
+import ErrorIcon from '@mui/icons-material/Error';
+import '../index.css';
 
-const ReportIssue = ({ open, onClose }) => {
+const ReportIssue = ({ open, onClose, driverUsername, orderId }) => {
+    const [error, setError] = React.useState(null);
+    const handleOrderDelayed = async () => 
+    {
+        const input = {
+            username: driverUsername,
+            orderID: orderId,
+            delayed: "true"
+        };
+
+        try {
+            const result = await updateOrderDelayed(input);
+            if (result) {
+                console.log("successfully set order to delayed");
+            } else {
+                throw new Error("failed to update order status");
+            }
+        } catch (err) {
+            console.error("error updating order to delayed:", err);
+            setError("Error: Could not submit issue.");
+        }
+    }
+
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>What type of issue would you like to report?</DialogTitle>
@@ -15,12 +40,25 @@ const ReportIssue = ({ open, onClose }) => {
                         marginTop: 2
                     }}
                 >
+                    {error && (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                padding: 2,
+                                borderRadius: 1,
+                                backgroundColor: 'var(--action-colour)',
+                            }}
+                        >
+                            <ErrorIcon sx={{ color: 'var(--secondary-colour)' }}/>
+                            <Typography variant="body2" sx={{ marginLeft: 1, color: 'var(--secondary-colour)' }}>
+                                {error}
+                            </Typography>
+                        </Box>
+                    )}
                     <Button 
                         variant="outlined" 
-                        onClick={() => {
-                            console.log("Order is delayed");
-                            onClose();
-                        }}
+                        onClick={handleOrderDelayed}
                         fullWidth
                     >
                         Order is delayed

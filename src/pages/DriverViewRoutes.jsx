@@ -362,7 +362,7 @@ const DriverViewRoutes = ({}) =>
                             Report Issue
                             <WarningAmberIcon  />
                         </Button>
-                        <ReportIssue open={issueDialogOpen} onClose={handleIssueDialogClose} />
+                        <ReportIssue open={issueDialogOpen} onClose={handleIssueDialogClose} driverUsername={driverUsername} orderId={currentDelivery.orderID} />
                         </>
                         )}
                     </Box>

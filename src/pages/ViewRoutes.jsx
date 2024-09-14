@@ -31,7 +31,7 @@ const styleConstants = {
 
 
 // Page design for View Routes page
-const ViewRoutes = ({ updateData }) =>
+const ViewRoutes = ( ) =>
 {
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [routes, setRoutes] = useState([]);
@@ -42,9 +42,19 @@ const ViewRoutes = ({ updateData }) =>
   });
   //can change in future for backend to handle this
   const [allOrders, setAllOrders] = useState([]);
+  const [plannedOrders, setPlannedOrders] = useState([]);
   const [numVehicles, setNumVehicles] = useState(1); // default to 1 vehicle
   const [ordersLoaded, setOrdersLoaded] = useState(false); // Track if orders are loaded
   const [calcType, setCalcType] = useState("brute");
+
+  
+  useEffect(() =>
+    {
+      enableScroll();
+      loadOrders();
+      loadRoutes();
+  
+    }, [])
 
   // Function to handle date change and load dummy output
   const handleDateChange = (date) =>
@@ -54,20 +64,18 @@ const ViewRoutes = ({ updateData }) =>
     //loadRoutes();
   };
 
+
   const handleCalcChange = (event) => {
     setCalcType(event.target.value)
     console.log("Calc changed to ", event.target.value );
 
   }
 
+
   const handleSnackbarClose = () =>
   {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
-
-  useEffect(() => {
-    enableScroll();
-}, []);
 
 
   const calcRoutes = async () => {
@@ -80,17 +88,18 @@ const ViewRoutes = ({ updateData }) =>
         numVehicle: numVehicles,
         calcType: calcType,
         deliveryDate: selectedDate,
-        orders: allOrders.
-        filter(order => order.status === "PLANNED").
+        orders: plannedOrders.
         map(order => order.orderID) // all orders
       };
 
       console.log("Payload being sent: ", JSON.stringify(userInput));
       const unsortedRoutesList = await postDeliveryRoutes(userInput);
-      if (routesList)
+      if (unsortedRoutesList)
       {
         const routesList = unsortedRoutesList.sort((a, b) => a.position - b.position);
         setRoutes(routesList);
+        loadOrders();
+
       }
       else
       {
@@ -115,15 +124,17 @@ const ViewRoutes = ({ updateData }) =>
 
   }
 
+
   const loadOrders = async () =>
   {
-    const unsortedRoutesList = await fetchMethod("orders");
-    if (unsortedRoutesList)
+    const ordersList = await fetchMethod("orders");
+    if (ordersList)
     {
-      console.log("Order list is " + JSON.stringify(unsortedRoutesList));
-      const routesList = unsortedRoutesList.sort((a, b) => a.position - b.position);
-      setAllOrders(routesList);
-      //orderList.filter() //what was this empty filter doing?
+      console.log("Order list is " + JSON.stringify(ordersList));
+      const sortedOrderList = ordersList.sort((a, b) => a.position - b.position);
+      setAllOrders(sortedOrderList);
+      const unassingedOrders = sortedOrderList.filter( order => order.status === "PLANNED");
+      setPlannedOrders(unassingedOrders);
       setOrdersLoaded(true); // Mark orders as loaded
     } else
     {
@@ -136,13 +147,6 @@ const ViewRoutes = ({ updateData }) =>
     }
   };
 
-  useEffect(() =>
-  {
-
-    loadOrders();
-    loadRoutes();
-
-  }, [])
 
   const deleteRoute = async (id) =>
   {
@@ -151,12 +155,12 @@ const ViewRoutes = ({ updateData }) =>
     if (result)
     {
       console.log('Item deleted successfully:', result);
+      await loadOrders();
+      await loadRoutes();
     } else
     {
       console.log('Failed to delete item.');
     }
-    loadOrders();
-    loadRoutes();
 
   }
 
@@ -297,8 +301,7 @@ const ViewRoutes = ({ updateData }) =>
                 aria-controls="panel1-content"
                 id="panel1-header"
               >
-                Unassigned Orders 
-                {allOrders ? <p>No Orders</p> : <p>Orders</p>}
+                {plannedOrders ? <p>Unassigned Orders {plannedOrders.length}</p> : <p>No Unassigned Orders</p>}
               </AccordionSummary>
               <AccordionDetails>
                 <OrdersTable updateData={false} filterBy={['PLANNED']}/>
@@ -313,16 +316,16 @@ const ViewRoutes = ({ updateData }) =>
 
          
           {/* Render assigned vehicles */}
-          {routes.map((vehicle, index) => (
-            <Grid item xs={12} key={vehicle.vehicleId} sx={styleConstants.fieldSpacing}>
+          {routes.map((route) => (
+            <Grid item xs={12} key={route.vehicleId} sx={styleConstants.fieldSpacing}>
               <Divider>
                 <Typography variant="h4" component="h3" align="center">
-                  Vehicle {vehicle.vehicleId}
+                  Vehicle {route.vehicleId}
                 </Typography>
               </Divider>
               <Grid item sx={styleConstants.fieldSpacing}>
                 <DataGrid
-                  rows={vehicle.orders
+                  rows={route.orders
                     .slice() // Copy to avoid mutating original array
                     .sort((a, b) => a.position - b.position) // Sort by position
                     .map((order) => ({ id: order.orderID, ...order }))}
@@ -330,10 +333,10 @@ const ViewRoutes = ({ updateData }) =>
                   pageSize={5}
                   autoHeight
                 />
-                 {vehicle.orders && vehicle.orders.length > 0 ? (
+                 {route.orders && route.orders.length > 0 ? (
                   <>
                     <MapWithPins
-                      inputLocations={vehicle.orders
+                      inputLocations={route.orders
                       .slice() // Copy to avoid mutating the original array
                       .sort((a, b) => a.position - b.position) // Sort by position
                       .map(order => ({
@@ -346,7 +349,7 @@ const ViewRoutes = ({ updateData }) =>
                   <p>No Orders</p>
                 )}
                 <Button
-                  onClick={()=>deleteRoute(vehicle.deliveryRouteID)}
+                  onClick={()=>deleteRoute(route.deliveryRouteID)}
                   color = "error"
                   variant = "contained"
                 >Delete Route</Button>

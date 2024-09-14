@@ -15,7 +15,10 @@ const MapWithPins = ({inputLocations}) =>
     // Initialize map when component mounts
     useEffect(() =>
     {
-        //console.log("Input locations is ", JSON.stringify(inputLocations) );
+        if (!inputLocations || inputLocations.length === 0) {
+            console.error("inputLocations not provided or null.");
+            return; 
+        }
         const midOrder = Math.floor(inputLocations.length / 2)
         const map = new mapboxgl.Map({
             container: mapContainerRef.current,

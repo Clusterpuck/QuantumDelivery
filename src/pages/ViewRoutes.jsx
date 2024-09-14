@@ -330,15 +330,21 @@ const ViewRoutes = ({ updateData }) =>
                   pageSize={5}
                   autoHeight
                 />
-                <MapWithPins
-                  inputLocations={vehicle.orders
-                    .slice() // Copy to avoid mutating original array
-                    .sort((a, b) => a.position - b.position) // Sort by position
-                    .map(order => ({
+                 {vehicle.orders && vehicle.orders.length > 0 ? (
+                  <>
+                    <MapWithPins
+                      inputLocations={vehicle.orders
+                      .slice() // Copy to avoid mutating the original array
+                      .sort((a, b) => a.position - b.position) // Sort by position
+                      .map(order => ({
                       latitude: order.latitude,
                       longitude: order.longitude
-                    }))}
-                />
+                      }))}
+                    />
+                  </>
+                ) : (
+                  <p>No Orders</p>
+                )}
                 <Button
                   onClick={()=>deleteRoute(vehicle.deliveryRouteID)}
                   color = "error"

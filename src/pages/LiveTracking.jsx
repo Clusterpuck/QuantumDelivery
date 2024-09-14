@@ -231,13 +231,17 @@ const LiveTracking = () => {
             // Add markers for every order
             orders.forEach(order => {
                 const el = document.createElement('div');
-                el.className = 'marker'; // Add the CSS class
-                el.textContent = order.position; // Add the position number to the mark
+                el.className = 'marker'; 
+                el.textContent = order.position; 
                 if (order.status == 'DELIVERED') {
-                    el.style.backgroundColor = '#379e34';
+                    el.style.backgroundColor = '#379e34'; //green for delivered
                 }
-                else {
-                    el.style.backgroundColor = '#e0983a';
+                else if (order.delayed) {
+                    el.style.backgroundColor = '#b31746'; // red for delayed
+                }
+                else
+                {
+                    el.style.backgroundColor = '#e0983a'; // yellow for everything else
                 }
 
                 if (order.longitude && order.latitude) {

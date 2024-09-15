@@ -4,7 +4,7 @@ import { updateOrderDelayed } from '../store/apiFunctions.js';
 import ErrorIcon from '@mui/icons-material/Error';
 import '../index.css';
 
-const ReportIssue = ({ open, onClose, driverUsername, orderId }) => {
+const ReportIssue = ({ open, onClose, driverUsername, orderId, fetchDeliveryData }) => {
     const [error, setError] = React.useState(null);
     const handleOrderDelayed = async () => 
     {
@@ -18,6 +18,7 @@ const ReportIssue = ({ open, onClose, driverUsername, orderId }) => {
             const result = await updateOrderDelayed(input);
             if (result) {
                 console.log("successfully set order to delayed");
+                await fetchDeliveryData();
             } else {
                 throw new Error("failed to update order status");
             }

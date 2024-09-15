@@ -59,6 +59,16 @@ const LiveTracking = () => {
         if (fetchedRoutes) {
             console.log("xxXXDelivery routes fetched", JSON.stringify(fetchedRoutes));
             setRoutesData(fetchedRoutes);
+
+            let tempOrdersData = {};
+
+            // Step 2: Iterate through the deliveryRoutesData and populate ordersData
+            fetchedRoutes.forEach(route => {
+            tempOrdersData[route.deliveryRouteID] = route.orders;
+            });
+            setOrdersData(tempOrdersData);
+            
+            
         } else {
             console.error("No routes data returned");
         }
@@ -98,29 +108,19 @@ const LiveTracking = () => {
         }
     }, [routesData]);
 
-    const handleRowToggle = async (routeId) => {
+    const handleRowToggle = (routeId) => {
         setOpenRow((prevState) => ({
             ...prevState,
-            [routeId]: !prevState[routeId], // Toggle the open state for the specific route
+            [routeId]: !prevState[routeId],
         }));
-
-        if (!openRow[routeId]) {
-            console.log("zzzzzz routes data: ", routesData)
-
-            const route = routesData.find((r) => r.deliveryRouteID === routeId);
-            if (route) {
-                const orders = await fetchOrdersFromDriver(route.driverUsername);
-                if (!route.driverUsername) {
-                    console.error("Driver username is undefined for route:", route);
-                    return;
-                }
-                setOrdersData((prevOrders) => ({
-                    ...prevOrders,
-                    [routeId]: orders,
-                }));
-            } else {
-                console.error(`Route with ID ${routeId} not found.`);
-            }
+    
+        const orders = ordersData[routeId];
+        if (orders) {
+            const sortedOrders = orders.sort((a, b) => a.position - b.position);
+            // Update the state or handle UI changes if necessary
+            console.log(`Orders for route ${routeId}:`, orders);
+        } else {
+            console.error(`No orders found for route ID ${routeId}.`);
         }
     };
 

@@ -1,22 +1,19 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
-    Drawer, Box, IconButton, Tabs, Tab, Typography, Table, TableBody, TableCell,
+    Drawer, Box, IconButton, Typography, Table, TableBody, TableCell,
     TableHead, TableRow, Checkbox, Collapse
 } from '@mui/material';
-import { Link } from 'react-router-dom';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { fetchMethod, fetchDeliveryRoute } from '../store/apiFunctions.js';
+import { fetchMethod } from '../store/apiFunctions.js';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { disableScroll } from '../assets/scroll.js';
 import '../assets/Marker.css'
 
 // Page design for live tracking page
-// address search is placeholder for directions API
-
 
 const LiveTracking = () => {
     const [drawerOpen, setDrawerOpen] = React.useState(true); // state for whether drawer is open
@@ -32,58 +29,28 @@ const LiveTracking = () => {
 
     // keeps track of orders data for each route. used for toggling the rows. Format: {<RouteID>: <OrdersArray>, <RouteID>: <OrdersArray>}
     const [ordersData, setOrdersData] = React.useState({});
-    // keeps track of orders data for each route. used for displaying routes. Format: {<RouteID>: <OrdersArray>, <RouteID>: <OrdersArray>}
-    const [checkedOrdersData, setCheckedOrdersData] = useState({});
-    // note. i think that ordersData and checkedOrdersData can be consolidated into one. will work on it -amira
 
     const mapContainer = useRef(null); // state for map container 
     const map = useRef(null); // state for map
     const [markers, setMarkers] = useState([]); // state for markers on the map
-    const [noRoutesFound, setNoRoutesFound] = useState(false); // state for whether there are routes to display
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
-    const toggleDrawer = (open) => (event) => { setDrawerOpen(open); }
-
-    // debugging purposes
-    useEffect(() => {
-        console.log("Updated OpenRow: ", openRow);
-    }, [openRow]);
-    // debugging purposes
-    useEffect(() => {
-        console.log("Updated ordersdata: ", ordersData);
-    }, [ordersData]);
+    const toggleDrawer = (open) => () => { setDrawerOpen(open); }
 
     const fetchRouteData = async () => {
         const fetchedRoutes = await fetchMethod("deliveryroutes");
         if (fetchedRoutes) {
-            console.log("xxXXDelivery routes fetched", JSON.stringify(fetchedRoutes));
             setRoutesData(fetchedRoutes);
-
             let tempOrdersData = {};
-
-            // Step 2: Iterate through the deliveryRoutesData and populate ordersData
             fetchedRoutes.forEach(route => {
-            tempOrdersData[route.deliveryRouteID] = route.orders;
+                tempOrdersData[route.deliveryRouteID] = route.orders;
             });
-            setOrdersData(tempOrdersData);
-            
-            
+            setOrdersData(tempOrdersData); // puts the orders data into the ordersData state  
         } else {
             console.error("No routes data returned");
         }
     };
-
-    const fetchOrdersFromDriver = async (username) => {
-        const fetchedOrders = await fetchDeliveryRoute(username);
-        if (fetchedOrders) {
-            console.log("Orders for driver ", username, JSON.stringify(fetchedOrders));
-            return fetchedOrders.orders.sort((a, b) => a.position - b.position);
-        } else {
-            console.error("No route data returned");
-            setNoRoutesFound(true);
-        }
-    }
 
     const handleCheckboxChange = (routeId) => (event) => {
         setCheckedRoutes((prevCheckedRoutes) => ({
@@ -92,28 +59,12 @@ const LiveTracking = () => {
         }));
     };
 
-
-    useEffect(() => {
-        disableScroll();
-        fetchRouteData();
-    }, []);
-
-    useEffect(() => {
-        if (routesData) {
-            const initialCheckedRoutes = {};
-            routesData.forEach(route => {
-                initialCheckedRoutes[route.deliveryRouteID] = true;  // Set all checkboxes to checked
-            });
-            setCheckedRoutes(initialCheckedRoutes);
-        }
-    }, [routesData]);
-
-    const handleRowToggle = (routeId) => {
+    const handleRowToggle = (routeId) => { // when the row is expanded
         setOpenRow((prevState) => ({
             ...prevState,
             [routeId]: !prevState[routeId],
         }));
-    
+
         const orders = ordersData[routeId];
         if (orders) {
             const sortedOrders = orders.sort((a, b) => a.position - b.position);
@@ -132,48 +83,6 @@ const LiveTracking = () => {
                 return '#d4edda'; // Light green
         }
     };
-
-
-    // Fetch orders for all checked routes whenever checkedRoutes changes
-    useEffect(() => {
-        const fetchOrdersForCheckedRoutes = async () => {
-            const newCheckedOrdersData = {};
-
-            for (const routeId of Object.keys(checkedRoutes)) {
-                if (checkedRoutes[routeId]) {
-                    console.log("checked routes -> ", JSON.stringify(checkedRoutes));
-                    console.log("routes data -> ", JSON.stringify(routesData));
-                    const route = routesData.find((r) => r.deliveryRouteID === Number(routeId));
-
-                    console.log("routeId type:", typeof routeId, "value:", routeId);
-                    console.log("route.deliveryRouteID type:", typeof route, "value:", route);
-
-                    console.log("the route: ", JSON.stringify(routesData));
-                    if (route) {
-                        console.log("hello route for driver username is " + JSON.stringify(route));
-                        const orders = await fetchOrdersFromDriver(route.driverUsername);
-                        newCheckedOrdersData[routeId] = orders;
-                        console.log("fetched order -> ", JSON.stringify(newCheckedOrdersData));
-                    }
-                }
-            }
-            setCheckedOrdersData(newCheckedOrdersData);
-        };
-
-        if (routesData) {
-            fetchOrdersForCheckedRoutes();
-        }
-    }, [checkedRoutes, routesData]);
-
-    useEffect(() => {
-        if (map.current) return;
-        map.current = new mapboxgl.Map({
-            container: mapContainer.current,
-            style: 'mapbox://styles/mapbox/streets-v11', // Style of the map
-            center: [115.8575, -31.9505], // Initial coordinates, e.g., Perth
-            zoom: 11,
-        });
-    }, [])
 
     // gets directions for the route, takes in route coordinates
     const fetchDirections = async (coordinates) => {
@@ -200,9 +109,34 @@ const LiveTracking = () => {
     };
 
     useEffect(() => {
+        disableScroll();
+        fetchRouteData();
+    }, []);
+
+    useEffect(() => { // sets all checkboxes to true when the routes data loads
+        if (routesData) {
+            const initialCheckedRoutes = {};
+            routesData.forEach(route => {
+                initialCheckedRoutes[route.deliveryRouteID] = true;  // Set all checkboxes to checked
+            });
+            setCheckedRoutes(initialCheckedRoutes);
+        }
+    }, [routesData]);
+
+    useEffect(() => {
+        if (map.current) return;
+        map.current = new mapboxgl.Map({
+            container: mapContainer.current,
+            style: 'mapbox://styles/mapbox/streets-v11', // Style of the map
+            center: [115.8575, -31.9505], // Initial coordinates, e.g., Perth
+            zoom: 11,
+        });
+    }, [])
+
+    useEffect(() => {
         if (!map.current) return;
 
-        // Clear existing markers and routes
+        // clears existing markers and routes
         markers.forEach(marker => marker.remove());
         setMarkers([]);
 
@@ -215,49 +149,44 @@ const LiveTracking = () => {
                 map.current.removeSource(`route-source-${routeId}`);
             }
         });
-
-        // ddd markers and fetch routes for all checked routes
         const newMarkers = [];
         const allRoutePromises = [];
 
+        for (const routeId in ordersData) {
 
-        for (const routeId in checkedOrdersData) {
+            if (checkedRoutes[routeId]) {
+                const unsortedOrders = ordersData[routeId];
+                const orders = unsortedOrders.sort((a, b) => a.position - b.position);
+                const routeCoordinates = orders.map(order => [order.longitude, order.latitude]);
 
-            const unsortedOrders = checkedOrdersData[routeId];
-            const orders = unsortedOrders.sort((a, b) => a.position - b.position);
+                // Add markers for every order
+                orders.forEach(order => {
+                    const el = document.createElement('div');
+                    el.className = 'marker';
+                    el.textContent = order.position;
+                    if (order.status == 'DELIVERED') {
+                        el.style.backgroundColor = '#379e34'; //green for delivered
+                    }
+                    else if (order.delayed) {
+                        el.style.backgroundColor = '#b31746'; // red for delayed
+                    }
+                    else {
+                        el.style.backgroundColor = '#e0983a'; // yellow for everything else
+                    }
 
-            const routeCoordinates = orders.map(order => [order.longitude, order.latitude]);
+                    if (order.longitude && order.latitude) {
+                        const marker = new mapboxgl.Marker(el)
+                            .setLngLat([order.longitude, order.latitude])
+                            .addTo(map.current);
+                        newMarkers.push(marker);
+                    }
+                });
 
-            // Add markers for every order
-            orders.forEach(order => {
-                const el = document.createElement('div');
-                el.className = 'marker'; 
-                el.textContent = order.position; 
-                if (order.status == 'DELIVERED') {
-                    el.style.backgroundColor = '#379e34'; //green for delivered
-                }
-                else if (order.delayed) {
-                    el.style.backgroundColor = '#b31746'; // red for delayed
-                }
-                else
-                {
-                    el.style.backgroundColor = '#e0983a'; // yellow for everything else
-                }
-
-                if (order.longitude && order.latitude) {
-                    const marker = new mapboxgl.Marker(el)
-                        .setLngLat([order.longitude, order.latitude])
-                        .addTo(map.current);
-                    newMarkers.push(marker);
-                }
-            });
-
-            // fetch directions called for each route. returns promise which is stored in allRoutePromises array
-            allRoutePromises.push(fetchDirections(routeCoordinates));
+                // fetch directions called for each route. returns promise which is stored in allRoutePromises array
+                allRoutePromises.push(fetchDirections(routeCoordinates));
+            }
         }
-
         setMarkers(newMarkers);
-
         const colors = ['#b31746' /*red*/, '#293fab' /*blue*/, '#6f2aad' /*purple*/, '#b82ab3' /*pink*/];
 
         // wait for all routes to be fetched and then draw them on the map
@@ -265,7 +194,7 @@ const LiveTracking = () => {
             allRoutes.forEach((route, index) => {
                 if (route) {
                     // adds source and layer for each route
-                    const routeId = Object.keys(checkedOrdersData)[index]; // get the routeId for each set of directions
+                    const routeId = Object.keys(ordersData)[index]; // get the routeId for each set of directions
                     const routeColor = colors[index % colors.length]; // cycles through the 'colors' array
                     map.current.addSource(`route-source-${routeId}`, {
                         type: 'geojson',
@@ -295,7 +224,7 @@ const LiveTracking = () => {
             });
         });
 
-    }, [checkedOrdersData]);
+    }, [checkedRoutes]);
 
     return (
         <Box sx={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>

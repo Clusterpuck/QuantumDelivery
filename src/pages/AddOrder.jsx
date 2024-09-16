@@ -11,10 +11,12 @@ import SendIcon from '@mui/icons-material/Send';
 import Typography from '@mui/material/Typography';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import {enableScroll} from '../assets/scroll.js';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
+import 'dayjs/locale/en-gb';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { fetchMethod } from '../store/apiFunctions';
+import { DateTimePicker } from '@mui/x-date-pickers';
 
 const styleConstants = {
     fieldSpacing: { mb: 2 }
@@ -29,6 +31,7 @@ const AddOrder = () => {
     const [orderNote, setOrderNote] = useState('');
     const [showAddressSearch, setShowAddressSearch] = useState(false);
     const [showAddCustomer, setShowAddCustomer] = useState(false);
+    const [orders, setOrders] = useState([]);
     const [refreshOrders, setRefreshOrders] = useState(0);
     const [snackbar, setSnackbar] = useState({
         open: false,
@@ -48,6 +51,7 @@ const AddOrder = () => {
             const newLocations = await fetchLocations();
             setLocations(newLocations);
         };
+        loadOrders();
         loadData();
     }, []);
 
@@ -60,6 +64,20 @@ const AddOrder = () => {
         setSelectedLocation(newValue);
         //console.log("Selected location is  " + selectedLocation.address);
     };
+
+    const loadOrders = async () => {
+        const loadOrders = await fetchMethod("orders");
+        if (loadOrders) {
+        const filteredOrders = loadOrders.filter(order => order.status !== "CANCELLED");
+        setOrders(filteredOrders);
+        console.log("Orders recieved are ", JSON.stringify(filteredOrders));
+        } else {
+            console.error('Error fetching orders:', error);
+            setSnackbarMessage('Failed to load orders');
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
+        }
+    }
 
     const handleCustomerFormClose = async (newCustomer) => {
         setShowAddCustomer(false);
@@ -116,6 +134,8 @@ const AddOrder = () => {
         const result = await postMethod(orderObject, 'Orders');
         if(result!= null )
         {
+            //refresh the table
+            loadOrders();
             console.log("Orders recieved are ", JSON.stringify(result));
             setRefreshOrders(prev => prev + 1); // Change the trigger value to refresh data
             setSnackbar({
@@ -157,10 +177,10 @@ const AddOrder = () => {
                     <Grid item xs={12} md= {12} container spacing={2} >
                     <Grid item xs={6} md= {6} container spacing={2} >
 
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DesktopDatePicker
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en-gb'>
+                <DateTimePicker
                   label="Date Required"
-                  inputFormat="DD/MM/YYYY"
+                  //inputFormat="DD/MM/YYYY"
                   value={selectedDate}
                   onChange={handleDateChange}
                   renderInput={(params) => <TextField {...params}/>}
@@ -290,7 +310,7 @@ const AddOrder = () => {
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
 
-            { refreshOrders ?  (<p>No Orders</p>) : (<OrdersTable updateData={refreshOrders} filterBy={['PLANNED', 'ASSIGNED', 'ON-ROUTE', 'DELAYED', 'DELIVERED']}/>) }
+            { refreshOrders ?  (<p>No Orders</p>) : (<OrdersTable updateData={refreshOrders} orders={orders}/>) }
 </Box>
 
             <Snackbar

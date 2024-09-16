@@ -159,7 +159,7 @@ export const fetchMethod = async (endpoint) => {
             throw new Error('Failed to fetch from endpoint ', endpoint);
         }
         ipData = await ipResponse.json();
-        console.log("Fetch Method. Data is " + JSON.stringify(ipData) );
+        // console.log("Fetch Method. Data is " + JSON.stringify(ipData) );
         // Use user's IP address to fetch region information
     } catch (error) {
         console.error('Error fetching from endpoint:', endpoint,' ', error.message);

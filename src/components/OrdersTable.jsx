@@ -6,36 +6,36 @@ import {formatDate} from '../store/helperFunctions';
 
 //update data us a state object that when changed on the parent object
 //will trigger a refresh of the orders table data. 
-const OrdersTable = ({updateData, filterBy}) => {
+const OrdersTable = ({updateData, orders}) => {
 
-    const [orders, setOrders] = useState([]);
+    //const [orders, setOrders] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
-    const loadOrders = useCallback(async () => {
-        const orderList = await fetchMethod("orders");
-        if (orderList) {
-            setOrders(orderList);
-            console.log("Orders recieved are ", JSON.stringify(orderList));
-        } else {
-            console.error('Error fetching orders:', error);
-            setSnackbarMessage('Failed to load orders');
-            setSnackbarSeverity('error');
-            setSnackbarOpen(true);
-        }
-    }, []);
+    // const loadOrders = useCallback(async () => {
+    //     const orderList = await fetchMethod("orders");
+    //     if (orderList) {
+    //         setOrders(orderList);
+    //         console.log("Orders recieved are ", JSON.stringify(orderList));
+    //     } else {
+    //         console.error('Error fetching orders:', error);
+    //         setSnackbarMessage('Failed to load orders');
+    //         setSnackbarSeverity('error');
+    //         setSnackbarOpen(true);
+    //     }
+    // }, []);
 
-    useEffect(() => {
+    // useEffect(() => {
         
-        loadOrders();
+    //     loadOrders();
 
-    }, [updateData, loadOrders])
+    // }, [updateData, loadOrders])
 
     
 
       // Manually filter the orders based on 'filterBy' prop (or hardcoded value for testing)
-      const filteredOrders = orders.filter(order => filterBy.includes(order.status));
+//      const filteredOrders = orders.filter(order => filterBy.includes(order.status));
 
 
     
@@ -51,7 +51,7 @@ const OrdersTable = ({updateData, filterBy}) => {
     ];
 
     // The rows should be based on the fetched orders data
-    const rows = filteredOrders.map(order => ({
+    const rows = orders?.map(order => ({
         id: order.orderID,
         Address: order.address,
         status: order.status,

@@ -23,6 +23,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import OrdersTable from '../components/OrdersTable.jsx';
+import { DateTimePicker } from '@mui/x-date-pickers';
 import {formatDate} from '../store/helperFunctions';
 
 const styleConstants = {
@@ -41,8 +42,8 @@ const ViewRoutes = ( ) =>
     severity: 'success',
   });
   //can change in future for backend to handle this
-  const [allOrders, setAllOrders] = useState([]);
   const [plannedOrders, setPlannedOrders] = useState([]);
+  const [datePlannedOrders, setDatePlannedOrders] = useState([]);
   const [numVehicles, setNumVehicles] = useState(1); // default to 1 vehicle
   const [ordersLoaded, setOrdersLoaded] = useState(false); // Track if orders are loaded
   const [calcType, setCalcType] = useState("brute");
@@ -58,10 +59,17 @@ const ViewRoutes = ( ) =>
 
   // Function to handle date change and load dummy output
   const handleDateChange = (date) =>
-  { // logic for showing orders from a specific date is still yet to be implemented.
+  { 
     setSelectedDate(date);
-    // Simulate sending date and input to a function to get the dummy output
-    //loadRoutes();
+    //filter orders by new date
+    const selectedDateFormatted = date.startOf('day');
+    const filteredOrders = plannedOrders.filter(order =>
+      {
+        const orderDeliverDate = dayjs(order.DeliverDate).startOf('day');
+        return orderDeliverDate.isSame(selectedDateFormatted);
+      });
+
+      setDatePlannedOrders(filteredOrders); // Save the date-filtered orders
   };
 
 
@@ -135,12 +143,23 @@ const ViewRoutes = ( ) =>
     const ordersList = await fetchMethod("orders");
     if (ordersList)
     {
+      const selectedDateFormatted = selectedDate.startOf('day');
       console.log("Order list is " + JSON.stringify(ordersList));
       const sortedOrderList = ordersList.sort((a, b) => a.position - b.position);
-      setAllOrders(sortedOrderList);
-      const unassingedOrders = sortedOrderList.filter( order => order.status === "PLANNED");
-      setPlannedOrders(unassingedOrders);
+      // Filter orders where the status is "PLANNED" and the DeliverDate matches the selected date
+      // Filter orders where the status is "PLANNED" (initial fetch)
+      const unassignedOrders = sortedOrderList.filter(order => order.status === "PLANNED");
+      setPlannedOrders(unassignedOrders);  // Save all planned orders
       setOrdersLoaded(true); // Mark orders as loaded
+      // Filter the saved planned orders by the selected date
+      const filteredOrders = plannedOrders.filter(order =>
+      {
+        const orderDeliverDate = dayjs(order.DeliverDate).startOf('day');
+        return orderDeliverDate.isSame(selectedDateFormatted);
+      });
+
+      setDatePlannedOrders(filteredOrders); // Save the date-filtered orders
+
     } else
     {
       console.error('Error fetching orders:', error);
@@ -306,10 +325,10 @@ const ViewRoutes = ( ) =>
                 aria-controls="panel1-content"
                 id="panel1-header"
               >
-                {plannedOrders ? <p>Unassigned Orders {plannedOrders.length}</p> : <p>No Unassigned Orders</p>}
+                {plannedOrders ? <p>Unassigned Orders {datePlannedOrders.length}</p> : <p>No Unassigned Orders</p>}
               </AccordionSummary>
               <AccordionDetails>
-                <OrdersTable updateData={false} filterBy={['PLANNED']}/>
+                <OrdersTable updateData={false} orders={datePlannedOrders}/>
               </AccordionDetails>
             </Accordion>
           </Grid>

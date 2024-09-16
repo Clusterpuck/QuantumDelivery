@@ -44,9 +44,9 @@ const DriverViewRoutes = ({}) =>
 
     const driverUsername = 'driver1@email.com'; // hard coded for now
 
-    const getRowColor = (status) => {
-        switch (status) {
-            case 'delayed':
+    const getRowColor = (delayed) => {
+        switch (delayed) {
+            case true:
                 return '#f8d7da'; // Light red
             default:
                 return '#d4edda'; // Light green
@@ -87,6 +87,7 @@ const DriverViewRoutes = ({}) =>
 
     const fetchDeliveryData = async () => {
         try {
+            console.log("FETCH DELIVERY DATA CALLED");
             const routeData = await fetchDeliveryRoute(driverUsername);
             if (routeData?.status === 404) {
                 setNoRoutesFound(true);
@@ -302,7 +303,7 @@ const DriverViewRoutes = ({}) =>
                         </Typography>
                     ) : (
                         <TableContainer component={Paper}>
-                            <Table>
+                            <Table sx={{ backgroundColor: getRowColor(currentDelivery?.delayed) }}>
                             <TableBody>
                                     <TableRow>
                                         <TableCell sx={{ width: 120 }}>Address</TableCell>
@@ -329,7 +330,7 @@ const DriverViewRoutes = ({}) =>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell sx={{ width: 120 }}>Status</TableCell>
-                                        <TableCell>{currentDelivery?.status}</TableCell>
+                                        <TableCell>{currentDelivery?.status}{currentDelivery?.delayed ? ", DELAYED" : ""}</TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
@@ -362,7 +363,7 @@ const DriverViewRoutes = ({}) =>
                             Report Issue
                             <WarningAmberIcon  />
                         </Button>
-                        <ReportIssue open={issueDialogOpen} onClose={handleIssueDialogClose} driverUsername={driverUsername} orderId={currentDelivery.orderID} />
+                        <ReportIssue open={issueDialogOpen} onClose={handleIssueDialogClose} driverUsername={driverUsername} orderId={currentDelivery.orderID} fetchDeliveryData={fetchDeliveryData} delay ={currentDelivery.delayed} />
                         </>
                         )}
                     </Box>
@@ -413,11 +414,11 @@ const DriverViewRoutes = ({}) =>
                                 </TableHead>
                                 <TableBody>
                                     {nextDeliveries.map((row, index) => (
-                                        <TableRow key={index} sx={{ backgroundColor: getRowColor(row.status) }}>
+                                        <TableRow key={index} sx={{ backgroundColor: getRowColor(row.delayed) }}>
                                             <TableCell>{row.address}</TableCell>
                                             <TableCell>{row.customerName}</TableCell>
                                             <TableCell>{row.orderID}</TableCell>
-                                            <TableCell>{row.status}</TableCell>
+                                            <TableCell>{row.status}{row.delayed ? ", DELAYED" : ""}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

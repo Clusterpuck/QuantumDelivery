@@ -65,6 +65,11 @@ const ViewRoutes = ( ) =>
   };
 
 
+  /**
+   * Handles the selector changing calc type between brute and quantum
+   *
+   * @param {*} event
+   */
   const handleCalcChange = (event) => {
     setCalcType(event.target.value)
     console.log("Calc changed to ", event.target.value );

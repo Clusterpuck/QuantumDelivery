@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Grid, Paper, MenuItem, Snackbar, Alert } from '@mui/material';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -15,15 +15,14 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
 import dayjs from 'dayjs';
+import 'dayjs/locale/en-gb';
 import {enableScroll} from '../assets/scroll.js';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import OrdersTable from '../components/OrdersTable.jsx';
-import { DateTimePicker } from '@mui/x-date-pickers';
 import {formatDate} from '../store/helperFunctions';
 
 const styleConstants = {
@@ -57,20 +56,41 @@ const ViewRoutes = ( ) =>
   
     }, [])
 
+    useEffect(() => {
+      if (plannedOrders && selectedDate) {
+        filterByDate(selectedDate);
+      }
+    }, [plannedOrders, selectedDate]);
+
   // Function to handle date change and load dummy output
   const handleDateChange = (date) =>
-  { 
+  {
     setSelectedDate(date);
     //filter orders by new date
-    const selectedDateFormatted = date.startOf('day');
-    const filteredOrders = plannedOrders.filter(order =>
-      {
-        const orderDeliverDate = dayjs(order.DeliverDate).startOf('day');
-        return orderDeliverDate.isSame(selectedDateFormatted);
-      });
-
-      setDatePlannedOrders(filteredOrders); // Save the date-filtered orders
+    filterByDate(date);
   };
+
+
+  
+  /**
+   * Filters all the orders that are planned to only orders
+   * in the selected date. 
+   *
+   * @param {*} newDate
+   */
+  function filterByDate(newDate)
+  {
+    const selectedDateFormatted = newDate.startOf('day');
+    const filteredOrders = plannedOrders.filter(order =>
+    {
+      const orderDeliverDate = dayjs(order.deliveryDate).startOf('day');
+      return orderDeliverDate.isSame(selectedDateFormatted);
+    });
+    console.log("xxXXFiltered orders is ", JSON.stringify(filteredOrders));
+
+    setDatePlannedOrders(filteredOrders); // Save the date-filtered orders
+
+  }
 
 
   /**
@@ -94,14 +114,13 @@ const ViewRoutes = ( ) =>
   const calcRoutes = async () => {
     try
     {
-      // using the dummy input to get route info from the database
       if (!ordersLoaded) return; // Do not load routes if orders are not loaded
-
+      if( !datePlannedOrders || datePlannedOrders.length == 0 ) return; 
       const userInput = {
         numVehicle: numVehicles,
         calcType: calcType,
         deliveryDate: selectedDate,
-        orders: plannedOrders.
+        orders: datePlannedOrdersOrders.
         map(order => order.orderID) // all orders
       };
 
@@ -111,6 +130,7 @@ const ViewRoutes = ( ) =>
       {
         const routesList = unsortedRoutesList.sort((a, b) => a.position - b.position);
         setRoutes(routesList);
+        //resets order list after them being assigned to routes
         loadOrders();
 
       }
@@ -143,8 +163,8 @@ const ViewRoutes = ( ) =>
     const ordersList = await fetchMethod("orders");
     if (ordersList)
     {
-      const selectedDateFormatted = selectedDate.startOf('day');
-      console.log("Order list is " + JSON.stringify(ordersList));
+      
+      //console.log("Order list is " + JSON.stringify(ordersList));
       const sortedOrderList = ordersList.sort((a, b) => a.position - b.position);
       // Filter orders where the status is "PLANNED" and the DeliverDate matches the selected date
       // Filter orders where the status is "PLANNED" (initial fetch)
@@ -152,13 +172,7 @@ const ViewRoutes = ( ) =>
       setPlannedOrders(unassignedOrders);  // Save all planned orders
       setOrdersLoaded(true); // Mark orders as loaded
       // Filter the saved planned orders by the selected date
-      const filteredOrders = plannedOrders.filter(order =>
-      {
-        const orderDeliverDate = dayjs(order.DeliverDate).startOf('day');
-        return orderDeliverDate.isSame(selectedDateFormatted);
-      });
-
-      setDatePlannedOrders(filteredOrders); // Save the date-filtered orders
+      filterByDate(selectedDate);
 
     } else
     {
@@ -259,10 +273,9 @@ const ViewRoutes = ( ) =>
           <Grid item xs={12} md={12} container spacing={2} alignItems="center">
             <Grid item xs={6} md={3} >
 
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en-gb'>
                 <DesktopDatePicker
                   label="Plan Date"
-                  inputFormat="MM/DD/YYYY"
                   value={selectedDate}
                   onChange={handleDateChange}
                   renderInput={(params) => <TextField {...params}/>}
@@ -308,6 +321,7 @@ const ViewRoutes = ( ) =>
               </Grid>
             <Grid item xs={6} md={4} container justifyContent="flex-end">
               <Button
+                disabled = {datePlannedOrders?.length==0}
                 variant='contained'
                 sx={{ height: '100%' }}
                 onClick={calcRoutes} // Call loadRoutes on button click

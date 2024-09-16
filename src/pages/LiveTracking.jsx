@@ -82,29 +82,6 @@ const LiveTracking = () => {
         }
     };
 
-    // gets directions for the route, takes in route coordinates
-    const fetchDirections = async (coordinates) => {
-        const validCoordinates = coordinates.filter(coord => !isNaN(coord[0]) && !isNaN(coord[1]))
-
-        const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates.join(';')}?geometries=geojson&access_token=${mapboxgl.accessToken}&overview=full`;
-
-        if (validCoordinates.length === 0) {
-            console.error('No valid coordinates available for route.');
-            return;
-        }
-
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Error fetching directions: ${response.statusText}`);
-            }
-            const data = await response.json();
-            return data.routes[0].geometry.coordinates;
-        } catch (error) {
-            console.error('Error fetching directions:', error);
-        }
-    };
-
     // USE EFFECTS
 
     useEffect(() => { // when the page mounts, disable scroll and fetch the route data

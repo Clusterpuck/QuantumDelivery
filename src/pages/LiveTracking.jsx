@@ -11,6 +11,7 @@ import { fetchMethod } from '../store/apiFunctions.js';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { disableScroll } from '../assets/scroll.js';
+import LiveMap from '../components/LiveMap'; // Import the new LiveMap component
 import '../assets/Marker.css'
 
 // Page design for live tracking page
@@ -38,7 +39,8 @@ const LiveTracking = () => {
 
     const toggleDrawer = (open) => () => { setDrawerOpen(open); }
 
-    const fetchRouteData = async () => {
+    // fetched the route data using get delivery routes endpoint
+    const fetchRouteData = async () => { 
         const fetchedRoutes = await fetchMethod("deliveryroutes");
         if (fetchedRoutes) {
             setRoutesData(fetchedRoutes);
@@ -52,14 +54,14 @@ const LiveTracking = () => {
         }
     };
 
-    const handleCheckboxChange = (routeId) => (event) => {
+    const handleCheckboxChange = (routeId) => (event) => { // for when a checkbox is checked/unchecked
         setCheckedRoutes((prevCheckedRoutes) => ({
             ...prevCheckedRoutes,
             [routeId]: event.target.checked,
         }));
     };
 
-    const handleRowToggle = (routeId) => { // when the row is expanded
+    const handleRowToggle = (routeId) => { // for when a row is expanded
         setOpenRow((prevState) => ({
             ...prevState,
             [routeId]: !prevState[routeId],
@@ -68,14 +70,10 @@ const LiveTracking = () => {
         const orders = ordersData[routeId];
         if (orders) {
             const sortedOrders = orders.sort((a, b) => a.position - b.position);
-            // Update the state or handle UI changes if necessary
-            console.log(`Orders for route ${routeId}:`, orders);
-        } else {
-            console.error(`No orders found for route ID ${routeId}.`);
         }
     };
 
-    const getRowColor = (delayed) => {
+    const getRowColor = (delayed) => { // for background colours, red for delayed, green for not.
         switch (delayed) {
             case true:
                 return '#f8d7da'; // Light red
@@ -100,7 +98,6 @@ const LiveTracking = () => {
             if (!response.ok) {
                 throw new Error(`Error fetching directions: ${response.statusText}`);
             }
-
             const data = await response.json();
             return data.routes[0].geometry.coordinates;
         } catch (error) {
@@ -108,7 +105,9 @@ const LiveTracking = () => {
         }
     };
 
-    useEffect(() => {
+    // USE EFFECTS
+
+    useEffect(() => { // when the page mounts, disable scroll and fetch the route data
         disableScroll();
         fetchRouteData();
     }, []);
@@ -123,108 +122,6 @@ const LiveTracking = () => {
         }
     }, [routesData]);
 
-    useEffect(() => {
-        if (map.current) return;
-        map.current = new mapboxgl.Map({
-            container: mapContainer.current,
-            style: 'mapbox://styles/mapbox/streets-v11', // Style of the map
-            center: [115.8575, -31.9505], // Initial coordinates, e.g., Perth
-            zoom: 11,
-        });
-    }, [])
-
-    useEffect(() => {
-        if (!map.current) return;
-
-        // clears existing markers and routes
-        markers.forEach(marker => marker.remove());
-        setMarkers([]);
-
-        // clears all previous route layers
-        Object.keys(checkedRoutes).forEach((routeId) => {
-            if (map.current.getLayer(`route-layer-${routeId}`)) {
-                map.current.removeLayer(`route-layer-${routeId}`);
-            }
-            if (map.current.getSource(`route-source-${routeId}`)) {
-                map.current.removeSource(`route-source-${routeId}`);
-            }
-        });
-        const newMarkers = [];
-        const allRoutePromises = [];
-
-        for (const routeId in ordersData) {
-
-            if (checkedRoutes[routeId]) {
-                const unsortedOrders = ordersData[routeId];
-                const orders = unsortedOrders.sort((a, b) => a.position - b.position);
-                const routeCoordinates = orders.map(order => [order.longitude, order.latitude]);
-
-                // Add markers for every order
-                orders.forEach(order => {
-                    const el = document.createElement('div');
-                    el.className = 'marker';
-                    el.textContent = order.position;
-                    if (order.status == 'DELIVERED') {
-                        el.style.backgroundColor = '#379e34'; //green for delivered
-                    }
-                    else if (order.delayed) {
-                        el.style.backgroundColor = '#b31746'; // red for delayed
-                    }
-                    else {
-                        el.style.backgroundColor = '#e0983a'; // yellow for everything else
-                    }
-
-                    if (order.longitude && order.latitude) {
-                        const marker = new mapboxgl.Marker(el)
-                            .setLngLat([order.longitude, order.latitude])
-                            .addTo(map.current);
-                        newMarkers.push(marker);
-                    }
-                });
-
-                // fetch directions called for each route. returns promise which is stored in allRoutePromises array
-                allRoutePromises.push(fetchDirections(routeCoordinates));
-            }
-        }
-        setMarkers(newMarkers);
-        const colors = ['#b31746' /*red*/, '#293fab' /*blue*/, '#6f2aad' /*purple*/, '#b82ab3' /*pink*/];
-
-        // wait for all routes to be fetched and then draw them on the map
-        Promise.all(allRoutePromises).then((allRoutes) => {
-            allRoutes.forEach((route, index) => {
-                if (route) {
-                    // adds source and layer for each route
-                    const routeId = Object.keys(ordersData)[index]; // get the routeId for each set of directions
-                    const routeColor = colors[index % colors.length]; // cycles through the 'colors' array
-                    map.current.addSource(`route-source-${routeId}`, {
-                        type: 'geojson',
-                        data: {
-                            type: 'Feature',
-                            geometry: {
-                                type: 'LineString',
-                                coordinates: route,
-                            },
-                        },
-                    });
-
-                    map.current.addLayer({
-                        id: `route-layer-${routeId}`,
-                        type: 'line',
-                        source: `route-source-${routeId}`,
-                        layout: {
-                            'line-join': 'round',
-                            'line-cap': 'round',
-                        },
-                        paint: {
-                            'line-color': routeColor,
-                            'line-width': 6,
-                        },
-                    });
-                }
-            });
-        });
-
-    }, [checkedRoutes]);
 
     return (
         <Box sx={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>
@@ -233,10 +130,10 @@ const LiveTracking = () => {
                 open={drawerOpen}
                 onClose={toggleDrawer(false)}
                 sx={{
-                    width: '40vw', // Width of the drawer
+                    width: '40vw',
                     flexShrink: 0,
                     '& .MuiDrawer-paper': {
-                        width: '40vw', // Same width as above
+                        width: '40vw', 
                         boxSizing: 'border-box',
                         backgroundColor: '#FFFFF',
                         overflowY: 'auto',
@@ -246,7 +143,7 @@ const LiveTracking = () => {
                 }}
                 ModalProps={{
                     BackdropProps: {
-                        style: { backgroundColor: 'transparent' }, // Removes the dark overlay
+                        style: { backgroundColor: 'transparent' }, // removes dark background when drawer is open
                     },
                     disableScrollLock: true,
                 }}
@@ -255,12 +152,12 @@ const LiveTracking = () => {
                     <Box
                         sx={{
                             display: 'flex',
-                            width: '100%', // Full width of the drawer
+                            width: '100%',
                             marginTop: '20px',
                             backgroundColor: '#819bc5',
-                            justifyContent: 'center', // Horizontally centers the content
-                            alignItems: 'center',     // Vertically centers the content
-                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                            justifyContent: 'center', 
+                            alignItems: 'center',     
+                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', 
                             borderRadius: '0 0 16px 16px',
                         }}
                     >
@@ -368,10 +265,7 @@ const LiveTracking = () => {
                 </IconButton>
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, position: 'fixed', height: '100vh', width: '100vw', margin: 0, padding: 0, pointerEvents: 'auto', }}>
-                <div
-                    ref={mapContainer}
-                    style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, margin: 0, padding: 0, pointerEvents: 'auto', }}
-                />
+                <LiveMap checkedRoutes={checkedRoutes} ordersData={ordersData} />
                 {!drawerOpen && (
                     <IconButton
                         onClick={toggleDrawer(true)}

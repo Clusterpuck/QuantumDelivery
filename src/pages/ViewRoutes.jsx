@@ -120,16 +120,19 @@ const ViewRoutes = ( ) =>
         numVehicle: numVehicles,
         calcType: calcType,
         deliveryDate: selectedDate,
-        orders: datePlannedOrdersOrders.
+        orders: datePlannedOrders.
         map(order => order.orderID) // all orders
       };
 
       console.log("Payload being sent: ", JSON.stringify(userInput));
-      const unsortedRoutesList = await postDeliveryRoutes(userInput);
+      await postDeliveryRoutes(userInput);
+      //needs to return all routes, not just new routes
+      const unsortedRoutesList = await loadRoutes();
       if (unsortedRoutesList)
       {
         const routesList = unsortedRoutesList.sort((a, b) => a.position - b.position);
         setRoutes(routesList);
+        
         //resets order list after them being assigned to routes
         loadOrders();
 
@@ -212,6 +215,7 @@ const ViewRoutes = ( ) =>
       if (routesList)
       {
         setRoutes(routesList);
+        return routesList;
       }
       else
       {
@@ -235,6 +239,8 @@ const ViewRoutes = ( ) =>
     }
   };
 
+
+  
   // Define columns for DataGrid
   const columns = [
     { field: 'orderID', headerName: 'Order ID', width: 90 },
@@ -348,14 +354,14 @@ const ViewRoutes = ( ) =>
           </Grid>
 
 
-          <Grid xs={6}>
+          <Grid item xs={6}>
           
           </Grid>
 
          
           {/* Render assigned vehicles */}
           {routes.map((route) => (
-            <Grid item xs={12} key={route.vehicleId} sx={styleConstants.fieldSpacing}>
+            <Grid item xs={12} key={route.deliveryRouteID} sx={styleConstants.fieldSpacing}>
               <Divider>
                 <Typography variant="h4" component="h3" align="center">
                   Vehicle {route.vehicleId}

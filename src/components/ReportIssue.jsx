@@ -1,13 +1,14 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { Dialog, DialogTitle, DialogContent, Button, Box, Typography } from '@mui/material';
 import { updateOrderDelayed } from '../store/apiFunctions.js';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import '../index.css';
 
-const ReportIssue = ({ open, onClose, driverUsername, orderId, fetchDeliveryData }) => {
+const ReportIssue = ({ open, onClose, driverUsername, orderId, fetchDeliveryData, delay }) => {
     const [error, setError] = React.useState(null);
     const [success, setSuccess] = React.useState(null);
+    const [isDelayed, setIsDelayed] = useState(delay);
 
     const handleOrderDelayed = async () => 
     {
@@ -23,6 +24,7 @@ const ReportIssue = ({ open, onClose, driverUsername, orderId, fetchDeliveryData
                 console.log("Successfully set order to delayed");
                 setSuccess('Delay reported successfully. Thank you!');  // set success message
                 setError(null);  // clear any previous error messages
+                setIsDelayed(true); 
                 await fetchDeliveryData();
             } else {
                 throw new Error("Failed to update order status");
@@ -38,8 +40,15 @@ const ReportIssue = ({ open, onClose, driverUsername, orderId, fetchDeliveryData
         if (open) {
             setSuccess(null);
             setError(null);
+            setIsDelayed(delay);
         }
     }, [open]);
+
+    useEffect(() =>
+    {
+        console.log("ISDELAYED ", isDelayed )
+    }
+    , [isDelayed]);
 
     return (
         <Dialog open={open} onClose={onClose}>
@@ -90,6 +99,7 @@ const ReportIssue = ({ open, onClose, driverUsername, orderId, fetchDeliveryData
                         variant="outlined" 
                         onClick={handleOrderDelayed}
                         fullWidth
+                        disabled={isDelayed}
                     >
                         Order is delayed
                     </Button>

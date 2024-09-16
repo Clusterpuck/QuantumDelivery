@@ -9,7 +9,21 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
     const map = useRef(null);
     const [markers, setMarkers] = useState([]);
 
-    // fetches directions for a route
+    const colourPalette = [
+        '#3357FF', // Blue
+        '#8E44AD', // Purple
+        '#1F618D', // Dark Blue
+        '#C0392B', // Red
+        '#2980B9'  // Light Blue
+    ];
+
+    // generate a colour from a route id
+    const generateColourFromId = (routeId) => {
+        const index = parseInt(routeId, 10) % colourPalette.length;
+        return colourPalette[index];
+    };
+
+    // fetch directions for a route
     const fetchDirections = async (coordinates) => {
         const validCoordinates = coordinates.filter(coord => !isNaN(coord[0]) && !isNaN(coord[1]));
         const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates.join(';')}?geometries=geojson&access_token=${mapboxgl.accessToken}&overview=full`;
@@ -31,18 +45,18 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
         }
     };
 
-    // initialises map
+    // initialize map
     useEffect(() => {
-        if (map.current) return; // prevents reinitialisation
+        if (map.current) return; // prevents reinitialization
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/streets-v11',
-            center: [115.8575, -31.9505], // perth coordinates (need to change so it centres on the routes)
+            center: [115.8575, -31.9505], // perth coordinates
             zoom: 11,
         });
     }, []);
 
-    // update map when checked routes changes or orders change
+    // update map when checked routes or orders change
     useEffect(() => {
         if (!map.current) return;
 
@@ -61,10 +75,15 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
         });
 
         const newMarkers = [];
+        const routeIdToColour = {}; // map routeId to colour
         const allRoutePromises = [];
+        const routeIds = [];
 
+        // Collect route IDs and fetch directions
         for (const routeId in ordersData) {
             if (checkedRoutes[routeId]) {
+                routeIds.push(routeId); // collect route IDs
+                routeIdToColour[routeId] = generateColourFromId(routeId); // Map routeId to colour
                 const orders = ordersData[routeId].sort((a, b) => a.position - b.position);
                 const routeCoordinates = orders.map(order => [order.longitude, order.latitude]);
 
@@ -90,10 +109,11 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
 
         Promise.all(allRoutePromises).then((allRoutes) => {
             allRoutes.forEach((route, index) => {
+                const routeId = routeIds[index];
+                const routeColour = routeIdToColour[routeId]; // get the color for this routeId
+
                 if (route) {
-                    const routeId = Object.keys(ordersData)[index];
-                    const colors = ['#b31746', '#293fab', '#6f2aad', '#b82ab3'];
-                    const routeColor = colors[index % colors.length];
+                    console.log(`Route ID: ${routeId}, Color: ${routeColour}`);
 
                     map.current.addSource(`route-source-${routeId}`, {
                         type: 'geojson',
@@ -108,7 +128,7 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
                         type: 'line',
                         source: `route-source-${routeId}`,
                         layout: { 'line-join': 'round', 'line-cap': 'round' },
-                        paint: { 'line-color': routeColor, 'line-width': 6 },
+                        paint: { 'line-color': routeColour, 'line-width': 6 },
                     });
                 }
             });

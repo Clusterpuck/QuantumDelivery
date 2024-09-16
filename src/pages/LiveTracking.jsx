@@ -31,10 +31,6 @@ const LiveTracking = () => {
     // keeps track of orders data for each route. used for toggling the rows. Format: {<RouteID>: <OrdersArray>, <RouteID>: <OrdersArray>}
     const [ordersData, setOrdersData] = React.useState({});
 
-    const mapContainer = useRef(null); // state for map container 
-    const map = useRef(null); // state for map
-    const [markers, setMarkers] = useState([]); // state for markers on the map
-
     mapboxgl.accessToken = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
     const toggleDrawer = (open) => () => { setDrawerOpen(open); }

@@ -1,29 +1,36 @@
+// React and Date Handling
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Grid, Paper, MenuItem, Snackbar, Alert } from '@mui/material';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DataGrid } from '@mui/x-data-grid';
-import { postDeliveryRoutes, fetchMethod, deleteMethod } from '../store/apiFunctions';
-import MapWithPins from '../components/MapWithPins.jsx';
-import Divider from '@mui/material/Divider';
-import Typography from '@mui/material/Typography';
+import dayjs from 'dayjs';
+import 'dayjs/locale/en-gb';
+
+// Material-UI Components
+import { TextField, Button, Grid, Paper, MenuItem, Snackbar, 
+  Alert, Divider, Typography, InputAdornment, Radio, RadioGroup,
+  FormControlLabel, Accordion, AccordionDetails, AccordionSummary,
+} from '@mui/material';
+
+// Material-UI Icons
 import RouteIcon from '@mui/icons-material/Route';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import InputAdornment from '@mui/material/InputAdornment';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import dayjs from 'dayjs';
-import 'dayjs/locale/en-gb';
-import {enableScroll} from '../assets/scroll.js';
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+// Date Picker
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+
+// Data Grid
+import { DataGrid } from '@mui/x-data-grid';
+
+// Local Imports
+import MapWithPins from '../components/MapWithPins.jsx';
 import OrdersTable from '../components/OrdersTable.jsx';
-import {formatDate} from '../store/helperFunctions';
+import { postDeliveryRoutes, fetchMethod, deleteMethod } from '../store/apiFunctions';
+import { formatDate } from '../store/helperFunctions';
+import CustomLoading from '../components/CustomLoading.jsx';
+import { enableScroll } from '../assets/scroll.js';
+
 
 const styleConstants = {
   fieldSpacing: { mb: 4 }
@@ -35,34 +42,45 @@ const ViewRoutes = ( ) =>
 {
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [routes, setRoutes] = useState([]);
+  const [routesLoading, setRoutesLoading] = useState(false);
+  const [plannedOrders, setPlannedOrders] = useState([]);
+  const [ordersLoaded, setOrdersLoaded] = useState(false); // Track if orders are loaded
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
     severity: 'success',
   });
   //can change in future for backend to handle this
-  const [plannedOrders, setPlannedOrders] = useState([]);
   const [datePlannedOrders, setDatePlannedOrders] = useState([]);
   const [numVehicles, setNumVehicles] = useState(1); // default to 1 vehicle
-  const [ordersLoaded, setOrdersLoaded] = useState(false); // Track if orders are loaded
   const [calcType, setCalcType] = useState("brute");
 
   
+
+
   useEffect(() =>
+  {
+    enableScroll();
+    loadOrders();
+    loadRoutes();
+
+  }, [])
+
+  useEffect(() =>
+  {
+    if (plannedOrders && selectedDate)
     {
-      enableScroll();
-      loadOrders();
-      loadRoutes();
+      filterByDate(selectedDate);
+    }
+  }, [plannedOrders, selectedDate]);
+
+
   
-    }, [])
-
-    useEffect(() => {
-      if (plannedOrders && selectedDate) {
-        filterByDate(selectedDate);
-      }
-    }, [plannedOrders, selectedDate]);
-
-  // Function to handle date change and load dummy output
+  /**
+   * Function to handle date change and load dummy output
+   *
+   * @param {*} date
+   */
   const handleDateChange = (date) =>
   {
     setSelectedDate(date);
@@ -86,7 +104,7 @@ const ViewRoutes = ( ) =>
       const orderDeliverDate = dayjs(order.deliveryDate).startOf('day');
       return orderDeliverDate.isSame(selectedDateFormatted);
     });
-    console.log("xxXXFiltered orders is ", JSON.stringify(filteredOrders));
+    //console.log("xxXXFiltered orders is ", JSON.stringify(filteredOrders));
 
     setDatePlannedOrders(filteredOrders); // Save the date-filtered orders
 
@@ -105,15 +123,28 @@ const ViewRoutes = ( ) =>
   }
 
 
+  
+  /** Deals with user requesting closing the snackbar */
   const handleSnackbarClose = () =>
   {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
 
 
+  
+  /**
+   * If orders are loaded and the datePlanned orders are defined and have values
+   * Meaning there are orders that aren't assigned on the selected date
+   * A request with those orders are sent to determine the routes
+   * RUns load orders if routes are calculated correctly. 
+   *
+   * @async
+   * @returns {*}
+   */
   const calcRoutes = async () => {
     try
     {
+      setRoutesLoading(true);
       if (!ordersLoaded) return; // Do not load routes if orders are not loaded
       if( !datePlannedOrders || datePlannedOrders.length == 0 ) return; 
       const userInput = {
@@ -134,7 +165,7 @@ const ViewRoutes = ( ) =>
         setRoutes(routesList);
         
         //resets order list after them being assigned to routes
-        loadOrders();
+        await loadOrders();
 
       }
       else
@@ -156,11 +187,21 @@ const ViewRoutes = ( ) =>
         message: 'Failed to load delivery routes',
         severity: 'error'
       });
+    }finally
+    {
+      setRoutesLoading(false);
     }
 
   }
 
 
+  /**
+   * Load orders then sort by position number
+   * and filter to planned only 
+   *
+   * @async
+   * @returns {*}
+   */
   const loadOrders = async () =>
   {
     const ordersList = await fetchMethod("orders");
@@ -168,11 +209,11 @@ const ViewRoutes = ( ) =>
     {
       
       //console.log("Order list is " + JSON.stringify(ordersList));
-      const sortedOrderList = ordersList.sort((a, b) => a.position - b.position);
+      const filteredOrders = ordersList.filter(order => order.status === "PLANNED");
+      const sortedOrderList = filteredOrders.sort((a, b) => a.position - b.position);
       // Filter orders where the status is "PLANNED" and the DeliverDate matches the selected date
       // Filter orders where the status is "PLANNED" (initial fetch)
-      const unassignedOrders = sortedOrderList.filter(order => order.status === "PLANNED");
-      setPlannedOrders(unassignedOrders);  // Save all planned orders
+      setPlannedOrders(sortedOrderList);  // Save all planned orders
       setOrdersLoaded(true); // Mark orders as loaded
       // Filter the saved planned orders by the selected date
       filterByDate(selectedDate);
@@ -189,6 +230,15 @@ const ViewRoutes = ( ) =>
   };
 
 
+  
+  /**
+   * Delete route send a route to be deleted by ID
+   * Once sent, routes and orders are reloaded. 
+   *
+   * @async
+   * @param {*} id
+   * @returns {*}
+   */
   const deleteRoute = async (id) =>
   {
     console.log("id sent to delete is " + id);
@@ -206,6 +256,13 @@ const ViewRoutes = ( ) =>
   }
 
 
+  /**
+   * Loads all the routes in the database
+   * Into the state values routes
+   *
+   * @async
+   * @returns {unknown}
+   */
   const loadRoutes = async () =>
   {//need to update get route to manage getting existing orders
     //should return the same as CalcRoute
@@ -214,6 +271,7 @@ const ViewRoutes = ( ) =>
       const routesList = await fetchMethod('DeliveryRoutes');
       if (routesList)
       {
+        console.log(JSON.stringify(routesList))
         setRoutes(routesList);
         return routesList;
       }
@@ -240,7 +298,7 @@ const ViewRoutes = ( ) =>
   };
 
 
-  
+
   // Define columns for DataGrid
   const columns = [
     { field: 'orderID', headerName: 'Order ID', width: 90 },
@@ -253,6 +311,13 @@ const ViewRoutes = ( ) =>
 
   ];
 
+  
+  /**
+   * Handle num vehicles change
+   * sets the drop down value for vehicles
+   *
+   * @param {*} event
+   */
   const handleNumVehiclesChange = (event) =>
   {
     setNumVehicles(event.target.value);
@@ -326,20 +391,32 @@ const ViewRoutes = ( ) =>
                 </RadioGroup>
               </Grid>
             <Grid item xs={6} md={4} container justifyContent="flex-end">
-              <Button
-                disabled = {datePlannedOrders?.length==0}
-                variant='contained'
-                sx={{ height: '100%' }}
-                onClick={calcRoutes} // Call loadRoutes on button click
-              >
-                <AltRouteIcon />
-                Regenerate Routes
-              </Button>
+              {routesLoading ? (
+                <Button
+                  variant='contained'
+                  color='secondary'
+                  sx={{ height: '100%' }}
+                >
+                  <CustomLoading />
+                </Button>
+              ) : (
+                <Button
+                  disabled={datePlannedOrders?.length == 0}
+                  variant='contained'
+                  sx={{ height: '100%' }}
+                  onClick={calcRoutes} // Call loadRoutes on button click
+                >
+
+                  <AltRouteIcon />
+
+                  Regenerate Routes
+                </Button>
+              )}
             </Grid>
           </Grid>
 
           <Grid item xs={12} md={12} container spacing={2} alignItems="center">
-            <Accordion style={{ width: '100%' }}>
+            <Accordion style={{ width: '85%' }}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1-content"
@@ -359,47 +436,85 @@ const ViewRoutes = ( ) =>
           </Grid>
 
          
-          {/* Render assigned vehicles */}
-          {routes.map((route) => (
-            <Grid item xs={12} key={route.deliveryRouteID} sx={styleConstants.fieldSpacing}>
-              <Divider>
-                <Typography variant="h4" component="h3" align="center">
-                  Vehicle {route.vehicleId}
-                </Typography>
-              </Divider>
-              <Grid item sx={styleConstants.fieldSpacing}>
-                <DataGrid
-                  rows={route.orders
-                    .slice() // Copy to avoid mutating original array
-                    .sort((a, b) => a.position - b.position) // Sort by position
-                    .map((order) => ({ id: order.orderID, ...order }))}
-                  columns={columns}
-                  pageSize={5}
-                  autoHeight
-                />
-                 {route.orders && route.orders.length > 0 ? (
-                  <>
-                    <MapWithPins
-                      inputLocations={route.orders
-                      .slice() // Copy to avoid mutating the original array
-                      .sort((a, b) => a.position - b.position) // Sort by position
-                      .map(order => ({
-                      latitude: order.latitude,
-                      longitude: order.longitude
-                      }))}
-                    />
-                  </>
-                ) : (
-                  <p>No Orders</p>
-                )}
-                <Button
-                  onClick={()=>deleteRoute(route.deliveryRouteID)}
-                  color = "error"
-                  variant = "contained"
-                >Delete Route</Button>
-              </Grid>
-            </Grid>
-          ))}
+         {/* Render assigned vehicles */}
+{routes.map((route) => (
+  <Accordion key={route.deliveryRouteID}>
+     <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1-content"
+                id="panel1-header"
+              >
+    <Grid container alignItems="center" spacing={2}>
+      <Grid item xs={10}>
+        <Typography>
+          ID: {route.deliveryRouteID} &nbsp;
+          Vehicle {route.vehicleId} &nbsp;
+          Orders: {route.orders.length}
+        </Typography>
+      </Grid>
+      <Grid item xs={2}>
+        <Button
+          onClick={() => deleteRoute(route.deliveryRouteID)}
+          color="error"
+          variant="contained"
+        >
+          Delete Route
+        </Button>
+      </Grid>
+    </Grid>
+    </AccordionSummary>
+    <AccordionDetails>
+      <Grid item xs={12} sx={styleConstants.fieldSpacing}>
+        <Divider>
+          <Typography variant="h4" component="h3" align="center">
+          
+            Vehicle {route.vehicleId}
+          </Typography>
+        </Divider>
+
+        {/* DataGrid for orders */}
+        <Grid item sx={styleConstants.fieldSpacing}>
+          <DataGrid
+            rows={route.orders
+              .slice() // Copy to avoid mutating original array
+              .sort((a, b) => a.position - b.position) // Sort by position
+              .map((order) => ({ id: order.orderID, ...order }))} // Set the row ID
+            columns={columns}
+            pageSize={5}
+            autoHeight
+          />
+
+          {/* Map for orders */}
+          {route.orders && route.orders.length > 0 ? (
+            <>
+              <MapWithPins
+                inputLocations={route.orders
+                  .slice() // Copy to avoid mutating the original array
+                  .sort((a, b) => a.position - b.position) // Sort by position
+                  .map((order) => ({
+                    latitude: order.latitude,
+                    longitude: order.longitude
+                  }))}
+              />
+            </>
+          ) : (
+            <p>No Orders</p>
+          )}
+
+          {/* Delete Route Button */}
+          <Button
+            onClick={() => deleteRoute(route.deliveryRouteID)}
+            color="error"
+            variant="contained"
+          >
+            Delete Route
+          </Button>
+        </Grid>
+      </Grid>
+    </AccordionDetails>
+  </Accordion>
+))}
+
         </Grid>
       </Paper>
 

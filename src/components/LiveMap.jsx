@@ -9,7 +9,7 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
     const map = useRef(null);
     const [markers, setMarkers] = useState([]);
 
-    // Fetches directions for a route
+    // fetches directions for a route
     const fetchDirections = async (coordinates) => {
         const validCoordinates = coordinates.filter(coord => !isNaN(coord[0]) && !isNaN(coord[1]));
         const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates.join(';')}?geometries=geojson&access_token=${mapboxgl.accessToken}&overview=full`;
@@ -31,26 +31,26 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
         }
     };
 
-    // Initialize map
+    // initialises map
     useEffect(() => {
-        if (map.current) return; // prevents reinitialization
+        if (map.current) return; // prevents reinitialisation
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/streets-v11',
-            center: [115.8575, -31.9505], // Perth coordinates
+            center: [115.8575, -31.9505], // perth coordinates (need to change so it centres on the routes)
             zoom: 11,
         });
     }, []);
 
-    // Update map when routes or orders change
+    // update map when checked routes changes or orders change
     useEffect(() => {
         if (!map.current) return;
 
-        // Clear existing markers
+        // clear existing markers
         markers.forEach(marker => marker.remove());
         setMarkers([]);
 
-        // Clear previous routes
+        // clear previous routes
         Object.keys(checkedRoutes).forEach((routeId) => {
             if (map.current.getLayer(`route-layer-${routeId}`)) {
                 map.current.removeLayer(`route-layer-${routeId}`);
@@ -68,7 +68,7 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
                 const orders = ordersData[routeId].sort((a, b) => a.position - b.position);
                 const routeCoordinates = orders.map(order => [order.longitude, order.latitude]);
 
-                // Add markers for orders
+                // add markers for orders
                 orders.forEach(order => {
                     const el = document.createElement('div');
                     el.className = 'marker';

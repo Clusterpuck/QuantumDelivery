@@ -10,20 +10,19 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
     const [markers, setMarkers] = useState([]);
 
     const colourPalette = [
-        '#3357FF', // Blue
-        '#8E44AD', // Purple
+        
+        '#0C134F', // Super dark blue
+        '#2B49CE', // bright blue
+        '#8E44AD', // Blue-Purple
         '#1F618D', // Dark Blue
-        '#C0392B', // Red
-        '#2980B9'  // Light Blue
+        '#7D1E6A', // Red-Purple
     ];
 
-    // generate a colour from a route id
     const generateColourFromId = (routeId) => {
         const index = parseInt(routeId, 10) % colourPalette.length;
         return colourPalette[index];
     };
 
-    // fetch directions for a route
     const fetchDirections = async (coordinates) => {
         const validCoordinates = coordinates.filter(coord => !isNaN(coord[0]) && !isNaN(coord[1]));
         const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates.join(';')}?geometries=geojson&access_token=${mapboxgl.accessToken}&overview=full`;
@@ -45,26 +44,22 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
         }
     };
 
-    // initialize map
     useEffect(() => {
-        if (map.current) return; // prevents reinitialization
+        if (map.current) return;
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/streets-v11',
-            center: [115.8575, -31.9505], // perth coordinates
+            center: [115.8575, -31.9505],
             zoom: 11,
         });
     }, []);
 
-    // update map when checked routes or orders change
     useEffect(() => {
         if (!map.current) return;
 
-        // clear existing markers
         markers.forEach(marker => marker.remove());
         setMarkers([]);
 
-        // clear previous routes
         Object.keys(checkedRoutes).forEach((routeId) => {
             if (map.current.getLayer(`route-layer-${routeId}`)) {
                 map.current.removeLayer(`route-layer-${routeId}`);
@@ -75,24 +70,26 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
         });
 
         const newMarkers = [];
-        const routeIdToColour = {}; // map routeId to colour
+        const routeIdToColour = {};
         const allRoutePromises = [];
         const routeIds = [];
 
-        // Collect route IDs and fetch directions
         for (const routeId in ordersData) {
             if (checkedRoutes[routeId]) {
-                routeIds.push(routeId); // collect route IDs
-                routeIdToColour[routeId] = generateColourFromId(routeId); // Map routeId to colour
+                routeIds.push(routeId);
+                routeIdToColour[routeId] = generateColourFromId(routeId);
                 const orders = ordersData[routeId].sort((a, b) => a.position - b.position);
                 const routeCoordinates = orders.map(order => [order.longitude, order.latitude]);
 
-                // add markers for orders
                 orders.forEach(order => {
                     const el = document.createElement('div');
                     el.className = 'marker';
                     el.textContent = order.position;
                     el.style.backgroundColor = order.status === 'DELIVERED' ? '#379e34' : order.delayed ? '#b31746' : '#e0983a';
+                    
+                    // Set the border color to match the route color
+                    const borderColor = routeIdToColour[routeId];
+                    el.style.border = `4px solid ${borderColor}`;
 
                     if (order.longitude && order.latitude) {
                         const marker = new mapboxgl.Marker(el)
@@ -110,7 +107,7 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
         Promise.all(allRoutePromises).then((allRoutes) => {
             allRoutes.forEach((route, index) => {
                 const routeId = routeIds[index];
-                const routeColour = routeIdToColour[routeId]; // get the color for this routeId
+                const routeColour = routeIdToColour[routeId];
 
                 if (route) {
                     console.log(`Route ID: ${routeId}, Color: ${routeColour}`);

@@ -38,8 +38,8 @@ const LiveTracking = () => {
     const fetchRouteData = async () => { 
         const fetchedRoutes = await fetchMethod("deliveryroutes");
         if (fetchedRoutes) {
-            const filteredRoutes = fetchedRoutes.filter(route => { // filter out any routes that have all orders as delivered
-                return !route.orders.every(order => order.status === 'DELIVERED');
+            const filteredRoutes = fetchedRoutes.filter(route => { // filter out any routes that have all orders as delivered or issue
+                return !route.orders.every(order => order.status === 'DELIVERED' || order.status === 'ISSUE');
             });
             setRoutesData(filteredRoutes);
             let tempOrdersData = {};

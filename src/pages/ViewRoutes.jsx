@@ -16,9 +16,7 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 // Date Picker
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import DateSelectHighlight from '../components/DateSelectHighlight.jsx';
 
 // Data Grid
 import { DataGrid } from '@mui/x-data-grid';
@@ -41,6 +39,7 @@ const styleConstants = {
 const ViewRoutes = ( ) =>
 {
   const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [unassignedDates, setUnassignedDates] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [routesLoading, setRoutesLoading] = useState(false);
   const [plannedOrders, setPlannedOrders] = useState([]);
@@ -87,6 +86,34 @@ const ViewRoutes = ( ) =>
     //filter orders by new date
     filterByDate(date);
   };
+
+
+
+  /** Forms a list of current dates that there are routes planned */
+  function extractOrderDates(inOrders)
+  {
+    const newDateList = [];
+
+    // Iterate over routes and orders, but only add unique dates
+    inOrders.forEach(order =>
+    {
+      const routeDate = dayjs(order.deliveryDate);
+
+      // Check if the same day, month, and year already exists in newDateList
+      const isDuplicate = newDateList.some(
+        date => dayjs(date).isSame(routeDate, 'day')
+      );
+
+      // Add to list if it's not a duplicate
+      if (!isDuplicate)
+      {
+        newDateList.push(order.deliveryDate);
+      }
+    });
+
+    setUnassignedDates(newDateList);
+
+  }
 
 
   
@@ -163,6 +190,7 @@ const ViewRoutes = ( ) =>
       {
         const routesList = unsortedRoutesList.sort((a, b) => a.position - b.position);
         setRoutes(routesList);
+        //send instead of relying on set due to asynch setting
         
         //resets order list after them being assigned to routes
         await loadOrders();
@@ -217,6 +245,7 @@ const ViewRoutes = ( ) =>
       setOrdersLoaded(true); // Mark orders as loaded
       // Filter the saved planned orders by the selected date
       filterByDate(selectedDate);
+      extractOrderDates(filteredOrders);
 
     } else
     {
@@ -311,7 +340,7 @@ const ViewRoutes = ( ) =>
 
   ];
 
-  
+
   /**
    * Handle num vehicles change
    * sets the drop down value for vehicles
@@ -344,16 +373,7 @@ const ViewRoutes = ( ) =>
           <Grid item xs={12} md={12} container spacing={2} alignItems="center">
             <Grid item xs={6} md={3} >
 
-              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en-gb'>
-                <DesktopDatePicker
-                  label="Plan Date"
-                  value={selectedDate}
-                  onChange={handleDateChange}
-                  renderInput={(params) => <TextField {...params}/>}
-                />
-
-              </LocalizationProvider>
-
+              <DateSelectHighlight highlightedDates={unassignedDates}  selectedDate={selectedDate} handleDateChange={handleDateChange}/>
 
             </Grid>
             {/* Dropdown for selecting number of vehicles and Regenerate button */}
@@ -502,13 +522,13 @@ const ViewRoutes = ( ) =>
           )}
 
           {/* Delete Route Button */}
-          <Button
+          {/* <Button
             onClick={() => deleteRoute(route.deliveryRouteID)}
             color="error"
             variant="contained"
           >
             Delete Route
-          </Button>
+          </Button> */}
         </Grid>
       </Grid>
     </AccordionDetails>

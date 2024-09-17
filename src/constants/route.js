@@ -74,7 +74,7 @@ export const ROUTES = [
   {
     path: "/addorder",
     element: (
-      <PrivateRoute role="ADMIN">
+      <PrivateRoute role="admin">
         <AddOrder />
       </PrivateRoute>
     ),
@@ -82,7 +82,7 @@ export const ROUTES = [
   {
     path: "/driverviewroutes",
     element: (
-      <PrivateRoute role="ADMIN">
+      <PrivateRoute>
         <DriverViewRoutes />
       </PrivateRoute>
     ),

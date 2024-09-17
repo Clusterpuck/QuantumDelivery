@@ -16,6 +16,7 @@ import Register from "./pages/Register";
 import AccountDetails from './pages/AccountDetails';
 import DriverViewRoutes from './pages/DriverViewRoutes';
 import PrivateRoute from './constants/PrivateRoute'; 
+import Unauthorized from './pages/Unauthorized'; 
 import './index.css';
 import './App.css';
 
@@ -42,51 +43,57 @@ const App = () => {
         <ThemeProvider theme={theme}>
             <Router>
                 <PageLayout>
-                    <Routes> 
+                    <Routes>
                         <Route path="/" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
+                        <Route path="/register" element={<Register />} /> {/* TO DO: move to admin controls page */}
                         <Route path="/login" element={<Login />} />
-                        <Route path="/home" element={
-                            <PrivateRoute>
-                                <AddOrder />
-                            </PrivateRoute>
-                        } />
+                        <Route path="/unauthorized" element={<Unauthorized />} /> {/* Unauthorized page */}
+
+                        {/* Protected routes (Admin only) */}
                         <Route path="/viewroutes" element={
-                            <PrivateRoute>
+                            <PrivateRoute role="ADMIN">
                                 <ViewRoutes />
                             </PrivateRoute>
                         } />
                         <Route path="/livetracking" element={
-                            <PrivateRoute>
+                            <PrivateRoute role="ADMIN">
                                 <LiveTracking />
                             </PrivateRoute>
                         } />
                         <Route path="/dailyreports" element={
-                            <PrivateRoute>
+                            <PrivateRoute role="ADMIN">
                                 <DailyReports />
                             </PrivateRoute>
                         } />
-                        <Route path="/accountdetails" element={
-                            <PrivateRoute>
-                                <AccountDetails />
-                            </PrivateRoute>
-                        } />
                         <Route path="/addorder" element={
-                            <PrivateRoute>
+                            <PrivateRoute role="ADMIN">
                                 <AddOrder />
                             </PrivateRoute>
                         } />
+                        <Route path="/accountdetails" element={
+                            <PrivateRoute role="ADMIN">
+                                <AccountDetails />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/home" element={
+                            <PrivateRoute role="ADMIN">
+                                <AddOrder />
+                            </PrivateRoute>
+                        } />
+
+                        {/* Protected routes (Admin and Driver) */}
                         <Route path="/driverviewroutes" element={
                             <PrivateRoute>
                                 <DriverViewRoutes />
                             </PrivateRoute>
-                        } />                                                
+                        } />
                     </Routes>
                 </PageLayout>
             </Router>
         </ThemeProvider>
     );
 };
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

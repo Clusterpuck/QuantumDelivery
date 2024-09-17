@@ -18,7 +18,7 @@ export const ROUTES = [
   {
     path: "/viewroutes",
     element: (
-      <PrivateRoute>
+      <PrivateRoute role="ADMIN">
         <ViewRoutes />
       </PrivateRoute>
     ),
@@ -26,7 +26,7 @@ export const ROUTES = [
   {
     path: "/livetracking",
     element: (
-      <PrivateRoute>
+      <PrivateRoute role="ADMIN">
         <LiveTracking />
       </PrivateRoute>
     ),
@@ -34,7 +34,7 @@ export const ROUTES = [
   {
     path: "/dailyreports",
     element: (
-      <PrivateRoute>
+      <PrivateRoute role="ADMIN">
         <DailyReports />
       </PrivateRoute>
     ),
@@ -42,7 +42,7 @@ export const ROUTES = [
   {
     path: "/uploadrunsheet",
     element: (
-      <PrivateRoute>
+      <PrivateRoute role="ADMIN">
         <UploadRunsheet />
       </PrivateRoute>
     ),
@@ -66,7 +66,7 @@ export const ROUTES = [
   {
     path: "/home",
     element: (
-      <PrivateRoute>
+      <PrivateRoute role="ADMIN">
         <AddOrder />
       </PrivateRoute>
     ),
@@ -74,7 +74,7 @@ export const ROUTES = [
   {
     path: "/addorder",
     element: (
-      <PrivateRoute>
+      <PrivateRoute role="ADMIN">
         <AddOrder />
       </PrivateRoute>
     ),
@@ -82,7 +82,7 @@ export const ROUTES = [
   {
     path: "/driverviewroutes",
     element: (
-      <PrivateRoute>
+      <PrivateRoute role="ADMIN">
         <DriverViewRoutes />
       </PrivateRoute>
     ),

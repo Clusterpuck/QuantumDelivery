@@ -12,7 +12,6 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { disableScroll } from '../assets/scroll.js';
 import LiveMap from '../components/LiveMap'; // Import the new LiveMap component
-import '../assets/Marker.css'
 
 // Page design for live tracking page
 

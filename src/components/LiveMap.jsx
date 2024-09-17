@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import '../assets/Marker.css';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
@@ -85,7 +86,13 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
                     const el = document.createElement('div');
                     el.className = 'marker';
                     el.textContent = order.position;
-                    el.style.backgroundColor = order.status === 'DELIVERED' ? '#379e34' : order.delayed ? '#b31746' : '#e0983a';
+                    if (order.status === 'DELIVERED') {
+                        el.classList.add('delivered');
+                    } else if (order.delayed) {
+                        el.classList.add('delayed');
+                    } else {
+                        el.classList.add('default');
+                    }
                     
                     // Set the border color to match the route color
                     const borderColor = routeIdToColour[routeId];

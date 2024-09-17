@@ -97,13 +97,13 @@ const DriverViewRoutes = ({}) =>
                 console.log("Delivery route fetched", routeData);
                 setRouteId(routeData.deliveryRouteID);
                 console.log("Route ID set to:", routeData.deliveryRouteID); 
-                const pendingDeliveries = routeData.orders.filter(order => order.status !== 'DELIVERED');
+                const pendingDeliveries = routeData.orders.filter(order => order.status !== 'DELIVERED' && order.status !== 'ISSUE');
                 const sortedDeliveries = pendingDeliveries.sort((a, b) => a.position - b.position);
                 setCurrentDelivery(sortedDeliveries[0]);
                 setNextDeliveries(sortedDeliveries.slice(1));
     
                 const anyPlanned = sortedDeliveries.some(order => order.status === 'ASSIGNED');
-                const finishedDelivery = sortedDeliveries.every(order => order.status === 'DELIVERED');
+                const finishedDelivery = sortedDeliveries.every(order => order.status === 'DELIVERED' || order.status === 'ISSUE');
                 setAnyPlanned(anyPlanned);
                 setFinishedDelivery(finishedDelivery);
             } else {

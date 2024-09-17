@@ -6,7 +6,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
+    background-color: rgb(190, 46, 92);
+    color: white;
     font-size: 14px;
     font-weight: bold;
     text-align: center;

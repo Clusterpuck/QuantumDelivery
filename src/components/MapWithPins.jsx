@@ -16,7 +16,7 @@ const MapWithPins = ({inputLocations}) =>
     useEffect(() =>
     {
         if (!inputLocations || inputLocations.length === 0) {
-            console.error("inputLocations not provided or null.");
+            console.error("xxXXinputLocations not provided or null.");
             return; 
         }
         const midOrder = Math.floor(inputLocations.length / 2)

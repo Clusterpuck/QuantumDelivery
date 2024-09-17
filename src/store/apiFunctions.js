@@ -322,6 +322,36 @@ export const updateOrderDelayed = async(input) =>{
     }
 }
 
+///Input is: const input = {
+//     username: driverUsername,
+//     orderId: currentDelivery.orderId,
+//     driverNote: "example driver note"
+// };
+export const updateOrderIssue = async(input) =>{
+    try{
+        const response = await fetch(Constants.DATA_ENDPOINT + 'deliveryroutes/update-issue', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(input),
+        });
+
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+            throw new Error('Failed to set order status to issue.');
+        }
+        const responseData = await response.json();
+        console.log('Successfully set order status to issue.', responseData);
+        return responseData; 
+
+    } catch (error) {
+        console.error('Error setting order status as issue: ', error);
+        return null; 
+    }
+}
+
 export const login = async (username, password) => {
     try {
         const response = await fetch(Constants.DATA_ENDPOINT + 'accounts/authenticate', {

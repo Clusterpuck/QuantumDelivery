@@ -1,3 +1,5 @@
+import '../assets/Marker.css';
+ 
  // Function to format the date
  export function formatDate(isoDate) {
     //console.log("xxXX Date sent is ", isoDate)
@@ -13,4 +15,17 @@
       return 'Invalid Date'; // Fallback in case of error
     }
   }
+
+  export function getRowColour(order) {
+    // Check the order's status and delayed attributes to return the appropriate color
+    if (order.status === 'DELIVERED') {
+        return 'delivered'; // Light green for delivered
+    } else if (order.status === 'ISSUE') {
+        return 'issue'; // Light red for issue
+    } else if (order.delayed) {
+        return 'delayed'; // Light pink for delayed
+    } else {
+        return 'default'; // Light yellow for anything else (on-route, etc.)
+    }
+};
   

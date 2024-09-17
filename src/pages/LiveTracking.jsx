@@ -11,7 +11,9 @@ import { fetchMethod } from '../store/apiFunctions.js';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { disableScroll } from '../assets/scroll.js';
-import LiveMap from '../components/LiveMap'; // Import the new LiveMap component
+import LiveMap from '../components/LiveMap'; 
+import {getRowColour} from '../store/helperFunctions.js';
+
 
 // Page design for live tracking page
 
@@ -38,8 +40,8 @@ const LiveTracking = () => {
     const fetchRouteData = async () => { 
         const fetchedRoutes = await fetchMethod("deliveryroutes");
         if (fetchedRoutes) {
-            const filteredRoutes = fetchedRoutes.filter(route => { // filter out any routes that have all orders as delivered
-                return !route.orders.every(order => order.status === 'DELIVERED');
+            const filteredRoutes = fetchedRoutes.filter(route => { // filter out any routes that have all orders as delivered or issue
+                return !route.orders.every(order => order.status === 'DELIVERED' || order.status === 'ISSUE');
             });
             setRoutesData(filteredRoutes);
             let tempOrdersData = {};
@@ -68,15 +70,6 @@ const LiveTracking = () => {
         const orders = ordersData[routeId];
         if (orders) {
             const sortedOrders = orders.sort((a, b) => a.position - b.position);
-        }
-    };
-
-    const getRowColor = (delayed) => { // for background colours, red for delayed, green for not.
-        switch (delayed) {
-            case true:
-                return '#f8d7da'; // Light red
-            default:
-                return '#d4edda'; // Light green
         }
     };
 
@@ -201,12 +194,12 @@ const LiveTracking = () => {
                                                                 </TableHead>
                                                                 <TableBody>
                                                                     {ordersData[route.deliveryRouteID].map((order) => (
-                                                                        <TableRow key={order.orderID} sx={{ backgroundColor: getRowColor(order.delayed) }}>
-                                                                            <TableCell>{order.orderID}</TableCell>
-                                                                            <TableCell>{order.address}</TableCell>
-                                                                            <TableCell>{order.customerName}</TableCell>
-                                                                            <TableCell>{order.productNames.join(", ")}</TableCell>
-                                                                            <TableCell>{order.status}{order.delayed ? ", DELAYED" : ""}</TableCell>
+                                                                        <TableRow key={order.orderID} >
+                                                                            <TableCell >{order.orderID}</TableCell>
+                                                                            <TableCell >{order.address}</TableCell>
+                                                                            <TableCell >{order.customerName}</TableCell>
+                                                                            <TableCell >{order.productNames.join(", ")}</TableCell>
+                                                                            <TableCell className={getRowColour(order)} sx={{ color: '#f2f2f2', borderRadius: '10px' }}>{order.status}{order.delayed ? ", DELAYED" : ""}</TableCell>
                                                                         </TableRow>
                                                                     ))}
                                                                 </TableBody>

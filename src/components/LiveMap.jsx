@@ -88,6 +88,8 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
                     el.textContent = order.position;
                     if (order.status === 'DELIVERED') {
                         el.classList.add('delivered');
+                    } else if (order.status === 'ISSUE') {
+                        el.classList.add('issue');
                     } else if (order.delayed) {
                         el.classList.add('delayed');
                     } else {

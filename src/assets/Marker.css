@@ -17,8 +17,12 @@
     background-color: #379e34;
 }
 
+.issue {
+    background-color: #a90604;
+}
+
 .delayed {
-    background-color: #b31746;
+    background-color: #cb595a;
 }
 
 .default {

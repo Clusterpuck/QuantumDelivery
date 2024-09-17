@@ -38,7 +38,10 @@ const LiveTracking = () => {
     const fetchRouteData = async () => { 
         const fetchedRoutes = await fetchMethod("deliveryroutes");
         if (fetchedRoutes) {
-            setRoutesData(fetchedRoutes);
+            const filteredRoutes = fetchedRoutes.filter(route => { // filter out any routes that have all orders as delivered
+                return !route.orders.every(order => order.status === 'DELIVERED');
+            });
+            setRoutesData(filteredRoutes);
             let tempOrdersData = {};
             fetchedRoutes.forEach(route => {
                 tempOrdersData[route.deliveryRouteID] = route.orders;

@@ -55,14 +55,23 @@ const LoginForm = () => {
         e.preventDefault();
         if (validate()) {
             try {
-                const factTest = await fetchMethod('QuantumFacts');
-                console.log("***XXxxSuccessfully got factxxXX** ", factTest);
                 const response = await login(username, password);
-                if (response && response.token) {
+                
+                if (response && response.token && response.role) {
+                    // store the token and role in cookies or localStorage
                     Cookies.set('authToken', response.token, { expires: 1 });
-                    navigate('/addorder');
+                    Cookies.set('userRole', response.role, { expires: 1 });
+    
+                    // redirect based on role
+                    if (response.role === 'ADMIN') {
+                        navigate('/addorder'); // redirect to Admin dashboard
+                    } else if (response.role === 'DRIVER') {
+                        navigate('/driverviewroutes'); // redirect to Driver dashboard
+                    } else {
+                        setErrorMessage('Invalid role, please contact an Admin for assistance');
+                    }
                 } else {
-                    setErrorMessage('Invalid username or password');
+                    setErrorMessage('Invalid username, password, or role');
                 }
             } catch (error) {
                 console.error('Login failed:', error);
@@ -134,3 +143,4 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
+

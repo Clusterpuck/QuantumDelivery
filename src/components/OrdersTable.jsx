@@ -13,30 +13,6 @@ const OrdersTable = ({updateData, orders}) => {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
-    // const loadOrders = useCallback(async () => {
-    //     const orderList = await fetchMethod("orders");
-    //     if (orderList) {
-    //         setOrders(orderList);
-    //         console.log("Orders recieved are ", JSON.stringify(orderList));
-    //     } else {
-    //         console.error('Error fetching orders:', error);
-    //         setSnackbarMessage('Failed to load orders');
-    //         setSnackbarSeverity('error');
-    //         setSnackbarOpen(true);
-    //     }
-    // }, []);
-
-    // useEffect(() => {
-        
-    //     loadOrders();
-
-    // }, [updateData, loadOrders])
-
-    
-
-      // Manually filter the orders based on 'filterBy' prop (or hardcoded value for testing)
-//      const filteredOrders = orders.filter(order => filterBy.includes(order.status));
-
 
     
     const columns = [

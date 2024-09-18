@@ -148,7 +148,7 @@ const ViewRoutes = () =>
   const handleCalcChange = (event) =>
   {
     setCalcType(event.target.value)
-    console.log("Calc changed to ", event.target.value);
+   // console.log("Calc changed to ", event.target.value);
 
   }
 
@@ -186,7 +186,7 @@ const ViewRoutes = () =>
           map(order => order.orderID) // all orders
       };
 
-      console.log("Payload being sent: ", JSON.stringify(userInput));
+      //console.log("Payload being sent: ", JSON.stringify(userInput));
       await postDeliveryRoutes(userInput);
       //needs to return all routes, not just new routes
       await loadRoutes();
@@ -259,16 +259,16 @@ const ViewRoutes = () =>
    */
   const deleteRoute = async (id) =>
   {
-    console.log("id sent to delete is " + id);
+    //console.log("id sent to delete is " + id);
     const result = await deleteMethod(id, 'DeliveryRoutes');
     if (result)
     {
-      console.log('Item deleted successfully:', result);
+      //console.log('Item deleted successfully:', result);
       await loadOrders();
       await loadRoutes();
     } else
     {
-      console.log('Failed to delete item.');
+      console.error('Failed to delete item.');
     }
 
   }
@@ -290,7 +290,7 @@ const ViewRoutes = () =>
       const routesList = await fetchMethod('DeliveryRoutes');
       if (routesList)
       {
-        console.log("xxXX Route List is " + JSON.stringify(routesList));
+        //console.log("xxXX Route List is " + JSON.stringify(routesList));
         //setRoutes(routesList);
         const groupedRoutes = routesList.reduce((acc, route) =>
         {
@@ -307,7 +307,7 @@ const ViewRoutes = () =>
         }, {});
 
         setRoutes(groupedRoutes)
-        console.log("xxXXGrouped Routes by Date: ", groupedRoutes);
+        //console.log("xxXXGrouped Routes by Date: ", groupedRoutes);
         return groupedRoutes;
       }
       else
@@ -373,11 +373,11 @@ const ViewRoutes = () =>
 
       <Typography variant="h2" component="h1" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <RouteIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
-        View Routes
+        Routes
       </Typography>
 
       <Paper elevation={3} sx={{ padding: 3, maxWidth: 1500, width: '100%' }}>
-        <Grid container spacing={2}>
+        <Grid item xs={12} md={12} container spacing={2}>
           <Grid item xs={12} md={12} container spacing={2} alignItems="center">
             <Grid item xs={6} md={3} >
               {ordersLoading ? <CircularProgress/> :
@@ -444,19 +444,19 @@ const ViewRoutes = () =>
             </Grid>
           </Grid>
 
+          {/* unassigned orders component */}
           <Grid item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
           {ordersLoading ? <LinearProgress/> :
           (
-            <Accordion >
+            <Accordion sx={{width: '100%'}} >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls={`panel-content`}
                 id={`panel-header`}
                 sx={{
                   backgroundColor: 'lightblue',  // Set background color
-                  borderRadius: '5px',
                   borderBottom: '1px solid grey', // Add a border
-                  padding: '1px', // Adjust padding
+                 
                   '&:hover': {
                     backgroundColor: 'teal', // Hover effect
                   },
@@ -466,19 +466,35 @@ const ViewRoutes = () =>
                   },
                 }}
               >
-                {plannedOrders ? <p>Unassigned Orders for {formatDate(selectedDate)} <strong>{datePlannedOrders.length}</strong></p> : <p>No Unassigned Orders</p>}
+               
+
+                    {plannedOrders ? (
+                      <>
+                      <Grid container alignItems="center" spacing={2}>
+                    <Grid item xs={10}>
+                      <Typography variant="h6">
+                        Unassigned Orders: {datePlannedOrders.length}
+                      </Typography>
+                      <Typography variant="h7">
+                        Date: {formatDate(selectedDate)}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                        </>
+                    ) : (
+                      <Typography variant="body1" color="textSecondary">
+                        No Unassigned Orders
+                      </Typography>
+                    )}
+
               </AccordionSummary>
               <AccordionDetails>
-                <OrdersTable updateData={false} orders={datePlannedOrders} />
+                <OrdersTable orders={datePlannedOrders} />
               </AccordionDetails>
             </Accordion>
           )}
           </Grid>
 
-
-          <Grid item xs={6}>
-
-          </Grid>
 
           <Grid item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
             {routesLoading ? ( <LinearProgress color='primary' sx={{ width: '100%' }} />) : (
@@ -486,6 +502,7 @@ const ViewRoutes = () =>
             
             {/* Render assigned vehicles */}
             {Object.entries(routes).map(([date, dateRoutes]) => (
+              <Grid item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
               <Accordion key={date}>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
@@ -493,9 +510,7 @@ const ViewRoutes = () =>
                   id={`panel-${date}-header`}
                   sx={{
                     backgroundColor: 'lightblue',  // Set background color
-                    borderRadius: '5px',
                     borderBottom: '1px solid grey', // Add a border
-                    padding: '1px', // Adjust padding
                     '&:hover': {
                       backgroundColor: 'teal', // Hover effect
                     },
@@ -507,7 +522,7 @@ const ViewRoutes = () =>
                 >
                   <Grid container alignItems="center" spacing={2}>
                     <Grid item xs={10}>
-                      <Typography variant="h6">
+                      <Typography variant="h7">
                         Delivery Date: {date}
                       </Typography>
                       <Typography variant="subtitle1">
@@ -539,7 +554,7 @@ const ViewRoutes = () =>
                         </Grid>
                       </Grid>
 
-                      <Grid item xs={12} sx={styleConstants.fieldSpacing}>
+                      <Grid item xs={12} md={12} sx={styleConstants.fieldSpacing}>
                         <Divider>
                           <Typography variant="h4" component="h3" align="center">
                             Vehicle {route.vehicleId}
@@ -547,7 +562,7 @@ const ViewRoutes = () =>
                         </Divider>
 
                         {/* DataGrid for orders */}
-                        <Grid item sx={styleConstants.fieldSpacing}>
+                        <Grid item xs={12} md={12} sx={styleConstants.fieldSpacing}>
                           <DataGrid
                             rows={route.orders
                               .slice()
@@ -580,6 +595,7 @@ const ViewRoutes = () =>
                   ))}
                 </AccordionDetails>
               </Accordion>
+              </Grid>
             ))}
             </>
             )}

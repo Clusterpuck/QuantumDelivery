@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { fetchMethod } from '../store/apiFunctions';
+import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Snackbar, Alert, Paper, Box } from '@mui/material';
 import {formatDate} from '../store/helperFunctions';
@@ -8,7 +7,6 @@ import {formatDate} from '../store/helperFunctions';
 //will trigger a refresh of the orders table data. 
 const OrdersTable = ({orders}) => {
 
-    //const [orders, setOrders] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
@@ -16,12 +14,12 @@ const OrdersTable = ({orders}) => {
 
     
     const columns = [
-        { field: 'id', headerName: 'ID', flex: 0.1 },
-        { field: 'DeliveryDate', headerName: 'Date', flex: 0.2 },
-        { field: 'Address', headerName: 'Address', flex: 0.3 },
-        { field: 'customerName', headerName: 'Customer Name', flex: 0.2 },
+        { field: 'id', headerName: 'ID', flex: 0.05 },
+        { field: 'DeliveryDate', headerName: 'Date', flex: 0.15 },
+        { field: 'Address', headerName: 'Address', flex: 0.2 },
+        { field: 'customerName', headerName: 'Customer Name', flex: 0.1 },
         { field: 'status', headerName: 'Status', flex: 0.2 },
-        { field: 'notes', headerName: 'Notes', flex: 0.4 },
+        { field: 'notes', headerName: 'Notes', flex: 0.3 },
     ];
     
 

@@ -20,7 +20,7 @@ const IssuesTable = () => {
         } catch (error) {
             console.error("Error fetching orders with issues: ", error);
         } finally{
-           // setLoadingIssues(false);
+           setLoadingIssues(false);
         }
     };
 

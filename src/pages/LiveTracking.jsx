@@ -12,11 +12,9 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { disableScroll } from '../assets/scroll.js';
 import LiveMap from '../components/LiveMap'; 
-import {getRowColour} from '../store/helperFunctions.js';
-
+import {getStatusColour} from '../store/helperFunctions.js';
 
 // Page design for live tracking page
-
 const LiveTracking = () => {
     const [drawerOpen, setDrawerOpen] = React.useState(true); // state for whether drawer is open
     const [routesData, setRoutesData] = React.useState(null); // routes data, returned by 'get delivery routes'
@@ -72,8 +70,6 @@ const LiveTracking = () => {
             const sortedOrders = orders.sort((a, b) => a.position - b.position);
         }
     };
-
-    // USE EFFECTS
 
     useEffect(() => { // when the page mounts, disable scroll and fetch the route data
         disableScroll();
@@ -199,7 +195,7 @@ const LiveTracking = () => {
                                                                             <TableCell >{order.address}</TableCell>
                                                                             <TableCell >{order.customerName}</TableCell>
                                                                             <TableCell >{order.productNames.join(", ")}</TableCell>
-                                                                            <TableCell className={getRowColour(order)} sx={{ color: '#f2f2f2', borderRadius: '10px' }}>{order.status}{order.delayed ? ", DELAYED" : ""}</TableCell>
+                                                                            <TableCell className={getStatusColour(order)} sx={{ color: '#f2f2f2', borderRadius: '10px' }}>{order.status}{order.delayed ? ", DELAYED" : ""}</TableCell>
                                                                         </TableRow>
                                                                     ))}
                                                                 </TableBody>

@@ -71,7 +71,7 @@ const App = () => {
                             </PrivateRoute>
                         } />
                         <Route path="/accountdetails" element={
-                            <PrivateRoute role="ADMIN">
+                            <PrivateRoute>
                                 <AccountDetails />
                             </PrivateRoute>
                         } />

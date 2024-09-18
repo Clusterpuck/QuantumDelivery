@@ -8,7 +8,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import DriverMap from '../components/DriverMap.jsx';
-import { fetchDeliveryRoute, startDeliveryRoute, updateOrderStatus } from '../store/apiFunctions';
+import { fetchDeliveryRoute, startDeliveryRoute, updateOrderStatusFromRoute } from '../store/apiFunctions';
 import NoRouteFound from '../components/NoRouteFound.jsx';
 import { disableScroll } from '../assets/scroll.js';
 import ReportIssue from '../components/ReportIssue.jsx';
@@ -74,7 +74,7 @@ const DriverViewRoutes = ({ }) => {
                 orderID: currentDelivery.orderID,
                 status: "DELIVERED"
             };
-            const result = await updateOrderStatus(input);
+            const result = await updateOrderStatusFromRoute(input);
             await fetchDeliveryData();
 
             if (result) {

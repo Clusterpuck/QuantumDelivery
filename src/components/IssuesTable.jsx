@@ -60,7 +60,7 @@ const IssuesTable = () => {
                                         color="primary"
                                         onClick={() => handleResolve(order.orderID)}
                                     >
-                                        Resolve
+                                        Edit
                                     </Button>
                                 </TableCell>
                             </TableRow>

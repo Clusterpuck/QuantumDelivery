@@ -14,9 +14,7 @@ import { disableScroll } from '../assets/scroll.js';
 import LiveMap from '../components/LiveMap'; 
 import {getStatusColour} from '../store/helperFunctions.js';
 
-
 // Page design for live tracking page
-
 const LiveTracking = () => {
     const [drawerOpen, setDrawerOpen] = React.useState(true); // state for whether drawer is open
     const [routesData, setRoutesData] = React.useState(null); // routes data, returned by 'get delivery routes'

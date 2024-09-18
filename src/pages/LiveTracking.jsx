@@ -73,8 +73,6 @@ const LiveTracking = () => {
         }
     };
 
-    // USE EFFECTS
-
     useEffect(() => { // when the page mounts, disable scroll and fetch the route data
         disableScroll();
         fetchRouteData();

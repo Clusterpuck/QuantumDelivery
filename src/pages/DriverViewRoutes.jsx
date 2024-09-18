@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Drawer, IconButton, Typography, Button, Modal, Fade, CircularProgress } from '@mui/material';
+import { Box, Drawer, IconButton, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, CircularProgress } from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -8,7 +8,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import DriverMap from '../components/DriverMap.jsx';
-import { fetchDeliveryRoute, fetchMethod, startDeliveryRoute, updateOrderStatus } from '../store/apiFunctions';
+import { fetchDeliveryRoute, startDeliveryRoute, updateOrderStatus } from '../store/apiFunctions';
 import NoRouteFound from '../components/NoRouteFound.jsx';
 import { disableScroll } from '../assets/scroll.js';
 import ReportIssue from '../components/ReportIssue.jsx';
@@ -17,50 +17,22 @@ import { getRowColour } from '../store/helperFunctions.js';
 const DriverViewRoutes = ({ }) => {
     // initialise drawer on the left (which shows delivery progress) to closed
     const [drawerOpen, setDrawerOpen] = React.useState(false);
-    const [modalOpen, setModalOpen] = React.useState(false); // whether the phone number for current delivery is shown
-    const [currentDelivery, setCurrentDelivery] = useState(null);
-    const [nextDeliveries, setNextDeliveries] = useState([]);
+    const [phoneDialogOpen, setPhoneDialogOpen] = React.useState(false); // whether the phone number for current delivery is shown
+    const [currentDelivery, setCurrentDelivery] = useState(null); // current order details
+    const [nextDeliveries, setNextDeliveries] = useState([]); // next order details
     const [currentLocation, setCurrentLocation] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [noRoutesFound, setNoRoutesFound] = React.useState(false);
     const [routeId, setRouteId] = React.useState(null);
-    const [anyPlanned, setAnyPlanned] = React.useState(true);
-    const [finishedDelivery, setFinishedDelivery] = React.useState(false);
-    const [issueDialogOpen, setIssueDialogOpen] = useState(false);
+    const [anyPlanned, setAnyPlanned] = React.useState(true); // if any orders are planned, use to check whether the start delivery button should be shown
+    const [finishedDelivery, setFinishedDelivery] = React.useState(false); // if delivery is finished
+    const [issueDialogOpen, setIssueDialogOpen] = useState(false); //if the report issue dialog is open
     const driverUsername = 'driver1@email.com'; // hard coded for now
 
     const toggleDrawer = (open) => () => { setDrawerOpen(open); }
-    const handlePhoneClick = (open) => () => { setModalOpen(open); };
-    const handleIssueDialogOpen = () => {setIssueDialogOpen(true);};
-    const handleIssueDialogClose = () => {setIssueDialogOpen(false);};
-
-    useEffect(() => { //disable scrolling on page load
-        disableScroll();
-    }, []);
-
-    useEffect(() => { // use effect for fetching the current location
-        if (!noRoutesFound) // Only fetch location if routes found
-        {
-            setIsLoading(true);
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const latitude = position.coords.latitude;
-                        const longitude = position.coords.longitude;
-                        setCurrentLocation([longitude, latitude]); // update state with valid location
-                        console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-                        setIsLoading(false);
-                    },
-                    (error) => {
-                        console.error("Error fetching location:", error);
-                        setIsLoading(false);
-                    });
-            } else {
-                console.log("Geolocation is not supported by this browser.");
-                setIsLoading(false);
-            }
-        }
-    }, [noRoutesFound]);
+    const handlePhoneDialog = (open) => () => { setPhoneDialogOpen(open); };
+    const handleIssueDialogOpen = () => { setIssueDialogOpen(true); };
+    const handleIssueDialogClose = () => { setIssueDialogOpen(false); };
 
     const fetchDeliveryData = async () => {
         try {
@@ -113,11 +85,39 @@ const DriverViewRoutes = ({ }) => {
         }
     };
 
+    useEffect(() => { //disable scrolling on page load
+        disableScroll();
+    }, []);
+
     useEffect(() => {
         if (driverUsername) {
             fetchDeliveryData();
         }
     }, [driverUsername]);
+
+    useEffect(() => { // use effect for fetching the current location
+        if (!noRoutesFound) // Only fetch location if routes found
+        {
+            setIsLoading(true);
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        setCurrentLocation([longitude, latitude]); // update state with valid location
+                        console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                        setIsLoading(false);
+                    },
+                    (error) => {
+                        console.error("Error fetching location:", error);
+                        setIsLoading(false);
+                    });
+            } else {
+                console.log("Geolocation is not supported by this browser.");
+                setIsLoading(false);
+            }
+        }
+    }, [noRoutesFound]);
 
     return (
         <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
@@ -126,10 +126,10 @@ const DriverViewRoutes = ({ }) => {
                 open={drawerOpen}
                 onClose={toggleDrawer(false)}
                 sx={{
-                    width: '95vw', // Width of the drawer
+                    width: '95vw', // drawer takes up 95% of the screen
                     flexShrink: 0,
                     '& .MuiDrawer-paper': {
-                        width: '95vw', // Same width as above
+                        width: '95vw',
                         boxSizing: 'border-box',
                         backgroundColor: '#FFFFF',
                         zIndex: 1200,
@@ -141,12 +141,12 @@ const DriverViewRoutes = ({ }) => {
                 <Box
                     sx={{
                         display: 'flex',
-                        width: '100%', // Full width of the drawer
-                        p: 0, // Padding around the text
+                        width: '100%',
+                        p: 0,
                         backgroundColor: '#819bc5',
-                        justifyContent: 'center', // Horizontally centers the content
-                        alignItems: 'center',     // Vertically centers the content
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
                         borderRadius: '0 0 16px 16px',
                     }}
                 >
@@ -159,11 +159,11 @@ const DriverViewRoutes = ({ }) => {
                         <Box
                             sx={{
                                 display: 'flex',
-                                top: 0, // Position at the top
-                                left: 0, // Align to the left
-                                width: 'calc(100% - 32px)%', // Full width of the drawer
-                                justifyContent: 'center', // Horizontally centers the content
-                                alignItems: 'center',     // Vertically centers the content
+                                top: 0,
+                                left: 0,
+                                width: 'calc(100% - 32px)%',
+                                justifyContent: 'center',
+                                alignItems: 'center',
                                 margin: 2,
                                 borderRadius: 4,
                             }}
@@ -181,15 +181,15 @@ const DriverViewRoutes = ({ }) => {
                             {!anyPlanned && (
                                 <Box sx={{
                                     display: 'flex',
-                                    top: 0, // Position at the top
-                                    left: 0, // Align to the left
-                                    width: '100%', // Full width of the drawer
+                                    top: 0,
+                                    left: 0,
+                                    width: '100%',
                                     height: '32px',
-                                    p: 0, // Padding around the text
+                                    p: 0,
                                     backgroundColor: '#fffff',
-                                    justifyContent: 'center', // Horizontally centers the content
-                                    alignItems: 'center',     // Vertically centers the content
-                                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
                                     marginTop: 1,
                                     borderRadius: 2,
                                 }}
@@ -210,14 +210,14 @@ const DriverViewRoutes = ({ }) => {
                         <Box
                             sx={{
                                 display: 'flex',
-                                top: 0, // Position at the top
-                                left: 0, // Align to the left
-                                width: 'calc(100% - 32px)%', // Full width of the drawer
-                                p: 0, // Padding around the text
+                                top: 0,
+                                left: 0,
+                                width: 'calc(100% - 32px)%',
+                                p: 0,
                                 backgroundColor: '#582c4d',
-                                justifyContent: 'center', // Horizontally centers the content
-                                alignItems: 'center',     // Vertically centers the content
-                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
                                 margin: 2,
                                 marginTop: 1,
                                 borderRadius: 4,
@@ -230,14 +230,14 @@ const DriverViewRoutes = ({ }) => {
                         <Box
                             sx={{
                                 display: 'flex',
-                                top: 0, // Position at the top
-                                left: 0, // Align to the left
-                                width: 'calc(100% - 32px)', // Full width of the drawer
-                                p: 0, // Padding around the text
+                                top: 0,
+                                left: 0,
+                                width: 'calc(100% - 32px)',
+                                p: 0,
                                 backgroundColor: '#D7E1F0',
-                                justifyContent: 'center', // Horizontally centers the content
-                                alignItems: 'center',     // Vertically centers the content
-                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
                                 marginLeft: 2,
                                 marginBottom: 2,
                                 borderRadius: 4,
@@ -259,7 +259,7 @@ const DriverViewRoutes = ({ }) => {
                                             <TableCell>
                                                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                                     <Typography sx={{ fontSize: '0.875rem' }}>{currentDelivery?.customerName}</Typography>
-                                                    <IconButton onClick={handlePhoneClick(true)} sx={{ ml: 2 }}>
+                                                    <IconButton onClick={handlePhoneDialog(true)} sx={{ ml: 2 }}>
                                                         <PhoneIcon />
                                                     </IconButton>
                                                 </Box>
@@ -315,14 +315,14 @@ const DriverViewRoutes = ({ }) => {
                         <Box
                             sx={{
                                 display: 'flex',
-                                top: 0, // Position at the top
-                                left: 0, // Align to the left
-                                width: 'calc(100% - 32px)', // Full width of the drawer
-                                p: 0, // Padding around the text
+                                top: 0,
+                                left: 0,
+                                width: 'calc(100% - 32px)',
+                                p: 0,
                                 backgroundColor: '#819bc5',
-                                justifyContent: 'center', // Horizontally centers the content
-                                alignItems: 'center',     // Vertically centers the content
-                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
                                 margin: 2,
                                 borderRadius: 4,
                             }}
@@ -334,14 +334,14 @@ const DriverViewRoutes = ({ }) => {
                         <Box
                             sx={{
                                 display: 'flex',
-                                top: 0, // Position at the top
-                                left: 0, // Align to the left
-                                width: 'calc(100% - 32px)', // Full width of the drawer
-                                p: 0, // Padding around the text
+                                top: 0,
+                                left: 0,
+                                width: 'calc(100% - 32px)',
+                                p: 0,
                                 backgroundColor: '#D7E1F0',
-                                justifyContent: 'center', // Horizontally centers the content
-                                alignItems: 'center',     // Vertically centers the content
-                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
                                 marginLeft: 2,
                                 marginBottom: 2,
                                 borderRadius: 4,
@@ -375,15 +375,15 @@ const DriverViewRoutes = ({ }) => {
                 {finishedDelivery && (
                     <Box sx={{
                         display: 'flex',
-                        top: 0, // Position at the top
-                        left: 0, // Align to the left
-                        width: '100% -32px', // Full width of the drawer
+                        top: 0,
+                        left: 0,
+                        width: '100% -32px',
                         height: '32px',
-                        p: 0, // Padding around the text
+                        p: 0,
                         backgroundColor: '#fffff',
-                        justifyContent: 'center', // Horizontally centers the content
-                        alignItems: 'center',     // Vertically centers the content
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', // Optional: adds a bottom border
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
                         margin: 2,
                         borderRadius: 2,
                     }}
@@ -444,15 +444,15 @@ const DriverViewRoutes = ({ }) => {
                                 top: '50%'
                             }}
                         >
-                            <CircularProgress /> 
+                            <CircularProgress />
                         </Box>
                     ) : noRoutesFound || finishedDelivery ? (
                         <Box
                             sx={{
                                 position: 'fixed',
-                                justifyContent: 'center', 
+                                justifyContent: 'center',
                                 alignItems: 'center',
-                                height: '100vh', 
+                                height: '100vh',
                                 width: '100vw',
                                 left: '-2%',
                                 top: '-5%'
@@ -467,38 +467,23 @@ const DriverViewRoutes = ({ }) => {
                     )}
                 </Box>
             </Box>
-            <Modal
-                open={modalOpen}
-                onClose={handlePhoneClick(false)}
-                closeAfterTransition
+            <Dialog
+                open={phoneDialogOpen}
+                onClose={handlePhoneDialog(false)}
+                fullWidth
+                maxWidth="sm"
             >
-                <Fade in={modalOpen}>
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            width: 200,
-                            bgcolor: 'background.paper',
-                            boxShadow: 24,
-                            p: 0,
-                            textAlign: 'center',
-                            borderRadius: 2,
-                        }}
-                    >
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            href="tel:+123456789"
-                            fullWidth
-                            sx={{ mt: 0, p: '12px', }}
-                        >
-                            {currentDelivery?.customerPhone}
-                        </Button>
-                    </Box>
-                </Fade>
-            </Modal>
+                <DialogTitle>Call {currentDelivery?.customerName}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Phone number: {' '}
+                        <a
+                            href={`tel:${currentDelivery?.customerPhone}`}
+                            style={{ textDecoration: 'none', color: 'blue' }}
+                        >{currentDelivery?.customerPhone}</a>
+                    </DialogContentText>
+                </DialogContent>
+            </Dialog>
         </Box>
     );
 };

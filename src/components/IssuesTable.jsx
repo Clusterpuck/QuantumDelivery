@@ -20,7 +20,7 @@ const IssuesTable = () => {
         } catch (error) {
             console.error("Error fetching orders with issues: ", error);
         } finally{
-           // setLoadingIssues(false);
+            setLoadingIssues(false);
         }
     };
 
@@ -111,7 +111,7 @@ const IssuesTable = () => {
     },[])
 
     return (
-        <Paper elevation={3} sx={{ padding: 3, width: '100vw' }}>
+        <Paper elevation={3} sx={{ padding: 3, width: '100%' }}>
         <TableContainer component={Paper}>
            
                     <TableOfIssues/>

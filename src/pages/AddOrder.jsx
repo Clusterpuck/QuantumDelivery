@@ -23,7 +23,8 @@ const styleConstants = {
     fieldSpacing: { mb: 2 }
 };
 
-const AddOrder = () => {
+const AddOrder = () =>
+{
     const [customers, setCustomers] = useState(null);
     const [loadingCustomers, setLoadingCustomers] = useState(false);
     const [locations, setLocations] = useState(null);
@@ -35,10 +36,7 @@ const AddOrder = () => {
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [selectedProducts, setSelectedProducts] = useState('');
     const [orderNote, setOrderNote] = useState('');
-    const [showAddressSearch, setShowAddressSearch] = useState(false);
-    const [showAddCustomer, setShowAddCustomer] = useState(false);
     const [snackbar, setSnackbar] = useState({
-
         open: false,
         message: '',
         severity: 'success',
@@ -46,25 +44,29 @@ const AddOrder = () => {
     const [selectedDate, setSelectedDate] = useState(dayjs());
 
 
-    useEffect(() => {
+    useEffect(() =>
+    {
 
         loadOrders();
         loadCustomers();
         loadLocations();
-        
+
     }, []);
 
-    const handleCustomerChange = (event, newValue) => {
+    const handleCustomerChange = (event, newValue) =>
+    {
         setSelectedCustomer(newValue);
         //console.log("Selected customer is  " + selectedCustomer.name);
     };
 
-    const handleLocationChange = (event, newValue) => {
+    const handleLocationChange = (event, newValue) =>
+    {
         setSelectedLocation(newValue);
         //console.log("Selected location is  " + selectedLocation.address);
     };
 
-    const loadCustomers = async () => {
+    const loadCustomers = async () =>
+    {
         setLoadingCustomers(true);
         const newCustomers = await fetchCustomers();
         setCustomers(newCustomers);
@@ -72,7 +74,8 @@ const AddOrder = () => {
 
     }
 
-    const loadLocations = async () => {
+    const loadLocations = async () =>
+    {
         setLoadingLocations(true);
         const newLocations = await fetchLocations();
         setLocations(newLocations);
@@ -80,14 +83,17 @@ const AddOrder = () => {
 
     }
 
-    const loadOrders = async () => {
+    const loadOrders = async () =>
+    {
         setLoadingOrders(true);
         const loadOrders = await fetchMethod("orders");
-        if (loadOrders) {
-        const filteredOrders = loadOrders.filter(order => order.status !== "CANCELLED");
-        setOrders(filteredOrders);
-        console.log("Orders recieved are ", JSON.stringify(filteredOrders));
-        } else {
+        if (loadOrders)
+        {
+            const filteredOrders = loadOrders.filter(order => order.status !== "CANCELLED");
+            setOrders(filteredOrders);
+            console.log("Orders recieved are ", JSON.stringify(filteredOrders));
+        } else
+        {
             console.error('Error fetching orders:', error);
             setSnackbarMessage('Failed to load orders');
             setSnackbarSeverity('error');
@@ -96,33 +102,18 @@ const AddOrder = () => {
         setLoadingOrders(false);
     }
 
-    const handleCustomerFormClose = async (newCustomer) => {
-        setShowAddCustomer(false);
-        setLoadingCustomers(true);
-        const reloadedCustomers = await fetchCustomers();
-        setLoadingCustomers(false);
-        setCustomers(reloadedCustomers);
-        //setSelectedCustomer(newCustomer);   
-    };
 
-    const handleAddressFormClose = async () => {
-        setShowAddressSearch(false);
-        setLoadingLocations(true);
-        const newAddress = await fetchLocations();
-        setLoadingLocations(false);
-        setLocations(newAddress);
-    };
-
-    
-  // Function to handle date change and load dummy output
-  const handleDateChange = (date) =>
+    // Function to handle date change and load dummy output
+    const handleDateChange = (date) =>
     { // logic for showing orders from a specific date is still yet to be implemented.
-      setSelectedDate(date);
+        setSelectedDate(date);
     };
 
-    const submitOrder = async (event) => {
+    const submitOrder = async (event) =>
+    {
         event.preventDefault();
-        if (!selectedCustomer || !selectedLocation || selectedProducts.length === 0) {
+        if (!selectedCustomer || !selectedLocation || selectedProducts.length === 0)
+        {
             setSnackbar({
                 open: true,
                 message: 'Please fill in all required fields.',
@@ -131,8 +122,8 @@ const AddOrder = () => {
             return;
         }
 
-        console.log('Submitting order: customerObject ', JSON.stringify(selectedCustomer) )
-        console.log('locationObject ', JSON.stringify(selectedLocation) )
+        console.log('Submitting order: customerObject ', JSON.stringify(selectedCustomer))
+        console.log('locationObject ', JSON.stringify(selectedLocation))
         console.log('productlist :', JSON.stringify(selectedProducts))
 
         const now = new Date().toISOString();  // Get the current date in ISO format
@@ -155,7 +146,7 @@ const AddOrder = () => {
         setSubmittingOrders(true);
         const result = await postMethod(orderObject, 'Orders');
         setSubmittingOrders(false);
-        if(result!= null )
+        if (result != null)
         {
             //refresh the table
             loadOrders();
@@ -179,17 +170,20 @@ const AddOrder = () => {
 
     }
 
-    const handleSnackbarClose = () => {
+    const handleSnackbarClose = () =>
+    {
         setSnackbar(prev => ({ ...prev, open: false }));
     };
 
-    const LocationAutocomplete = () => {
-          
-          
-        if (loadingLocations) {
-          return <Skeleton variant="rectangular" animation="wave" sx={skeletonStyles} />;
+    const LocationAutocomplete = () =>
+    {
+
+
+        if (loadingLocations)
+        {
+            return <Skeleton variant="rectangular" animation="wave" sx={skeletonStyles} />;
         }
-      
+
         if (locations)
         {
             return (
@@ -206,54 +200,57 @@ const AddOrder = () => {
                 />
             );
         }
-      
-       // return <p>No Customers</p>;
-      };
-      
-      const commonStyles = {
+
+        // return <p>No Customers</p>;
+    };
+
+    const commonStyles = {
         width: '100%',  // Make it responsive to parent container
-        maxWidth: 400,  // Set a max width to keep it from expanding too much
+        maxWidth: 800,  // Set a max width to keep it from expanding too much
         height: 'auto', // Auto-adjust height for responsiveness
-      };
-      const skeletonStyles = {
+    };
+    const skeletonStyles = {
         ...commonStyles,
         height: 56,  // Set a fixed height for the skeleton to simulate the input field height
-      };
-
-   
+    };
 
 
 
-    const CustomerAutocomplete = () => {
-          
-          
-        if (loadingCustomers) {
-          return <Skeleton variant="rectangular" animation="wave" sx={skeletonStyles} />;
+
+
+    const CustomerAutocomplete = () =>
+    {
+
+
+        if (loadingCustomers)
+        {
+            return <Skeleton variant="rectangular" animation="wave" sx={skeletonStyles} />;
         }
-      
-        if (customers) {
-          return (
-            <Autocomplete
-              disablePortal
-              id="Customers"
-              options={customers}
-              getOptionLabel={(option) => option.name + " " + option.phone}
-              getOptionKey={(option) => option.id}
-              sx={commonStyles}
-              value= {selectedCustomer}
-              onChange={handleCustomerChange}
-              renderInput={(params) => <TextField {...params} label="Select Customer" />}
-            />
-          );
+
+        if (customers)
+        {
+            return (
+                <Autocomplete
+                    disablePortal
+                    id="Customers"
+                    options={customers}
+                    getOptionLabel={(option) => option.name + " " + option.phone}
+                    getOptionKey={(option) => option.id}
+                    sx={commonStyles}
+                    value={selectedCustomer}
+                    onChange={handleCustomerChange}
+                    renderInput={(params) => <TextField {...params} label="Select Customer" />}
+                />
+            );
         }
-      
-       // return <p>No Customers</p>;
-      };
+
+        // return <p>No Customers</p>;
+    };
 
 
     return (
         <div
-           
+
         >
             <Typography variant="h3" component="h1" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <LibraryAddIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
@@ -263,108 +260,75 @@ const AddOrder = () => {
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                 <Paper elevation={3} sx={{ padding: 4, maxWidth: 1500, width: '100%' }}>
-                    <Grid item xs={12} md= {12} container spacing={2} >
-                    <Grid item xs={6} md= {6} container spacing={2} >
+                    <Grid item xs={12} md={12} container spacing={2} >
+                        <Grid item xs={6} md={6} sx={styleConstants.fieldSpacing} >
 
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en-gb'>
-                <DateTimePicker
-                  label="Date Required"
-                  //inputFormat="DD/MM/YYYY"
-                  value={selectedDate}
-                  onChange={handleDateChange}
-                  renderInput={(params) => <TextField {...params}/>}
-                />
+                            <Grid item xs={12} md={12} sx={styleConstants.fieldSpacing}>
 
-              </LocalizationProvider>
-              </Grid>
-              <Grid item xs={6} md= {6} container spacing={2} >
+                                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en-gb'>
+                                    <DateTimePicker
+                                        sx={commonStyles}
+                                        label="Date Required"
+                                        value={selectedDate}
+                                        onChange={handleDateChange}
+                                        renderInput={(params) => <TextField {...params} />}
+                                    />
 
-                        
-                    <TextField 
-                        id='order-notes'
-                        label="Order Comments"
-                        multiline
-                        fullWidth
-                        value = {orderNote}
-                        placeholder='Order Comments'
-                        onChange={(event) => {
-                            setOrderNote(event.target.value)}
-                        }
+                                </LocalizationProvider>
+                            </Grid>
 
-                        />
-                    </Grid>
-                        <Grid item xs={4} sx={styleConstants.fieldSpacing}>
-                            <CustomerAutocomplete />
+                            <Grid item xs={12} md={12} sx={styleConstants.fieldSpacing}>
+                                <CustomerAutocomplete />
+                            </Grid>
+                            
+                            <Grid item xs={12} md={12} sx={styleConstants.fieldSpacing}>
+                                <LocationAutocomplete />
+                            </Grid>
+                        </Grid>
+                      
+                        <Grid item xs={6} md={6} sx={styleConstants.fieldSpacing} >
+
+                            <TextField
+                                id='order-notes'
+                                label="Order Comments"
+                                multiline
+                                fullWidth
+                                rows={7}
+                                value={orderNote}
+                                placeholder='Order Comments'
+                                onChange={(event) =>
+                                    {
+                                        setOrderNote(event.target.value)
+                                    }
+                                }
+
+                            />
                         </Grid>
 
-                        <Grid item xs={2} sx={styleConstants.fieldSpacing}>
+                        <Grid item xs={12} md={12} sx={styleConstants.fieldSpacing} >
+
+                            <ProductListForm sendProductList={setSelectedProducts} />
+
+                        </Grid>
+                        <Grid item xs={12} md={12} sx={styleConstants.fieldSpacing} >
+
                             <Button
-                                variant="contained"
-                                sx={{ height: '100%' }}
+                                type="submit"
+                                variant={selectedCustomer && selectedLocation &&
+                                    selectedProducts && selectedProducts.length > 0
+
+                                    ? "contained" : "disabled"}
                                 color="primary"
-                                onClick={() => setShowAddCustomer(!showAddCustomer)}>
-                                {showAddCustomer ? 'Hide Customer Form' : (
-                                    <>
-                                        <PersonAddIcon/>
-                                        {'New Customer'}
-                                    </>
-                                )}
+                                onClick={submitOrder}
+                                sx={{ height: 40 }} // Set a fixed height for the button
+                            >
+                                Submit Order
+                                {submittingOrders ? <CircularProgress size={18} color='secondary' x={{ marginLeft: 1 }} /> : <SendIcon sx={{ marginLeft: 1 }} />}
+
                             </Button>
                         </Grid>
-
-                        <Grid item xs={4} sx={styleConstants.fieldSpacing}>
-                            <LocationAutocomplete />
-                        </Grid>
-
-                        <Grid item xs={2} sx={styleConstants.fieldSpacing}>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                sx={{ height: '100%' }}
-                                onClick={() => setShowAddressSearch(!showAddressSearch)}>
-                                {showAddressSearch ? 'Hide Address Form' : (
-                                    <>
-                                    <AddLocationIcon />
-                                    {'New Address'}</>
-                                )}
-                            </Button>
-                        </Grid>
                     </Grid>
-
-
-                    {/* Conditionally render the AddCustomer component */}
-                    {showAddCustomer && (
-                        <Box sx={{ mt: 4 }}>
-                            <AddCustomer onCloseForm={handleCustomerFormClose} />
-                        </Box>
-                    )}
-
-                    {/* Conditionally render the AddressSearch component */}
-                    {showAddressSearch && (
-                        <Box sx={{ mt: 4 }}>
-                            <AddressSearch onCloseForm={handleAddressFormClose} />
-                        </Box>
-                    )}
-              
-
-            <ProductListForm sendProductList={setSelectedProducts}/>
-
-            <Button
-                type = "submit" 
-                variant= {  selectedCustomer && selectedLocation && 
-                            selectedProducts && selectedProducts.length > 0
-                           
-                            ? "contained" : "disabled"}
-                color="primary" 
-                onClick={submitOrder}
-                sx={{ height: 40 }} // Set a fixed height for the button
-                >
-                Submit Order
-                {submittingOrders? <CircularProgress size={18} color='secondary' x={{ marginLeft: 1 }}/> : <SendIcon sx={{ marginLeft: 1 }}/>}
-                    
-            </Button>
-
-            </Paper>
+                </Paper>
             </Box>
 
             <Divider></Divider>
@@ -379,12 +343,12 @@ const AddOrder = () => {
 
             <h2>All Orders</h2>
 
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                <Paper elevation={3} sx={{ padding: 3, width: '100%' }}>
-                    <Box sx={{ height: 400, width: '100%', mt: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Paper elevation={3} sx={{ padding: 4, maxWidth: 1500, width: '100%' }}>
+                    <Box sx={{ height: 400, width: '100%' }}>
 
-                        {loadingOrders ? 
-                            (<Skeleton variant="rectangular" animation="wave" sx={{height: '100%'}} />) : 
+                        {loadingOrders ?
+                            (<Skeleton variant="rectangular" animation="wave" sx={{ height: '100%' }} />) :
                             (<OrdersTable orders={orders} />)}
                     </Box>
                 </Paper>
@@ -402,7 +366,7 @@ const AddOrder = () => {
             </Snackbar>
 
 
-        </div>
+        </div >
     );
 };
 

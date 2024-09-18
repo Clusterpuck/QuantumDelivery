@@ -140,9 +140,9 @@ const ProductListForm = ({ sendProductList }) =>
     };
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 90 },
-        { field: 'name', headerName: 'Name', width: 150 },
-        { field: 'quantity', headerName: 'Quantity', width: 150 }
+        { field: 'id', headerName: 'ID', flex: 0.2 },
+        { field: 'name', headerName: 'Name', flex: 0.4 },
+        { field: 'quantity', headerName: 'Quantity', flex: 0.2 }
     ];
 
     const rows = addedProducts.map(product => ({
@@ -152,9 +152,9 @@ const ProductListForm = ({ sendProductList }) =>
     }));
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
             <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Grid item xs={7} md={7} >
                     <ProductAutocomplete />
                 </Grid>
                 <Grid item xs={3}>

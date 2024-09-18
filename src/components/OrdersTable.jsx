@@ -16,15 +16,14 @@ const OrdersTable = ({orders}) => {
 
     
     const columns = [
-        { field: 'id', headerName: 'ID', width: 90 },
-        { field: 'DeliveryDate', headerName: 'Date', width: 150 },
-        { field: 'Address', headerName: 'Address', width: 180 },
-        { field: 'customerName', headerName: 'Customer Name', width: 150 },
-        { field: 'status', headerName: 'Status', width: 150 },
-        { field: 'notes', headerName: 'Notes', width: 150 },
-        { field: 'Products', headerName: 'Products', width: 500, renderCell: (params) => params.value.join(', '
-        )},
+        { field: 'id', headerName: 'ID', flex: 0.1 },
+        { field: 'DeliveryDate', headerName: 'Date', flex: 0.2 },
+        { field: 'Address', headerName: 'Address', flex: 0.3 },
+        { field: 'customerName', headerName: 'Customer Name', flex: 0.2 },
+        { field: 'status', headerName: 'Status', flex: 0.2 },
+        { field: 'notes', headerName: 'Notes', flex: 0.4 },
     ];
+    
 
     // The rows should be based on the fetched orders data
     const rows = orders?.map(order => ({
@@ -43,7 +42,7 @@ const OrdersTable = ({orders}) => {
     };
 
     return (
-        <>
+        <Box sx={{ height: 400, width: '100%' }}>
 
             <DataGrid
                 rows={rows}
@@ -61,7 +60,7 @@ const OrdersTable = ({orders}) => {
                     {snackbarMessage}
                 </Alert>
             </Snackbar>
-        </>
+        </Box>
     );
 
 }

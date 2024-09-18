@@ -11,7 +11,8 @@ import DriverMap from '../components/DriverMap.jsx';
 import { fetchDeliveryRoute, fetchMethod, startDeliveryRoute, updateOrderStatus } from '../store/apiFunctions';
 import NoRouteFound from '../components/NoRouteFound.jsx';
 import {disableScroll} from '../assets/scroll.js';
-import ReportIssue from '../components/ReportIssue.jsx'; 
+import ReportIssue from '../components/ReportIssue.jsx';
+import {getRowColour} from '../store/helperFunctions.js';
 
 const DriverViewRoutes = ({}) => 
 {
@@ -43,15 +44,6 @@ const DriverViewRoutes = ({}) =>
       };
 
     const driverUsername = 'driver1@email.com'; // hard coded for now
-
-    const getRowColor = (delayed) => {
-        switch (delayed) {
-            case true:
-                return '#f8d7da'; // Light red
-            default:
-                return '#d4edda'; // Light green
-        }
-    };
 
     useEffect(() => {
         disableScroll();
@@ -303,7 +295,7 @@ const DriverViewRoutes = ({}) =>
                         </Typography>
                     ) : (
                         <TableContainer component={Paper}>
-                            <Table sx={{ backgroundColor: getRowColor(currentDelivery?.delayed) }}>
+                            <Table sx={{ backgroundColor: getRowColour(currentDelivery?.delayed) }}>
                             <TableBody>
                                     <TableRow>
                                         <TableCell sx={{ width: 120 }}>Address</TableCell>
@@ -414,7 +406,7 @@ const DriverViewRoutes = ({}) =>
                                 </TableHead>
                                 <TableBody>
                                     {nextDeliveries.map((row, index) => (
-                                        <TableRow key={index} sx={{ backgroundColor: getRowColor(row.delayed) }}>
+                                        <TableRow key={index} sx={{ backgroundColor: getRowColour(row.delayed) }}>
                                             <TableCell>{row.address}</TableCell>
                                             <TableCell>{row.customerName}</TableCell>
                                             <TableCell>{row.orderID}</TableCell>

@@ -16,7 +16,7 @@ import '../assets/Marker.css';
     }
   }
 
-  export function getRowColour(order) {
+  export function getStatusColour(order) {
     // Check the order's status and delayed attributes to return the appropriate color
     if (order.status === 'DELIVERED') {
         return 'delivered'; // Light green for delivered
@@ -27,5 +27,14 @@ import '../assets/Marker.css';
     } else {
         return 'default'; // Light yellow for anything else (on-route, etc.)
     }
+};
+
+export function getRowColour (delayed) {
+  switch (delayed) {
+      case true:
+          return '#f8d7da'; // Light red
+      default:
+          return '#d4edda'; // Light green
+  }
 };
   

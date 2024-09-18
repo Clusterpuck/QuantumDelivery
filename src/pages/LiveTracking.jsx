@@ -12,7 +12,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { disableScroll } from '../assets/scroll.js';
 import LiveMap from '../components/LiveMap'; 
-import {getRowColour} from '../store/helperFunctions.js';
+import {getStatusColour} from '../store/helperFunctions.js';
 
 
 // Page design for live tracking page
@@ -199,7 +199,7 @@ const LiveTracking = () => {
                                                                             <TableCell >{order.address}</TableCell>
                                                                             <TableCell >{order.customerName}</TableCell>
                                                                             <TableCell >{order.productNames.join(", ")}</TableCell>
-                                                                            <TableCell className={getRowColour(order)} sx={{ color: '#f2f2f2', borderRadius: '10px' }}>{order.status}{order.delayed ? ", DELAYED" : ""}</TableCell>
+                                                                            <TableCell className={getStatusColour(order)} sx={{ color: '#f2f2f2', borderRadius: '10px' }}>{order.status}{order.delayed ? ", DELAYED" : ""}</TableCell>
                                                                         </TableRow>
                                                                     ))}
                                                                 </TableBody>

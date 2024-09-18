@@ -19,7 +19,8 @@ const admin_pages = [
   { name: 'Live Tracking', path: '/livetracking' },
   { name: 'Daily Reports', path: '/dailyreports' },
   { name: 'Add Order', path: '/addorder' },
-  { name: 'Driver Navigation', path: '/driverviewroutes'}
+  { name: 'Driver Navigation', path: '/driverviewroutes'},
+  { name: 'Admin Controls', path: '/admincontrols'}
 ];
 
 const driver_pages = [

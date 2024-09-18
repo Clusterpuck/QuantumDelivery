@@ -9,6 +9,7 @@ import Register from "../pages/Register";
 import AddOrder from "../pages/AddOrder";
 import PrivateRoute from "./PrivateRoute";  
 import DriverViewRoutes from "../pages/DriverViewRoutes";
+import AdminControls from "../pages/AdminControls";
 
 export const ROUTES = [
   {
@@ -20,6 +21,14 @@ export const ROUTES = [
     element: (
       <PrivateRoute role="ADMIN">
         <ViewRoutes />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/admincontrols",
+    element: (
+      <PrivateRoute role="ADMIN">
+        <AdminControls />
       </PrivateRoute>
     ),
   },

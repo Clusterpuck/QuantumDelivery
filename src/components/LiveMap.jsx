@@ -9,6 +9,7 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
     const mapContainer = useRef(null);
     const map = useRef(null);
     const [markers, setMarkers] = useState([]);
+    const [allCoordinates, setAllCoordinates] = useState([]);
 
     const colourPalette = [
         
@@ -50,10 +51,20 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/streets-v11',
-            center: [115.8575, -31.9505],
-            zoom: 11,
+            center: [115.8575, -31.9505], // perth coordinates
+            zoom: 5,
         });
     }, []);
+
+    useEffect(() => { // use effect for centering the map on the routes when the coordinates are recieved
+        if (allCoordinates.length > 0) {
+            const bounds = allCoordinates.reduce(
+                (bounds, coord) => bounds.extend(coord),
+                new mapboxgl.LngLatBounds(allCoordinates[0], allCoordinates[0])
+            );
+            map.current.fitBounds(bounds, { padding: 100, offset: [100, 20]}); //offset to the right because of the drawer, and down because of the nav bar
+        }
+    }, [allCoordinates]);
 
     useEffect(() => {
         if (!map.current) return;
@@ -74,6 +85,7 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
         const routeIdToColour = {};
         const allRoutePromises = [];
         const routeIds = [];
+        const tempAllCoordinates = [];
 
         for (const routeId in ordersData) {
             if (checkedRoutes[routeId]) {
@@ -136,9 +148,14 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
                         layout: { 'line-join': 'round', 'line-cap': 'round' },
                         paint: { 'line-color': routeColour, 'line-width': 6 },
                     });
+                    tempAllCoordinates.push(...route);
                 }
             });
+            if (tempAllCoordinates.length > 0) {
+                setAllCoordinates(tempAllCoordinates);
+            }
         });
+        
     }, [checkedRoutes, ordersData]);
 
     return (

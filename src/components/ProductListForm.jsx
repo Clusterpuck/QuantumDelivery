@@ -11,9 +11,12 @@ import { DataGrid } from '@mui/x-data-grid';
 import { fetchProducts } from '../store/apiFunctions';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import Skeleton from '@mui/material/Skeleton';
 
-const ProductListForm = ({sendProductList}) => {
+const ProductListForm = ({ sendProductList }) =>
+{
     const [products, setProducts] = useState([]);
+    const [loadingProducts, setLoadingProducts] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
     const [addedProducts, setAddedProducts] = useState([]);
@@ -21,50 +24,64 @@ const ProductListForm = ({sendProductList}) => {
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
-    useEffect(() => {
-        const loadProducts = async () => {
-            try {
+    useEffect(() =>
+    {
+        const loadProducts = async () =>
+        {
+            setLoadingProducts(true)
+            try
+            {
                 const productList = await fetchProducts();
                 setProducts(productList);
-            } catch (error) {
+            } catch (error)
+            {
                 console.error('Error fetching products:', error);
                 setSnackbarMessage('Failed to load products');
                 setSnackbarSeverity('error');
                 setSnackbarOpen(true);
+            }finally{
+                setLoadingProducts(false);
             }
         };
 
         loadProducts();
     }, []);
 
-    const handleProductChange = (event, value) => {
+    const handleProductChange = (event, value) =>
+    {
         setSelectedProduct(value);
     };
 
-    const handleQuantityChange = (event) => {
+    const handleQuantityChange = (event) =>
+    {
         setQuantity(Number(event.target.value));
     };
 
-    const handleAddProduct = () => {
-        if (selectedProduct) {
-            setAddedProducts(prev => {
+    const handleAddProduct = () =>
+    {
+        if (selectedProduct)
+        {
+            setAddedProducts(prev =>
+            {
                 const existingProductIndex = prev.findIndex(product => product.id === selectedProduct.id);
                 var updatedProducts;
-                if (existingProductIndex !== -1) {
+                if (existingProductIndex !== -1)
+                {
                     // Product already exists, update the quantity
                     updatedProducts = [...prev];
                     updatedProducts[existingProductIndex] = {
                         ...updatedProducts[existingProductIndex],
                         quantity: updatedProducts[existingProductIndex].quantity + quantity
                     };
-                } else {
+                } else
+                {
                     updatedProducts = [
                         ...prev,
                         { id: selectedProduct.id, name: selectedProduct.name, quantity: quantity }
                     ];
                     // Product does not exist, add new entry
                 }
-                sendProductList( updatedProducts );
+                sendProductList(updatedProducts);
                 return updatedProducts;
             });
 
@@ -73,15 +90,53 @@ const ProductListForm = ({sendProductList}) => {
             setSnackbarMessage('Product added successfully!');
             setSnackbarSeverity('success');
             setSnackbarOpen(true);
-        } else {
+        } else
+        {
             setSnackbarMessage('Invalid product selected');
             setSnackbarSeverity('error');
             setSnackbarOpen(true);
         }
     };
 
-    const handleSnackbarClose = () => {
+    const handleSnackbarClose = () =>
+    {
         setSnackbarOpen(false);
+    };
+
+
+    const commonStyles = {
+        width: '100%',  // Make it responsive to parent container
+        maxWidth: 400,  // Set a max width to keep it from expanding too much
+        height: 'auto', // Auto-adjust height for responsiveness
+    };
+    const skeletonStyles = {
+        ...commonStyles,
+        height: 56,  // Set a fixed height for the skeleton to simulate the input field height
+    };
+
+
+    const ProductAutocomplete = () =>
+    {
+
+        if (loadingProducts)
+        {
+            return <Skeleton variant="rectangular" animation="wave" sx={skeletonStyles} />;
+        }
+
+        if (products)
+        {
+            return (
+                <Autocomplete
+                value={selectedProduct}
+                onChange={handleProductChange}
+                options={products}
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => <TextField {...params} label="Select Product" variant="outlined" fullWidth />}
+            />
+            );
+        }
+
+        // return <p>No Customers</p>;
     };
 
     const columns = [
@@ -98,48 +153,42 @@ const ProductListForm = ({sendProductList}) => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
-                <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                        <Autocomplete
-                            value={selectedProduct}
-                            onChange={handleProductChange}
-                            options={products}
-                            getOptionLabel={(option) => option.name}
-                            renderInput={(params) => <TextField {...params} label="Select Product" variant="outlined" fullWidth />}
-                        />
-                    </Grid>
-                    <Grid item xs={3}>
-                        <TextField
-                            label="Quantity"
-                            type="number"
-                            variant="outlined"
-                            fullWidth
-                            value={quantity}
-                            onChange={handleQuantityChange}
-                            inputProps={{ min: 1 }}
-                        />
-                    </Grid>
-                    <Grid item xs={2}>
-                        <Button 
-                            onClick={handleAddProduct} 
-                            variant="contained" 
-                            color="primary" 
-                            fullWidth
-                            sx={{ height: '100%' }} 
-                            >
-                            <AddIcon/>
-                            Add Product
-                        </Button>
-                    </Grid>
+            <Grid container spacing={2}>
+                <Grid item xs={6}>
+                    <ProductAutocomplete />
                 </Grid>
+                <Grid item xs={3}>
+                    <TextField
+                        label="Quantity"
+                        type="number"
+                        variant="outlined"
+                        fullWidth
+                        value={quantity}
+                        onChange={handleQuantityChange}
+                        inputProps={{ min: 1 }}
+                    />
+                </Grid>
+                <Grid item xs={2}>
+                    <Button
+                        onClick={handleAddProduct}
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        sx={{ height: '100%' }}
+                    >
+                        <AddIcon />
+                        Add Product
+                    </Button>
+                </Grid>
+            </Grid>
 
-                <Box sx={{ height: 400, width: '100%', mt: 2 }}>
-                    <DataGrid 
-                        rows={rows} 
-                        columns={columns} 
-                        pageSize={10}
-                        checkboxSelection />
-                </Box>
+            <Box sx={{ height: 400, width: '100%', mt: 2 }}>
+                <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    pageSize={10}
+                    checkboxSelection />
+            </Box>
 
             {/* Snackbar for feedback */}
             <Snackbar

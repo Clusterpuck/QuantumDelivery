@@ -8,7 +8,7 @@ import
   {
     TextField, Button, Grid, Paper, MenuItem, Snackbar,
     Alert, Divider, Typography, InputAdornment, Radio, RadioGroup,
-    FormControlLabel, Accordion, AccordionDetails, AccordionSummary,
+    FormControlLabel, Accordion, AccordionDetails, AccordionSummary, LinearProgress, CircularProgress
   } from '@mui/material';
 
 // Material-UI Icons
@@ -45,7 +45,7 @@ const ViewRoutes = () =>
   const [routes, setRoutes] = useState([]);
   const [routesLoading, setRoutesLoading] = useState(false);
   const [plannedOrders, setPlannedOrders] = useState([]);
-  const [ordersLoaded, setOrdersLoaded] = useState(false); // Track if orders are loaded
+  const [ordersLoading, setOrdersLoading] = useState(false); // Track if orders are loaded
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
@@ -176,7 +176,7 @@ const ViewRoutes = () =>
     try
     {
       setRoutesLoading(true);
-      if (!ordersLoaded) return; // Do not load routes if orders are not loaded
+      if (!orders) return; // Do not load routes if orders are not loaded
       if (!datePlannedOrders || datePlannedOrders.length == 0) return;
       const userInput = {
         numVehicle: numVehicles,
@@ -220,6 +220,7 @@ const ViewRoutes = () =>
    */
   const loadOrders = async () =>
   {
+    setOrdersLoading(true);
     const ordersList = await fetchMethod("orders");
     if (ordersList)
     {
@@ -230,7 +231,6 @@ const ViewRoutes = () =>
       // Filter orders where the status is "PLANNED" and the DeliverDate matches the selected date
       // Filter orders where the status is "PLANNED" (initial fetch)
       setPlannedOrders(sortedOrderList);  // Save all planned orders
-      setOrdersLoaded(true); // Mark orders as loaded
       // Filter the saved planned orders by the selected date
       filterByDate(selectedDate);
       extractOrderDates(filteredOrders);
@@ -244,6 +244,7 @@ const ViewRoutes = () =>
         severity: 'error'
       });
     }
+    setOrdersLoading(false);
   };
 
 
@@ -283,6 +284,7 @@ const ViewRoutes = () =>
   const loadRoutes = async () =>
   {//need to update get route to manage getting existing orders
     //should return the same as CalcRoute
+    setRoutesLoading(true);
     try
     {
       const routesList = await fetchMethod('DeliveryRoutes');
@@ -327,6 +329,9 @@ const ViewRoutes = () =>
         message: 'Failed to load delivery routes',
         severity: 'error'
       });
+    }
+    finally{
+      setRoutesLoading(false);
     }
   };
 
@@ -375,9 +380,10 @@ const ViewRoutes = () =>
         <Grid container spacing={2}>
           <Grid item xs={12} md={12} container spacing={2} alignItems="center">
             <Grid item xs={6} md={3} >
+              {ordersLoading ? <CircularProgress/> :
 
               <DateSelectHighlight highlightedDates={unassignedDates} selectedDate={selectedDate} handleDateChange={handleDateChange} />
-
+              }
             </Grid>
             {/* Dropdown for selecting number of vehicles and Regenerate button */}
             <Grid item xs={6} md={2}>
@@ -439,18 +445,34 @@ const ViewRoutes = () =>
           </Grid>
 
           <Grid item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
-            <Accordion style={{ width: '100%' }}>
+          {ordersLoading ? <LinearProgress/> :
+          (
+            <Accordion >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1-content"
-                id="panel1-header"
+                aria-controls={`panel-content`}
+                id={`panel-header`}
+                sx={{
+                  backgroundColor: 'lightblue',  // Set background color
+                  borderRadius: '5px',
+                  borderBottom: '1px solid grey', // Add a border
+                  padding: '1px', // Adjust padding
+                  '&:hover': {
+                    backgroundColor: 'teal', // Hover effect
+                  },
+                  '& .MuiTypography-root': {
+                    fontWeight: 'bold', // Custom font styles for text
+                    color: '#333', // Change text color
+                  },
+                }}
               >
-                {plannedOrders ? <p>Unassigned Orders {datePlannedOrders.length}</p> : <p>No Unassigned Orders</p>}
+                {plannedOrders ? <p>Unassigned Orders for {formatDate(selectedDate)} <strong>{datePlannedOrders.length}</strong></p> : <p>No Unassigned Orders</p>}
               </AccordionSummary>
               <AccordionDetails>
                 <OrdersTable updateData={false} orders={datePlannedOrders} />
               </AccordionDetails>
             </Accordion>
+          )}
           </Grid>
 
 
@@ -459,6 +481,9 @@ const ViewRoutes = () =>
           </Grid>
 
           <Grid item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
+            {routesLoading ? ( <LinearProgress color='primary' sx={{ width: '100%' }} />) : (
+              <>
+            
             {/* Render assigned vehicles */}
             {Object.entries(routes).map(([date, dateRoutes]) => (
               <Accordion key={date}>
@@ -556,6 +581,8 @@ const ViewRoutes = () =>
                 </AccordionDetails>
               </Accordion>
             ))}
+            </>
+            )}
           </Grid>
 
         </Grid>

@@ -6,7 +6,7 @@ import {formatDate} from '../store/helperFunctions';
 
 //update data us a state object that when changed on the parent object
 //will trigger a refresh of the orders table data. 
-const OrdersTable = ({updateData, orders}) => {
+const OrdersTable = ({orders}) => {
 
     //const [orders, setOrders] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -43,15 +43,14 @@ const OrdersTable = ({updateData, orders}) => {
     };
 
     return (
-            <Paper elevation={3} sx={{ padding: 3, width: '100%' }}>
-                 <Box sx={{ height: 400, width: '100%', mt: 2 }}>
-                    <DataGrid 
-                        rows={rows} 
-                        columns={columns} 
-                        pageSize={10} 
-                       
-                    />
-            </Box>
+        <>
+
+            <DataGrid
+                rows={rows}
+                columns={columns}
+                pageSize={10}
+
+            />
             <Snackbar
                 open={snackbarOpen}
                 autoHideDuration={6000}
@@ -62,7 +61,7 @@ const OrdersTable = ({updateData, orders}) => {
                     {snackbarMessage}
                 </Alert>
             </Snackbar>
-            </Paper>
+        </>
     );
 
 }

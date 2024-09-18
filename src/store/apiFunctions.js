@@ -266,7 +266,7 @@ export const startDeliveryRoute = async(routeId) => {
 //     orderId: currentDelivery.orderId,
 //     status: "DELIVERED"
 // };
-export const updateOrderStatus = async(input) =>{
+export const updateOrderStatusFromRoute = async(input) =>{
     console.log("xxXXBody to send to update status " + JSON.stringify(input))
     try{
         const response = await fetch(Constants.DATA_ENDPOINT + 'deliveryroutes/update-status', {
@@ -377,4 +377,47 @@ export const login = async (username, password) => {
         return null; // Return null or handle the error as needed
     }
 };
+
+export const fetchIssueOrders = async () => {
+    let orderData = null
+    try {
+        const orderResponse = await fetch( Constants.DATA_ENDPOINT + 'orders/issues');
+        if (!orderResponse.ok) {
+            throw new Error('Failed to fetch issue orders data');
+        }
+        orderData = await orderResponse.json();
+    } catch (error) {
+        console.error('Error fetching issue orders data:', error.message);
+    }
+    return orderData
+};
+
+///Input is: const input = {
+//     orderId: currentDelivery.orderId,
+//     status: "CANCELLED"
+// };
+export const updateOrderStatus  = async(input) =>{
+    try{
+        const response = await fetch(Constants.DATA_ENDPOINT + 'orders/update-order-status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(input),
+        });
+
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+            throw new Error('Failed to update order status.');
+        }
+        const responseData = await response.json();
+        console.log('Successfully updated order status: ', responseData);
+        return responseData; 
+
+    } catch (error) {
+        console.error('Error updating order status: ', error);
+        return null; 
+    }
+}
 

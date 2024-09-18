@@ -12,10 +12,10 @@ import { fetchMethod } from '../store/apiFunctions.js';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { disableScroll } from '../assets/scroll.js';
-import LiveMap from '../components/LiveMap'; // Import the new LiveMap component
+import LiveMap from '../components/LiveMap'; 
+import {getStatusColour} from '../store/helperFunctions.js';
 
 // Page design for live tracking page
-
 const LiveTracking = () => {
     const [drawerOpen, setDrawerOpen] = React.useState(true); // state for whether drawer is open
     const [routesData, setRoutesData] = React.useState(null); // routes data, returned by 'get delivery routes'
@@ -41,8 +41,8 @@ const LiveTracking = () => {
         setLoadingRoutes(true); 
         const fetchedRoutes = await fetchMethod("deliveryroutes");
         if (fetchedRoutes) {
-            const filteredRoutes = fetchedRoutes.filter(route => { // filter out any routes that have all orders as delivered
-                return !route.orders.every(order => order.status === 'DELIVERED');
+            const filteredRoutes = fetchedRoutes.filter(route => { // filter out any routes that have all orders as delivered or issue
+                return !route.orders.every(order => order.status === 'DELIVERED' || order.status === 'ISSUE');
             });
             setRoutesData(filteredRoutes);
             let tempOrdersData = {};

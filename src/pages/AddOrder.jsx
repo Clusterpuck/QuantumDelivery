@@ -17,6 +17,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { fetchMethod } from '../store/apiFunctions';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import Skeleton from '@mui/material/Skeleton';
+import IssuesTable from '../components/IssuesTable';
 
 const styleConstants = {
     fieldSpacing: { mb: 2 }
@@ -364,9 +365,15 @@ const AddOrder = () => {
             </Button>
 
             </Paper>
-        </Box>
+            </Box>
 
-        <Divider></Divider>
+            <Divider></Divider>
+
+            <h2>Orders with Driver Reported Issues</h2>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+
+                <IssuesTable />
+            </Box>
 
 
 

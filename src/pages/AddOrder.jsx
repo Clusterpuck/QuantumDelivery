@@ -10,7 +10,6 @@ import AddLocationIcon from '@mui/icons-material/AddLocation';
 import SendIcon from '@mui/icons-material/Send';
 import Typography from '@mui/material/Typography';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
-import {enableScroll} from '../assets/scroll.js';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
@@ -31,36 +30,27 @@ const AddOrder = () => {
     const [orders, setOrders] = useState([]);
     const [loadingOrders, setLoadingOrders] = useState(0);
     const [submittingOrders, setSubmittingOrders] = useState(false);
-    const [selectedCustomer, setSelectedCustomer] = useState('');
-    const [selectedLocation, setSelectedLocation] = useState('');
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const [selectedLocation, setSelectedLocation] = useState(null);
     const [selectedProducts, setSelectedProducts] = useState('');
     const [orderNote, setOrderNote] = useState('');
     const [showAddressSearch, setShowAddressSearch] = useState(false);
     const [showAddCustomer, setShowAddCustomer] = useState(false);
     const [snackbar, setSnackbar] = useState({
+
         open: false,
         message: '',
         severity: 'success',
     });
     const [selectedDate, setSelectedDate] = useState(dayjs());
 
-    useEffect(() => {
-        enableScroll();
-    }, []);
 
     useEffect(() => {
-        const loadData = async () => {
-            setLoadingCustomers(true);
-            const newCustomers = await fetchCustomers();
-            setCustomers(newCustomers);    
-            setLoadingCustomers(false);
-            setLoadingLocations(true);
-            const newLocations = await fetchLocations();
-            setLocations(newLocations);
-            setLoadingLocations(false);
-        };
+
         loadOrders();
-        loadData();
+        loadCustomers();
+        loadLocations();
+        
     }, []);
 
     const handleCustomerChange = (event, newValue) => {
@@ -72,6 +62,22 @@ const AddOrder = () => {
         setSelectedLocation(newValue);
         //console.log("Selected location is  " + selectedLocation.address);
     };
+
+    const loadCustomers = async () => {
+        setLoadingCustomers(true);
+        const newCustomers = await fetchCustomers();
+        setCustomers(newCustomers);
+        setLoadingCustomers(false);
+
+    }
+
+    const loadLocations = async () => {
+        setLoadingLocations(true);
+        const newLocations = await fetchLocations();
+        setLocations(newLocations);
+        setLoadingLocations(false);
+
+    }
 
     const loadOrders = async () => {
         setLoadingOrders(true);
@@ -194,6 +200,7 @@ const AddOrder = () => {
                     getOptionKey={(option) => option.id}
                     sx={commonStyles}
                     onChange={handleLocationChange}
+                    value={selectedLocation}
                     renderInput={(params) => <TextField {...params} label="Select Location" />}
                 />
             );
@@ -229,9 +236,10 @@ const AddOrder = () => {
               disablePortal
               id="Customers"
               options={customers}
-              getOptionLabel={(option) => option.name}
+              getOptionLabel={(option) => option.name + " " + option.phone}
               getOptionKey={(option) => option.id}
               sx={commonStyles}
+              value= {selectedCustomer}
               onChange={handleCustomerChange}
               renderInput={(params) => <TextField {...params} label="Select Customer" />}
             />
@@ -348,9 +356,11 @@ const AddOrder = () => {
                             ? "contained" : "disabled"}
                 color="primary" 
                 onClick={submitOrder}
+                sx={{ height: 40 }} // Set a fixed height for the button
                 >
-                            {submittingOrders? <CircularProgress/> : <></>}    Submit Order
-                    <SendIcon/>
+                Submit Order
+                {submittingOrders? <CircularProgress size={18} color='secondary' x={{ marginLeft: 1 }}/> : <SendIcon sx={{ marginLeft: 1 }}/>}
+                    
             </Button>
 
             </Paper>

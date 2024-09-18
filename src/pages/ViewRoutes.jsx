@@ -447,13 +447,26 @@ const ViewRoutes = () =>
           <Grid item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
           {ordersLoading ? <LinearProgress/> :
           (
-            <Accordion style={{ width: '100%' }}>
+            <Accordion >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1-content"
-                id="panel1-header"
+                aria-controls={`panel-content`}
+                id={`panel-header`}
+                sx={{
+                  backgroundColor: 'lightblue',  // Set background color
+                  borderRadius: '5px',
+                  borderBottom: '1px solid grey', // Add a border
+                  padding: '1px', // Adjust padding
+                  '&:hover': {
+                    backgroundColor: 'teal', // Hover effect
+                  },
+                  '& .MuiTypography-root': {
+                    fontWeight: 'bold', // Custom font styles for text
+                    color: '#333', // Change text color
+                  },
+                }}
               >
-                {plannedOrders ? <p>Unassigned Orders {datePlannedOrders.length}</p> : <p>No Unassigned Orders</p>}
+                {plannedOrders ? <p>Unassigned Orders for {formatDate(selectedDate)} <strong>{datePlannedOrders.length}</strong></p> : <p>No Unassigned Orders</p>}
               </AccordionSummary>
               <AccordionDetails>
                 <OrdersTable updateData={false} orders={datePlannedOrders} />

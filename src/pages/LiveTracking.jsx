@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
     Drawer, Box, IconButton, Typography, Table, TableBody, TableCell,
-    TableHead, TableRow, Checkbox, Collapse
+    TableHead, TableRow, Checkbox, Collapse,
+    CircularProgress, Skeleton
 } from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
@@ -18,6 +19,7 @@ import LiveMap from '../components/LiveMap'; // Import the new LiveMap component
 const LiveTracking = () => {
     const [drawerOpen, setDrawerOpen] = React.useState(true); // state for whether drawer is open
     const [routesData, setRoutesData] = React.useState(null); // routes data, returned by 'get delivery routes'
+    const [loadingRoutes, setLoadingRoutes] = useState(false);
 
     // state to keep track of which routes are checked. Format: {<RouteID>: <boolean>, <RouteID>: <boolean>}
     // eg. {8: true, 9: true, 12: false, 18: true} means routes 8, 9 and 18 are checked, 12 is not.
@@ -35,7 +37,8 @@ const LiveTracking = () => {
     const toggleDrawer = (open) => () => { setDrawerOpen(open); }
 
     // fetched the route data using get delivery routes endpoint
-    const fetchRouteData = async () => { 
+    const fetchRouteData = async () => {
+        setLoadingRoutes(true); 
         const fetchedRoutes = await fetchMethod("deliveryroutes");
         if (fetchedRoutes) {
             const filteredRoutes = fetchedRoutes.filter(route => { // filter out any routes that have all orders as delivered
@@ -50,6 +53,7 @@ const LiveTracking = () => {
         } else {
             console.error("No routes data returned");
         }
+        setLoadingRoutes(false);
     };
 
     const handleCheckboxChange = (routeId) => (event) => { // for when a checkbox is checked/unchecked
@@ -79,6 +83,117 @@ const LiveTracking = () => {
                 return '#d4edda'; // Light green
         }
     };
+
+
+    const RoutesTableView = () => {
+        if( loadingRoutes )
+        {
+            return (
+            <>
+            <Skeleton/>
+            <Skeleton 
+                variant='wave'
+                sx={{ 
+                    height: 500,  // Adjust the height based on the estimated table size
+                    width: '100%', // Make the Skeleton take the full width of the container
+                    borderRadius: 4 // Optional: Adds rounded corners to match table aesthetics
+                  }} 
+            />
+            </>
+            )
+        }
+        else if( routesData )
+        {
+            return (
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell></TableCell>
+                            <TableCell>Route ID</TableCell>
+                            <TableCell>Driver</TableCell>
+                            <TableCell>Vehicle ID</TableCell>
+                            <TableCell></TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {routesData.map((route) => (
+                            <React.Fragment key={route.deliveryRouteID}>
+                                <TableRow>
+                                    <TableCell>
+                                        <Checkbox
+                                            checked={!!checkedRoutes[route.deliveryRouteID]}
+                                            onChange={handleCheckboxChange(route.deliveryRouteID)}
+                                        />
+                                    </TableCell>
+                                    <TableCell>{route.deliveryRouteID}</TableCell>
+                                    <TableCell>{route.driverUsername}</TableCell>
+                                    <TableCell>{route.vehicleId}</TableCell>
+                                    <TableCell>
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => handleRowToggle(route.deliveryRouteID)}
+                                        >
+                                            {openRow[route.deliveryRouteID] ? (
+                                                <KeyboardArrowUpIcon />
+                                            ) : (
+                                                <KeyboardArrowDownIcon />
+                                            )}
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell
+                                        style={{ paddingBottom: 0, paddingTop: 0 }}
+                                        colSpan={5}
+                                    >
+                                        <Collapse
+                                            in={openRow[route.deliveryRouteID]}
+                                            timeout="auto"
+                                            unmountOnExit
+                                        >
+                                            <Box margin={1}>
+                                                {ordersData[route.deliveryRouteID] ? (
+                                                    <Table size="small">
+                                                        <TableHead>
+                                                            <TableRow>
+                                                                <TableCell>Order ID</TableCell>
+                                                                <TableCell>Address</TableCell>
+                                                                <TableCell>Customer</TableCell>
+                                                                <TableCell>Products</TableCell>
+                                                                <TableCell>Status</TableCell>
+                                                            </TableRow>
+                                                        </TableHead>
+                                                        <TableBody>
+                                                            {ordersData[route.deliveryRouteID].map((order) => (
+                                                                <TableRow key={order.orderID} sx={{ backgroundColor: getRowColor(order.delayed) }}>
+                                                                    <TableCell>{order.orderID}</TableCell>
+                                                                    <TableCell>{order.address}</TableCell>
+                                                                    <TableCell>{order.customerName}</TableCell>
+                                                                    <TableCell>{order.productNames.join(", ")}</TableCell>
+                                                                    <TableCell>{order.status}{order.delayed ? ", DELAYED" : ""}</TableCell>
+                                                                </TableRow>
+                                                            ))}
+                                                        </TableBody>
+                                                    </Table>
+                                                ) : (
+                                                    <Typography></Typography>
+                                                )}
+                                            </Box>
+                                        </Collapse>
+                                    </TableCell>
+                                </TableRow>
+                            </React.Fragment>
+                        ))}
+                    </TableBody>
+                </Table>
+            )
+        }
+        else{
+            return (
+                <Typography>No routes available</Typography>
+            )
+        }
+    }
 
     // USE EFFECTS
 
@@ -140,91 +255,8 @@ const LiveTracking = () => {
                             Route Details
                         </Typography>
                     </Box>
-                    {routesData ? (
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell></TableCell>
-                                    <TableCell>Route ID</TableCell>
-                                    <TableCell>Driver</TableCell>
-                                    <TableCell>Vehicle ID</TableCell>
-                                    <TableCell></TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {routesData.map((route) => (
-                                    <React.Fragment key={route.deliveryRouteID}>
-                                        <TableRow>
-                                            <TableCell>
-                                                <Checkbox
-                                                    checked={!!checkedRoutes[route.deliveryRouteID]}
-                                                    onChange={handleCheckboxChange(route.deliveryRouteID)}
-                                                />
-                                            </TableCell>
-                                            <TableCell>{route.deliveryRouteID}</TableCell>
-                                            <TableCell>{route.driverUsername}</TableCell>
-                                            <TableCell>{route.vehicleId}</TableCell>
-                                            <TableCell>
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={() => handleRowToggle(route.deliveryRouteID)}
-                                                >
-                                                    {openRow[route.deliveryRouteID] ? (
-                                                        <KeyboardArrowUpIcon />
-                                                    ) : (
-                                                        <KeyboardArrowDownIcon />
-                                                    )}
-                                                </IconButton>
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell
-                                                style={{ paddingBottom: 0, paddingTop: 0 }}
-                                                colSpan={5}
-                                            >
-                                                <Collapse
-                                                    in={openRow[route.deliveryRouteID]}
-                                                    timeout="auto"
-                                                    unmountOnExit
-                                                >
-                                                    <Box margin={1}>
-                                                        {ordersData[route.deliveryRouteID] ? (
-                                                            <Table size="small">
-                                                                <TableHead>
-                                                                    <TableRow>
-                                                                        <TableCell>Order ID</TableCell>
-                                                                        <TableCell>Address</TableCell>
-                                                                        <TableCell>Customer</TableCell>
-                                                                        <TableCell>Products</TableCell>
-                                                                        <TableCell>Status</TableCell>
-                                                                    </TableRow>
-                                                                </TableHead>
-                                                                <TableBody>
-                                                                    {ordersData[route.deliveryRouteID].map((order) => (
-                                                                        <TableRow key={order.orderID} sx={{ backgroundColor: getRowColor(order.delayed) }}>
-                                                                            <TableCell>{order.orderID}</TableCell>
-                                                                            <TableCell>{order.address}</TableCell>
-                                                                            <TableCell>{order.customerName}</TableCell>
-                                                                            <TableCell>{order.productNames.join(", ")}</TableCell>
-                                                                            <TableCell>{order.status}{order.delayed ? ", DELAYED" : ""}</TableCell>
-                                                                        </TableRow>
-                                                                    ))}
-                                                                </TableBody>
-                                                            </Table>
-                                                        ) : (
-                                                            <Typography></Typography>
-                                                        )}
-                                                    </Box>
-                                                </Collapse>
-                                            </TableCell>
-                                        </TableRow>
-                                    </React.Fragment>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    ) : (
-                        <Typography>No routes available</Typography>
-                    )}
+                        <RoutesTableView/>
+
                 </Box>
                 <IconButton
                     onClick={toggleDrawer(false)}

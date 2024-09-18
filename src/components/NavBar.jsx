@@ -13,20 +13,29 @@ import { Link, useNavigate } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Cookies from 'js-cookie';
 
-const pages = [
+// Define the pages for admin and driver
+const admin_pages = [
   { name: 'View Routes', path: '/viewroutes' },
   { name: 'Live Tracking', path: '/livetracking' },
   { name: 'Daily Reports', path: '/dailyreports' },
   { name: 'Add Order', path: '/addorder' },
+  { name: 'Driver Navigation', path: '/driverviewroutes'},
+  { name: 'Admin Controls', path: '/admincontrols'}
+];
 
-  // temporarily in the nav bar until authorisation is implemented
-  { name: 'Driver - View Routes', path: '/driverviewroutes'} 
+const driver_pages = [
+  { name: 'Driver - View Routes', path: '/driverviewroutes'}
 ];
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const navigate = useNavigate();
+  
   const authToken = Cookies.get('authToken');
+  const authRole = Cookies.get('userRole');
+
+  // Determine pages based on role
+  const pages = authRole === 'ADMIN' ? admin_pages : authRole === 'DRIVER' ? driver_pages : [];
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -38,6 +47,7 @@ function Navbar() {
 
   const handleLogout = () => {
     Cookies.remove('authToken');
+    Cookies.remove('userRole');
     navigate('/login');
   };
 
@@ -48,8 +58,8 @@ function Navbar() {
           <Typography
             variant="h6"
             noWrap
-            component={Link} 
-            to="/home" 
+            component={Link}
+            to="/home"
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -115,8 +125,8 @@ function Navbar() {
           <Typography
             variant="h6"
             noWrap
-            component={Link} 
-            to="/home" 
+            component={Link}
+            to="/home"
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
@@ -152,7 +162,7 @@ function Navbar() {
                 <IconButton
                   component={Link}
                   to="/accountdetails"
-                  sx={{ color: 'white', ml: 2, fontSize: 32 }} 
+                  sx={{ color: 'white', ml: 2, fontSize: 32 }}
                 >
                   <AccountCircleIcon fontSize="inherit" />
                 </IconButton>

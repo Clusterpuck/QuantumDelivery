@@ -1,6 +1,6 @@
 .map-container {
   width: 100%; /* Ensure the map takes the full width of its container */
-  height: 500px; /* Set a fixed height for the map */
+  height: 250px; /* Set a fixed height for the map */
   margin-top: 16px; /* Add some space between the DataGrid and the map */
   position: relative; /* Change position to relative to avoid overlapping */
 }

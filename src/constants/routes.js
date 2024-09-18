@@ -16,6 +16,7 @@ import Register from "./pages/Register";
 import AccountDetails from './pages/AccountDetails';
 import PrivateRoute from './constants/PrivateRoute';
 import Unauthorized from './pages/Unauthorized';
+import AdminControls from './pages/AdminControls';
 import './index.css';
 import './App.css';
 import DriverViewRoutes from '../pages/DriverViewRoutes';
@@ -53,6 +54,11 @@ const App = () => {
                         <Route path="/viewroutes" element={
                             <PrivateRoute role="ADMIN">
                                 <ViewRoutes />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/admincontrols" element={
+                            <PrivateRoute role="ADMIN">
+                                <AdminControls />
                             </PrivateRoute>
                         } />
                         <Route path="/livetracking" element={

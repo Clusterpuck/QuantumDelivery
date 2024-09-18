@@ -17,6 +17,7 @@ import AccountDetails from './pages/AccountDetails';
 import DriverViewRoutes from './pages/DriverViewRoutes';
 import PrivateRoute from './constants/PrivateRoute'; 
 import Unauthorized from './pages/Unauthorized'; 
+import AdminControls from './pages/AdminControls';
 import './index.css';
 import './App.css';
 
@@ -71,13 +72,18 @@ const App = () => {
                             </PrivateRoute>
                         } />
                         <Route path="/accountdetails" element={
-                            <PrivateRoute role="ADMIN">
+                            <PrivateRoute>
                                 <AccountDetails />
                             </PrivateRoute>
                         } />
                         <Route path="/home" element={
                             <PrivateRoute role="ADMIN">
                                 <AddOrder />
+                            </PrivateRoute>
+                        } />
+                        <Route path="/admincontrols" element={
+                            <PrivateRoute role="ADMIN">
+                                <AdminControls />
                             </PrivateRoute>
                         } />
 
@@ -100,3 +106,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <App />
   </React.StrictMode>,
 );
+

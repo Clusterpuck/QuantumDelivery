@@ -378,3 +378,17 @@ export const login = async (username, password) => {
     }
 };
 
+export const fetchIssueOrders = async () => {
+    let orderData = null
+    try {
+        const orderResponse = await fetch( Constants.DATA_ENDPOINT + 'orders/issues');
+        if (!orderResponse.ok) {
+            throw new Error('Failed to fetch issue orders data');
+        }
+        orderData = await orderResponse.json();
+    } catch (error) {
+        console.error('Error fetching issue orders data:', error.message);
+    }
+    return orderData
+};
+

@@ -56,6 +56,8 @@ const ViewRoutes = () =>
   const [numVehicles, setNumVehicles] = useState(1); // default to 1 vehicle
   const [calcType, setCalcType] = useState("brute");
 
+  // Depot handling
+  const [selectedDepot, setSelectedDepot] = useState('');
 
 
 
@@ -360,6 +362,18 @@ const ViewRoutes = () =>
     setNumVehicles(event.target.value);
   };
 
+  // Temp Code
+  const depots = [
+    { id: 1, name: "Depot A" },
+    { id: 2, name: "Depot B" },
+    { id: 3, name: "Depot C" },
+    { id: 4, name: "Depot D" },
+  ];
+
+  const handleDepotChange = (event) => {
+    setSelectedDepot(event.target.value);
+  };
+
   return (
     <div
       style={{
@@ -385,10 +399,6 @@ const ViewRoutes = () =>
               <DateSelectHighlight highlightedDates={unassignedDates} selectedDate={selectedDate} handleDateChange={handleDateChange} />
               }
             </Grid>
-            {/* Add a simple string here */}
-            <Grid item xs={12}>
-              <Typography variant="h6">Select your options below:</Typography>
-            </Grid>
             {/* Dropdown for selecting number of vehicles and Regenerate button */}
             <Grid item xs={6} md={2}>
               <TextField
@@ -412,6 +422,28 @@ const ViewRoutes = () =>
                 ))}
               </TextField>
             </Grid>
+            <Grid item xs={6} md={2}>
+              <TextField
+                select
+                label="Depot"
+                value={selectedDepot}
+                fullWidth
+                onChange={handleDepotChange}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LocalShippingIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              >
+                {depots.map(depot => (
+                  <MenuItem key={depot.id} value={depot.id}>
+                    {depot.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
             <Grid item xs={6} md={3}>
               <RadioGroup
                 aria-labelledby="demo-controlled-radio-buttons-group"
@@ -423,7 +455,7 @@ const ViewRoutes = () =>
                 <FormControlLabel value="dwave" control={<Radio />} label="Quantum Computer" />
               </RadioGroup>
             </Grid>
-            <Grid item xs={6} md={4} container justifyContent="flex-end">
+            <Grid item xs={6} md={2} container justifyContent="flex-end">
               {routesLoading ? (
                 <Button
                   variant='contained'

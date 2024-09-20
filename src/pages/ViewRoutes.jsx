@@ -176,7 +176,7 @@ const ViewRoutes = () =>
     try
     {
       setRoutesLoading(true);
-      if (!orders) return; // Do not load routes if orders are not loaded
+      if (!datePlannedOrders) return; // Do not load routes if orders are not loaded
       if (!datePlannedOrders || datePlannedOrders.length == 0) return;
       const userInput = {
         numVehicle: numVehicles,

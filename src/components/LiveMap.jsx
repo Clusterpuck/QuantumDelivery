@@ -10,15 +10,15 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
     const map = useRef(null);
     const [markers, setMarkers] = useState([]);
     const [allCoordinates, setAllCoordinates] = useState([]);
-    const [centered, setCentered] = useState(false);
+    const [centered, setCentered] = useState(false); // to ensure that the map only centers on the page load, and not when you check/uncheck routes
 
     const colourPalette = [
         
-        '#0C134F', // Super dark blue
-        '#2B49CE', // bright blue
-        '#8E44AD', // Blue-Purple
-        '#1F618D', // Dark Blue
-        '#7D1E6A', // Red-Purple
+        '#3a429f', // violet blue
+        '#a97dce', // lavender
+        '#f4a4af', // cherry blossom pink
+        '#a7577f', // china rose
+        '#3d096b' // persian indigo
     ];
 
     const generateColourFromId = (routeId) => {
@@ -57,16 +57,32 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
         });
     }, []);
 
-    useEffect(() => { // use effect for centering the map on the routes when the coordinates are recieved
+    useEffect(() => {
+        console.log(allCoordinates)
+    }, [allCoordinates]);
+
+    useEffect(() => {
         if ((allCoordinates.length > 0) && (!centered)) {
-            const bounds = allCoordinates.reduce(
-                (bounds, coord) => bounds.extend(coord),
-                new mapboxgl.LngLatBounds(allCoordinates[0], allCoordinates[0])
-            );
-            map.current.fitBounds(bounds, { padding: 100, offset: [100, 20]}); //offset to the right because of the drawer, and down because of the nav bar
+            if (allCoordinates.length === 1) {
+                // case when there's only one coordinate
+                const singleCoord = allCoordinates[0];
+                const bounds = new mapboxgl.LngLatBounds(singleCoord, singleCoord);
+    
+                
+                bounds.extend([singleCoord[0] + 0.2, singleCoord[1] + 0.2]); 
+                bounds.extend([singleCoord[0] - 0.2, singleCoord[1] - 0.2]);
+    
+                map.current.fitBounds(bounds, { padding: 50, offset: [150, -15] });
+            } else {
+                const bounds = allCoordinates.reduce((bounds, coord) => {
+                    const bufferedCoord = [coord[0] + 0.2, coord[1] + 0.2];
+                    return bounds.extend(coord).extend(bufferedCoord);
+                }, new mapboxgl.LngLatBounds(allCoordinates[0], allCoordinates[0]));
+    
+                map.current.fitBounds(bounds, { padding: 50, offset: [200, -50] });
+            }
             setCentered(true);
         }
-        
     }, [allCoordinates, centered]);
 
     useEffect(() => {
@@ -120,6 +136,10 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
                             .setLngLat([order.longitude, order.latitude])
                             .addTo(map.current);
                         newMarkers.push(marker);
+
+                        if (routeCoordinates.length === 1) {
+                            tempAllCoordinates.push([order.longitude, order.latitude]);
+                        }
                     }
                 });
 

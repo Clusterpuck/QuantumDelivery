@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react';
-import { Link } from 'react-router-dom';
 import AccountDetailsForm from '../components/AccountDetailsForm';
 import {enableScroll} from '../assets/scroll.js';
 

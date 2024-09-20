@@ -75,15 +75,6 @@ const LiveTracking = () => {
         }
     };
 
-    const getRowColor = (delayed) => { // for background colours, red for delayed, green for not.
-        switch (delayed) {
-            case true:
-                return '#f8d7da'; // Light red
-            default:
-                return '#d4edda'; // Light green
-        }
-    };
-
 
     const RoutesTableView = () => {
         if( loadingRoutes )
@@ -165,12 +156,12 @@ const LiveTracking = () => {
                                                         </TableHead>
                                                         <TableBody>
                                                             {ordersData[route.deliveryRouteID].map((order) => (
-                                                                <TableRow key={order.orderID} sx={{ backgroundColor: getRowColor(order.delayed) }}>
+                                                                <TableRow key={order.orderID} >
                                                                     <TableCell>{order.orderID}</TableCell>
                                                                     <TableCell>{order.address}</TableCell>
                                                                     <TableCell>{order.customerName}</TableCell>
                                                                     <TableCell>{order.productNames.join(", ")}</TableCell>
-                                                                    <TableCell>{order.status}{order.delayed ? ", DELAYED" : ""}</TableCell>
+                                                                    <TableCell className={getStatusColour(order)} sx={{ color: '#f2f2f2', borderRadius: '10px' }}>{order.status}{order.delayed ? ", DELAYED" : ""}</TableCell>
                                                                 </TableRow>
                                                             ))}
                                                         </TableBody>

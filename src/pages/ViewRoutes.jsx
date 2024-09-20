@@ -57,8 +57,13 @@ const ViewRoutes = () =>
   const [calcType, setCalcType] = useState("brute");
 
   // Depot handling
-  const [selectedDepot, setSelectedDepot] = useState('');
-
+  const depots = [
+    { id: 1, name: "Depot A" },
+    { id: 2, name: "Depot B" },
+    { id: 3, name: "Depot C" },
+    { id: 4, name: "Depot D" },
+  ];
+  const [selectedDepot, setSelectedDepot] = useState(depots[0].id); 
 
 
   useEffect(() =>
@@ -178,12 +183,15 @@ const ViewRoutes = () =>
     try
     {
       setRoutesLoading(true);
+      console.log("We are getting: ", selectedDepot)
       if (!datePlannedOrders) return; // Do not load routes if orders are not loaded
       if (!datePlannedOrders || datePlannedOrders.length == 0) return;
+      /* TODO Synchronise with C# Backend, Add in sending the depot name*/
       const userInput = {
         numVehicle: numVehicles,
         calcType: calcType,
         deliveryDate: selectedDate,
+        depot: selectedDepot,
         orders: datePlannedOrders.
           map(order => order.orderID) // all orders
       };
@@ -362,16 +370,8 @@ const ViewRoutes = () =>
     setNumVehicles(event.target.value);
   };
 
-  // Temp Code
-  const depots = [
-    { id: 1, name: "Depot A" },
-    { id: 2, name: "Depot B" },
-    { id: 3, name: "Depot C" },
-    { id: 4, name: "Depot D" },
-  ];
-
   const handleDepotChange = (event) => {
-    setSelectedDepot(event.target.value);
+    setSelectedDepot(Number(event.target.value));
   };
 
   return (
@@ -422,6 +422,7 @@ const ViewRoutes = () =>
                 ))}
               </TextField>
             </Grid>
+            {/*Depot drop down menu*/}
             <Grid item xs={6} md={2}>
               <TextField
                 select

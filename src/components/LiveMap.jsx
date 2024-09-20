@@ -10,6 +10,7 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
     const map = useRef(null);
     const [markers, setMarkers] = useState([]);
     const [allCoordinates, setAllCoordinates] = useState([]);
+    const [centered, setCentered] = useState(false);
 
     const colourPalette = [
         
@@ -57,14 +58,16 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
     }, []);
 
     useEffect(() => { // use effect for centering the map on the routes when the coordinates are recieved
-        if (allCoordinates.length > 0) {
+        if ((allCoordinates.length > 0) && (!centered)) {
             const bounds = allCoordinates.reduce(
                 (bounds, coord) => bounds.extend(coord),
                 new mapboxgl.LngLatBounds(allCoordinates[0], allCoordinates[0])
             );
             map.current.fitBounds(bounds, { padding: 100, offset: [100, 20]}); //offset to the right because of the drawer, and down because of the nav bar
+            setCentered(true);
         }
-    }, [allCoordinates]);
+        
+    }, [allCoordinates, centered]);
 
     useEffect(() => {
         if (!map.current) return;

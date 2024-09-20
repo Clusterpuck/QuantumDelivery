@@ -1,4 +1,3 @@
-// AdminControlsForm.jsx
 import React from 'react';
 import { Paper, Button, Grid, MenuItem, Select, InputLabel, FormControl, Typography } from '@mui/material';
 
@@ -22,7 +21,8 @@ const AdminControlsForm = ({ entity, operation, handleOperationChange, handleSub
                     >
                         <MenuItem value="add">Add</MenuItem>
                         <MenuItem value="edit">Edit</MenuItem>
-                        <MenuItem value="remove">Remove</MenuItem>
+                        {/* Update this to 'delete' */}
+                        <MenuItem value="delete">Delete</MenuItem>
                     </Select>
                 </FormControl>
 

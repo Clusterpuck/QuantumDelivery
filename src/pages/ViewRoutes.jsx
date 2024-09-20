@@ -385,6 +385,10 @@ const ViewRoutes = () =>
               <DateSelectHighlight highlightedDates={unassignedDates} selectedDate={selectedDate} handleDateChange={handleDateChange} />
               }
             </Grid>
+            {/* Add a simple string here */}
+            <Grid item xs={12}>
+              <Typography variant="h6">Select your options below:</Typography>
+            </Grid>
             {/* Dropdown for selecting number of vehicles and Regenerate button */}
             <Grid item xs={6} md={2}>
               <TextField

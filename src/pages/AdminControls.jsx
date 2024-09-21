@@ -4,48 +4,53 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { useNavigate } from 'react-router-dom';
 import AdminControlsForm from '../components/AdminControlsForm';
 import DeleteEntityForm from '../components/DeleteEntityForm';
-// import AccountForm from '../components/AccountForm';
+import AccountForm from '../components/AccountForm';
 
 const AdminControls = () => {
     const navigate = useNavigate();
 
-    // store the current operations state and entity for deletion
     const [operations, setOperations] = useState({
         user: 'add',
         customer: 'add',
         location: 'add',
         product: 'add'
     });
-    const [deleteEntity, setDeleteEntity] = useState(null);  // state to store the entity requesting delete
-    const [open, setOpen] = useState(false); // state to handle modal open/close
+
+    const [deleteEntity, setDeleteEntity] = useState(null);
+    const [openDelete, setOpenDelete] = useState(false);
+    const [openAccountForm, setOpenAccountForm] = useState(false);
+    const [userMode, setUserMode] = useState('add'); // Keep track of the mode for the user form
 
     const handleOperationChange = (entity) => (event) => {
         setOperations({
             ...operations,
-            [entity]: event.target.value // ensure 'delete' is the operation value for deletion
+            [entity]: event.target.value
         });
     };
 
-    // when submit on the dashboard is clicked
     const handleSubmit = (entity) => (event) => {
-        event.preventDefault(); // prevent the default form submission behavior
+        event.preventDefault();
+        const operation = operations[entity];
 
-        // ensure you're checking for both 'delete' and 'remove' if needed.
-        if (operations[entity] === 'delete') {
-            // handle delete operation by opening modal
-            setDeleteEntity(entity); // Store the entity requesting deletion
-            setOpen(true); // Open the delete modal
-        } else {
-            // handle other operations (e.g., add, edit)
-            console.log(`Submitted operation for ${entity}:`, operations[entity]);
-            // only navigate if not deleting
-            navigate('/addorder'); // TO DO: replace logic here
+        if (operation === 'delete') {
+            setDeleteEntity(entity);
+            setOpenDelete(true);
+        } else if (entity === 'user' && (operation === 'add' || operation === 'edit')) {
+            // Set user mode before opening the form
+            setUserMode(operation); 
+            setOpenAccountForm(true);
+        } else if (entity !== 'user') {
+            console.log(`Submitted operation for ${entity}:`, operation);
+            navigate('/addorder');
         }
     };
 
-    // when close on the modal is clicked
-    const handleClose = () => {
-        setOpen(false); // close the modal
+    const handleCloseDelete = () => {
+        setOpenDelete(false);
+    };
+
+    const handleCloseAccountForm = () => {
+        setOpenAccountForm(false);
     };
 
     const entities = ['user', 'customer', 'location', 'product'];
@@ -91,10 +96,10 @@ const AdminControls = () => {
                 </Grid>
             </Paper>
 
-            {/* delete modal */}
+            {/* Delete Form Modal */}
             <Modal
-                open={open}
-                onClose={handleClose}
+                open={openDelete}
+                onClose={handleCloseDelete}
                 aria-labelledby="delete-entity-modal"
                 aria-describedby="delete-entity-description"
             >
@@ -118,6 +123,32 @@ const AdminControls = () => {
                     )}
                 </Box>
             </Modal>
+
+            {/* Account Form Modal */}
+            <Modal
+                open={openAccountForm}
+                onClose={handleCloseAccountForm}
+                aria-labelledby="account-form-modal"
+                aria-describedby="account-form-description"
+            >
+                <Box 
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        bgcolor: 'background.paper',
+                        boxShadow: 24,
+                        p: 4,
+                        maxWidth: 600,
+                        width: '100%',
+                    }}
+                >
+                    {/* Pass the userMode prop to the AccountForm */}
+                    <AccountForm mode={userMode} />
+                </Box>
+            </Modal>
+
         </div>
     );
 };

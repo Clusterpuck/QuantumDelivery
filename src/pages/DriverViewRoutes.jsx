@@ -29,7 +29,7 @@ const DriverViewRoutes = ({ }) => {
     const [anyPlanned, setAnyPlanned] = React.useState(true); // if any orders are planned, use to check whether the start delivery button should be shown
     const [finishedDelivery, setFinishedDelivery] = React.useState(false); // if delivery is finished
     const [issueDialogOpen, setIssueDialogOpen] = useState(false); //if the report issue dialog is open
-    const driverUsername = Cookies.get('driverUsername'); // driver you are viewing routes for
+    const driverUsername = Cookies.get('userName'); // username of logged in user, Admins will see no routes
 
     const toggleDrawer = (open) => () => { setDrawerOpen(open); }
     const handlePhoneDialog = (open) => () => { setPhoneDialogOpen(open); };

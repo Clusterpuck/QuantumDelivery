@@ -13,6 +13,8 @@ import NoRouteFound from '../components/NoRouteFound.jsx';
 import { disableScroll } from '../assets/scroll.js';
 import ReportIssue from '../components/ReportIssue.jsx';
 import { getRowColour } from '../store/helperFunctions.js';
+import Cookies from 'js-cookie';
+
 
 const DriverViewRoutes = ({ }) => {
     // initialise drawer on the left (which shows delivery progress) to closed
@@ -27,7 +29,7 @@ const DriverViewRoutes = ({ }) => {
     const [anyPlanned, setAnyPlanned] = React.useState(true); // if any orders are planned, use to check whether the start delivery button should be shown
     const [finishedDelivery, setFinishedDelivery] = React.useState(false); // if delivery is finished
     const [issueDialogOpen, setIssueDialogOpen] = useState(false); //if the report issue dialog is open
-    const driverUsername = 'driver1@email.com'; // hard coded for now
+    const driverUsername = Cookies.get('driverUsername'); // driver you are viewing routes for
 
     const toggleDrawer = (open) => () => { setDrawerOpen(open); }
     const handlePhoneDialog = (open) => () => { setPhoneDialogOpen(open); };

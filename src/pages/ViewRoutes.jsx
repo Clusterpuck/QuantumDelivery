@@ -183,10 +183,8 @@ const ViewRoutes = () =>
     try
     {
       setRoutesLoading(true);
-      console.log("We are getting: ", selectedDepot)
       if (!datePlannedOrders) return; // Do not load routes if orders are not loaded
       if (!datePlannedOrders || datePlannedOrders.length == 0) return;
-      /* TODO Synchronise with C# Backend, Add in sending the depot name*/
       const userInput = {
         numVehicle: numVehicles,
         calcType: calcType,

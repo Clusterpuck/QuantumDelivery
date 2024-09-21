@@ -61,6 +61,7 @@ const LoginForm = () => {
                     // store the token and role in cookies or localStorage
                     Cookies.set('authToken', response.token, { expires: 1 });
                     Cookies.set('userRole', response.role, { expires: 1 });
+                    Cookies.set('driverUsername', username, { expires: 1 }); // Unsure if need expires, keep just in case
     
                     // redirect based on role
                     if (response.role === 'ADMIN') {

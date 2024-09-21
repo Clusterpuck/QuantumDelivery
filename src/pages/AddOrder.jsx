@@ -89,12 +89,12 @@ const AddOrder = () =>
     const loadOrders = async () =>
     {
         setLoadingOrders(true);
-        const loadOrders = await fetchMethod("orders");
+        const loadOrders = await fetchMethod("orders/with-products");
         if (loadOrders)
         {
             const filteredOrders = loadOrders.filter(order => order.status !== "CANCELLED");
             setOrders(filteredOrders);
-            setTestOrder(filteredOrders[0]); //AMIRA TESTING
+            setTestOrder(filteredOrders[1]); //AMIRA TESTING
 
             console.log("Orders recieved are ", JSON.stringify(filteredOrders));
         } else

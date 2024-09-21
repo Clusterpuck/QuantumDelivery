@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchCustomers, fetchLocations, fetchProducts } from '../store/apiFunctions.js';
-import { Autocomplete, TextField, Table, TableRow, TableCell, TableBody, TableHead, TableContainer, Paper, Button, Grid, Typography, IconButton } from '@mui/material';
+import { Input, FormControl, InputLabel, Select, MenuItem, Autocomplete, TextField, Table, TableRow, TableCell, TableBody, TableHead, TableContainer, Paper, Button, Grid, Typography, IconButton } from '@mui/material';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -13,10 +13,12 @@ const EditOrderForm = ({ order }) => {
     const [selectedCustomer, setSelectedCustomer] = useState('');
     const [selectedLocation, setSelectedLocation] = useState('');
     const [selectedDeliveryDate, setSelectedDeliveryDate] = useState(dayjs());
-    const [selectedProducts, setSelectedProducts] = useState('');
+    const [selectedProducts, setSelectedProducts] = useState([]);
     const [orderNotes, setOrderNotes] = useState('');
     const [products, setProducts] = useState([]);
-    const [selectedProduct, setSelectedProduct] = useState(null);
+
+    const statuses = ["PLANNED", "ASSIGNED", "ON-ROUTE", "DELIVERED", "CANCELLED", "ISSUE"];
+    const [selectedStatus, setSelectedStatus] = useState('');
 
     const loadCustomers = async () => {
         const tempCustomers = await fetchCustomers();
@@ -33,7 +35,6 @@ const EditOrderForm = ({ order }) => {
         setProducts(productList);
     };
 
-
     const handleCustomerChange = (newValue) => {
         setSelectedCustomer(newValue);
     };
@@ -42,12 +43,19 @@ const EditOrderForm = ({ order }) => {
         setSelectedLocation(newValue);
     };
 
-    const handleProductChange = (newValue) => {
-        setSelectedProduct(value);
+    const handleDeleteProduct = (productID) => {
+        // Remove the product with the given productID from the selectedProducts array
+        const updatedProducts = selectedProducts.filter((product) => product.productID !== productID);
+        setSelectedProducts(updatedProducts); // Update the state to re-render the table
     };
 
-    const handleDateChange = (date) => {
-        setSelectedDate(date);
+    const handleQuantityChange = (productID, newQuantity) => {
+        const updatedProducts = selectedProducts.map((product) =>
+            product.productID === productID
+                ? { ...product, quantity: Math.max(1, newQuantity) }
+                : product
+        );
+        setSelectedProducts(updatedProducts);
     };
 
     useEffect(() => {
@@ -59,16 +67,23 @@ const EditOrderForm = ({ order }) => {
     useEffect(() => {
         if (order) {
             setSelectedDeliveryDate(order?.deliveryDate ? dayjs(order.deliveryDate) : dayjs());
+            setSelectedProducts(order?.products || []);
+            setOrderNotes(order?.orderNotes || []);
+            setSelectedStatus(order?.status);
+            const matchedCustomer = customers.find(customer => customer.name === order?.customerName);
+            setSelectedCustomer(matchedCustomer);
+            const matchedLocation = locations.find(location => location.address === order?.address);
+            setSelectedLocation(matchedLocation);
         }
     }, [order]);
 
     useEffect(() => {
-        console.log("PASSED ORDER ", order);
-    }, [order]);
+        console.log(" SELECTED date", selectedDeliveryDate);
+    }, [selectedDeliveryDate]);
 
     useEffect(() => {
-        console.log("SELECTED DATE ", selectedDeliveryDate);
-    }, [selectedDeliveryDate]);
+        console.log("selected customer ", selectedCustomer);
+    }, [selectedCustomer]);
 
 
 
@@ -105,7 +120,7 @@ const EditOrderForm = ({ order }) => {
                                 getOptionLabel={(option) => option.name}
                                 getOptionKey={(option) => option.id}
                                 fullWidth
-                                onChange={(newValue) => handleCustomerChange(newValue)} // Pass the whole object
+                                onChange={(event, newValue) => handleCustomerChange(newValue)} 
                                 renderInput={(params) => <TextField {...params} label="Select Customer" />}
                             />
                         ) : (
@@ -122,7 +137,7 @@ const EditOrderForm = ({ order }) => {
                                 getOptionLabel={(option) => option.address}
                                 getOptionKey={(option) => option.id}
                                 fullWidth
-                                onChange={( newValue) => handleLocationChange(newValue)} // Pass the whole object
+                                onChange={(event, newValue) => handleLocationChange(newValue)} // Pass the whole object
                                 renderInput={(params) => <TextField {...params} label="Select Location" />}
                             />
                         ) : (
@@ -143,12 +158,21 @@ const EditOrderForm = ({ order }) => {
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <TextField
-                            label="Status"
-                            value={order?.status || ''}
-                            variant="outlined"
-                            fullWidth
-                        />
+                        {/* Dropdown for Status */}
+                        <FormControl fullWidth>
+                            <InputLabel>Status</InputLabel>
+                            <Select
+                                value={selectedStatus}
+                                onChange={ (e) => setSelectedStatus(e.target.value)}
+                                label="Status"
+                            >
+                                {statuses.map((status) => (
+                                    <MenuItem key={status} value={status}>
+                                        {status}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Grid>
                 </Grid>
 
@@ -157,7 +181,7 @@ const EditOrderForm = ({ order }) => {
                     <Grid item xs={12}>
                         <TextField
                             label="Order Notes"
-                            value={order?.orderNotes || ''}
+                            value={orderNotes || ''}
                             onChange={(e) => setOrderNotes(e.target.value)}
                             variant="outlined"
                             fullWidth
@@ -181,21 +205,33 @@ const EditOrderForm = ({ order }) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {products.map((product) => ( // MAPPING ALL PRODUCTS FOR NOW - should be order products
-                                <TableRow key={product.productId}>
-                                    <TableCell>{product.name}</TableCell>
-                                    <TableCell>{product.quantity}</TableCell>
-                                    <TableCell>{product.unit}</TableCell>
-                                    <TableCell align="right">
-                                        <IconButton
-                                            color="primary"
-                                        //onClick={}
-                                        >
-                                            <DeleteIcon />
-                                        </IconButton>
+                            {selectedProducts.length > 0 ? (
+                                selectedProducts.map((product) => (
+                                    <TableRow key={product.productID}>
+                                        <TableCell>{product.name}</TableCell>
+                                        <TableCell>
+                                            <Input
+                                                type="number"
+                                                value={product.quantity}
+                                                inputProps={{ min: 1 }}  // Prevent going below 1
+                                                onChange={(e) => handleQuantityChange(product.productID, e.target.value)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>{product.unitOfMeasure}</TableCell>
+                                        <TableCell align="right">
+                                            <IconButton color="primary" onClick={() => handleDeleteProduct(product.productID)}>
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={4} align="center">
+                                        No products in this order.
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            )}
                         </TableBody>
                     </Table>
                 </TableContainer>

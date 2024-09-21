@@ -18,6 +18,7 @@ import { fetchMethod } from '../store/apiFunctions';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import Skeleton from '@mui/material/Skeleton';
 import IssuesTable from '../components/IssuesTable';
+import EditOrderForm from '../components/EditOrderForm';
 
 const styleConstants = {
     fieldSpacing: { mb: 2 }
@@ -25,6 +26,8 @@ const styleConstants = {
 
 const AddOrder = () =>
 {
+    const [testOrder, setTestOrder] = useState(null);
+
     const [customers, setCustomers] = useState(null);
     const [loadingCustomers, setLoadingCustomers] = useState(false);
     const [locations, setLocations] = useState(null);
@@ -86,11 +89,13 @@ const AddOrder = () =>
     const loadOrders = async () =>
     {
         setLoadingOrders(true);
-        const loadOrders = await fetchMethod("orders");
+        const loadOrders = await fetchMethod("orders/with-products");
         if (loadOrders)
         {
             const filteredOrders = loadOrders.filter(order => order.status !== "CANCELLED");
             setOrders(filteredOrders);
+            setTestOrder(filteredOrders[1]); //AMIRA TESTING
+
             console.log("Orders recieved are ", JSON.stringify(filteredOrders));
         } else
         {
@@ -339,7 +344,10 @@ const AddOrder = () =>
                 <IssuesTable />
             </Box>
 
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
 
+                <EditOrderForm order={testOrder} />
+            </Box>
 
             <h2>All Orders</h2>
 

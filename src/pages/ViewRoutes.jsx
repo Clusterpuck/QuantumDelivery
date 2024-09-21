@@ -391,14 +391,14 @@ const ViewRoutes = () =>
       <Paper elevation={3} sx={{ padding: 3, maxWidth: 1500, width: '100%' }}>
         <Grid item xs={12} md={12} container spacing={2}>
           <Grid item xs={12} md={12} container spacing={2} alignItems="center">
-            <Grid item xs={6} md={3} >
+            <Grid item xs={4} md={3} >
               {ordersLoading ? <CircularProgress/> :
 
               <DateSelectHighlight highlightedDates={unassignedDates} selectedDate={selectedDate} handleDateChange={handleDateChange} />
               }
             </Grid>
             {/* Dropdown for selecting number of vehicles and Regenerate button */}
-            <Grid item xs={6} md={2}>
+            <Grid item xs={3} md={2}>
               <TextField
                 select
                 label="Number of Vehicles"
@@ -421,7 +421,7 @@ const ViewRoutes = () =>
               </TextField>
             </Grid>
             {/*Depot drop down menu*/}
-            <Grid item xs={6} md={2}>
+            <Grid item xs={5} md={2}>
               <TextField
                 select
                 label="Depot"

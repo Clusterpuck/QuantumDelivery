@@ -14,6 +14,7 @@ const EditOrderForm = ({ order }) => {
     const [selectedLocation, setSelectedLocation] = useState('');
     const [selectedDeliveryDate, setSelectedDeliveryDate] = useState(dayjs());
     const [selectedProducts, setSelectedProducts] = useState('');
+    const [orderNotes, setOrderNotes] = useState('');
     const [products, setProducts] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -56,8 +57,18 @@ const EditOrderForm = ({ order }) => {
     }, []);
 
     useEffect(() => {
+        if (order) {
+            setSelectedDeliveryDate(order?.deliveryDate ? dayjs(order.deliveryDate) : dayjs());
+        }
+    }, [order]);
+
+    useEffect(() => {
         console.log("PASSED ORDER ", order);
     }, [order]);
+
+    useEffect(() => {
+        console.log("SELECTED DATE ", selectedDeliveryDate);
+    }, [selectedDeliveryDate]);
 
 
 
@@ -94,7 +105,7 @@ const EditOrderForm = ({ order }) => {
                                 getOptionLabel={(option) => option.name}
                                 getOptionKey={(option) => option.id}
                                 fullWidth
-                                onChange={(event, newValue) => handleCustomerChange(newValue)} // Pass the whole object
+                                onChange={(newValue) => handleCustomerChange(newValue)} // Pass the whole object
                                 renderInput={(params) => <TextField {...params} label="Select Customer" />}
                             />
                         ) : (
@@ -111,7 +122,7 @@ const EditOrderForm = ({ order }) => {
                                 getOptionLabel={(option) => option.address}
                                 getOptionKey={(option) => option.id}
                                 fullWidth
-                                onChange={(event, newValue) => handleLocationChange(newValue)} // Pass the whole object
+                                onChange={( newValue) => handleLocationChange(newValue)} // Pass the whole object
                                 renderInput={(params) => <TextField {...params} label="Select Location" />}
                             />
                         ) : (
@@ -121,8 +132,8 @@ const EditOrderForm = ({ order }) => {
                     <Grid item xs={12} sm={6}>
                         <TextField
                             label="Delivery Date"
-                            value={order?.deliveryDate}
-                            onChange={(e) => setSelectedDeliveryDate(e.target.value)}
+                            value={selectedDeliveryDate.format('YYYY-MM-DD')}  // Format the date for input
+                            onChange={(e) => setSelectedDeliveryDate(dayjs(e.target.value))}
                             variant="outlined"
                             fullWidth
                             type="date"

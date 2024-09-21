@@ -6,7 +6,7 @@ import 'dayjs/locale/en-gb';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../index.css';
 
-const EditOrderForm = ({order}) => {
+const EditOrderForm = ({ order }) => {
     const [customers, setCustomers] = useState(null);
     const [locations, setLocations] = useState(null);
 
@@ -53,8 +53,13 @@ const EditOrderForm = ({order}) => {
         loadCustomers();
         loadLocations();
         loadProducts();
-        console.log("PASSED ORDER: ", JSON.stringify)
     }, []);
+
+    useEffect(() => {
+        console.log("PASSED ORDER ", order);
+    }, [order]);
+
+
 
     return (
         <Paper elevation={3} sx={{ padding: 3, width: '100%' }}>
@@ -84,11 +89,12 @@ const EditOrderForm = ({order}) => {
                             <Autocomplete
                                 disablePortal
                                 id="Customers"
+                                value={customers?.find(customer => customer.name === order?.customerName) || null} // Find the matching customer object
                                 options={customers}
                                 getOptionLabel={(option) => option.name}
                                 getOptionKey={(option) => option.id}
                                 fullWidth
-                                onChange={handleCustomerChange}
+                                onChange={(event, newValue) => handleCustomerChange(newValue)} // Pass the whole object
                                 renderInput={(params) => <TextField {...params} label="Select Customer" />}
                             />
                         ) : (
@@ -100,11 +106,12 @@ const EditOrderForm = ({order}) => {
                             <Autocomplete
                                 disablePortal
                                 id="Locations"
+                                value={locations?.find(loc => loc.address === order?.address) || null} // Find the matching location object
                                 options={locations}
                                 getOptionLabel={(option) => option.address}
                                 getOptionKey={(option) => option.id}
                                 fullWidth
-                                onChange={handleLocationChange}
+                                onChange={(event, newValue) => handleLocationChange(newValue)} // Pass the whole object
                                 renderInput={(params) => <TextField {...params} label="Select Location" />}
                             />
                         ) : (
@@ -171,7 +178,7 @@ const EditOrderForm = ({order}) => {
                                     <TableCell align="right">
                                         <IconButton
                                             color="primary"
-                                            //onClick={}
+                                        //onClick={}
                                         >
                                             <DeleteIcon />
                                         </IconButton>

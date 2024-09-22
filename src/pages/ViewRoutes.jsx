@@ -257,7 +257,7 @@ const ViewRoutes = () =>
                         aria-controls={`panel-${date}-content`}
                         id={`panel-${date}-header`}
                         sx={{
-                          backgroundColor: theme.palette.background.default,  // Set background color
+                          backgroundColor: theme.palette.primary.accent,  // Set background color
                           borderBottom: '1px solid grey', // Add a border
                           borderRadius: '8px',
                           margin: 0.5,

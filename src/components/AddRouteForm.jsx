@@ -240,6 +240,14 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
 
     }
 
+
+
+    /**
+     * Uses conditionals to determine the correct component to return
+     * based on maxvehicle and the loading state
+     *
+     * @returns {*}
+     */
     const VehiclePicker = () =>
     {
         if (loadingMaxVehicle)
@@ -253,6 +261,7 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
         }
         else if( maxVehicle > 0 )
         {
+            //normla vehicle selection available
             return (
                 <TextField
                     select
@@ -279,11 +288,13 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
 
             );
         }else{
+            //no vehicles available
             return (
                 <TextField
                     select
                     label="Number of Vehicles"
                     fullWidth
+                    value=''
                     onChange={handleNumVehiclesChange}
                     InputProps={{
                         startAdornment: (

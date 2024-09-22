@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { postDeliveryRoutes, fetchMethod } from '../store/apiFunctions';
+import { postDeliveryRoutes, fetchMethod, fetchNumVehicles } from '../store/apiFunctions';
 // Date Picker
 import DateSelectHighlight from '../components/DateSelectHighlight.jsx';
 import dayjs from 'dayjs';
@@ -30,6 +30,8 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
     const [numVehicles, setNumVehicles] = useState(1); // default to 1 vehicle
     const [calcType, setCalcType] = useState("brute");
     const [routesLoading, setRoutesLoading] = useState(false);
+    const [maxVehicle, setMaxVehicle] = useState(1);
+    const [loadingMaxVehicle, setLoadingMaxVehicle] = useState(true);
 
 
     // Depot handling
@@ -143,7 +145,20 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
         setSelectedDate(date);
         //filter orders by new date
         filterByDate(date);
+
+        settingMaxVechicles(date);
     };
+
+    const settingMaxVechicles = async (date) => {
+        console.log("In add route, date is " + JSON.stringify(date));
+
+        setLoadingMaxVehicle(true);
+        let tempMaxVehicles = await fetchNumVehicles(date);
+        setLoadingMaxVehicle(false);
+        console.log("Got a max vehicle of " + tempMaxVehicles);
+        setMaxVehicle(tempMaxVehicles);
+
+    }
 
 
     /**
@@ -225,12 +240,76 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
 
     }
 
+    const VehiclePicker = () =>
+    {
+        if (loadingMaxVehicle)
+        {
+            return (
+                <Skeleton sx={{
+                    width: '100%',  // Make it responsive to parent container
+                    height: '100px', // Auto-adjust height for responsiveness
+                }} />
+            );
+        }
+        else if( maxVehicle > 0 )
+        {
+            return (
+                <TextField
+                    select
+                    label="Number of Vehicles"
+                    value={numVehicles}
+                    fullWidth
+                    onChange={handleNumVehiclesChange}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <LocalShippingIcon />
+                            </InputAdornment>
+                        ),
+                    }}
+                >
+                        {[...Array(maxVehicle).keys()].map(i => (
+                    <MenuItem key={i + 1} value={i + 1}>
+                        {i + 1}
+                    </MenuItem>
+                        ))}
+                   
+                    
+                </TextField>
+
+            );
+        }else{
+            return (
+                <TextField
+                    select
+                    label="Number of Vehicles"
+                    fullWidth
+                    onChange={handleNumVehiclesChange}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <LocalShippingIcon />
+                            </InputAdornment>
+                        ),
+                    }}
+                >
+                    <MenuItem value={0} disabled>
+                        None available
+                    </MenuItem>
+                </TextField>
+
+            );
+
+        }
+    }
+
 
 
 
     useEffect(() =>
     {
         loadOrders();
+        settingMaxVechicles(selectedDate);
 
     }, []);
 
@@ -260,26 +339,8 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
                 </Grid>
                 {/* Dropdown for selecting number of vehicles and Regenerate button */}
                 <Grid item xs={6} md={3}>
-                    <TextField
-                        select
-                        label="Number of Vehicles"
-                        value={numVehicles}
-                        fullWidth
-                        onChange={handleNumVehiclesChange}
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <LocalShippingIcon />
-                                </InputAdornment>
-                            ),
-                        }}
-                    >
-                        {[...Array(10).keys()].map(i => (
-                            <MenuItem key={i + 1} value={i + 1}>
-                                {i + 1}
-                            </MenuItem>
-                        ))}
-                    </TextField>
+                   <VehiclePicker/>
+
                 </Grid>
                 {/*Depot drop down menu*/}
                 <Grid item xs={6} md={3}>
@@ -328,7 +389,7 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
                         </Button>
                     ) : (
                         <Button
-                            disabled={datePlannedOrders?.length == 0}
+                            disabled={datePlannedOrders?.length == 0 || maxVehicle == 0}
                             variant='contained'
                             sx={{ height: '100%' }}
                             onClick={calcRoutes} // Call loadRoutes on button click

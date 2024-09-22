@@ -501,7 +501,7 @@ export const getAccountDetails = async (accountId) => {
 };
 
 
-const handleDeleteAccount = async (accountId) => {
+export const handleDeleteAccount = async (accountId) => {
     const result = await deleteAccount(accountId);
     if (result) {
         console.log('successfully deleted account:' + accountId);

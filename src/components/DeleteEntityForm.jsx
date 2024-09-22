@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import handleDeleteAccount from '../store/apiFunctions'; 
+import { handleDeleteAccount } from '../store/apiFunctions'; 
 
 const DeleteEntityForm = ({ entity }) => {
     const [entityId, setEntityId] = useState('');
@@ -40,11 +40,12 @@ const DeleteEntityForm = ({ entity }) => {
                 <DeleteIcon /> Delete {entity}
             </Typography>
             <TextField
-                label={`${entity} ID`}
+                label={entity === 'user' ? 'Username' : `${entity} ID`}
                 value={entityId}
                 onChange={handleChange}
                 required
             />
+
             <Button variant="contained" color="error" type="submit">Delete {entity}</Button>
             {error && <Typography color="error">{error}</Typography>}
             {success && <Typography color="green">Account deleted successfully!</Typography>}

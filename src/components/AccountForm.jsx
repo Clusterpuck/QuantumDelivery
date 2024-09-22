@@ -91,16 +91,28 @@ const AccountForm = ({ mode, accountId }) => {
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <TextField
-                                    label="Password"
-                                    name="password"
-                                    type="password"
-                                    variant="outlined"
-                                    fullWidth
-                                    required={mode !== 'edit'} // password is only required for creating a new account
-                                    value={'******'}
-                                    disabled // disable editing for password, can be changed via change password button
-                                />
+                                {mode === 'edit' ? (
+                                    <TextField
+                                        label="Password"
+                                        name="password"
+                                        type="password"
+                                        variant="outlined"
+                                        fullWidth
+                                        value={'******'}
+                                        disabled
+                                    />
+                                ) : (
+                                    <TextField
+                                        label="Password"
+                                        name="password"
+                                        type="password"
+                                        variant="outlined"
+                                        fullWidth
+                                        required
+                                        value={formData.password}
+                                        onChange={handleInputChange}
+                                    />
+                                )}
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
@@ -131,7 +143,6 @@ const AccountForm = ({ mode, accountId }) => {
                                         name="companyRole"
                                         value={formData.companyRole}
                                         onChange={handleInputChange}
-                                        //disabled // <- toggle comment to enable/disable editing
                                     >
                                         <MenuItem value="DRIVER">Driver</MenuItem>
                                         <MenuItem value="ADMIN">Admin</MenuItem>

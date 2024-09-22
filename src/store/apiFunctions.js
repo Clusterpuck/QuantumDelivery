@@ -509,3 +509,35 @@ export const handleDeleteAccount = async (accountId) => {
         console.error('could not delete account');
     }
 };
+
+///Input is: const input = {
+//  "orderId": 0,
+//  "status": "string",
+//  "customerId": 0,
+//  "locationId": 0,
+//  "deliveryDate": "2024-09-22T05:15:09.115Z",
+//  "orderNotes": "string",
+//  "products": [
+//    {
+//      "productId": 0,
+//      "quantity": 0
+//    }
+//  ]
+//}
+export const updateOrderDetails = async (input) => {
+    const response = await fetch(`${Constants.DATA_ENDPOINT}orders/${input.orderId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(input),
+    });
+
+    // Check if the response is not OK
+    if (!response.ok) {
+        const errorText = await response.text(); // Get the error message from the response body
+        return `Error: ${errorText}`;
+    } else {
+        return "Order details successfully updated";  // Return success message if request was OK
+    }
+}

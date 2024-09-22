@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Snackbar, Alert, Paper, Box } from '@mui/material';
+import { Snackbar, Alert, Paper, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Dialog } from '@mui/material';
 import {formatDate} from '../store/helperFunctions';
+import EditOrderForm from '../components/EditOrderForm';
+import dayjs from 'dayjs';
 
 //update data us a state object that when changed on the parent object
 //will trigger a refresh of the orders table data. 
@@ -10,44 +12,65 @@ const OrdersTable = ({orders}) => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-
-
-    
-    const columns = [
-        { field: 'id', headerName: 'ID', flex: 0.05 },
-        { field: 'DeliveryDate', headerName: 'Date', flex: 0.15 },
-        { field: 'Address', headerName: 'Address', flex: 0.2 },
-        { field: 'customerName', headerName: 'Customer Name', flex: 0.1 },
-        { field: 'status', headerName: 'Status', flex: 0.2 },
-        { field: 'notes', headerName: 'Notes', flex: 0.3 },
-    ];
-    
-
-    // The rows should be based on the fetched orders data
-    const rows = orders?.map(order => ({
-        id: order.orderID,
-        Address: order.address,
-        status: order.status,
-        customerName: order.customerName,
-        notes: order.orderNotes,
-        DeliveryDate: formatDate(order.deliveryDate),
-        Products: order.productNames,
-
-    }));
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState(null);
 
     const handleSnackbarClose = () => {
         setSnackbarOpen(false);
     };
 
+    const handleEditClick = (order) => {
+        setSelectedOrder(order);
+        setOpenEditDialog(true);
+        
+    };
+
+    const handleCloseEditDialog = () => {
+        setOpenEditDialog(false);
+        setSelectedOrder(null); 
+    };
+
     return (
-        <Box sx={{ height: 400, width: '100%' }}>
+        <Box sx={{ width: '100%' }}>
+            <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
+                <Table stickyHeader>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell >ID</TableCell>
+                            <TableCell >Date</TableCell>
+                            <TableCell >Address</TableCell>
+                            <TableCell >Customer Name</TableCell>
+                            <TableCell >Status</TableCell>
+                            <TableCell >Notes</TableCell>
+                            <TableCell >Actions</TableCell> 
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {orders.map((row) => (
+                            <TableRow key={row.orderID}>
+                                <TableCell>{row.orderID}</TableCell>
+                                <TableCell>{dayjs(row.deliveryDate).format('DD/MM/YY')}</TableCell>
+                                <TableCell>{row.address}</TableCell>
+                                <TableCell>{row.customerName}</TableCell>
+                                <TableCell>{row.status}</TableCell>
+                                <TableCell>{row.orderNotes}</TableCell>
+                                <TableCell>
+                                    {(row.status === 'ISSUE' || row.status === 'PLANNED') && (
+                                        <Button 
+                                            variant="contained" 
+                                            color="primary" 
+                                            onClick={() => handleEditClick(row)}
+                                        >
+                                            Edit
+                                        </Button>
+                                    )}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
 
-            <DataGrid
-                rows={rows}
-                columns={columns}
-                pageSize={10}
-
-            />
             <Snackbar
                 open={snackbarOpen}
                 autoHideDuration={6000}
@@ -58,9 +81,11 @@ const OrdersTable = ({orders}) => {
                     {snackbarMessage}
                 </Alert>
             </Snackbar>
+            <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth>
+                <EditOrderForm order={selectedOrder} onClose={handleCloseEditDialog} />
+            </Dialog>
         </Box>
     );
-
-}
+};
 
 export default OrdersTable;

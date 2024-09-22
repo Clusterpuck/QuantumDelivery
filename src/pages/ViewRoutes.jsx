@@ -7,6 +7,7 @@ import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered"; // 
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday"; // Date Icon
 import LabelIcon from "@mui/icons-material/Label"; // ID Icon
 import { useTheme } from '@mui/material/styles';
+import WarehouseIcon from '@mui/icons-material/Warehouse';
 
 // Material-UI Components
 import
@@ -448,7 +449,7 @@ const ViewRoutes = () =>
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <LocalShippingIcon />
+                      <WarehouseIcon/>
                     </InputAdornment>
                   ),
                 }}

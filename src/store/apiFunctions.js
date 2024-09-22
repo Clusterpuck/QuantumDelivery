@@ -1,4 +1,5 @@
 import * as Constants from '../Constants.js';
+import {formatDate } from './helperFunctions.js';
 
 export const fetchRegion = async () => {
     let data = null
@@ -574,4 +575,52 @@ export const fetchNumVehicles = async (date) => {
     }
     return ipData;
 };
+
+
+export const deleteRouteByDate = async (date) => {
+    console.log("In delete by date API function. Incoming date is: " + JSON.stringify(date));
+    let result = null;
+    try {
+        // Create a Date object from the incoming string
+        const dateObj = new Date(date);
+
+        // Check if the date is valid
+        if (isNaN(dateObj.getTime())) {
+            throw new Error('Invalid date provided');
+        }
+
+        // Format the date as 'yyyy-MM-dd' string
+        const formattedDate = dateObj.getFullYear() + '-' +
+            String(dateObj.getMonth() + 1).padStart(2, '0') + '-' + 
+            String(dateObj.getDate()).padStart(2, '0');
+        
+        // Construct the DELETE endpoint URL with the formatted date
+        const endpoint = `${Constants.DATA_ENDPOINT}DeliveryRoutes/date/${encodeURIComponent(formattedDate)}`;
+        
+        console.log("Sending DELETE request to: " + endpoint + " with date: " + formattedDate);
+        
+        // Send the DELETE request to the API
+        const response = await fetch(endpoint, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        // Check if the request was successful
+        if (!response.ok) {
+            throw new Error('Failed to delete route for date ' + formattedDate);
+        }
+
+        // Parse the JSON response
+        result = await response.json();
+        console.log("DELETE request successful. Response: " + JSON.stringify(result));
+        
+    } catch (error) {
+        console.error('Error in DELETE request:', error.message);
+    }
+
+    return result;
+};
+
 

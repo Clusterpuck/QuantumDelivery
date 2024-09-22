@@ -541,3 +541,37 @@ export const updateOrderDetails = async (input) => {
         return "Order details successfully updated";  // Return success message if request was OK
     }
 }
+
+
+
+/**
+ * Sends a request to get number of vehicles still available at a select date
+ *
+ * @async
+ * @param {*} date
+ * @returns {unknown}
+ */
+export const fetchNumVehicles = async (date) => {
+    let ipData = null;
+    try {
+        // Convert the date to ISO string (or another desired format)
+        const formattedDate = new Date(date).toISOString().split('T')[0]; // Get only the 'yyyy-MM-dd' part
+        const endpoint = Constants.DATA_ENDPOINT + "Vehicles/num-on-date/" + encodeURIComponent(formattedDate); // Use query param
+        
+        console.log("End points sent is " + endpoint + " date is: " + formattedDate);
+
+        const ipResponse = await fetch(endpoint);
+        
+        if (!ipResponse.ok) {
+            throw new Error('Failed to fetch from endpoint ' + endpoint);
+        }
+
+        ipData = await ipResponse.json();
+        console.log("Fetch Method. Data is " + JSON.stringify(ipData));
+        
+    } catch (error) {
+        console.error('Error fetching from endpoint:', error.message);
+    }
+    return ipData;
+};
+

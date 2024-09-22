@@ -5,26 +5,14 @@ import '../assets/Marker.css';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
-const LiveMap = ({ checkedRoutes, ordersData }) => {
+const LiveMap = ({ checkedRoutes, ordersData, routeIdToColour }) => {
     const mapContainer = useRef(null);
     const map = useRef(null);
     const [markers, setMarkers] = useState([]);
     const [allCoordinates, setAllCoordinates] = useState([]);
     const [centered, setCentered] = useState(false); // to ensure that the map only centers on the page load, and not when you check/uncheck routes
 
-    const colourPalette = [
-        
-        '#3a429f', // violet blue
-        '#a97dce', // lavender
-        '#f4a4af', // cherry blossom pink
-        '#a7577f', // china rose
-        '#3d096b' // persian indigo
-    ];
 
-    const generateColourFromId = (routeId) => {
-        const index = parseInt(routeId, 10) % colourPalette.length;
-        return colourPalette[index];
-    };
 
     const fetchDirections = async (coordinates) => {
         const validCoordinates = coordinates.filter(coord => !isNaN(coord[0]) && !isNaN(coord[1]));
@@ -101,7 +89,7 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
         });
 
         const newMarkers = [];
-        const routeIdToColour = {};
+        //const routeIdToColour = {};
         const allRoutePromises = [];
         const routeIds = [];
         const tempAllCoordinates = [];
@@ -109,7 +97,7 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
         for (const routeId in ordersData) {
             if (checkedRoutes[routeId]) {
                 routeIds.push(routeId);
-                routeIdToColour[routeId] = generateColourFromId(routeId);
+                //routeIdToColour[routeId] = generateColourFromId(routeId);
                 const orders = ordersData[routeId].sort((a, b) => a.position - b.position);
                 const routeCoordinates = orders.map(order => [order.longitude, order.latitude]);
 

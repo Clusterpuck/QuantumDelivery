@@ -61,9 +61,9 @@ const LiveTracking = () => {
      *
      * @returns {{}}
      */
-    function assignRouteColours() {
+    function assignRouteColours(tempOrdersData) {
         const routeColourArray = {};
-            for (const routeID in ordersData ){
+            for (const routeID in tempOrdersData ){
                 routeColourArray[routeID] = generateColourFromId(routeID);
             }
             

@@ -172,7 +172,7 @@ const AdminControls = () => {
                         width: '100%',
                     }}
                 >
-                    {/* pass the userMode and accountId to the AccountForm */}
+                    {/* ass the userMode and accountId to the AccountForm */}
                     <AccountForm mode={userMode} accountId={accountId} />
                 </Box>
             </Modal>

@@ -30,6 +30,7 @@ import MapWithPins from '../components/MapWithPins.jsx';
 import { fetchMethod, deleteMethod } from '../store/apiFunctions';
 import { formatDate } from '../store/helperFunctions';
 import { enableScroll } from '../assets/scroll.js';
+import {deleteRouteByDate} from '../store/apiFunctions.js'
 
 
 const styleConstants = {
@@ -112,12 +113,19 @@ const ViewRoutes = () =>
     {
       //console.log('Item deleted successfully:', result);
       //await loadOrders();
-      await loadRoutes();
+      loadRoutes();
     } else
     {
       console.error('Failed to delete item.');
     }
 
+  }
+
+  const deleteAllRoutesByDate = async (date) =>{
+    console.log("In delete all date is " + JSON.stringify(date) + " formatted is " + formatDate(date));
+    let result = await deleteRouteByDate(date);
+    console.log("Delete all routes response is " + JSON.stringify(result));
+    loadRoutes();
   }
 
 
@@ -299,6 +307,16 @@ const ViewRoutes = () =>
                       <AccordionDetails
                         key={`panel-${date}-details`}
                       >
+                         <Grid item xs={12} md={12} sx={{ ml: 'auto' }}>
+                                <Button
+                                  onClick={() => deleteAllRoutesByDate(date)}
+                                  color="error"
+                                  variant="contained"
+                                  size='small'
+                                >
+                                  Delete All Routes For Date: {formatDate(date)}
+                                </Button>
+                              </Grid>
                         {dateRoutes.map((route) => (
                           <Grid container item xs={12} md={12} sx={{ mb: 5 }}>
                             <Grid item xs={12} md={12} container alignItems="center" spacing={2} sx={{ mb: 2 }}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Box, Paper, Button, Grid } from '@mui/material';
+import { TextField, Box, Paper, Button, Grid, Typography, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { getAccountDetails } from '../store/apiFunctions';
 
@@ -8,8 +8,8 @@ const AccountForm = ({ mode, accountId }) => {
         fullName: '',
         email: '',
         password: '',
-        companyName: '',
-        companyPhone: '',
+        address: '',
+        phone: '',
         companyRole: '',
     });
 
@@ -22,9 +22,9 @@ const AccountForm = ({ mode, accountId }) => {
                     setFormData({
                         fullName: accountDetails.name || '',
                         email: accountDetails.username || '',
-                        password: '', // keep password empty for security, maybe update it to a bunch of dots instead
-                        companyName: accountDetails.companyName || '',
-                        companyPhone: accountDetails.companyPhone || '',
+                        password: '', // password empty for security, shown as dots in input
+                        address: accountDetails.address || '',
+                        phone: accountDetails.phone || '',
                         companyRole: accountDetails.role || '',
                     });
                 } else {
@@ -33,7 +33,7 @@ const AccountForm = ({ mode, accountId }) => {
             };
             fetchAccountData();
         }
-    }, [mode, accountId]); // dependency array to rerun the effect if mode or accountId changes
+    }, [mode, accountId]);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -51,6 +51,11 @@ const AccountForm = ({ mode, accountId }) => {
         } else {
             console.log('Creating new account...', formData);
         }
+    };
+
+    const handleChangePassword = () => {
+        // TODO: Implement change password logic here
+        console.log('Change password logic goes here');
     };
 
     return (
@@ -92,49 +97,71 @@ const AccountForm = ({ mode, accountId }) => {
                                     type="password"
                                     variant="outlined"
                                     fullWidth
-                                    required={!mode === 'edit'} // password is only required for creating a new account
-                                    value={formData.password}
+                                    required={mode !== 'edit'} // password is only required for creating a new account
+                                    value={'******'}
+                                    disabled // disable editing for password, can be changed via change password button
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    label="Address"
+                                    name="address"
+                                    variant="outlined"
+                                    fullWidth
+                                    required
+                                    value={formData.address}
                                     onChange={handleInputChange}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    label="Company Name"
-                                    name="companyName"
+                                    label="Phone Number"
+                                    name="phone"
                                     variant="outlined"
                                     fullWidth
                                     required
-                                    value={formData.companyName}
+                                    value={formData.phone}
                                     onChange={handleInputChange}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <TextField
-                                    label="Company Phone"
-                                    name="companyPhone"
-                                    variant="outlined"
-                                    fullWidth
-                                    required
-                                    value={formData.companyPhone}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    label="Company Role"
-                                    name="companyRole"
-                                    variant="outlined"
-                                    fullWidth
-                                    required
-                                    value={formData.companyRole}
-                                    onChange={handleInputChange}
-                                />
+                                <FormControl fullWidth required>
+                                    <InputLabel>Company Role</InputLabel>
+                                    <Select
+                                        name="companyRole"
+                                        value={formData.companyRole}
+                                        onChange={handleInputChange}
+                                        //disabled // <- toggle comment to enable/disable editing
+                                    >
+                                        <MenuItem value="DRIVER">Driver</MenuItem>
+                                        <MenuItem value="ADMIN">Admin</MenuItem>
+                                    </Select>
+                                </FormControl>
                             </Grid>
                         </Grid>
                         <Grid item xs={12} sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <Button type="submit" variant="contained" color="primary" sx={{ width: "250px" }}>
+                            <Button type="submit" variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
                                 {mode === 'edit' ? 'Save Changes' : 'Create Account'}
                             </Button>
+                            {mode === 'edit' && (
+                                <Button
+                                    variant="outlined"
+                                    color="secondary"
+                                    onClick={handleChangePassword}
+                                    sx={{
+                                        padding: '10px 20px', // Increase padding
+                                        fontSize: '1rem', // Increase font size
+                                        border: '2px solid', // Make border thicker
+                                        borderColor: 'secondary.main',
+                                        '&:hover': {
+                                            backgroundColor: 'secondary.main', // Change background on hover
+                                            color: 'white', // Change text color on hover
+                                        },
+                                    }}
+                                >
+                                    Change Password
+                                </Button>
+                            )}
                         </Grid>
                     </form>
                 </Grid>

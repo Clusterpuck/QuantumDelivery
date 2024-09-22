@@ -6,6 +6,24 @@ import AdminControlsForm from '../components/AdminControlsForm';
 import DeleteEntityForm from '../components/DeleteEntityForm';
 import AccountForm from '../components/AccountForm';
 
+// Function to retrieve the 'userName' from the cookie
+const getUsernameFromCookie = () => {
+    const name = 'userName='; // Updated to match the set cookie name
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const cookieArray = decodedCookie.split(';');
+    for (let i = 0; i < cookieArray.length; i++) {
+        let cookie = cookieArray[i];
+        while (cookie.charAt(0) === ' ') {
+            cookie = cookie.substring(1);
+        }
+        if (cookie.indexOf(name) === 0) {
+            return cookie.substring(name.length, cookie.length);
+        }
+    }
+    return '';
+};
+
+
 const AdminControls = () => {
     const navigate = useNavigate();
 
@@ -20,6 +38,7 @@ const AdminControls = () => {
     const [openDelete, setOpenDelete] = useState(false);
     const [openAccountForm, setOpenAccountForm] = useState(false);
     const [userMode, setUserMode] = useState('add'); // Keep track of the mode for the user form
+    const [accountId, setAccountId] = useState(''); // Track accountId when editing
 
     const handleOperationChange = (entity) => (event) => {
         setOperations({
@@ -37,7 +56,16 @@ const AdminControls = () => {
             setOpenDelete(true);
         } else if (entity === 'user' && (operation === 'add' || operation === 'edit')) {
             // Set user mode before opening the form
-            setUserMode(operation); 
+            setUserMode(operation);
+
+            // If editing, retrieve the username from the cookie and set the accountId
+            if (operation === 'edit') {
+                const username = getUsernameFromCookie();
+                setAccountId(username);
+            } else {
+                setAccountId(''); // No accountId when adding a new user
+            }
+
             setOpenAccountForm(true);
         } else if (entity !== 'user') {
             console.log(`Submitted operation for ${entity}:`, operation);
@@ -144,8 +172,8 @@ const AdminControls = () => {
                         width: '100%',
                     }}
                 >
-                    {/* Pass the userMode prop to the AccountForm */}
-                    <AccountForm mode={userMode} />
+                    {/* Pass the userMode and accountId to the AccountForm */}
+                    <AccountForm mode={userMode} accountId={accountId} />
                 </Box>
             </Modal>
 

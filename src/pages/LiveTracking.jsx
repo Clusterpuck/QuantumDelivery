@@ -116,6 +116,7 @@ const LiveTracking = () => {
         const orders = ordersData[routeId];
         if (orders) {
             const sortedOrders = orders.sort((a, b) => a.position - b.position);
+            //TODO this appears to be doin nothing
         }
     };
 

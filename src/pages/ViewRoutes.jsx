@@ -15,7 +15,8 @@ import
   TextField, Button, Grid, Paper, MenuItem, Snackbar,
   Alert, Divider, Typography, InputAdornment, Radio, RadioGroup,
   FormControlLabel, Accordion, AccordionDetails, AccordionSummary, LinearProgress, CircularProgress,
-  Box
+  Box,
+  Skeleton
 } from '@mui/material';
 
 // Material-UI Icons
@@ -390,27 +391,15 @@ const ViewRoutes = () =>
     setSelectedDepot(Number(event.target.value));
   };
 
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: 8,
-      }}
-    >
-
-      <Typography variant="h2" component="h1" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <RouteIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
-        Routes
-      </Typography>
-
-      <Paper elevation={3} sx={{ padding: 3, maxWidth: 1500, width: '100%' }}>
-        <Grid item xs={12} md={12} container spacing={2}>
-          <Grid item xs={12} md={12} container spacing={2} alignItems="center">
+  const AddRoute = () => {
+    return(
+      <Grid item xs={12} md={12} container spacing={2}>
+      <Grid item xs={12} md={12} container spacing={2} alignItems="center">
             <Grid item xs={4} md={3} >
-              {ordersLoading ? <CircularProgress /> :
+              {ordersLoading ? <Skeleton sx={{
+                    width: '100%',  // Make it responsive to parent container
+                    height: '100px', // Auto-adjust height for responsiveness
+                  }} /> :
 
                 <DateSelectHighlight highlightedDates={unassignedDates} selectedDate={selectedDate} handleDateChange={handleDateChange} />
               }
@@ -499,7 +488,10 @@ const ViewRoutes = () =>
 
           {/* unassigned orders component */}
           <Grid item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
-            {ordersLoading ? <LinearProgress /> :
+            {ordersLoading ? <Skeleton sx={{
+                    width: '100%',  // Make it responsive to parent container
+                    height: '100px', // Auto-adjust height for responsiveness
+                  }} /> :
               (
                 <Accordion sx={{ width: '100%' }} >
                   <AccordionSummary
@@ -547,10 +539,38 @@ const ViewRoutes = () =>
                 </Accordion>
               )}
           </Grid>
+          </Grid>
+    )
+  }
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 8,
+      }}
+    >
+
+      <Typography variant="h2" component="h1" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <RouteIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
+        Routes
+      </Typography>
+
+      <Paper elevation={3} sx={{ padding: 3, maxWidth: 1500, width: '100%' }}>
+        <Grid item xs={12} md={12} container spacing={2}>
+          <AddRoute/>
 
 
           <Grid item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
-            {routesLoading ? (<LinearProgress color='primary' sx={{ width: '100%' }} />) : (
+            {routesLoading ? (
+            <Skeleton sx={{
+              width: '100%',  // Make it responsive to parent container
+              height: '100px', // Auto-adjust height for responsiveness
+            }} />
+            ) : (
               <>
 
                 {/* Render assigned vehicles */}

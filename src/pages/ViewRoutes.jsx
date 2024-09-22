@@ -2,14 +2,20 @@
 import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar"; // Vehicle Icon
+import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered"; // Orders Icon
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday"; // Date Icon
+import LabelIcon from "@mui/icons-material/Label"; // ID Icon
+import { useTheme } from '@mui/material/styles';
 
 // Material-UI Components
 import
-  {
-    TextField, Button, Grid, Paper, MenuItem, Snackbar,
-    Alert, Divider, Typography, InputAdornment, Radio, RadioGroup,
-    FormControlLabel, Accordion, AccordionDetails, AccordionSummary, LinearProgress, CircularProgress
-  } from '@mui/material';
+{
+  TextField, Button, Grid, Paper, MenuItem, Snackbar,
+  Alert, Divider, Typography, InputAdornment, Radio, RadioGroup,
+  FormControlLabel, Accordion, AccordionDetails, AccordionSummary, LinearProgress, CircularProgress,
+  Box
+} from '@mui/material';
 
 // Material-UI Icons
 import RouteIcon from '@mui/icons-material/Route';
@@ -63,7 +69,9 @@ const ViewRoutes = () =>
     { id: 3, name: "Depot C" },
     { id: 4, name: "Depot D" },
   ];
-  const [selectedDepot, setSelectedDepot] = useState(depots[0].id); 
+  const [selectedDepot, setSelectedDepot] = useState(depots[0].id);
+
+  const theme = useTheme();
 
 
   useEffect(() =>
@@ -155,7 +163,7 @@ const ViewRoutes = () =>
   const handleCalcChange = (event) =>
   {
     setCalcType(event.target.value)
-   // console.log("Calc changed to ", event.target.value);
+    // console.log("Calc changed to ", event.target.value);
 
   }
 
@@ -300,21 +308,28 @@ const ViewRoutes = () =>
       {
         //console.log("xxXX Route List is " + JSON.stringify(routesList));
         //setRoutes(routesList);
-        const groupedRoutes = routesList.reduce((acc, route) =>
-        {
+        const groupedRoutes = routesList.reduce((acc, route) => {
           const deliveryDate = new Date(route.deliveryDate).toDateString(); // Convert to string (ignoring time)
-
+        
           // Check if this date already exists in the accumulator
-          if (!acc[deliveryDate])
-          {
+          if (!acc[deliveryDate]) {
             acc[deliveryDate] = []; // Initialize array if it doesn't exist
           }
-
+        
           acc[deliveryDate].push(route); // Add route to the relevant date group
           return acc;
         }, {});
-
-        setRoutes(groupedRoutes)
+        
+        // Convert to an array of entries and sort by date
+        const sortedGroupedRoutes = Object.entries(groupedRoutes).sort(([dateA], [dateB]) => 
+          new Date(dateA) - new Date(dateB)
+        );
+        
+        // Convert back to an object if needed
+        const sortedRoutes = Object.fromEntries(sortedGroupedRoutes);
+        
+        setRoutes(sortedRoutes);
+        
         //console.log("xxXXGrouped Routes by Date: ", groupedRoutes);
         return groupedRoutes;
       }
@@ -338,7 +353,8 @@ const ViewRoutes = () =>
         severity: 'error'
       });
     }
-    finally{
+    finally
+    {
       setRoutesLoading(false);
     }
   };
@@ -346,13 +362,13 @@ const ViewRoutes = () =>
 
   // Define columns for DataGrid
   const columns = [
-    { field: 'orderID', headerName: 'Order ID', width: 90 },
-    { field: 'deliveryDate', headerName: 'Delivery Date', width: 100, renderCell: (params) => formatDate(params.value) },
-    { field: 'position', headerName: 'Position', width: 90 },
-    { field: 'address', headerName: 'Address', width: 150 },
-    { field: 'status', headerName: 'Status', width: 150 },
-    { field: 'customerName', headerName: 'Customer Name', width: 150 },
-    { field: 'productNames', headerName: 'Product Names', width: 500, renderCell: (params) => params.value.join(', ') },
+    { field: 'orderID', headerName: 'ID', flex: 0.5 },
+    // { field: 'deliveryDate', headerName: 'Delivery Date', flex: 2, renderCell: (params) => formatDate(params.value) },
+    { field: 'position', headerName: 'Position', flex: 1 },
+    { field: 'address', headerName: 'Address', flex: 4 },
+    { field: 'status', headerName: 'Status', flex: 2 },
+    { field: 'customerName', headerName: 'Customer Name', flex: 2.5 },
+    // { field: 'productNames', headerName: 'Product Names', width: 500, renderCell: (params) => params.value.join(', ') },
 
   ];
 
@@ -368,7 +384,8 @@ const ViewRoutes = () =>
     setNumVehicles(event.target.value);
   };
 
-  const handleDepotChange = (event) => {
+  const handleDepotChange = (event) =>
+  {
     setSelectedDepot(Number(event.target.value));
   };
 
@@ -392,9 +409,9 @@ const ViewRoutes = () =>
         <Grid item xs={12} md={12} container spacing={2}>
           <Grid item xs={12} md={12} container spacing={2} alignItems="center">
             <Grid item xs={4} md={3} >
-              {ordersLoading ? <CircularProgress/> :
+              {ordersLoading ? <CircularProgress /> :
 
-              <DateSelectHighlight highlightedDates={unassignedDates} selectedDate={selectedDate} handleDateChange={handleDateChange} />
+                <DateSelectHighlight highlightedDates={unassignedDates} selectedDate={selectedDate} handleDateChange={handleDateChange} />
               }
             </Grid>
             {/* Dropdown for selecting number of vehicles and Regenerate button */}
@@ -481,158 +498,187 @@ const ViewRoutes = () =>
 
           {/* unassigned orders component */}
           <Grid item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
-          {ordersLoading ? <LinearProgress/> :
-          (
-            <Accordion sx={{width: '100%'}} >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls={`panel-content`}
-                id={`panel-header`}
-                sx={{
-                  backgroundColor: 'lightblue',  // Set background color
-                  borderBottom: '1px solid grey', // Add a border
-                 
-                  '&:hover': {
-                    backgroundColor: 'teal', // Hover effect
-                  },
-                  '& .MuiTypography-root': {
-                    fontWeight: 'bold', // Custom font styles for text
-                    color: '#333', // Change text color
-                  },
-                }}
-              >
-               
+            {ordersLoading ? <LinearProgress /> :
+              (
+                <Accordion sx={{ width: '100%' }} >
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls={`panel-content`}
+                    id={`panel-header`}
+                    sx={{
+                      backgroundColor: 'lightblue',  // Set background color
+                      borderBottom: '1px solid grey', // Add a border
+
+                      '&:hover': {
+                        backgroundColor: 'teal', // Hover effect
+                      },
+                      '& .MuiTypography-root': {
+                        fontWeight: 'bold', // Custom font styles for text
+                        color: '#333', // Change text color
+                      },
+                    }}
+                  >
+
 
                     {plannedOrders ? (
                       <>
-                      <Grid container alignItems="center" spacing={2}>
-                    <Grid item xs={10}>
-                      <Typography variant="h6">
-                        Unassigned Orders: {datePlannedOrders.length}
-                      </Typography>
-                      <Typography variant="h7">
-                        Date: {formatDate(selectedDate)}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                        </>
+                        <Grid container alignItems="center" spacing={2}>
+                          <Grid item xs={10}>
+                            <Typography variant="h6">
+                              Unassigned Orders: {datePlannedOrders.length}
+                            </Typography>
+                            <Typography variant="h7">
+                              Date: {formatDate(selectedDate)}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                      </>
                     ) : (
                       <Typography variant="body1" color="textSecondary">
                         No Unassigned Orders
                       </Typography>
                     )}
 
-              </AccordionSummary>
-              <AccordionDetails>
-                <OrdersTable orders={datePlannedOrders} />
-              </AccordionDetails>
-            </Accordion>
-          )}
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <OrdersTable orders={datePlannedOrders} />
+                  </AccordionDetails>
+                </Accordion>
+              )}
           </Grid>
 
 
           <Grid item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
-            {routesLoading ? ( <LinearProgress color='primary' sx={{ width: '100%' }} />) : (
+            {routesLoading ? (<LinearProgress color='primary' sx={{ width: '100%' }} />) : (
               <>
-            
-            {/* Render assigned vehicles */}
-            {Object.entries(routes).map(([date, dateRoutes]) => (
-              <Grid item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
-              <Accordion key={date}>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls={`panel-${date}-content`}
-                  id={`panel-${date}-header`}
-                  sx={{
-                    backgroundColor: 'lightblue',  // Set background color
-                    borderBottom: '1px solid grey', // Add a border
-                    '&:hover': {
-                      backgroundColor: 'teal', // Hover effect
-                    },
-                    '& .MuiTypography-root': {
-                      fontWeight: 'bold', // Custom font styles for text
-                      color: '#333', // Change text color
-                    },
-                  }}
-                >
-                  <Grid container alignItems="center" spacing={2}>
-                    <Grid item xs={10}>
-                      <Typography variant="h7">
-                        Delivery Date: {date}
-                      </Typography>
-                      <Typography variant="subtitle1">
-                        Total Routes: {dateRoutes.length}
-                      </Typography>
-                    </Grid>
+
+                {/* Render assigned vehicles */}
+                {Object.entries(routes).map(([date, dateRoutes]) => (
+                  <Grid key={date} item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
+                    <Accordion key={date} sx={{width: '100%'}}>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls={`panel-${date}-content`}
+                        id={`panel-${date}-header`}
+                        sx={{
+                          backgroundColor: theme.palette.background.default,  // Set background color
+                          borderBottom: '1px solid grey', // Add a border
+                          borderRadius: '8px',
+                          margin: 0.5,
+                          '&:hover': {
+                            backgroundColor: theme.palette.secondary.main, // Hover effect
+                          },
+                          '& .MuiTypography-root': {
+                            fontWeight: 'bold', // Custom font styles for text
+                            color: theme.palette.text.primary, // Change text color
+                          },
+                        }}
+                      >
+                        <Grid container margin={0.1}>
+                          <Grid item xs={12} md={4} marginBottom={2} marginTop={2}>
+                            <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
+                              <CalendarTodayIcon color="primary" />
+                              <Typography variant='h6' >
+                                Date: {formatDate(date)}
+                              </Typography>
+                            </Box>
+                          </Grid>
+                          <Grid item xs={6} md={4} marginTop={2}>
+                            <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
+                              <Typography variant="subtitle1">
+                                Total Routes: {dateRoutes.length}
+                              </Typography>
+                            </Box>
+                          </Grid>
+                          <Grid item xs={6} md={4} marginTop={2}>
+                            <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
+                              <Typography variant="subtitle1">
+                                Total Orders: {dateRoutes.reduce((acc, curr) => acc + curr.orders.length, 0)}
+                              </Typography>
+                            </Box>
+                          </Grid>
+                        </Grid>
+
+                      </AccordionSummary>
+                      <AccordionDetails
+                        key={`panel-${date}-details`}
+                      >
+                        {dateRoutes.map((route) => (
+                        <Grid container item xs={12} md={12} sx={{mb: 5}}>
+                          <Grid item xs={12} md={12} container alignItems="center" spacing={2} sx={{mb: 2}}>
+                           
+                              {/* Route Details with Icons */}
+                              <Grid item xs={6} md={5}>
+                                <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
+                                  <LabelIcon color="primary" />
+                                  <Typography>ID: {route.deliveryRouteID}</Typography>
+                                </Box>
+
+                                <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
+                                  <DirectionsCarIcon color="primary" />
+                                  <Typography>Vehicle: {route.vehicleId}</Typography>
+                                </Box>
+                                <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
+                                  <FormatListNumberedIcon color="primary" />
+                                  <Typography>Orders: {route.orders.length}</Typography>
+                                </Box>
+                                </Grid>
+
+                                
+                            <Grid item xs={12} md={2} sx={{ml: 'auto'}}>
+                              <Button
+                                onClick={() => deleteRoute(route.deliveryRouteID)}
+                                color="error"
+                                variant="contained"
+                                size='small'
+                              >
+                                Delete Route
+                              </Button>
+                            </Grid>
+                            </Grid>
+
+                            {/* Grid container for table and map side by side */}
+                            <Grid container item xs={12} spacing={2}>
+                              {/* DataGrid for orders */}
+                              <Grid item xs={12} md={7} sx={styleConstants.fieldSpacing}>
+                                <DataGrid
+                                  rows={route.orders
+                                    .slice()
+                                    .sort((a, b) => a.position - b.position)
+                                    .map((order) => ({ id: order.orderID, ...order }))}
+                                  columns={columns}
+                                  pageSize={5}
+                                  autoHeight
+                                  density='compact'
+                                />
+                              </Grid>
+
+                              {/* Map for orders */}
+                              <Grid item xs={12} md={5} sx={styleConstants.fieldSpacing}>
+                                {route.orders && route.orders.length > 0 ? (
+                                
+                                  <MapWithPins
+                                    inputLocations={route.orders
+                                      .slice()
+                                      .sort((a, b) => a.position - b.position)
+                                      .map((order) => ({
+                                        latitude: order.latitude,
+                                        longitude: order.longitude,
+                                      }))}
+                                  />
+                                ) : (
+                                  <p>No Orders</p>
+                                )}
+                              </Grid>
+                            </Grid>
+                          </Grid>
+                        ))}
+                      </AccordionDetails>
+
+                    </Accordion>
                   </Grid>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {dateRoutes.map((route) => (
-                    <>
-                      <Grid container alignItems="center" spacing={2}>
-                        <Grid item xs={10}>
-                          <Typography>
-                            ID: {route.deliveryRouteID} &nbsp;
-                            Vehicle: {route.vehicleId} &nbsp;
-                            Orders: {route.orders.length} &nbsp;
-                            Date: {formatDate(route.deliveryDate)}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={2}>
-                          <Button
-                            onClick={() => deleteRoute(route.deliveryRouteID)}
-                            color="error"
-                            variant="contained"
-                          >
-                            Delete Route
-                          </Button>
-                        </Grid>
-                      </Grid>
-
-                      <Grid item xs={12} md={12} sx={styleConstants.fieldSpacing}>
-                        <Divider>
-                          <Typography variant="h4" component="h3" align="center">
-                            Vehicle {route.vehicleId}
-                          </Typography>
-                        </Divider>
-
-                        {/* DataGrid for orders */}
-                        <Grid item xs={12} md={12} sx={styleConstants.fieldSpacing}>
-                          <DataGrid
-                            rows={route.orders
-                              .slice()
-                              .sort((a, b) => a.position - b.position)
-                              .map((order) => ({ id: order.orderID, ...order }))}
-                            columns={columns}
-                            pageSize={5}
-                            autoHeight
-                          />
-
-                          {/* Map for orders */}
-                          {route.orders && route.orders.length > 0 ? (
-                            <>
-                              <MapWithPins
-                                inputLocations={route.orders
-                                  .slice()
-                                  .sort((a, b) => a.position - b.position)
-                                  .map((order) => ({
-                                    latitude: order.latitude,
-                                    longitude: order.longitude,
-                                  }))}
-                              />
-                            </>
-                          ) : (
-                            <p>No Orders</p>
-                          )}
-                        </Grid>
-                      </Grid>
-                    </>
-                  ))}
-                </AccordionDetails>
-              </Accordion>
-              </Grid>
-            ))}
-            </>
+                ))}
+              </>
             )}
           </Grid>
 

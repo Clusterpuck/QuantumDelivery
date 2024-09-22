@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import {enableScroll} from '../assets/scroll.js';
-import DateSelectHighlight from '../components/DateSelectHighlight.jsx';
+import MapWithPins from '../components/MapWithPins.jsx';
 
 
 const DailyReports = () => {
@@ -21,7 +21,7 @@ const DailyReports = () => {
             }}
         >
             <h1>Daily Reports</h1>
-            <DateSelectHighlight />
+            <MapWithPins inputLocations={[{latitude: 90, longitude: 110}]}/>
         </div>
     );
 };

@@ -46,6 +46,8 @@ const MapWithPins = ({inputLocations}) =>
         return () => map.remove();
     }, [inputLocations]);
 
+    
+
     return <div className="map-container" ref={mapContainerRef} />;
 };
 

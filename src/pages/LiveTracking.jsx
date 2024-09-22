@@ -61,13 +61,14 @@ const LiveTracking = () => {
      *
      * @returns {{}}
      */
-    function assignRouteColours() {
+    function assignRouteColours(tempOrdersData) {
         const routeColourArray = {};
-            for (const routeID in ordersData ){
+            for (const routeID in tempOrdersData ){
                 routeColourArray[routeID] = generateColourFromId(routeID);
             }
             
             setRouteIdToColour(routeColourArray);
+            console.log("xxXX routecoloursarray mae of ", JSON.stringify(routeColourArray));
         return routeColourArray;
 
     }
@@ -115,6 +116,7 @@ const LiveTracking = () => {
         const orders = ordersData[routeId];
         if (orders) {
             const sortedOrders = orders.sort((a, b) => a.position - b.position);
+            //TODO this appears to be doin nothing
         }
     };
 

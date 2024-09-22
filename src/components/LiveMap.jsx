@@ -89,7 +89,6 @@ const LiveMap = ({ checkedRoutes, ordersData, routeIdToColour }) => {
         });
 
         const newMarkers = [];
-        //const routeIdToColour = {};
         const allRoutePromises = [];
         const routeIds = [];
         const tempAllCoordinates = [];
@@ -97,7 +96,6 @@ const LiveMap = ({ checkedRoutes, ordersData, routeIdToColour }) => {
         for (const routeId in ordersData) {
             if (checkedRoutes[routeId]) {
                 routeIds.push(routeId);
-                //routeIdToColour[routeId] = generateColourFromId(routeId);
                 const orders = ordersData[routeId].sort((a, b) => a.position - b.position);
                 const routeCoordinates = orders.map(order => [order.longitude, order.latitude]);
 

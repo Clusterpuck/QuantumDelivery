@@ -509,3 +509,39 @@ export const handleDeleteAccount = async (accountId) => {
         console.error('could not delete account');
     }
 };
+
+///Input is: const input = {
+//  "orderId": 0,
+//  "status": "string",
+//  "customerId": 0,
+//  "locationId": 0,
+//  "deliveryDate": "2024-09-22T05:15:09.115Z",
+//  "orderNotes": "string",
+//  "products": [
+//    {
+//      "productId": 0,
+//      "quantity": 0
+//    }
+//  ]
+//}
+export const updateOrderDetails = async(input) => {
+    try {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}orders/${input.orderId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(input),
+        });
+
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+            throw new Error('Failed to update order details');
+        } else {
+            console.log("Order degtails updated");
+        }
+    } catch (error) {
+        console.error('Error updating order details: ', error);
+    }
+};

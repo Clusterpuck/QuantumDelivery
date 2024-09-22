@@ -1,11 +1,11 @@
 // React and Date Handling
 import React, { useState, useEffect } from 'react';
-import dayjs from 'dayjs';
-import 'dayjs/locale/en-gb';
+
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar"; // Vehicle Icon
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered"; // Orders Icon
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday"; // Date Icon
 import LabelIcon from "@mui/icons-material/Label"; // ID Icon
+import AddIcon from '@mui/icons-material/Add'; // Add Icon
 import { useTheme } from '@mui/material/styles';
 import AddRouteForm from '../components/AddRouteForm.jsx';
 
@@ -13,8 +13,8 @@ import AddRouteForm from '../components/AddRouteForm.jsx';
 import
 {
   Button, Grid, Paper, Snackbar,
-  Alert, Typography, Accordion, AccordionDetails, AccordionSummary, 
-  Box, Skeleton
+  Alert, Typography, Accordion, AccordionDetails, AccordionSummary,
+  Box, Skeleton, Modal
 } from '@mui/material';
 
 // Material-UI Icons
@@ -27,7 +27,7 @@ import { DataGrid } from '@mui/x-data-grid';
 
 // Local Imports
 import MapWithPins from '../components/MapWithPins.jsx';
-import {fetchMethod, deleteMethod } from '../store/apiFunctions';
+import { fetchMethod, deleteMethod } from '../store/apiFunctions';
 import { formatDate } from '../store/helperFunctions';
 import { enableScroll } from '../assets/scroll.js';
 
@@ -48,9 +48,23 @@ const ViewRoutes = () =>
     severity: 'success',
   });
 
- 
+  // State for controlling Modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const theme = useTheme();
+
+
+  // Modal Style
+  const modalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '80%',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+  };
 
 
   useEffect(() =>
@@ -60,7 +74,14 @@ const ViewRoutes = () =>
 
   }, [])
 
-  
+  // Open Modal function
+  const handleOpenModal = () => setIsModalOpen(true);
+
+  // Close Modal function
+  const handleCloseModal = () => setIsModalOpen(false);
+
+
+
 
 
 
@@ -118,28 +139,30 @@ const ViewRoutes = () =>
       {
         //console.log("xxXX Route List is " + JSON.stringify(routesList));
         //setRoutes(routesList);
-        const groupedRoutes = routesList.reduce((acc, route) => {
+        const groupedRoutes = routesList.reduce((acc, route) =>
+        {
           const deliveryDate = new Date(route.deliveryDate).toDateString(); // Convert to string (ignoring time)
-        
+
           // Check if this date already exists in the accumulator
-          if (!acc[deliveryDate]) {
+          if (!acc[deliveryDate])
+          {
             acc[deliveryDate] = []; // Initialize array if it doesn't exist
           }
-        
+
           acc[deliveryDate].push(route); // Add route to the relevant date group
           return acc;
         }, {});
-        
+
         // Convert to an array of entries and sort by date
-        const sortedGroupedRoutes = Object.entries(groupedRoutes).sort(([dateA], [dateB]) => 
+        const sortedGroupedRoutes = Object.entries(groupedRoutes).sort(([dateA], [dateB]) =>
           new Date(dateA) - new Date(dateB)
         );
-        
+
         // Convert back to an object if needed
         const sortedRoutes = Object.fromEntries(sortedGroupedRoutes);
-        
+
         setRoutes(sortedRoutes);
-        
+
         //console.log("xxXXGrouped Routes by Date: ", groupedRoutes);
         return groupedRoutes;
       }
@@ -202,22 +225,33 @@ const ViewRoutes = () =>
 
       <Paper elevation={3} sx={{ padding: 3, maxWidth: 1500, width: '100%' }}>
         <Grid item xs={12} md={12} container spacing={2}>
-          <AddRouteForm/>
+          <Grid item xs={12} md={12} margin={2} >
+          {/* Add Route Button */}
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={handleOpenModal}
+          >
+            Add New Routes
+          </Button>
+
+          </Grid>
 
 
           <Grid item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
             {routesLoading ? (
-            <Skeleton sx={{
-              width: '100%',  // Make it responsive to parent container
-              height: '100px', // Auto-adjust height for responsiveness
-            }} />
+              <Skeleton sx={{
+                width: '100%',  // Make it responsive to parent container
+                height: '100px', // Auto-adjust height for responsiveness
+              }} />
             ) : (
               <>
 
                 {/* Render assigned vehicles */}
                 {Object.entries(routes).map(([date, dateRoutes]) => (
                   <Grid key={date} item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
-                    <Accordion key={date} sx={{width: '100%'}}>
+                    <Accordion key={date} sx={{ width: '100%' }}>
                       <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls={`panel-${date}-content`}
@@ -266,9 +300,9 @@ const ViewRoutes = () =>
                         key={`panel-${date}-details`}
                       >
                         {dateRoutes.map((route) => (
-                        <Grid container item xs={12} md={12} sx={{mb: 5}}>
-                          <Grid item xs={12} md={12} container alignItems="center" spacing={2} sx={{mb: 2}}>
-                           
+                          <Grid container item xs={12} md={12} sx={{ mb: 5 }}>
+                            <Grid item xs={12} md={12} container alignItems="center" spacing={2} sx={{ mb: 2 }}>
+
                               {/* Route Details with Icons */}
                               <Grid item xs={6} md={5}>
                                 <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
@@ -284,19 +318,19 @@ const ViewRoutes = () =>
                                   <FormatListNumberedIcon color="primary" />
                                   <Typography>Orders: {route.orders.length}</Typography>
                                 </Box>
-                                </Grid>
+                              </Grid>
 
-                                
-                            <Grid item xs={12} md={2} sx={{ml: 'auto'}}>
-                              <Button
-                                onClick={() => deleteRoute(route.deliveryRouteID)}
-                                color="error"
-                                variant="contained"
-                                size='small'
-                              >
-                                Delete Route
-                              </Button>
-                            </Grid>
+
+                              <Grid item xs={12} md={2} sx={{ ml: 'auto' }}>
+                                <Button
+                                  onClick={() => deleteRoute(route.deliveryRouteID)}
+                                  color="error"
+                                  variant="contained"
+                                  size='small'
+                                >
+                                  Delete Route
+                                </Button>
+                              </Grid>
                             </Grid>
 
                             {/* Grid container for table and map side by side */}
@@ -318,7 +352,7 @@ const ViewRoutes = () =>
                               {/* Map for orders */}
                               <Grid item xs={12} md={5} sx={styleConstants.fieldSpacing}>
                                 {route.orders && route.orders.length > 0 ? (
-                                
+
                                   <MapWithPins
                                     inputLocations={route.orders
                                       .slice()
@@ -343,6 +377,25 @@ const ViewRoutes = () =>
               </>
             )}
           </Grid>
+          
+
+          {/* Modal for AddRouteForm */}
+          <Modal
+            open={isModalOpen}
+            onClose={handleCloseModal}
+            aria-labelledby="add-route-modal"
+            aria-describedby="add-route-form"
+          >
+            <Box sx={modalStyle}>
+              <Typography id="add-route-modal" variant="h6" component="h2">
+                Calculate New Routes
+              </Typography>
+              <AddRouteForm updateRoutes={loadRoutes} closeView={handleCloseModal} />
+              <Button onClick={handleCloseModal} sx={{ mt: 2 }}>
+                Close
+              </Button>
+            </Box>
+          </Modal>
 
         </Grid>
       </Paper>

@@ -1,18 +1,37 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { handleDeleteAccount } from '../store/apiFunctions'; 
 
 const DeleteEntityForm = ({ entity }) => {
     const [entityId, setEntityId] = useState('');
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(false);
 
     const handleChange = (event) => {
         setEntityId(event.target.value);
+        setError(null); // reset error on change
+        setSuccess(false); // reset success on change
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         console.log(`Delete ${entity} with ID:`, entityId);
-        // TODO: Add logic to delete the entity
+
+        if (entity === 'user') {
+            try {
+                const result = await handleDeleteAccount(entityId); 
+                if (result) {
+                    setSuccess(true); 
+                } else {
+                    setError('Failed to delete account.'); 
+                }
+            } catch (err) {
+                setError('An error occurred while deleting the account.');
+                console.error(err); 
+            }
+        }
+        // TODO: Add logic to delete the entity for other types 
     };
 
     return (
@@ -21,12 +40,15 @@ const DeleteEntityForm = ({ entity }) => {
                 <DeleteIcon /> Delete {entity}
             </Typography>
             <TextField
-                label={`${entity} ID`}
+                label={entity === 'user' ? 'Username' : `${entity} ID`}
                 value={entityId}
                 onChange={handleChange}
                 required
             />
+
             <Button variant="contained" color="error" type="submit">Delete {entity}</Button>
+            {error && <Typography color="error">{error}</Typography>}
+            {success && <Typography color="green">Account deleted successfully!</Typography>}
         </Box>
     );
 };

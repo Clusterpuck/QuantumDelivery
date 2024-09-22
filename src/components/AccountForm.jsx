@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Box, Paper, Button, Grid, Typography, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { getAccountDetails } from '../store/apiFunctions';
+import { getAccountDetails, createAccount } from '../store/apiFunctions'; // Ensure you import createAccount
 
 const AccountForm = ({ mode, accountId }) => {
     const [formData, setFormData] = useState({
@@ -12,6 +12,8 @@ const AccountForm = ({ mode, accountId }) => {
         phone: '',
         companyRole: '',
     });
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(false);
 
     useEffect(() => {
         if (mode === 'edit') {
@@ -22,7 +24,7 @@ const AccountForm = ({ mode, accountId }) => {
                     setFormData({
                         fullName: accountDetails.name || '',
                         email: accountDetails.username || '',
-                        password: '', // password empty for security, shown as dots in input
+                        password: '', // password empty for security, is displayed as dots
                         address: accountDetails.address || '',
                         phone: accountDetails.phone || '',
                         companyRole: accountDetails.role || '',
@@ -43,18 +45,28 @@ const AccountForm = ({ mode, accountId }) => {
         });
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        // TODO: handle form submit event (update db with new details)
         if (mode === 'edit') {
             console.log('Saving changes...', formData);
+            // TODO: Add update logic here for editing account
         } else {
-            console.log('Creating new account...', formData);
+            try {
+                const result = await createAccount(formData);
+                if (result) {
+                    setSuccess(true);
+                    console.log('Account created successfully:', result);
+                } else {
+                    setError('Failed to create account.');
+                }
+            } catch (err) {
+                setError('An error occurred while creating the account.');
+                console.error(err);
+            }
         }
     };
 
     const handleChangePassword = () => {
-        // TODO: Implement change password logic here
         console.log('Change password logic goes here');
     };
 
@@ -160,19 +172,21 @@ const AccountForm = ({ mode, accountId }) => {
                                     color="secondary"
                                     onClick={handleChangePassword}
                                     sx={{
-                                        padding: '10px 20px', // Increase padding
-                                        fontSize: '1rem', // Increase font size
-                                        border: '2px solid', // Make border thicker
+                                        padding: '10px 20px',
+                                        fontSize: '1rem',
+                                        border: '2px solid',
                                         borderColor: 'secondary.main',
                                         '&:hover': {
-                                            backgroundColor: 'secondary.main', // Change background on hover
-                                            color: 'white', // Change text color on hover
+                                            backgroundColor: 'secondary.main',
+                                            color: 'white',
                                         },
                                     }}
                                 >
                                     Change Password
                                 </Button>
                             )}
+                            {error && <Typography color="error">{error}</Typography>}
+                            {success && <Typography color="green">Account created successfully!</Typography>}
                         </Grid>
                     </form>
                 </Grid>

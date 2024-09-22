@@ -496,6 +496,16 @@ export const getAccountDetails = async (accountId) => {
 
     } catch (error) {
         console.error('Error fetching account details:', error);
-        return null; // Handle the error as needed
+        return null; 
+    }
+};
+
+
+export const handleDeleteAccount = async (accountId) => {
+    const result = await deleteAccount(accountId);
+    if (result) {
+        console.log('successfully deleted account:' + accountId);
+    } else {
+        console.error('could not delete account');
     }
 };

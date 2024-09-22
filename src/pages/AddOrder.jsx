@@ -26,7 +26,6 @@ const styleConstants = {
 
 const AddOrder = () =>
 {
-    const [testOrder, setTestOrder] = useState(null);
 
     const [customers, setCustomers] = useState(null);
     const [loadingCustomers, setLoadingCustomers] = useState(false);
@@ -94,7 +93,6 @@ const AddOrder = () =>
         {
             const filteredOrders = loadOrders.filter(order => order.status !== "CANCELLED");
             setOrders(filteredOrders);
-            setTestOrder(filteredOrders[1]); //AMIRA TESTING
 
             console.log("Orders recieved are ", JSON.stringify(filteredOrders));
         } else
@@ -342,11 +340,6 @@ const AddOrder = () =>
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
 
                 <IssuesTable />
-            </Box>
-
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-
-                <EditOrderForm order={testOrder} />
             </Box>
 
             <h2>All Orders</h2>

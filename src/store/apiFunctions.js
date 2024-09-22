@@ -524,24 +524,20 @@ export const handleDeleteAccount = async (accountId) => {
 //    }
 //  ]
 //}
-export const updateOrderDetails = async(input) => {
-    try {
-        const response = await fetch(`${Constants.DATA_ENDPOINT}orders/${input.orderId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(input),
-        });
+export const updateOrderDetails = async (input) => {
+    const response = await fetch(`${Constants.DATA_ENDPOINT}orders/${input.orderId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(input),
+    });
 
-        if (!response.ok) {
-            console.error('Response status:', response.status);
-            console.error('Response status text:', response.statusText);
-            throw new Error('Failed to update order details');
-        } else {
-            console.log("Order degtails updated");
-        }
-    } catch (error) {
-        console.error('Error updating order details: ', error);
+    // Check if the response is not OK
+    if (!response.ok) {
+        const errorText = await response.text(); // Get the error message from the response body
+        return `Error: ${errorText}`;
+    } else {
+        return "Order details successfully updated";  // Return success message if request was OK
     }
-};
+}

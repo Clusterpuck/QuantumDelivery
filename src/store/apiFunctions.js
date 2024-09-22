@@ -422,3 +422,80 @@ export const updateOrderStatus  = async(input) =>{
     }
 }
 
+export const editAccount = async (accountId, updatedAccountData) => {
+    try {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}accounts/${accountId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedAccountData),
+        });
+
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+            throw new Error('Failed to update account details');
+        }
+
+        const responseData = await response.json();
+        console.log('Successfully updated account details:', responseData);
+        return responseData;
+
+    } catch (error) {
+        console.error('Error updating account details:', error);
+        return null;
+    }
+};
+
+export const createAccount = async (newAccountData) => {
+    try {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}accounts`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newAccountData),
+        });
+
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+            throw new Error('Failed to create account');
+        }
+
+        const responseData = await response.json();
+        console.log('Successfully created account:', responseData);
+        return responseData;
+
+    } catch (error) {
+        console.error('Error creating account:', error);
+        return null;
+    }
+};
+
+// account id is the USERNAME and it is stored in the user's cookie for easy access
+export const getAccountDetails = async (accountId) => {
+    try {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}accounts/${accountId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+            throw new Error(`Failed to fetch account details for account ID: ${accountId}`);
+        }
+
+        const responseData = await response.json();
+        console.log('Successfully fetched account details:', responseData);
+        return responseData; // Return the account details
+
+    } catch (error) {
+        console.error('Error fetching account details:', error);
+        return null; // Return null or handle the error as needed
+    }
+};

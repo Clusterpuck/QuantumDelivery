@@ -492,10 +492,10 @@ export const getAccountDetails = async (accountId) => {
 
         const responseData = await response.json();
         console.log('Successfully fetched account details:', responseData);
-        return responseData; // Return the account details
+        return responseData;
 
     } catch (error) {
         console.error('Error fetching account details:', error);
-        return null; // Return null or handle the error as needed
+        return null; // Handle the error as needed
     }
 };

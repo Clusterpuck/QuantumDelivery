@@ -6,9 +6,9 @@ import AdminControlsForm from '../components/AdminControlsForm';
 import DeleteEntityForm from '../components/DeleteEntityForm';
 import AccountForm from '../components/AccountForm';
 
-// Function to retrieve the 'userName' from the cookie
+// function to retrieve the 'userName' from the cookie
 const getUsernameFromCookie = () => {
-    const name = 'userName='; // Updated to match the set cookie name
+    const name = 'userName='; 
     const decodedCookie = decodeURIComponent(document.cookie);
     const cookieArray = decodedCookie.split(';');
     for (let i = 0; i < cookieArray.length; i++) {
@@ -37,8 +37,8 @@ const AdminControls = () => {
     const [deleteEntity, setDeleteEntity] = useState(null);
     const [openDelete, setOpenDelete] = useState(false);
     const [openAccountForm, setOpenAccountForm] = useState(false);
-    const [userMode, setUserMode] = useState('add'); // Keep track of the mode for the user form
-    const [accountId, setAccountId] = useState(''); // Track accountId when editing
+    const [userMode, setUserMode] = useState('add'); // keep track of the mode for the user form
+    const [accountId, setAccountId] = useState(''); // track accountId when editing
 
     const handleOperationChange = (entity) => (event) => {
         setOperations({
@@ -55,15 +55,15 @@ const AdminControls = () => {
             setDeleteEntity(entity);
             setOpenDelete(true);
         } else if (entity === 'user' && (operation === 'add' || operation === 'edit')) {
-            // Set user mode before opening the form
+            // set user mode before opening the form
             setUserMode(operation);
 
-            // If editing, retrieve the username from the cookie and set the accountId
+            // if editing, retrieve the username from the cookie and set the accountId
             if (operation === 'edit') {
                 const username = getUsernameFromCookie();
                 setAccountId(username);
             } else {
-                setAccountId(''); // No accountId when adding a new user
+                setAccountId(''); // no accountId needed when adding a new user
             }
 
             setOpenAccountForm(true);
@@ -124,7 +124,7 @@ const AdminControls = () => {
                 </Grid>
             </Paper>
 
-            {/* Delete Form Modal */}
+            {/* delete form modal */}
             <Modal
                 open={openDelete}
                 onClose={handleCloseDelete}
@@ -152,7 +152,7 @@ const AdminControls = () => {
                 </Box>
             </Modal>
 
-            {/* Account Form Modal */}
+            {/* account form modal */}
             <Modal
                 open={openAccountForm}
                 onClose={handleCloseAccountForm}
@@ -172,7 +172,7 @@ const AdminControls = () => {
                         width: '100%',
                     }}
                 >
-                    {/* Pass the userMode and accountId to the AccountForm */}
+                    {/* pass the userMode and accountId to the AccountForm */}
                     <AccountForm mode={userMode} accountId={accountId} />
                 </Box>
             </Modal>

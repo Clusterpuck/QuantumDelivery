@@ -22,7 +22,7 @@ const AccountForm = ({ mode, accountId }) => {
                     setFormData({
                         fullName: accountDetails.name || '',
                         email: accountDetails.username || '',
-                        password: '', // Keep password empty for security
+                        password: '', // keep password empty for security, maybe update it to a bunch of dots instead
                         companyName: accountDetails.companyName || '',
                         companyPhone: accountDetails.companyPhone || '',
                         companyRole: accountDetails.role || '',
@@ -33,7 +33,7 @@ const AccountForm = ({ mode, accountId }) => {
             };
             fetchAccountData();
         }
-    }, [mode, accountId]); // Dependency array to rerun the effect if mode or accountId changes
+    }, [mode, accountId]); // dependency array to rerun the effect if mode or accountId changes
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -45,7 +45,7 @@ const AccountForm = ({ mode, accountId }) => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        // Handle form submission logic here (e.g., call the API to create or update the account)
+        // TODO: handle form submit event (update db with new details)
         if (mode === 'edit') {
             console.log('Saving changes...', formData);
         } else {
@@ -92,7 +92,7 @@ const AccountForm = ({ mode, accountId }) => {
                                     type="password"
                                     variant="outlined"
                                     fullWidth
-                                    required={!mode === 'edit'} // Password is only required for creating a new account
+                                    required={!mode === 'edit'} // password is only required for creating a new account
                                     value={formData.password}
                                     onChange={handleInputChange}
                                 />

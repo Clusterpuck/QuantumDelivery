@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import {enableScroll} from '../assets/scroll.js';
-import DateSelectHighlight from '../components/DateSelectHighlight.jsx';
+import AddRouteForm from '../components/AddRouteForm.jsx'
 
 
 const DailyReports = () => {
@@ -11,19 +11,9 @@ const DailyReports = () => {
     }, []);
 
     return (
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 8,
-            }}
-        >
-            <h1>Daily Reports</h1>
-            <DateSelectHighlight />
-        </div>
-    );
+        <AddRouteForm/>
+        
+    )
 };
 
 export default DailyReports;

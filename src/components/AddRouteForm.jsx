@@ -249,7 +249,7 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
         <Grid item xs={12} md={12} container spacing={2}>
             <Grid item xs={12} md={12} container spacing={2} alignItems="center">
                 {/**date selection */}
-                <Grid item xs={3} md={3} >
+                <Grid item xs={6} md={3} >
                     {ordersLoading ? <Skeleton sx={{
                         width: '100%',  // Make it responsive to parent container
                         height: '100px', // Auto-adjust height for responsiveness
@@ -259,7 +259,7 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
                     }
                 </Grid>
                 {/* Dropdown for selecting number of vehicles and Regenerate button */}
-                <Grid item xs={3} md={3}>
+                <Grid item xs={6} md={3}>
                     <TextField
                         select
                         label="Number of Vehicles"
@@ -282,7 +282,7 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
                     </TextField>
                 </Grid>
                 {/*Depot drop down menu*/}
-                <Grid item xs={3} md={3}>
+                <Grid item xs={6} md={3}>
                     <TextField
                         select
                         label="Depot"
@@ -305,7 +305,7 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
                     </TextField>
                 </Grid>
                 {/**Calc type selection */}
-                <Grid item xs={3} md={3}>
+                <Grid item xs={6} md={3}>
                     <RadioGroup
                         aria-labelledby="demo-controlled-radio-buttons-group"
                         name="controlled-radio-buttons-group"

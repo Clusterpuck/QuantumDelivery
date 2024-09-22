@@ -68,6 +68,7 @@ const LiveTracking = () => {
             }
             
             setRouteIdToColour(routeColourArray);
+            console.log("xxXX routecoloursarray mae of ", JSON.stringify(routeColourArray));
         return routeColourArray;
 
     }

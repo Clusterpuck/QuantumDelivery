@@ -31,6 +31,33 @@ const LiveTracking = () => {
 
     // keeps track of orders data for each route. used for toggling the rows. Format: {<RouteID>: <OrdersArray>, <RouteID>: <OrdersArray>}
     const [ordersData, setOrdersData] = React.useState({});
+    const [routeIdToColour, setRouteIdToColour] = useState({});
+
+    const colourPalette = [
+        
+        '#3a429f', // violet blue
+        '#a97dce', // lavender
+        '#f4a4af', // cherry blossom pink
+        '#a7577f', // china rose
+        '#3d096b' // persian indigo
+    ];
+
+    
+    const generateColourFromId = (routeId) => {
+        const index = parseInt(routeId, 10) % colourPalette.length;
+        return colourPalette[index];
+    };
+
+    function assignRouteColours() {
+        const routeColourArray = {};
+            for (const routeID in ordersData ){
+                routeColourArray[routeID] = generateColourFromId(routeID);
+            }
+            
+            setRouteIdToColour(routeColourArray);
+        return routeColourArray;
+
+    }
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
@@ -49,6 +76,9 @@ const LiveTracking = () => {
             fetchedRoutes.forEach(route => {
                 tempOrdersData[route.deliveryRouteID] = route.orders;
             });
+            const routeColourArray = assignRouteColours(tempOrdersData);//create the colour map
+            console.log("xxXXAssigned array made is ", JSON.stringify(routeColourArray));
+
             setOrdersData(tempOrdersData); // puts the orders data into the ordersData state  
         } else {
             console.error("No routes data returned");
@@ -109,7 +139,14 @@ const LiveTracking = () => {
                     <TableBody>
                         {routesData.map((route) => (
                             <React.Fragment key={route.deliveryRouteID}>
-                                <TableRow>
+                                <TableRow
+                                  sx={{
+                                    backgroundColor: 'red', // Replace with your desired color
+                                    '&:hover': {
+                                        backgroundColor: '#e0e0e0', // Hover effect
+                                    },
+                                }}
+                                >
                                     <TableCell>
                                         <Checkbox
                                             checked={!!checkedRoutes[route.deliveryRouteID]}
@@ -263,7 +300,7 @@ const LiveTracking = () => {
                 </IconButton>
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, position: 'fixed', height: '100vh', width: '100vw', margin: 0, padding: 0, pointerEvents: 'auto', }}>
-                <LiveMap checkedRoutes={checkedRoutes} ordersData={ordersData} />
+                <LiveMap checkedRoutes={checkedRoutes} ordersData={ordersData} routeIdToColour={routeIdToColour} />
                 {!drawerOpen && (
                     <IconButton
                         onClick={toggleDrawer(true)}

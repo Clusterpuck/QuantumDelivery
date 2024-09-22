@@ -5,7 +5,7 @@ import '../assets/Marker.css';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
-const LiveMap = ({ checkedRoutes, ordersData }) => {
+const LiveMap = ({ checkedRoutes, ordersData, routeIdToColour }) => {
     const mapContainer = useRef(null);
     const map = useRef(null);
     const [markers, setMarkers] = useState([]);
@@ -48,6 +48,7 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
     };
 
     useEffect(() => {
+        console.log("xxXX colour from id is ", JSON.stringify(routeIdToColour))
         if (map.current) return;
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
@@ -101,7 +102,7 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
         });
 
         const newMarkers = [];
-        const routeIdToColour = {};
+        //const routeIdToColour = {};
         const allRoutePromises = [];
         const routeIds = [];
         const tempAllCoordinates = [];
@@ -109,7 +110,7 @@ const LiveMap = ({ checkedRoutes, ordersData }) => {
         for (const routeId in ordersData) {
             if (checkedRoutes[routeId]) {
                 routeIds.push(routeId);
-                routeIdToColour[routeId] = generateColourFromId(routeId);
+                //routeIdToColour[routeId] = generateColourFromId(routeId);
                 const orders = ordersData[routeId].sort((a, b) => a.position - b.position);
                 const routeCoordinates = orders.map(order => [order.longitude, order.latitude]);
 

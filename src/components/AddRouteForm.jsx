@@ -3,7 +3,9 @@ import { postDeliveryRoutes, fetchMethod, fetchNumVehicles } from '../store/apiF
 // Date Picker
 import DateSelectHighlight from '../components/DateSelectHighlight.jsx';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import 'dayjs/locale/en-gb';
+dayjs.extend(utc);
 import { useTheme } from '@mui/material/styles';
 import WarehouseIcon from '@mui/icons-material/Warehouse';
 
@@ -18,6 +20,8 @@ import
     TextField, Button, Grid, MenuItem, Typography, InputAdornment, Radio, RadioGroup,
     FormControlLabel, Skeleton
 } from '@mui/material';
+
+
 
 const AddRouteForm = ({ updateRoutes, closeView }) =>
 {
@@ -45,6 +49,14 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
 
     const theme = useTheme();
 
+    const formatDateToYYYYMMDD = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const day = String(date.getDate()).padStart(2, '0');
+        
+        return `${year}-${month}-${day}`;
+    };
+
 
 
     /**
@@ -63,10 +75,20 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
             setRoutesLoading(true);
             if (!datePlannedOrders) return; // Do not load routes if orders are not loaded
             if (!datePlannedOrders || datePlannedOrders.length == 0) return;
+
+            // Create a dayjs object for the selected date and get the local timezone offset in milliseconds
+        const localDate = dayjs(selectedDate).startOf('day');
+        const utcOffset = localDate.utcOffset(); // Get the offset in minutes
+        console.log("Formatting string is now " + formatDateToYYYYMMDD(new Date(selectedDate)));
+
+        // Create a UTC date by subtracting the offset
+        const utcDate = localDate.subtract(utcOffset, 'minute').toISOString();
+
+            console.log("In calcroutes selected date converted is " + utcDate + " new date is " + new Date(selectedDate));
             const userInput = {
                 numVehicle: numVehicles,
                 calcType: calcType,
-                deliveryDate: selectedDate,
+                deliveryDate: formatDateToYYYYMMDD(new Date(selectedDate)),
                 depot: selectedDepot,
                 orders: datePlannedOrders.
                     map(order => order.orderID) // all orders
@@ -84,11 +106,11 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
         {
             // catch error
             console.error('Error fetching delivery routes: ', error);
-            setSnackbar({
-                open: true,
-                message: 'Failed to load delivery routes',
-                severity: 'error'
-            });
+            // setSnackbar({
+            //     open: true,
+            //     message: 'Failed to load delivery routes',
+            //     severity: 'error'
+            // });
         } finally
         {
             setRoutesLoading(false);
@@ -142,6 +164,8 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
      */
     const handleDateChange = (date) =>
     {
+        const readDate = new Date(date);
+        console.log("In Handle date change date is " + readDate.toString());
         setSelectedDate(date);
         //filter orders by new date
         filterByDate(date);
@@ -150,10 +174,11 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
     };
 
     const settingMaxVechicles = async (date) => {
-        console.log("In add route, date is " + JSON.stringify(date));
+        const utcDate = new Date(date);   
+        console.log("In setting max vehicle, date is " + JSON.stringify(date) + " ISO date is " + utcDate );
 
         setLoadingMaxVehicle(true);
-        let tempMaxVehicles = await fetchNumVehicles(date);
+        let tempMaxVehicles = await fetchNumVehicles(utcDate);
         setLoadingMaxVehicle(false);
         console.log("Got a max vehicle of " + tempMaxVehicles);
         setMaxVehicle(tempMaxVehicles);

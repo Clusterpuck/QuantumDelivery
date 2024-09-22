@@ -43,11 +43,24 @@ const LiveTracking = () => {
     ];
 
     
+    /**
+     * Selectes a colour, limited by the size of the array
+     * For the routeID
+     *
+     * @param {*} routeId
+     * @returns {*}
+     */
     const generateColourFromId = (routeId) => {
         const index = parseInt(routeId, 10) % colourPalette.length;
         return colourPalette[index];
     };
 
+    
+    /**
+     * Creates the array of assigned colours from the routeID
+     *
+     * @returns {{}}
+     */
     function assignRouteColours() {
         const routeColourArray = {};
             for (const routeID in ordersData ){

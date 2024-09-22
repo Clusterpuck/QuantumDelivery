@@ -12,19 +12,7 @@ const LiveMap = ({ checkedRoutes, ordersData, routeIdToColour }) => {
     const [allCoordinates, setAllCoordinates] = useState([]);
     const [centered, setCentered] = useState(false); // to ensure that the map only centers on the page load, and not when you check/uncheck routes
 
-    const colourPalette = [
-        
-        '#3a429f', // violet blue
-        '#a97dce', // lavender
-        '#f4a4af', // cherry blossom pink
-        '#a7577f', // china rose
-        '#3d096b' // persian indigo
-    ];
 
-    const generateColourFromId = (routeId) => {
-        const index = parseInt(routeId, 10) % colourPalette.length;
-        return colourPalette[index];
-    };
 
     const fetchDirections = async (coordinates) => {
         const validCoordinates = coordinates.filter(coord => !isNaN(coord[0]) && !isNaN(coord[1]));
@@ -48,7 +36,6 @@ const LiveMap = ({ checkedRoutes, ordersData, routeIdToColour }) => {
     };
 
     useEffect(() => {
-        console.log("xxXX colour from id is ", JSON.stringify(routeIdToColour))
         if (map.current) return;
         map.current = new mapboxgl.Map({
             container: mapContainer.current,

@@ -141,14 +141,25 @@ const LiveTracking = () => {
                             <React.Fragment key={route.deliveryRouteID}>
                                 <TableRow
                                   sx={{
-                                    backgroundColor: 'red', // Replace with your desired color
+                                    //backgroundColor: routeIdToColour[route.deliveryRouteID],
+                                     // Replace with your desired color
                                     '&:hover': {
                                         backgroundColor: '#e0e0e0', // Hover effect
                                     },
+                                    color: 'white',
                                 }}
                                 >
                                     <TableCell>
                                         <Checkbox
+                                            sx={{
+                                                color: routeIdToColour[route.deliveryRouteID], // Unchecked color
+                                                '&.Mui-checked': {
+                                                    color: routeIdToColour[route.deliveryRouteID], // Checked color
+                                                },
+                                                '& .MuiSvgIcon-root': {
+                                                    fontSize: 28, // Adjust the size of the checkbox icon
+                                                },
+                                            }}
                                             checked={!!checkedRoutes[route.deliveryRouteID]}
                                             onChange={handleCheckboxChange(route.deliveryRouteID)}
                                         />

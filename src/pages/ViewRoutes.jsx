@@ -56,7 +56,14 @@ const ViewRoutes = () =>
   const [numVehicles, setNumVehicles] = useState(1); // default to 1 vehicle
   const [calcType, setCalcType] = useState("brute");
 
-
+  // Depot handling
+  const depots = [
+    { id: 1, name: "Depot A" },
+    { id: 2, name: "Depot B" },
+    { id: 3, name: "Depot C" },
+    { id: 4, name: "Depot D" },
+  ];
+  const [selectedDepot, setSelectedDepot] = useState(depots[0].id); 
 
 
   useEffect(() =>
@@ -176,12 +183,13 @@ const ViewRoutes = () =>
     try
     {
       setRoutesLoading(true);
-      if (!orders) return; // Do not load routes if orders are not loaded
+      if (!datePlannedOrders) return; // Do not load routes if orders are not loaded
       if (!datePlannedOrders || datePlannedOrders.length == 0) return;
       const userInput = {
         numVehicle: numVehicles,
         calcType: calcType,
         deliveryDate: selectedDate,
+        depot: selectedDepot,
         orders: datePlannedOrders.
           map(order => order.orderID) // all orders
       };
@@ -360,6 +368,10 @@ const ViewRoutes = () =>
     setNumVehicles(event.target.value);
   };
 
+  const handleDepotChange = (event) => {
+    setSelectedDepot(Number(event.target.value));
+  };
+
   return (
     <div
       style={{
@@ -379,14 +391,14 @@ const ViewRoutes = () =>
       <Paper elevation={3} sx={{ padding: 3, maxWidth: 1500, width: '100%' }}>
         <Grid item xs={12} md={12} container spacing={2}>
           <Grid item xs={12} md={12} container spacing={2} alignItems="center">
-            <Grid item xs={6} md={3} >
+            <Grid item xs={4} md={3} >
               {ordersLoading ? <CircularProgress/> :
 
               <DateSelectHighlight highlightedDates={unassignedDates} selectedDate={selectedDate} handleDateChange={handleDateChange} />
               }
             </Grid>
             {/* Dropdown for selecting number of vehicles and Regenerate button */}
-            <Grid item xs={6} md={2}>
+            <Grid item xs={3} md={2}>
               <TextField
                 select
                 label="Number of Vehicles"
@@ -408,6 +420,29 @@ const ViewRoutes = () =>
                 ))}
               </TextField>
             </Grid>
+            {/*Depot drop down menu*/}
+            <Grid item xs={5} md={2}>
+              <TextField
+                select
+                label="Depot"
+                value={selectedDepot}
+                fullWidth
+                onChange={handleDepotChange}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LocalShippingIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              >
+                {depots.map(depot => (
+                  <MenuItem key={depot.id} value={depot.id}>
+                    {depot.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
             <Grid item xs={6} md={3}>
               <RadioGroup
                 aria-labelledby="demo-controlled-radio-buttons-group"
@@ -419,7 +454,7 @@ const ViewRoutes = () =>
                 <FormControlLabel value="dwave" control={<Radio />} label="Quantum Computer" />
               </RadioGroup>
             </Grid>
-            <Grid item xs={6} md={4} container justifyContent="flex-end">
+            <Grid item xs={6} md={2} container justifyContent="flex-end">
               {routesLoading ? (
                 <Button
                   variant='contained'

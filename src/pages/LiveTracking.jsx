@@ -17,6 +17,7 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
+import NoRouteFound from '../components/NoRouteFound';
 
 // Page design for live tracking page
 const LiveTracking = () => {
@@ -103,7 +104,7 @@ const LiveTracking = () => {
 
             setRoutesData(filteredRoutes);
             let tempOrdersData = {};
-            fetchedRoutes.forEach(route => {
+            filteredRoutes.forEach(route => {
                 tempOrdersData[route.deliveryRouteID] = route.orders;
             });
             const routeColourArray = assignRouteColours(tempOrdersData);//create the colour map
@@ -153,6 +154,8 @@ const LiveTracking = () => {
                 </>
             )
         }
+        else if (routesData && routesData.length === 0) {
+            return <NoRouteFound />;}
         else if (routesData) {
             return (
                 <Table>
@@ -270,9 +273,10 @@ const LiveTracking = () => {
         fetchRouteData();
     }, []);
 
-    useEffect(() => {
+    useEffect(() => { // refetch routes data when selected date changes.
         fetchRouteData();
     }, [selectedDate]);
+
 
     useEffect(() => { // sets all checkboxes to true when the routes data loads
         if (routesData) {

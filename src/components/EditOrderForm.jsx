@@ -5,6 +5,9 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../index.css';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'; 
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const EditOrderForm = ({ order, onRefresh }) => {
     const [customers, setCustomers] = useState(null);
@@ -60,6 +63,12 @@ const EditOrderForm = ({ order, onRefresh }) => {
                 : product
         );
         setSelectedProducts(updatedProducts);
+    };
+
+    const commonStyles = {
+        width: '100%',  // Make it responsive to parent container
+        maxWidth: 800,  // Set a max width to keep it from expanding too much
+        height: 'auto', // Auto-adjust height for responsiveness
     };
 
     const handleAddProduct = () => {
@@ -185,17 +194,16 @@ const EditOrderForm = ({ order, onRefresh }) => {
                         )}
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <TextField
+                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en-gb'>
+                        <DateTimePicker
+                            sx={commonStyles}
                             label="Delivery Date"
-                            value={selectedDeliveryDate.format('YYYY-MM-DD')}  // Format the date for input
-                            onChange={(e) => setSelectedDeliveryDate(dayjs(e.target.value))}
-                            variant="outlined"
+                            value={selectedDeliveryDate}
+                            onChange={(newValue) => setSelectedDeliveryDate(newValue)}
+                            renderInput={(params) => <TextField {...params} fullWidth />}
                             fullWidth
-                            type="date"
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
                         />
+                        </LocalizationProvider>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         {/* Dropdown for Status */}

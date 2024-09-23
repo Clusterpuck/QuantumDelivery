@@ -19,6 +19,7 @@ import { DateTimePicker } from '@mui/x-date-pickers';
 import Skeleton from '@mui/material/Skeleton';
 import IssuesTable from '../components/IssuesTable';
 import EditOrderForm from '../components/EditOrderForm';
+import {enableScroll} from '../assets/scroll.js';
 
 const styleConstants = {
     fieldSpacing: { mb: 2 }
@@ -51,7 +52,7 @@ const AddOrder = () =>
 
     useEffect(() =>
     {
-
+        enableScroll();
         loadOrders();
         loadCustomers();
         loadLocations();

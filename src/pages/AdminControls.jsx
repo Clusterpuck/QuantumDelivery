@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Paper, Grid, Typography, Modal, Box } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useNavigate } from 'react-router-dom';
 import AdminControlsForm from '../components/AdminControlsForm';
 import DeleteEntityForm from '../components/DeleteEntityForm';
 import AccountForm from '../components/AccountForm';
+import {enableScroll} from '../assets/scroll.js';
 
 // function to retrieve the 'userName' from the cookie
 const getUsernameFromCookie = () => {
@@ -39,6 +40,11 @@ const AdminControls = () => {
     const [openAccountForm, setOpenAccountForm] = useState(false);
     const [userMode, setUserMode] = useState('add'); // keep track of the mode for the user form
     const [accountId, setAccountId] = useState(''); // track accountId when editing
+    useEffect(() =>
+        {
+            enableScroll();
+    
+        }, []);
 
     const handleOperationChange = (entity) => (event) => {
         setOperations({

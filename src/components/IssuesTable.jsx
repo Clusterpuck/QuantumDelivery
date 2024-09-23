@@ -127,7 +127,7 @@ const IssuesTable = () => {
             </TableContainer>
 
             <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth>
-                <EditOrderForm order={selectedOrder} onClose={handleCloseEditDialog} />
+                <EditOrderForm order={selectedOrder} onClose={handleCloseEditDialog} onRefresh={fetchIssues} />
             </Dialog>
         </Paper>
     );

@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 
 //update data us a state object that when changed on the parent object
 //will trigger a refresh of the orders table data. 
-const OrdersTable = ({orders}) => {
+const OrdersTable = ({orders, onRefresh }) => {
 
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -82,7 +82,7 @@ const OrdersTable = ({orders}) => {
                 </Alert>
             </Snackbar>
             <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth>
-                <EditOrderForm order={selectedOrder} onClose={handleCloseEditDialog} />
+                <EditOrderForm order={selectedOrder} onClose={handleCloseEditDialog} onRefresh={onRefresh} />
             </Dialog>
         </Box>
     );

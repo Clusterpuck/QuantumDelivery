@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
     Drawer, Box, IconButton, Typography, Table, TableBody, TableCell,
-    TableHead, TableRow, Checkbox, Collapse,
-    CircularProgress, Skeleton
+    TableHead, TableRow, Checkbox, Collapse, Skeleton
 } from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
@@ -12,8 +11,12 @@ import { fetchMethod } from '../store/apiFunctions.js';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { disableScroll } from '../assets/scroll.js';
-import LiveMap from '../components/LiveMap'; 
-import {getStatusColour} from '../store/helperFunctions.js';
+import LiveMap from '../components/LiveMap';
+import { getStatusColour } from '../store/helperFunctions.js';
+import { DatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from 'dayjs';
 
 // Page design for live tracking page
 const LiveTracking = () => {
@@ -33,8 +36,10 @@ const LiveTracking = () => {
     const [ordersData, setOrdersData] = React.useState({});
     const [routeIdToColour, setRouteIdToColour] = useState({});
 
+    const [selectedDate, setSelectedDate] = useState(dayjs());
+
     const colourPalette = [
-        
+
         '#3a429f', // violet blue
         '#a97dce', // lavender
         '#f4a4af', // cherry blossom pink
@@ -42,7 +47,10 @@ const LiveTracking = () => {
         '#3d096b' // persian indigo
     ];
 
-    
+    const handleDateChange = (date) => { // logic for showing orders from a specific date is still yet to be implemented.
+        setSelectedDate(date);
+    };
+
     /**
      * Selectes a colour, limited by the size of the array
      * For the routeID
@@ -55,7 +63,7 @@ const LiveTracking = () => {
         return colourPalette[index];
     };
 
-    
+
     /**
      * Creates the array of assigned colours from the routeID
      *
@@ -63,12 +71,12 @@ const LiveTracking = () => {
      */
     function assignRouteColours(tempOrdersData) {
         const routeColourArray = {};
-            for (const routeID in tempOrdersData ){
-                routeColourArray[routeID] = generateColourFromId(routeID);
-            }
-            
-            setRouteIdToColour(routeColourArray);
-            console.log("xxXX routecoloursarray mae of ", JSON.stringify(routeColourArray));
+        for (const routeID in tempOrdersData) {
+            routeColourArray[routeID] = generateColourFromId(routeID);
+        }
+
+        setRouteIdToColour(routeColourArray);
+        console.log("xxXX routecoloursarray mae of ", JSON.stringify(routeColourArray));
         return routeColourArray;
 
     }
@@ -79,12 +87,20 @@ const LiveTracking = () => {
 
     // fetched the route data using get delivery routes endpoint
     const fetchRouteData = async () => {
-        setLoadingRoutes(true); 
+        setLoadingRoutes(true);
         const fetchedRoutes = await fetchMethod("deliveryroutes");
         if (fetchedRoutes) {
-            const filteredRoutes = fetchedRoutes.filter(route => { // filter out any routes that have all orders as delivered or issue
-                return !route.orders.every(order => order.status === 'DELIVERED' || order.status === 'ISSUE');
+            const filteredRoutes = fetchedRoutes.filter(route => {
+                // filter out routes based on orders' status
+                const hasPendingOrders = !route.orders.every(order => order.status === 'DELIVERED' || order.status === 'ISSUE');
+    
+                // filter out routes that don't match the selected date
+                const routeDate = dayjs(route.deliveryDate).startOf('day'); // convert to dayjs object and normalize to start of the day
+                const selectedDateNormalized = dayjs(selectedDate).startOf('day'); // normalize selected date
+    
+                return hasPendingOrders && routeDate.isSame(selectedDateNormalized);
             });
+
             setRoutesData(filteredRoutes);
             let tempOrdersData = {};
             fetchedRoutes.forEach(route => {
@@ -122,24 +138,22 @@ const LiveTracking = () => {
 
 
     const RoutesTableView = () => {
-        if( loadingRoutes )
-        {
+        if (loadingRoutes) {
             return (
-            <>
-            <Skeleton/>
-            <Skeleton 
-                variant='wave'
-                sx={{ 
-                    height: 500,  // Adjust the height based on the estimated table size
-                    width: '100%', // Make the Skeleton take the full width of the container
-                    borderRadius: 4 // Optional: Adds rounded corners to match table aesthetics
-                  }} 
-            />
-            </>
+                <>
+                    <Skeleton />
+                    <Skeleton
+                        variant='wave'
+                        sx={{
+                            height: 500,  // Adjust the height based on the estimated table size
+                            width: '100%', // Make the Skeleton take the full width of the container
+                            borderRadius: 4 // Optional: Adds rounded corners to match table aesthetics
+                        }}
+                    />
+                </>
             )
         }
-        else if( routesData )
-        {
+        else if (routesData) {
             return (
                 <Table>
                     <TableHead>
@@ -155,14 +169,14 @@ const LiveTracking = () => {
                         {routesData.map((route) => (
                             <React.Fragment key={route.deliveryRouteID}>
                                 <TableRow
-                                  sx={{
-                                    //backgroundColor: routeIdToColour[route.deliveryRouteID],
-                                     // Replace with your desired color
-                                    '&:hover': {
-                                        backgroundColor: '#e0e0e0', // Hover effect
-                                    },
-                                    color: 'white',
-                                }}
+                                    sx={{
+                                        //backgroundColor: routeIdToColour[route.deliveryRouteID],
+                                        // Replace with your desired color
+                                        '&:hover': {
+                                            backgroundColor: '#e0e0e0', // Hover effect
+                                        },
+                                        color: 'white',
+                                    }}
                                 >
                                     <TableCell>
                                         <Checkbox
@@ -242,7 +256,7 @@ const LiveTracking = () => {
                 </Table>
             )
         }
-        else{
+        else {
             return (
                 <Typography>No routes available</Typography>
             )
@@ -255,6 +269,10 @@ const LiveTracking = () => {
         disableScroll();
         fetchRouteData();
     }, []);
+
+    useEffect(() => {
+        fetchRouteData();
+    }, [selectedDate]);
 
     useEffect(() => { // sets all checkboxes to true when the routes data loads
         if (routesData) {
@@ -277,7 +295,7 @@ const LiveTracking = () => {
                     width: '40vw',
                     flexShrink: 0,
                     '& .MuiDrawer-paper': {
-                        width: '40vw', 
+                        width: '40vw',
                         boxSizing: 'border-box',
                         backgroundColor: '#FFFFF',
                         overflowY: 'auto',
@@ -299,17 +317,26 @@ const LiveTracking = () => {
                             width: '100%',
                             marginTop: '20px',
                             backgroundColor: '#819bc5',
-                            justifyContent: 'center', 
-                            alignItems: 'center',     
-                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)', 
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
                             borderRadius: '0 0 16px 16px',
+                            height: '80px', // Adjust the height as needed
                         }}
                     >
                         <Typography variant="h6" color="black" sx={{ p: 2, fontWeight: 'bold' }}>
                             Route Details
                         </Typography>
+                        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en-gb'>
+                            <DatePicker
+                                value={selectedDate}
+                                onChange={handleDateChange}
+                                slotProps={{ textField: { size: 'small' } }}
+                                
+                            />
+                        </LocalizationProvider>
                     </Box>
-                        <RoutesTableView/>
+                    <RoutesTableView />
 
                 </Box>
                 <IconButton

@@ -6,7 +6,7 @@ import 'dayjs/locale/en-gb';
 import DeleteIcon from '@mui/icons-material/Delete';
 import '../index.css';
 
-const EditOrderForm = ({ order }) => {
+const EditOrderForm = ({ order, onRefresh }) => {
     const [customers, setCustomers] = useState(null);
     const [locations, setLocations] = useState(null);
 
@@ -96,6 +96,7 @@ const EditOrderForm = ({ order }) => {
             const responseMessage = await updateOrderDetails(input);
             setMessage(responseMessage); 
             setOpenSnackbar(true); 
+            onRefresh();
         } catch (error) {
             console.error('Failed to save changes:', error);
         }

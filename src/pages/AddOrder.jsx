@@ -45,6 +45,9 @@ const AddOrder = () =>
     });
     const [selectedDate, setSelectedDate] = useState(dayjs());
 
+    const refreshOrders = async () => {
+        loadOrders();     
+    };
 
     useEffect(() =>
     {
@@ -350,7 +353,7 @@ const AddOrder = () =>
 
                         {loadingOrders ?
                             (<Skeleton variant="rectangular" animation="wave" sx={{ height: '100%' }} />) :
-                            (<OrdersTable orders={orders} />)}
+                            (<OrdersTable orders={orders} onRefresh={refreshOrders}/>)}
                     </Box>
                 </Paper>
             </Box>

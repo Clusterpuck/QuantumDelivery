@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
-    Drawer, Box, IconButton, Typography, Table, TableBody, TableCell,
+    Button, Drawer, Box, IconButton, Typography, Table, TableBody, TableCell,
     TableHead, TableRow, Checkbox, Collapse, Skeleton
 } from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
@@ -137,6 +137,24 @@ const LiveTracking = () => {
         }
     };
 
+    // Function to check all routes
+    const checkAllRoutes = () => {
+        const allChecked = {};
+        routesData.forEach(route => {
+            allChecked[route.deliveryRouteID] = true;
+        });
+        setCheckedRoutes(allChecked);
+    };
+
+    // Function to uncheck all routes
+    const uncheckAllRoutes = () => {
+        const allUnchecked = {};
+        routesData.forEach(route => {
+            allUnchecked[route.deliveryRouteID] = false;
+        });
+        setCheckedRoutes(allUnchecked);
+    };
+
 
     const RoutesTableView = () => {
         if (loadingRoutes) {
@@ -158,6 +176,15 @@ const LiveTracking = () => {
             return <NoRouteFound />;}
         else if (routesData) {
             return (
+                <>
+                    <Box sx={{ display: 'flex', justifyContent: 'center',gap: 5, margin: 2}}>
+                        <Button variant="contained" color="primary" onClick={checkAllRoutes}>
+                            Check All Routes
+                        </Button>
+                        <Button variant="contained" color="secondary" onClick={uncheckAllRoutes}>
+                            Uncheck All Routes
+                        </Button>
+                    </Box>
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -257,6 +284,7 @@ const LiveTracking = () => {
                         ))}
                     </TableBody>
                 </Table>
+                </>
             )
         }
         else {

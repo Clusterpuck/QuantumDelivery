@@ -1,29 +1,12 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState } from 'react';
 import { Paper, Grid, Typography, Modal, Box } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useNavigate } from 'react-router-dom';
 import AdminControlsForm from '../components/AdminControlsForm';
 import DeleteEntityForm from '../components/DeleteEntityForm';
-import AccountForm from '../components/AccountForm';
-import {enableScroll} from '../assets/scroll.js';
-
-// function to retrieve the 'userName' from the cookie
-const getUsernameFromCookie = () => {
-    const name = 'userName='; 
-    const decodedCookie = decodeURIComponent(document.cookie);
-    const cookieArray = decodedCookie.split(';');
-    for (let i = 0; i < cookieArray.length; i++) {
-        let cookie = cookieArray[i];
-        while (cookie.charAt(0) === ' ') {
-            cookie = cookie.substring(1);
-        }
-        if (cookie.indexOf(name) === 0) {
-            return cookie.substring(name.length, cookie.length);
-        }
-    }
-    return '';
-};
-
+import CreateAccountForm from '../components/CreateAccountForm';
+import EditAccountForm from '../components/EditAccountForm'; // Edit form for user
+import EditEntityForm from '../components/EditEntityForm'; // Form to collect ID
 
 const AdminControls = () => {
     const navigate = useNavigate();
@@ -32,24 +15,20 @@ const AdminControls = () => {
         user: 'add',
         customer: 'add',
         location: 'add',
-        product: 'add'
+        product: 'add',
     });
 
     const [deleteEntity, setDeleteEntity] = useState(null);
     const [openDelete, setOpenDelete] = useState(false);
     const [openAccountForm, setOpenAccountForm] = useState(false);
-    const [userMode, setUserMode] = useState('add'); // keep track of the mode for the user form
-    const [accountId, setAccountId] = useState(''); // track accountId when editing
-    useEffect(() =>
-        {
-            enableScroll();
-    
-        }, []);
+    const [openEditEntityForm, setOpenEditEntityForm] = useState(false); // Modal for EditEntityForm
+    const [userMode, setUserMode] = useState('add'); // 'add' or 'edit' for user form
+    const [accountId, setAccountId] = useState(''); // Holds accountId when editing
 
     const handleOperationChange = (entity) => (event) => {
         setOperations({
             ...operations,
-            [entity]: event.target.value
+            [entity]: event.target.value,
         });
     };
 
@@ -60,18 +39,12 @@ const AdminControls = () => {
         if (operation === 'delete') {
             setDeleteEntity(entity);
             setOpenDelete(true);
-        } else if (entity === 'user' && (operation === 'add' || operation === 'edit')) {
-            // set user mode before opening the form
-            setUserMode(operation);
-
-            // if editing, retrieve the username from the cookie and set the accountId
-            if (operation === 'edit') {
-                const username = getUsernameFromCookie();
-                setAccountId(username);
-            } else {
-                setAccountId(''); // no accountId needed when adding a new user
-            }
-
+        } else if (entity === 'user' && operation === 'edit') {
+            // Open modal to get accountId for editing
+            setOpenEditEntityForm(true);
+        } else if (entity === 'user' && operation === 'add') {
+            setUserMode('add');
+            setAccountId(''); // Clear accountId for add mode
             setOpenAccountForm(true);
         } else if (entity !== 'user') {
             console.log(`Submitted operation for ${entity}:`, operation);
@@ -87,29 +60,40 @@ const AdminControls = () => {
         setOpenAccountForm(false);
     };
 
+    const handleCloseEditEntityForm = () => {
+        setOpenEditEntityForm(false);
+    };
+
+    const handleEditEntitySuccess = (collectedAccountId) => {
+        setAccountId(collectedAccountId); // Set the collected accountId
+        setUserMode('edit'); // Set mode to edit
+        setOpenAccountForm(true); // Open the user form for editing
+        setOpenEditEntityForm(false); // Close the ID collection modal
+    };
+
     const entities = ['user', 'customer', 'location', 'product'];
 
     return (
         <div
             style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
                 gap: 8,
             }}
         >
             <Typography
                 variant="h1"
                 component="h1"
-                sx={{ 
+                sx={{
                     mt: 3,
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: 1, 
-                    fontWeight: 'bold', 
-                    fontSize: '3rem', 
-                    mb: 3 
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    fontWeight: 'bold',
+                    fontSize: '3rem',
+                    mb: 3,
                 }}
             >
                 <SettingsIcon sx={{ fontSize: 50 }} />
@@ -137,7 +121,7 @@ const AdminControls = () => {
                 aria-labelledby="delete-entity-modal"
                 aria-describedby="delete-entity-description"
             >
-                <Box 
+                <Box
                     sx={{
                         position: 'absolute',
                         top: '50%',
@@ -150,11 +134,7 @@ const AdminControls = () => {
                         width: '100%',
                     }}
                 >
-                    {deleteEntity && (
-                        <DeleteEntityForm 
-                            entity={deleteEntity} 
-                        />
-                    )}
+                    {deleteEntity && <DeleteEntityForm entity={deleteEntity} />}
                 </Box>
             </Modal>
 
@@ -165,7 +145,7 @@ const AdminControls = () => {
                 aria-labelledby="account-form-modal"
                 aria-describedby="account-form-description"
             >
-                <Box 
+                <Box
                     sx={{
                         position: 'absolute',
                         top: '50%',
@@ -178,11 +158,41 @@ const AdminControls = () => {
                         width: '100%',
                     }}
                 >
-                    {/* ass the userMode and accountId to the AccountForm */}
-                    <AccountForm mode={userMode} accountId={accountId} />
+                    {/* Display either CreateAccountForm or EditUserForm based on userMode */}
+                    {userMode === 'add' ? (
+                        <CreateAccountForm />
+                    ) : (
+                        <EditAccountForm accountId={accountId} />
+                    )}
                 </Box>
             </Modal>
 
+            {/* edit entity ID collection modal */}
+            <Modal
+                open={openEditEntityForm}
+                onClose={handleCloseEditEntityForm}
+                aria-labelledby="edit-entity-modal"
+                aria-describedby="edit-entity-description"
+            >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        bgcolor: 'background.paper',
+                        boxShadow: 24,
+                        p: 4,
+                        maxWidth: 400,
+                        width: '100%',
+                    }}
+                >
+                    <EditEntityForm
+                        entity="user"
+                        onSuccess={handleEditEntitySuccess} // Pass success handler
+                    />
+                </Box>
+            </Modal>
         </div>
     );
 };

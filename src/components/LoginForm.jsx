@@ -131,7 +131,7 @@ const LoginForm = () => {
                     </Grid>
                     <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', marginTop: 8 }}>
                         <Typography variant="body2" color="primary">
-                            Don't have an account? get QuantaPath for your business.
+                            Don't have an account? Get QuantaPath for your business.
                         </Typography>
                     </Grid>
                 </Grid>

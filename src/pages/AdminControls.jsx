@@ -4,7 +4,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { useNavigate } from 'react-router-dom';
 import AdminControlsForm from '../components/AdminControlsForm';
 import DeleteEntityForm from '../components/DeleteEntityForm';
-import AccountForm from '../components/AccountForm';
+import CreateAccountForm from '../components/CreateAccountForm';
+import EditAccountForm from '../components/EditAccountForm';
 
 // function to retrieve the 'userName' from the cookie
 const getUsernameFromCookie = () => {
@@ -23,7 +24,6 @@ const getUsernameFromCookie = () => {
     return '';
 };
 
-
 const AdminControls = () => {
     const navigate = useNavigate();
 
@@ -31,7 +31,7 @@ const AdminControls = () => {
         user: 'add',
         customer: 'add',
         location: 'add',
-        product: 'add'
+        product: 'add',
     });
 
     const [deleteEntity, setDeleteEntity] = useState(null);
@@ -43,7 +43,7 @@ const AdminControls = () => {
     const handleOperationChange = (entity) => (event) => {
         setOperations({
             ...operations,
-            [entity]: event.target.value
+            [entity]: event.target.value,
         });
     };
 
@@ -86,24 +86,24 @@ const AdminControls = () => {
     return (
         <div
             style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
                 gap: 8,
             }}
         >
             <Typography
                 variant="h1"
                 component="h1"
-                sx={{ 
+                sx={{
                     mt: 3,
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: 1, 
-                    fontWeight: 'bold', 
-                    fontSize: '3rem', 
-                    mb: 3 
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    fontWeight: 'bold',
+                    fontSize: '3rem',
+                    mb: 3,
                 }}
             >
                 <SettingsIcon sx={{ fontSize: 50 }} />
@@ -131,7 +131,7 @@ const AdminControls = () => {
                 aria-labelledby="delete-entity-modal"
                 aria-describedby="delete-entity-description"
             >
-                <Box 
+                <Box
                     sx={{
                         position: 'absolute',
                         top: '50%',
@@ -144,11 +144,7 @@ const AdminControls = () => {
                         width: '100%',
                     }}
                 >
-                    {deleteEntity && (
-                        <DeleteEntityForm 
-                            entity={deleteEntity} 
-                        />
-                    )}
+                    {deleteEntity && <DeleteEntityForm entity={deleteEntity} />}
                 </Box>
             </Modal>
 
@@ -159,7 +155,7 @@ const AdminControls = () => {
                 aria-labelledby="account-form-modal"
                 aria-describedby="account-form-description"
             >
-                <Box 
+                <Box
                     sx={{
                         position: 'absolute',
                         top: '50%',
@@ -172,11 +168,14 @@ const AdminControls = () => {
                         width: '100%',
                     }}
                 >
-                    {/* ass the userMode and accountId to the AccountForm */}
-                    <AccountForm mode={userMode} accountId={accountId} />
+                    {/* Display either CreateAccountForm or EditAccountForm based on userMode */}
+                    {userMode === 'add' ? (
+                        <CreateAccountForm />
+                    ) : (
+                        <EditAccountForm accountId={accountId} />
+                    )}
                 </Box>
             </Modal>
-
         </div>
     );
 };

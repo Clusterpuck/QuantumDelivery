@@ -1,11 +1,9 @@
-import Register from "../components/Register";
 import AccountDetails from "../pages/AccountDetails" 
 import ViewRoutes from "../pages/ViewRoutes";
 import Login from "../pages/Login";
 import LiveTracking from "../pages/LiveTracking";
 import DailyReports from "../pages/DailyReports";
 import UploadRunsheet from "../pages/UploadRunsheet";
-import Register from "../pages/Register";
 import AddOrder from "../pages/AddOrder";
 import PrivateRoute from "./PrivateRoute";  
 import DriverViewRoutes from "../pages/DriverViewRoutes";
@@ -67,10 +65,6 @@ export const ROUTES = [
         <AccountDetails />
       </PrivateRoute>
     ),
-  },
-  {
-    path: "/register",
-    element: <Register />,
   },
   {
     path: "/home",

@@ -12,7 +12,6 @@ import LiveTracking from './pages/LiveTracking';
 import DailyReports from './pages/DailyReports';
 import AddOrder from './pages/AddOrder';
 import Login from "./pages/Login";
-import Register from "./pages/Register";
 import AccountDetails from './pages/AccountDetails';
 import PrivateRoute from './constants/PrivateRoute';
 import Unauthorized from './pages/Unauthorized';
@@ -46,7 +45,6 @@ const App = () => {
                 <PageLayout>
                     <Routes>
                         <Route path="/" element={<Login />} />
-                        <Route path="/register" element={<Register />} /> {/* TO DO: move to admin controls page */}
                         <Route path="/login" element={<Login />} />
                         <Route path="/unauthorized" element={<Unauthorized />} /> {/* Unauthorized page */}
 

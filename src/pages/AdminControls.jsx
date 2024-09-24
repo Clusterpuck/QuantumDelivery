@@ -34,6 +34,7 @@ const AdminControls = () => {
         customer: 'add',
         location: 'add',
         product: 'add',
+        product: 'add',
     });
 
     const [deleteEntity, setDeleteEntity] = useState(null);
@@ -50,6 +51,7 @@ const AdminControls = () => {
     const handleOperationChange = (entity) => (event) => {
         setOperations({
             ...operations,
+            [entity]: event.target.value,
             [entity]: event.target.value,
         });
     };
@@ -97,6 +99,10 @@ const AdminControls = () => {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
                 gap: 8,
             }}
         >
@@ -104,7 +110,14 @@ const AdminControls = () => {
                 variant="h1"
                 component="h1"
                 sx={{
+                sx={{
                     mt: 3,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    fontWeight: 'bold',
+                    fontSize: '3rem',
+                    mb: 3,
                     display: 'flex',
                     alignItems: 'center',
                     gap: 1,
@@ -139,6 +152,7 @@ const AdminControls = () => {
                 aria-describedby="delete-entity-description"
             >
                 <Box
+                <Box
                     sx={{
                         position: 'absolute',
                         top: '50%',
@@ -152,6 +166,7 @@ const AdminControls = () => {
                     }}
                 >
                     {deleteEntity && <DeleteEntityForm entity={deleteEntity} />}
+                    {deleteEntity && <DeleteEntityForm entity={deleteEntity} />}
                 </Box>
             </Modal>
 
@@ -162,6 +177,7 @@ const AdminControls = () => {
                 aria-labelledby="account-form-modal"
                 aria-describedby="account-form-description"
             >
+                <Box
                 <Box
                     sx={{
                         position: 'absolute',
@@ -175,6 +191,12 @@ const AdminControls = () => {
                         width: '100%',
                     }}
                 >
+                    {/* Display either CreateAccountForm or EditAccountForm based on userMode */}
+                    {userMode === 'add' ? (
+                        <CreateAccountForm />
+                    ) : (
+                        <EditAccountForm accountId={accountId} />
+                    )}
                     {/* Display either CreateAccountForm or EditAccountForm based on userMode */}
                     {userMode === 'add' ? (
                         <CreateAccountForm />

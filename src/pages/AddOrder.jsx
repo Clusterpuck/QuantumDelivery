@@ -342,8 +342,9 @@ const AddOrder = () =>
 
             <h2>Orders with Driver Reported Issues</h2>
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-
+            <Paper elevation={3} sx={{ padding: 4, maxWidth: 1500, width: '100%' }}>
                 <IssuesTable />
+                </Paper>
             </Box>
 
             <h2>All Orders</h2>

@@ -16,7 +16,7 @@ import { getRowColour } from '../store/helperFunctions.js';
 import Cookies from 'js-cookie';
 
 
-const DriverViewRoutes = ({ }) => {
+const DriverViewRoutes = ({ inputUser }) => {
     // initialise drawer on the left (which shows delivery progress) to closed
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     const [phoneDialogOpen, setPhoneDialogOpen] = React.useState(false); // whether the phone number for current delivery is shown
@@ -29,7 +29,9 @@ const DriverViewRoutes = ({ }) => {
     const [anyPlanned, setAnyPlanned] = React.useState(true); // if any orders are planned, use to check whether the start delivery button should be shown
     const [finishedDelivery, setFinishedDelivery] = React.useState(false); // if delivery is finished
     const [issueDialogOpen, setIssueDialogOpen] = useState(false); //if the report issue dialog is open
+    const [otherUser, setOtherUser] = useState(null);
     const driverUsername = Cookies.get('userName'); // username of logged in user, Admins will see no routes
+
 
     const toggleDrawer = (open) => () => { setDrawerOpen(open); }
     const handlePhoneDialog = (open) => () => { setPhoneDialogOpen(open); };
@@ -38,8 +40,18 @@ const DriverViewRoutes = ({ }) => {
 
     const fetchDeliveryData = async () => {
         try {
-            const routeData = await fetchDeliveryRoute(driverUsername);
+            var routeData;
+            //uses logged in user unless a specific username given to component
+            if(otherUser)
+            {
+                console.log("Fetching for otherUser " + otherUser);
+                routeData = await fetchDeliveryRoute(otherUser);
+            }
+            else{
+                routeData = await fetchDeliveryRoute(driverUsername);
+            }
             if (routeData) {
+                setNoRoutesFound(false);//added to reload routes if found on driver change
                 setRouteId(routeData.deliveryRouteID);
                 const pendingDeliveries = routeData.orders.filter(order => order.status !== 'DELIVERED' && order.status !== 'ISSUE');
                 const sortedDeliveries = pendingDeliveries.sort((a, b) => a.position - b.position);
@@ -92,10 +104,13 @@ const DriverViewRoutes = ({ }) => {
     }, []);
 
     useEffect(() => {
+        if( inputUser ) {
+            setOtherUser(inputUser);
+        }
         if (driverUsername) {
             fetchDeliveryData();
         }
-    }, [driverUsername]);
+    }, [driverUsername, inputUser]);
 
     useEffect(() => { // use effect for fetching the current location
         if (!noRoutesFound) // Only fetch location if routes found

@@ -17,6 +17,7 @@ import DriverViewRoutes from './pages/DriverViewRoutes';
 import PrivateRoute from './constants/PrivateRoute'; 
 import Unauthorized from './pages/Unauthorized'; 
 import AdminControls from './pages/AdminControls';
+import AdminDriverNav from './pages/AdminDriverNav';
 import './index.css';
 import './App.css';
 
@@ -90,6 +91,13 @@ const App = () => {
                         <Route path="/driverviewroutes" element={
                             <PrivateRoute>
                                 <DriverViewRoutes />
+                            </PrivateRoute>
+                        } />
+
+                           {/* Protected routes (Admin and Driver) */}
+                           <Route path="/admindrivernav" element={
+                            <PrivateRoute role="ADMIN">
+                                <AdminDriverNav />
                             </PrivateRoute>
                         } />
                     </Routes>

@@ -5,8 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import AdminControlsForm from '../components/AdminControlsForm';
 import DeleteEntityForm from '../components/DeleteEntityForm';
 import CreateAccountForm from '../components/CreateAccountForm';
-import EditAccountForm from '../components/EditAccountForm'; // Edit form for user
-import EditEntityForm from '../components/EditEntityForm'; // Form to collect ID
+import EditAccountForm from '../components/EditAccountForm'; 
+import EditEntityForm from '../components/EditEntityForm'; 
+import CheckPasswordForm from '../components/CheckPasswordForm';
 
 const AdminControls = () => {
     const navigate = useNavigate();
@@ -21,9 +22,11 @@ const AdminControls = () => {
     const [deleteEntity, setDeleteEntity] = useState(null);
     const [openDelete, setOpenDelete] = useState(false);
     const [openAccountForm, setOpenAccountForm] = useState(false);
-    const [openEditEntityForm, setOpenEditEntityForm] = useState(false); // Modal for EditEntityForm
-    const [userMode, setUserMode] = useState('add'); // 'add' or 'edit' for user form
-    const [accountId, setAccountId] = useState(''); // Holds accountId when editing
+    const [openEditEntityForm, setOpenEditEntityForm] = useState(false); 
+    const [userMode, setUserMode] = useState('add');
+    const [accountId, setAccountId] = useState(''); 
+    const [openPasswordModal, setOpenPasswordModal] = useState(false); 
+    const [usernameForPasswordChange, setUsernameForPasswordChange] = useState('');
 
     const handleOperationChange = (entity) => (event) => {
         setOperations({
@@ -40,11 +43,10 @@ const AdminControls = () => {
             setDeleteEntity(entity);
             setOpenDelete(true);
         } else if (entity === 'user' && operation === 'edit') {
-            // Open modal to get accountId for editing
             setOpenEditEntityForm(true);
         } else if (entity === 'user' && operation === 'add') {
             setUserMode('add');
-            setAccountId(''); // Clear accountId for add mode
+            setAccountId('');
             setOpenAccountForm(true);
         } else if (entity !== 'user') {
             console.log(`Submitted operation for ${entity}:`, operation);
@@ -65,10 +67,19 @@ const AdminControls = () => {
     };
 
     const handleEditEntitySuccess = (collectedAccountId) => {
-        setAccountId(collectedAccountId); // Set the collected accountId
-        setUserMode('edit'); // Set mode to edit
-        setOpenAccountForm(true); // Open the user form for editing
-        setOpenEditEntityForm(false); // Close the ID collection modal
+        setAccountId(collectedAccountId);
+        setUserMode('edit');
+        setOpenAccountForm(true);
+        setOpenEditEntityForm(false);
+    };
+
+    const handleOpenPasswordModal = (username) => {
+        setUsernameForPasswordChange(username);
+        setOpenPasswordModal(true);
+    };
+
+    const handleClosePasswordModal = () => {
+        setOpenPasswordModal(false);
     };
 
     const entities = ['user', 'customer', 'location', 'product'];
@@ -114,7 +125,7 @@ const AdminControls = () => {
                 </Grid>
             </Paper>
 
-            {/* delete form modal */}
+            {/* Delete entity modal */}
             <Modal
                 open={openDelete}
                 onClose={handleCloseDelete}
@@ -138,7 +149,7 @@ const AdminControls = () => {
                 </Box>
             </Modal>
 
-            {/* account form modal */}
+            {/* Account form modal */}
             <Modal
                 open={openAccountForm}
                 onClose={handleCloseAccountForm}
@@ -158,16 +169,18 @@ const AdminControls = () => {
                         width: '100%',
                     }}
                 >
-                    {/* Display either CreateAccountForm or EditUserForm based on userMode */}
                     {userMode === 'add' ? (
                         <CreateAccountForm />
                     ) : (
-                        <EditAccountForm accountId={accountId} />
+                        <EditAccountForm 
+                            accountId={accountId} 
+                            handleOpenPasswordModal={handleOpenPasswordModal} // Pass function as prop
+                        />
                     )}
                 </Box>
             </Modal>
 
-            {/* edit entity ID collection modal */}
+            {/* Edit entity ID collection modal */}
             <Modal
                 open={openEditEntityForm}
                 onClose={handleCloseEditEntityForm}
@@ -189,7 +202,34 @@ const AdminControls = () => {
                 >
                     <EditEntityForm
                         entity="user"
-                        onSuccess={handleEditEntitySuccess} // Pass success handler
+                        onSuccess={handleEditEntitySuccess}
+                    />
+                </Box>
+            </Modal>
+
+            {/* Password modal */}
+            <Modal
+                open={openPasswordModal}
+                onClose={handleClosePasswordModal}
+                aria-labelledby="password-form-modal"
+                aria-describedby="password-form-description"
+            >
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        bgcolor: 'background.paper',
+                        boxShadow: 24,
+                        p: 4,
+                        maxWidth: 400,
+                        width: '100%',
+                    }}
+                >
+                    <CheckPasswordForm
+                        username={usernameForPasswordChange} 
+                        onClose={handleClosePasswordModal}
                     />
                 </Box>
             </Modal>

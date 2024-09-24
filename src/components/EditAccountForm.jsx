@@ -3,7 +3,7 @@ import { TextField, Box, Paper, Button, Grid, Typography, MenuItem, Select, Inpu
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { getAccountDetails } from '../store/apiFunctions';
 
-const EditAccountForm = ({ accountId }) => {
+const EditAccountForm = ({ accountId, handleOpenPasswordModal }) => {
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -49,7 +49,7 @@ const EditAccountForm = ({ accountId }) => {
     };
 
     const handleChangePassword = () => {
-        console.log('Change password logic goes here');
+        handleOpenPasswordModal(formData.email); // Pass the email to the modal handler
     };
 
     return (
@@ -91,7 +91,7 @@ const EditAccountForm = ({ accountId }) => {
                                     type="password"
                                     variant="outlined"
                                     fullWidth
-                                    value={'******'}
+                                    value={'******'} // Masked password display
                                     disabled
                                 />
                             </Grid>
@@ -136,10 +136,10 @@ const EditAccountForm = ({ accountId }) => {
                                 Save Changes
                             </Button>
                             <Button
-                                variant="outlined"
-                                color="secondary"
+                                variant="contained"
+                                color="primary"
                                 onClick={handleChangePassword}
-                                sx={{ padding: '10px 20px', fontSize: '1rem' }}
+                                sx={{ width: "250px", mb: 2 }}
                             >
                                 Change Password
                             </Button>

@@ -194,6 +194,7 @@ export const deleteMethod = async (id, endPoint) => {
 
 export const fetchDeliveryRoute = async (driverUsername) => {
     let deliveryRouteData = null;
+    console.log("SENDING USERNAME: ", driverUsername);
     try {
         const endpoint = `DeliveryRoutes/driver/${driverUsername}`;
         const response = await fetch(`${Constants.DATA_ENDPOINT}${endpoint}`, {
@@ -623,6 +624,7 @@ export const deleteRouteByDate = async (date) => {
     return result;
 };
 
+
 /**
  * Sends a request to change the user's password
  *
@@ -654,6 +656,27 @@ export const changePassword = async (username, oldPassword, newPassword) => {
 };
 
 
+export const deleteOrder = async (id) => {
+    try {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}orders/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
 
+        if (!response.ok) {
+            throw new Error('Failed to delete order with ID: ' + id);
+        }
+        // confirm successful deletion
+        const responseData = await response.json();
+        console.log('Successfully deleted order with ID:', id);
+        return responseData;
+
+    } catch (error) {
+        console.error('Error deleting data with ID:', id, " ", error.message);
+        return null;
+    }
+};
 
 

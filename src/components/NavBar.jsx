@@ -15,16 +15,16 @@ import Cookies from 'js-cookie';
 
 // Define the pages for admin and driver
 const admin_pages = [
-  { name: 'View Routes', path: '/viewroutes' },
+  { name: 'Routes', path: '/viewroutes' },
   { name: 'Live Tracking', path: '/livetracking' },
   { name: 'Daily Reports', path: '/dailyreports' },
-  { name: 'Add Order', path: '/addorder' },
-  { name: 'Driver Navigation', path: '/driverviewroutes'},
+  { name: 'Orders', path: '/addorder' },
+  { name: 'Driver Navigation', path: '/admindrivernav'},
   { name: 'Admin Controls', path: '/admincontrols'}
 ];
 
 const driver_pages = [
-  { name: 'Driver - View Routes', path: '/driverviewroutes'}
+  { name: 'View Routes', path: '/driverviewroutes'}
 ];
 
 function Navbar() {

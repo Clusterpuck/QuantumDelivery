@@ -8,7 +8,7 @@ import '../index.css';
 const ReportIssue = ({ open, onClose, driverUsername, order, fetchDeliveryData}) => {
     const [error, setError] = React.useState(null);
     const [success, setSuccess] = React.useState(null);
-    const [isDelayed, setIsDelayed] = useState(order.delayed);
+    const [isDelayed, setIsDelayed] = useState(order?.delayed);
     const [isIssueOpen, setIsIssueOpen] = useState(false); // for the message box when a driver reports an issue.
     const [issueNote, setIssueNote] = useState(''); // issue note
     const [isIssueSubmitted, setIsIssueSubmitted] = useState(false);
@@ -71,7 +71,7 @@ const ReportIssue = ({ open, onClose, driverUsername, order, fetchDeliveryData})
         if (open) {
             setSuccess(null);
             setError(null);
-            setIsDelayed(order.delayed);
+            setIsDelayed(order?.delayed);
             setIsIssueOpen(false); // reset issue box state when the dialog reopens
             setIssueNote(''); 
             setIsIssueSubmitted(false);

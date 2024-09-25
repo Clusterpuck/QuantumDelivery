@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
-//import { handlePasswordChange } from '../store/apiFunctions'; // Assume you have this API function
+import { changePassword } from '../store/apiFunctions'; 
 
 const CheckPasswordForm = ({ username }) => {
     const [oldPassword, setOldPassword] = useState('');
@@ -11,38 +11,50 @@ const CheckPasswordForm = ({ username }) => {
 
     const handleChangeOldPassword = (event) => {
         setOldPassword(event.target.value);
-        setError(null); // Reset error on change
-        setSuccess(false); // Reset success on change
+        setError(null); 
+        setSuccess(false); 
     };
 
     const handleChangeNewPassword = (event) => {
         setNewPassword(event.target.value);
-        setError(null); // Reset error on change
-        setSuccess(false); // Reset success on change
+        setError(null); 
+        setSuccess(false); 
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log(`Changing password for ${username}`);
-
+    
         if (!oldPassword || !newPassword) {
             setError('Both password fields are required.');
             return;
         }
-
+    
         try {
             // API call to change password
-            const result = await handlePasswordChange(username, oldPassword, newPassword);
+            const result = await changePassword(username, oldPassword, newPassword);
             if (result) {
-                setSuccess(true);
+                console.log(result);  // "Password changed successfully!"
+                setSuccess(true); // If you want to indicate success
             } else {
-                setError('Failed to change password. Please check the old password and try again.');
+                console.error('Password change failed');
             }
-        } catch (err) {
-            setError('An error occurred while changing the password.');
-            console.error(err);
-        }
+        }   
+        catch (err) {
+                console.error('Error object:', err); // Log the entire error object for debugging
+                if (err.response) {
+                    // Check for a response from the server
+                    setError(err.response.data.message || 'An error occurred.');
+                    console.error(`Error: ${err.response.data.message}`);
+                } else {
+                    // If there's no response, log a more general error message
+                    setError('An error occurred while changing the password.');
+                    console.error('Error without response:', err);
+                }
+            }
+            
     };
+    
 
     return (
         <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>

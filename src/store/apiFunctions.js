@@ -623,4 +623,37 @@ export const deleteRouteByDate = async (date) => {
     return result;
 };
 
+/**
+ * Sends a request to change the user's password
+ *
+ * @async
+ * @param {string} username - The username of the account
+ * @param {string} currentPassword - The user's current password
+ * @param {string} newPassword - The new password the user wants to set
+ * @returns {string|null} - Returns success message or null in case of failure
+ */
+export const changePassword = async (username, oldPassword, newPassword) => {
+    const response = await fetch('https://routingdata.azurewebsites.net/api/accounts/change-password', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            Username: username,
+            CurrentPassword: oldPassword,
+            NewPassword: newPassword
+        }),
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to change password: ${errorText}`);
+    }
+
+    return await response.text();  // Return success message as plain text
+};
+
+
+
+
 

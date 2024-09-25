@@ -92,7 +92,7 @@ const Orders = () =>
     return (
         <Grid container>
 
-            <Grid item xs={4} md={4} sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+            {/* <Grid item xs={4} md={4} sx={{ display: 'flex', justifyContent: 'flex-start' }}>
                 <Button
                     variant="contained"
                     color="primary"
@@ -101,10 +101,10 @@ const Orders = () =>
                 >
                     <AddIcon sx={{ fontSize: '2rem' }} /> Add New Orders
                 </Button>
-            </Grid>
+            </Grid> */}
 
 
-            <Grid item xs={4} md={4} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Typography variant="h3" component="h1" sx={{ display: 'flex', alignItems: 'center' }}>
                     <LibraryAddIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
                     Orders
@@ -116,6 +116,16 @@ const Orders = () =>
             {/**Issues table */}
             <Box maxHeight='30%' sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                 <Paper elevation={3} sx={{ padding: 4, maxWidth: 1500, width: '100%' }}>
+                {/* <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleOpenModal}
+                    sx={{ borderRadius: '18px' }}
+                >
+                    <AddIcon sx={{ fontSize: '2rem' }} /> Add New Orders
+                </Button>
+            </Grid> */}
                     <Grid item xs={12} md={12} mb={1}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}> {/* Flexbox for inline layout */}
                             <SmsFailedIcon sx={{ mr: 1 }} /> {/* Add margin to the right of the icon */}
@@ -131,6 +141,16 @@ const Orders = () =>
             {/**All orders table */}
             <Box maxHeight='70%' sx={{ display: 'flex', justifyContent: 'center' }} marginTop={4}>
                 <Paper elevation={3} sx={{ padding: 4, maxWidth: 1500, width: '100%' }}>
+                <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleOpenModal}
+                    sx={{ borderRadius: '18px' }}
+                >
+                    <AddIcon sx={{ fontSize: '2rem' }} /> Add New Orders
+                </Button>
+            </Grid>
                 <Grid item xs={12} md={12} mb={1}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}> {/* Flexbox for inline layout */}
                             <WidgetsIcon sx={{ mr: 1 }} /> {/* Add margin to the right of the icon */}

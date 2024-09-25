@@ -18,6 +18,7 @@ import PrivateRoute from './constants/PrivateRoute';
 import Unauthorized from './pages/Unauthorized'; 
 import AdminControls from './pages/AdminControls';
 import AdminDriverNav from './pages/AdminDriverNav';
+import LandingPage from './pages/LandingPage';
 import './index.css';
 import './App.css';
 
@@ -78,7 +79,7 @@ const App = () => {
                         } />
                         <Route path="/home" element={
                             <PrivateRoute role="ADMIN">
-                                <Orders />
+                                <LandingPage />
                             </PrivateRoute>
                         } />
                         <Route path="/admincontrols" element={
@@ -94,11 +95,11 @@ const App = () => {
                             </PrivateRoute>
                         } />
 
-                           {/* Protected routes (Admin and Driver) */}
-                           <Route path="/admindrivernav" element={
-                            <PrivateRoute role="ADMIN">
-                                <AdminDriverNav />
-                            </PrivateRoute>
+                        {/* Protected routes (Admin and Driver) */}
+                        <Route path="/admindrivernav" element={
+                        <PrivateRoute role="ADMIN">
+                            <AdminDriverNav />
+                        </PrivateRoute>
                         } />
                     </Routes>
                 </PageLayout>

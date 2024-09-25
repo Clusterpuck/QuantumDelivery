@@ -11,6 +11,7 @@ import { login } from '../store/apiFunctions';
 import {fetchMethod} from '../store/apiFunctions';
 import Cookies from 'js-cookie';
 
+
 const styleConstants = {
     fieldSpacing: { mb: 2 },
 };
@@ -65,7 +66,7 @@ const LoginForm = () => {
     
                     // redirect based on role
                     if (response.role === 'ADMIN') {
-                        navigate('/orders'); // redirect to Admin dashboard
+                        navigate('/home'); // redirect to Admin dashboard
                     } else if (response.role === 'DRIVER') {
                         navigate('/driverviewroutes'); // redirect to Driver dashboard
                     } else {

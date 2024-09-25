@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Drawer, IconButton, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, CircularProgress } from '@mui/material';
+import {useMediaQuery, Box, Drawer, IconButton, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, CircularProgress } from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -82,6 +82,8 @@ const DriverViewRoutes = ({ inputUser }) => {
         }
     };
 
+    const isMobile = useMediaQuery('(max-width:600px)'); 
+
     const handleMarkAsDelivered = async () => {
         if (currentDelivery) {
             const input = {
@@ -147,12 +149,13 @@ const DriverViewRoutes = ({ inputUser }) => {
                     width: '95vw', // drawer takes up 95% of the screen
                     flexShrink: 0,
                     '& .MuiDrawer-paper': {
-                        width: '95vw',
+                        width: isMobile ? '95vw' : '30vw',
                         boxSizing: 'border-box',
                         backgroundColor: '#FFFFF',
                         zIndex: 1200,
                         overflowY: 'auto',
                         paddingTop: '56px',
+                        
                     },
                 }}
             >
@@ -421,7 +424,7 @@ const DriverViewRoutes = ({ inputUser }) => {
                     sx={{
                         position: 'fixed',
                         bottom: 16,
-                        right: 30,
+                        right: isMobile ? '7vw' : '71vw',
                         backgroundColor: 'rgb(187, 205, 235)',
                         color: 'black'
                     }}

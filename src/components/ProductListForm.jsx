@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
+import { Stack } from '@mui/material';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Snackbar from '@mui/material/Snackbar';
@@ -12,6 +13,8 @@ import { fetchProducts } from '../store/apiFunctions';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Skeleton from '@mui/material/Skeleton';
+import DeleteIcon from '@mui/icons-material/Delete';
+import {Input} from '@mui/material';
 
 const ProductListForm = ({ sendProductList }) =>
 {
@@ -32,6 +35,7 @@ const ProductListForm = ({ sendProductList }) =>
             try
             {
                 const productList = await fetchProducts();
+                console.log("Products gained is " + JSON.stringify(productList));
                 setProducts(productList);
             } catch (error)
             {
@@ -39,7 +43,8 @@ const ProductListForm = ({ sendProductList }) =>
                 setSnackbarMessage('Failed to load products');
                 setSnackbarSeverity('error');
                 setSnackbarOpen(true);
-            }finally{
+            } finally
+            {
                 setLoadingProducts(false);
             }
         };
@@ -77,7 +82,11 @@ const ProductListForm = ({ sendProductList }) =>
                 {
                     updatedProducts = [
                         ...prev,
-                        { id: selectedProduct.id, name: selectedProduct.name, quantity: quantity }
+                        { 
+                            id: selectedProduct.id, 
+                            name: selectedProduct.name, 
+                            quantity: quantity, 
+                            unitOfMeasure: selectedProduct.unitOfMeasure }
                     ];
                     // Product does not exist, add new entry
                 }
@@ -87,20 +96,33 @@ const ProductListForm = ({ sendProductList }) =>
 
             setSelectedProduct(null);
             setQuantity(1);
-            setSnackbarMessage('Product added successfully!');
-            setSnackbarSeverity('success');
-            setSnackbarOpen(true);
-        } else
+           
+        } 
+    };
+
+    const handleRemoveProduct = (id) =>
+    {
+        setAddedProducts((prev) =>
         {
-            setSnackbarMessage('Invalid product selected');
-            setSnackbarSeverity('error');
-            setSnackbarOpen(true);
-        }
+            const updatedProducts = prev.filter(product => product.id !== id);
+            sendProductList(updatedProducts);  // Update the parent component with the new product list
+            return updatedProducts;
+        });
+
     };
 
     const handleSnackbarClose = () =>
     {
         setSnackbarOpen(false);
+    };
+
+    const handleTableQuantityChange = (productID, newQuantity) => {
+        const updatedProducts = addedProducts.map((product) =>
+            product.id === productID
+                ? { ...product, quantity: Math.max(1, newQuantity) }
+                : product
+        );
+        setAddedProducts(updatedProducts);
     };
 
 
@@ -127,12 +149,13 @@ const ProductListForm = ({ sendProductList }) =>
         {
             return (
                 <Autocomplete
-                value={selectedProduct}
-                onChange={handleProductChange}
-                options={products}
-                getOptionLabel={(option) => option.name}
-                renderInput={(params) => <TextField {...params} label="Select Product" variant="outlined" fullWidth />}
-            />
+                    size="small"
+                    value={selectedProduct}
+                    onChange={handleProductChange}
+                    options={products}
+                    getOptionLabel={(option) => option.name}
+                    renderInput={(params) => <TextField {...params} label="Select Product" variant="outlined" fullWidth />}
+                />
             );
         }
 
@@ -142,18 +165,56 @@ const ProductListForm = ({ sendProductList }) =>
     const columns = [
         { field: 'id', headerName: 'ID', flex: 0.2 },
         { field: 'name', headerName: 'Name', flex: 0.4 },
-        { field: 'quantity', headerName: 'Quantity', flex: 0.2 }
+        {
+            field: 'editQuanity',
+            headerName: '',
+            flex: 0.2,
+            sortable: false,
+            disableClickEventBubbling: true,
+            
+            renderCell: (params) => {
+                return (
+                    <Input
+                        type="number"
+                        value={params.row.quantity}
+                        inputProps={{ min: 1 }}  // Prevent going below 1
+                        onChange={(e) => handleTableQuantityChange(params.row.id, e.target.value)}
+                    />
+                );
+            },
+        },
+        { field: 'unitOfMeasure', headerName: 'Unit', flex: 0.2 },
+
+        {
+            field: 'action',
+            headerName: '',
+            flex: 0.2,
+            sortable: false,
+            disableClickEventBubbling: true,
+            
+            renderCell: (params) => {
+                return (
+                    <Button 
+                        variant="outlined" 
+                        color="error" 
+                        size="small" 
+                        onClick={()=>handleRemoveProduct(params.row.id)}><DeleteIcon/></Button>
+                );
+            },
+        }
+
     ];
 
     const rows = addedProducts.map(product => ({
         id: product.id,
         name: product.name,
-        quantity: product.quantity
+        quantity: product.quantity,
+        unitOfMeasure: product.unitOfMeasure
     }));
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-            <Grid container spacing={2}>
+            <Grid container spacing={1}>
                 <Grid item xs={7} md={7} >
                     <ProductAutocomplete />
                 </Grid>
@@ -166,28 +227,36 @@ const ProductListForm = ({ sendProductList }) =>
                         value={quantity}
                         onChange={handleQuantityChange}
                         inputProps={{ min: 1 }}
+                        size="small"
                     />
                 </Grid>
-                <Grid item xs={2}>
-                    <Button
-                        onClick={handleAddProduct}
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        sx={{ height: '100%' }}
+                <Grid item xs={2} justifyContent="center">
+                    <Box
+                        display="flex"          // Enable flexbox
+                        alignItems="center"     // Center vertically
+                        justifyContent="center"  // Center horizontally (optional)
+                        height="100%"           // Make Box take full height of Grid item
                     >
-                        <AddIcon />
-                        Add Product
-                    </Button>
+                        <Button
+                            onClick={handleAddProduct}
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                        >
+                            <AddIcon />
+                            Add Product
+                        </Button>
+                    </Box>
                 </Grid>
             </Grid>
 
-            <Box sx={{ height: 400, width: '100%', mt: 2 }}>
+            <Box sx={{ height: 250, width: '100%', mt: 0.5 }}>
                 <DataGrid
+                    density="compact"
                     rows={rows}
                     columns={columns}
                     pageSize={10}
-                    checkboxSelection />
+                    />
             </Box>
 
             {/* Snackbar for feedback */}

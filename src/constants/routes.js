@@ -10,7 +10,7 @@ import PageLayout from './components/PageLayout';
 import ViewRoutes from './pages/ViewRoutes';
 import LiveTracking from './pages/LiveTracking';
 import DailyReports from './pages/DailyReports';
-import AddOrder from './pages/AddOrder';
+import Orders from './pages/Orders';
 import Login from "./pages/Login";
 import AccountDetails from './pages/AccountDetails';
 import PrivateRoute from './constants/PrivateRoute';
@@ -69,9 +69,9 @@ const App = () => {
                                 <DailyReports />
                             </PrivateRoute>
                         } />
-                        <Route path="/addorder" element={
+                        <Route path="/orders" element={
                             <PrivateRoute role="ADMIN">
-                                <AddOrder />
+                                <Orders />
                             </PrivateRoute>
                         } />
                         <Route path="/accountdetails" element={
@@ -81,7 +81,7 @@ const App = () => {
                         } />
                         <Route path="/home" element={
                             <PrivateRoute role="ADMIN">
-                                <AddOrder />
+                                <Orders />
                             </PrivateRoute>
                         } />
 

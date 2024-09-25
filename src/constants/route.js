@@ -4,7 +4,7 @@ import Login from "../pages/Login";
 import LiveTracking from "../pages/LiveTracking";
 import DailyReports from "../pages/DailyReports";
 import UploadRunsheet from "../pages/UploadRunsheet";
-import AddOrder from "../pages/AddOrder";
+import Orders from "../pages/Orders";
 import PrivateRoute from "./PrivateRoute";  
 import DriverViewRoutes from "../pages/DriverViewRoutes";
 import AdminControls from "../pages/AdminControls";
@@ -70,15 +70,15 @@ export const ROUTES = [
     path: "/home",
     element: (
       <PrivateRoute role="ADMIN">
-        <AddOrder />
+        <Orders />
       </PrivateRoute>
     ),
   },
   {
-    path: "/addorder",
+    path: "/orders",
     element: (
       <PrivateRoute role="admin">
-        <AddOrder />
+        <Orders />
       </PrivateRoute>
     ),
   },

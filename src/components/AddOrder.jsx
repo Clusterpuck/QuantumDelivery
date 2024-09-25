@@ -1,75 +1,56 @@
 import React, { useEffect, useState } from 'react';
-import { fetchCustomers, fetchLocations, postMethod } from '../store/apiFunctions.js';
-import { Autocomplete, Button, Box, Paper, Grid, TextField, Snackbar, Alert, Divider, CircularProgress } from '@mui/material';
-import AddressSearch from '../components/AddressSearch.jsx';
-import AddCustomer from '../components/AddCustomer.jsx';
+import { Autocomplete, Button, Box, Paper, Grid, TextField, CircularProgress, Snackbar, Alert, Skeleton } from '@mui/material';
 import ProductListForm from '../components/ProductListForm.jsx';
-import OrdersTable from '../components/OrdersTable.jsx';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import AddLocationIcon from '@mui/icons-material/AddLocation';
 import SendIcon from '@mui/icons-material/Send';
-import Typography from '@mui/material/Typography';
-import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { fetchMethod } from '../store/apiFunctions';
 import { DateTimePicker } from '@mui/x-date-pickers';
-import Skeleton from '@mui/material/Skeleton';
-import IssuesTable from '../components/IssuesTable';
-import EditOrderForm from '../components/EditOrderForm';
-import {enableScroll} from '../assets/scroll.js';
+import { fetchCustomers, fetchLocations, postMethod } from '../store/apiFunctions.js';
 
-const styleConstants = {
-    fieldSpacing: { mb: 2 }
-};
 
-const AddOrder = () =>
+const AddOrder = ({ updateOrders }) =>
 {
-
+    const [selectedDate, setSelectedDate] = useState(dayjs());
+    const [orderNote, setOrderNote] = useState('');
+    const [selectedProducts, setSelectedProducts] = useState('');
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const [selectedLocation, setSelectedLocation] = useState(null);
+    const [submittingOrders, setSubmittingOrders] = useState(false);
     const [customers, setCustomers] = useState(null);
     const [loadingCustomers, setLoadingCustomers] = useState(false);
     const [locations, setLocations] = useState(null);
     const [loadingLocations, setLoadingLocations] = useState(false);
-    const [orders, setOrders] = useState([]);
-    const [loadingOrders, setLoadingOrders] = useState(0);
-    const [submittingOrders, setSubmittingOrders] = useState(false);
-    const [selectedCustomer, setSelectedCustomer] = useState(null);
-    const [selectedLocation, setSelectedLocation] = useState(null);
-    const [selectedProducts, setSelectedProducts] = useState('');
-    const [orderNote, setOrderNote] = useState('');
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: '',
         severity: 'success',
     });
-    const [selectedDate, setSelectedDate] = useState(dayjs());
 
-    const refreshOrders = async () => {
-        loadOrders();     
+    const commonStyles = {
+        width: '100%',  // Make it responsive to parent container
+        maxWidth: 800,  // Set a max width to keep it from expanding too much
+        height: 'auto', // Auto-adjust height for responsiveness
     };
+
+    const skeletonStyles = {
+        ...commonStyles,
+        height: 56,  // Set a fixed height for the skeleton to simulate the input field height
+    };
+
+    
+const styleConstants = {
+    fieldSpacing: { mb: 0.5 }
+};
+
 
     useEffect(() =>
     {
-        enableScroll();
-        loadOrders();
         loadCustomers();
         loadLocations();
 
     }, []);
-
-    const handleCustomerChange = (event, newValue) =>
-    {
-        setSelectedCustomer(newValue);
-        //console.log("Selected customer is  " + selectedCustomer.name);
-    };
-
-    const handleLocationChange = (event, newValue) =>
-    {
-        setSelectedLocation(newValue);
-        //console.log("Selected location is  " + selectedLocation.address);
-    };
 
     const loadCustomers = async () =>
     {
@@ -89,25 +70,10 @@ const AddOrder = () =>
 
     }
 
-    const loadOrders = async () =>
+    const handleSnackbarClose = () =>
     {
-        setLoadingOrders(true);
-        const loadOrders = await fetchMethod("orders/with-products");
-        if (loadOrders)
-        {
-            const filteredOrders = loadOrders.filter(order => order.status !== "CANCELLED");
-            setOrders(filteredOrders);
-
-            console.log("Orders recieved are ", JSON.stringify(filteredOrders));
-        } else
-        {
-            console.error('Error fetching orders:', error);
-            setSnackbarMessage('Failed to load orders');
-            setSnackbarSeverity('error');
-            setSnackbarOpen(true);
-        }
-        setLoadingOrders(false);
-    }
+        setSnackbar(prev => ({ ...prev, open: false }));
+    };
 
 
     // Function to handle date change and load dummy output
@@ -115,6 +81,19 @@ const AddOrder = () =>
     { // logic for showing orders from a specific date is still yet to be implemented.
         setSelectedDate(date);
     };
+
+    const handleCustomerChange = (event, newValue) =>
+    {
+        setSelectedCustomer(newValue);
+        //console.log("Selected customer is  " + selectedCustomer.name);
+    };
+
+    const handleLocationChange = (event, newValue) =>
+    {
+        setSelectedLocation(newValue);
+        //console.log("Selected location is  " + selectedLocation.address);
+    };
+
 
     const submitOrder = async (event) =>
     {
@@ -156,7 +135,7 @@ const AddOrder = () =>
         if (result != null)
         {
             //refresh the table
-            loadOrders();
+            updateOrders();
             console.log("Orders recieved are ", JSON.stringify(result));
             setSnackbar({
                 open: true,
@@ -177,10 +156,37 @@ const AddOrder = () =>
 
     }
 
-    const handleSnackbarClose = () =>
+
+    const CustomerAutocomplete = () =>
     {
-        setSnackbar(prev => ({ ...prev, open: false }));
+
+
+        if (loadingCustomers)
+        {
+            return <Skeleton variant="rectangular" animation="wave" sx={skeletonStyles} />;
+        }
+
+        if (customers)
+        {
+            return (
+                <Autocomplete
+                    disablePortal
+                    id="Customers"
+                    size="small"
+                    options={customers}
+                    getOptionLabel={(option) => option.name + " " + option.phone}
+                    getOptionKey={(option) => option.id}
+                    sx={commonStyles}
+                    value={selectedCustomer}
+                    onChange={handleCustomerChange}
+                    renderInput={(params) => <TextField {...params} label="Select Customer" />}
+                />
+            );
+        }
+
+        // return <p>No Customers</p>;
     };
+
 
     const LocationAutocomplete = () =>
     {
@@ -198,6 +204,7 @@ const AddOrder = () =>
                     disablePortal
                     id="Locations"
                     options={locations}
+                    size="small"
                     getOptionLabel={(option) => option.address}
                     getOptionKey={(option) => option.id}
                     sx={commonStyles}
@@ -211,63 +218,14 @@ const AddOrder = () =>
         // return <p>No Customers</p>;
     };
 
-    const commonStyles = {
-        width: '100%',  // Make it responsive to parent container
-        maxWidth: 800,  // Set a max width to keep it from expanding too much
-        height: 'auto', // Auto-adjust height for responsiveness
-    };
-    const skeletonStyles = {
-        ...commonStyles,
-        height: 56,  // Set a fixed height for the skeleton to simulate the input field height
-    };
+   
 
-
-
-
-
-    const CustomerAutocomplete = () =>
-    {
-
-
-        if (loadingCustomers)
-        {
-            return <Skeleton variant="rectangular" animation="wave" sx={skeletonStyles} />;
-        }
-
-        if (customers)
-        {
-            return (
-                <Autocomplete
-                    disablePortal
-                    id="Customers"
-                    options={customers}
-                    getOptionLabel={(option) => option.name + " " + option.phone}
-                    getOptionKey={(option) => option.id}
-                    sx={commonStyles}
-                    value={selectedCustomer}
-                    onChange={handleCustomerChange}
-                    renderInput={(params) => <TextField {...params} label="Select Customer" />}
-                />
-            );
-        }
-
-        // return <p>No Customers</p>;
-    };
 
 
     return (
-        <div
-
-        >
-            <Typography variant="h3" component="h1" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <LibraryAddIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
-                Orders
-            </Typography>
-
-
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                <Paper elevation={3} sx={{ padding: 4, maxWidth: 1500, width: '100%' }}>
-                    <Grid item xs={12} md={12} container spacing={2} >
+        <>
+            <Box sx={{ display: 'flex', justifyContent: 'center', maxHeight: '80vh' }}>
+                    <Grid item xs={12} md={12} container spacing={0.5} >
                         <Grid item xs={6} md={6} sx={styleConstants.fieldSpacing} >
 
                             <Grid item xs={12} md={12} sx={styleConstants.fieldSpacing}>
@@ -278,6 +236,7 @@ const AddOrder = () =>
                                         label="Date Required"
                                         value={selectedDate}
                                         onChange={handleDateChange}
+                                        size="small"
                                         renderInput={(params) => <TextField {...params} />}
                                     />
 
@@ -287,12 +246,12 @@ const AddOrder = () =>
                             <Grid item xs={12} md={12} sx={styleConstants.fieldSpacing}>
                                 <CustomerAutocomplete />
                             </Grid>
-                            
+
                             <Grid item xs={12} md={12} sx={styleConstants.fieldSpacing}>
                                 <LocationAutocomplete />
                             </Grid>
                         </Grid>
-                      
+
                         <Grid item xs={6} md={6} sx={styleConstants.fieldSpacing} >
 
                             <TextField
@@ -300,13 +259,14 @@ const AddOrder = () =>
                                 label="Order Comments"
                                 multiline
                                 fullWidth
-                                rows={7}
+                                rows={5}
                                 value={orderNote}
                                 placeholder='Order Comments'
+                                size="small"
                                 onChange={(event) =>
-                                    {
-                                        setOrderNote(event.target.value)
-                                    }
+                                {
+                                    setOrderNote(event.target.value)
+                                }
                                 }
 
                             />
@@ -327,7 +287,7 @@ const AddOrder = () =>
                                     ? "contained" : "disabled"}
                                 color="primary"
                                 onClick={submitOrder}
-                                sx={{ height: 40 }} // Set a fixed height for the button
+                                sx={{ height: 30 }} // Set a fixed height for the button
                             >
                                 Submit Order
                                 {submittingOrders ? <CircularProgress size={18} color='secondary' x={{ marginLeft: 1 }} /> : <SendIcon sx={{ marginLeft: 1 }} />}
@@ -335,31 +295,7 @@ const AddOrder = () =>
                             </Button>
                         </Grid>
                     </Grid>
-                </Paper>
             </Box>
-
-            <Divider></Divider>
-
-            <h2>Orders with Driver Reported Issues</h2>
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 4, maxWidth: 1500, width: '100%' }}>
-                <IssuesTable />
-                </Paper>
-            </Box>
-
-            <h2>All Orders</h2>
-
-            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Paper elevation={3} sx={{ padding: 4, maxWidth: 1500, width: '100%' }}>
-                    <Box sx={{ height: 400, width: '100%' }}>
-
-                        {loadingOrders ?
-                            (<Skeleton variant="rectangular" animation="wave" sx={{ height: '100%' }} />) :
-                            (<OrdersTable orders={orders} onRefresh={refreshOrders}/>)}
-                    </Box>
-                </Paper>
-            </Box>
-
             <Snackbar
                 open={snackbar.open}
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
@@ -370,10 +306,9 @@ const AddOrder = () =>
                     {snackbar.message}
                 </Alert>
             </Snackbar>
-
-
-        </div >
+        </>
     );
-};
+
+}
 
 export default AddOrder;

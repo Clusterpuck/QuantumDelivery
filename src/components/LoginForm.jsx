@@ -65,7 +65,7 @@ const LoginForm = () => {
     
                     // redirect based on role
                     if (response.role === 'ADMIN') {
-                        navigate('/addorder'); // redirect to Admin dashboard
+                        navigate('/orders'); // redirect to Admin dashboard
                     } else if (response.role === 'DRIVER') {
                         navigate('/driverviewroutes'); // redirect to Driver dashboard
                     } else {

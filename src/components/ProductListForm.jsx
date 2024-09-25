@@ -39,7 +39,8 @@ const ProductListForm = ({ sendProductList }) =>
                 setSnackbarMessage('Failed to load products');
                 setSnackbarSeverity('error');
                 setSnackbarOpen(true);
-            }finally{
+            } finally
+            {
                 setLoadingProducts(false);
             }
         };
@@ -127,12 +128,13 @@ const ProductListForm = ({ sendProductList }) =>
         {
             return (
                 <Autocomplete
-                value={selectedProduct}
-                onChange={handleProductChange}
-                options={products}
-                getOptionLabel={(option) => option.name}
-                renderInput={(params) => <TextField {...params} label="Select Product" variant="outlined" fullWidth />}
-            />
+                    size="small"
+                    value={selectedProduct}
+                    onChange={handleProductChange}
+                    options={products}
+                    getOptionLabel={(option) => option.name}
+                    renderInput={(params) => <TextField {...params} label="Select Product" variant="outlined" fullWidth />}
+                />
             );
         }
 
@@ -153,7 +155,7 @@ const ProductListForm = ({ sendProductList }) =>
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-            <Grid container spacing={2}>
+            <Grid container spacing={1}>
                 <Grid item xs={7} md={7} >
                     <ProductAutocomplete />
                 </Grid>
@@ -166,24 +168,32 @@ const ProductListForm = ({ sendProductList }) =>
                         value={quantity}
                         onChange={handleQuantityChange}
                         inputProps={{ min: 1 }}
+                        size="small"
                     />
                 </Grid>
-                <Grid item xs={2}>
-                    <Button
-                        onClick={handleAddProduct}
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        sx={{ height: '100%' }}
+                <Grid item xs={2} justifyContent="center">
+                    <Box
+                        display="flex"          // Enable flexbox
+                        alignItems="center"     // Center vertically
+                        justifyContent="center"  // Center horizontally (optional)
+                        height="100%"           // Make Box take full height of Grid item
                     >
-                        <AddIcon />
-                        Add Product
-                    </Button>
+                        <Button
+                            onClick={handleAddProduct}
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                        >
+                            <AddIcon />
+                            Add Product
+                        </Button>
+                    </Box>
                 </Grid>
             </Grid>
 
-            <Box sx={{ height: 400, width: '100%', mt: 2 }}>
+            <Box sx={{ height: 250, width: '100%', mt: 0.5 }}>
                 <DataGrid
+                    density="compact"
                     rows={rows}
                     columns={columns}
                     pageSize={10}

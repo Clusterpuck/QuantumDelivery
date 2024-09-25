@@ -73,7 +73,7 @@ const OrdersTable = ({ orders, onRefresh }) => {
 
     return (
         <Box sx={{ width: '100%' }}>
-            <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
+            <TableContainer component={Paper} sx={{ maxHeight: 800 }}>
                 <Table stickyHeader>
                     <TableHead>
                         <TableRow>

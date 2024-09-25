@@ -8,6 +8,7 @@ import LabelIcon from "@mui/icons-material/Label"; // ID Icon
 import AddIcon from '@mui/icons-material/Add'; // Add Icon
 import { useTheme } from '@mui/material/styles';
 import AddRouteForm from '../components/AddRouteForm.jsx';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 // Material-UI Components
 import
@@ -403,17 +404,29 @@ const ViewRoutes = () =>
             onClose={handleCloseModal}
             aria-labelledby="add-route-modal"
             aria-describedby="add-route-form"
-          >
+        >
             <Box sx={modalStyle}>
-              <Typography id="add-route-modal" variant="h6" component="h2">
-                Calculate New Routes
-              </Typography>
-              <AddRouteForm updateRoutes={loadRoutes} closeView={handleCloseModal} />
-              <Button onClick={handleCloseModal} sx={{ mt: 2 }}>
-                Close
-              </Button>
+                <Grid container alignItems="center">  {/* Use Grid container for alignment */}
+                    <Grid item xs={10}>  {/* Title takes up 10 units */}
+                        <Typography
+                            id="add-route-modal"
+                            variant="h6"
+                            component="h2"
+                            align="left"  // Align text to the left
+                            sx={{ fontWeight: 'bold', mb: 1 }}  // Bold and margin below
+                        >
+                            Calculate New Routes
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={2} textAlign="right">  {/* Button takes up 2 units */}
+                        <Button onClick={handleCloseModal}>
+                            <CancelIcon />
+                        </Button>
+                    </Grid>
+                </Grid>
+                <AddRouteForm updateRoutes={loadRoutes} closeView={handleCloseModal} />
             </Box>
-          </Modal>
+        </Modal>
 
         </Grid>
       </Paper>

@@ -52,7 +52,7 @@ const AdminControls = () => {
             setOpenAccountForm(true);
         } else if (entity !== 'user') {
             console.log(`Submitted operation for ${entity}:`, operation);
-            navigate('/addorder');
+            navigate('/orders');
         }
     };
 

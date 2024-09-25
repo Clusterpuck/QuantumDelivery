@@ -18,7 +18,7 @@ const admin_pages = [
   { name: 'Routes', path: '/viewroutes' },
   { name: 'Live Tracking', path: '/livetracking' },
   { name: 'Daily Reports', path: '/dailyreports' },
-  { name: 'Orders', path: '/addorder' },
+  { name: 'Orders', path: '/orders' },
   { name: 'Driver Navigation', path: '/admindrivernav'},
   { name: 'Admin Controls', path: '/admincontrols'}
 ];

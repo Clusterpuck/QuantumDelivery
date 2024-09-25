@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import {useMediaQuery, Box, Drawer, IconButton, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, CircularProgress } from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
@@ -15,6 +15,7 @@ import ReportIssue from '../components/ReportIssue.jsx';
 import { getRowColour } from '../store/helperFunctions.js';
 import Cookies from 'js-cookie';
 import DateSelectHighlight from '../components/DateSelectHighlight.jsx';
+import dayjs from 'dayjs';
 
 
 const DriverViewRoutes = ({ inputUser }) => {
@@ -30,9 +31,10 @@ const DriverViewRoutes = ({ inputUser }) => {
     const [anyPlanned, setAnyPlanned] = React.useState(true); // if any orders are planned, use to check whether the start delivery button should be shown
     const [finishedDelivery, setFinishedDelivery] = React.useState(false); // if delivery is finished
     const [issueDialogOpen, setIssueDialogOpen] = useState(false); //if the report issue dialog is open
-    const [otherUser, setOtherUser] = useState(null);
+    const otherUser = useRef(null);
     const driverUsername = Cookies.get('userName'); // username of logged in user, Admins will see no routes
-
+    const [selectedDate, setSelectedDate] = useState(dayjs());
+    const [dateOptions, setDateOptions] = useState([]);
 
     const toggleDrawer = (open) => () => { setDrawerOpen(open); }
     const handlePhoneDialog = (open) => () => { setPhoneDialogOpen(open); };
@@ -41,28 +43,60 @@ const DriverViewRoutes = ({ inputUser }) => {
 
     const fetchDeliveryData = async () => {
         try {
+            setCurrentDelivery(null);
+            setNextDeliveries(null);
             var routeData;
             //uses logged in user unless a specific username given to component
-            if(otherUser)
+            if(otherUser.current)
             {
-                console.log("Fetching for otherUser " + otherUser);
-                routeData = await fetchDeliveryRoute(otherUser);
+                console.log("Fetching for otherUser " + otherUser.current);
+                routeData = await fetchDeliveryRoute(otherUser.current);
             }
             else{
+                console.log("Fetching for driver " + driverUsername);
                 routeData = await fetchDeliveryRoute(driverUsername);
             }
             if (routeData) {
-                setNoRoutesFound(false);//added to reload routes if found on driver change
-                setRouteId(routeData.deliveryRouteID);
-                const pendingDeliveries = routeData.orders.filter(order => order.status !== 'DELIVERED' && order.status !== 'ISSUE');
-                const sortedDeliveries = pendingDeliveries.sort((a, b) => a.position - b.position);
-                setCurrentDelivery(sortedDeliveries[0]);
-                setNextDeliveries(sortedDeliveries.slice(1));
+                console.log("AAAAAA ROUTES DATA :", routeData);
+                const routeDates = extractDeliveryDates(routeData);
+                setDateOptions(routeDates);
+            
+                setNoRoutesFound(false); // added to reload routes if found on driver change
 
-                const anyPlanned = sortedDeliveries.some(order => order.status === 'ASSIGNED');
-                const finishedDelivery = sortedDeliveries.every(order => order.status === 'DELIVERED' || order.status === 'ISSUE');
-                setAnyPlanned(anyPlanned);
-                setFinishedDelivery(finishedDelivery);
+                const selectedDateString = selectedDate.toISOString().split('T')[0];
+            
+                // Extract the route that matches the selected date
+                const selectedRoute = routeData.find(route => 
+                    route.deliveryDate.split('T')[0] === selectedDateString
+                );
+                console.log("SEKECTED DATE: ", JSON.stringify(selectedDate));
+                console.log("SEKECTED ROUTE: ", JSON.stringify(selectedRoute));
+            
+                if (selectedRoute) {
+                    setRouteId(selectedRoute.deliveryRouteID);
+                    
+                    const pendingDeliveries = selectedRoute.orders.filter(order => 
+                        order.status !== 'DELIVERED' && order.status !== 'ISSUE'
+                    );
+                    
+                    const sortedDeliveries = pendingDeliveries.sort((a, b) => 
+                        a.position - b.position
+                    );
+                    
+                    setCurrentDelivery(sortedDeliveries[0]);
+                    setNextDeliveries(sortedDeliveries.slice(1));
+            
+                    const anyPlanned = sortedDeliveries.some(order => order.status === 'ASSIGNED');
+                    const finishedDelivery = sortedDeliveries.every(order => 
+                        order.status === 'DELIVERED' || order.status === 'ISSUE' || order.status === 'CANCELLED'
+                    );
+                    
+                    setAnyPlanned(anyPlanned);
+                    setFinishedDelivery(finishedDelivery);
+                } else {
+                    console.error("No route found for the selected date:", selectedDate);
+                    setNoRoutesFound(true);
+                }
             } else {
                 console.error("No route data returned.");
                 setNoRoutesFound(true);
@@ -71,6 +105,27 @@ const DriverViewRoutes = ({ inputUser }) => {
             console.error("Error fetching delivery route:", error);
         }
     };
+
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+    };
+
+    function extractDeliveryDates(routes) {
+        // Extract delivery dates
+        const deliveryDates = new Set();
+
+        // Loop through each vehicle's routes
+        routes.forEach(route => {
+            // Add the deliveryDate of the route to the Set
+            deliveryDates.add(route.deliveryDate.split('T')[0]); // Only take the date part
+        });
+
+        // Convert Set to Array and sort it
+        const uniqueDeliveryDates = Array.from(deliveryDates).sort();
+
+        console.log(uniqueDeliveryDates);
+        return uniqueDeliveryDates;
+    }
 
     const handleStartDelivery = async () => {
         if (routeId) {
@@ -87,7 +142,7 @@ const DriverViewRoutes = ({ inputUser }) => {
     const handleMarkAsDelivered = async () => {
         if (currentDelivery) {
             const input = {
-                username: driverUsername,
+                username: otherUser.current || driverUsername,
                 orderID: currentDelivery.orderID,
                 status: "DELIVERED"
             };
@@ -108,12 +163,12 @@ const DriverViewRoutes = ({ inputUser }) => {
 
     useEffect(() => {
         if( inputUser ) {
-            setOtherUser(inputUser);
+            otherUser.current=inputUser;
         }
         if (driverUsername) {
             fetchDeliveryData();
         }
-    }, [driverUsername, inputUser]);
+    }, [driverUsername, inputUser, selectedDate]);
 
     useEffect(() => { // use effect for fetching the current location
         if (!noRoutesFound) // Only fetch location if routes found
@@ -139,6 +194,10 @@ const DriverViewRoutes = ({ inputUser }) => {
         }
     }, [noRoutesFound]);
 
+    useEffect(() => { // use effect for fetching the current location
+        console.log("NO ROUTES FOUND: ", noRoutesFound);
+    }, [noRoutesFound]);
+
     return (
         <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
             <Drawer
@@ -162,6 +221,7 @@ const DriverViewRoutes = ({ inputUser }) => {
                 <Box
                     sx={{
                         display: 'flex',
+                        flexDirection: 'column',
                         width: '100%',
                         p: 0,
                         backgroundColor: '#819bc5',
@@ -174,8 +234,15 @@ const DriverViewRoutes = ({ inputUser }) => {
                     <Typography variant="h6" color="black" sx={{ p: 2, fontWeight: 'bold' }}>
                         Delivery Progress
                     </Typography>
+                    <Box sx={{ mb: 2 }}> 
+                    <DateSelectHighlight
+                            highlightedDates={dateOptions}
+                            selectedDate={selectedDate}
+                            handleDateChange={handleDateChange}
+                            />
+                            </Box>
                 </Box>
-                {!finishedDelivery && (
+                {!finishedDelivery && !noRoutesFound && (
                     <Box>
                         <Box
                             sx={{
@@ -329,7 +396,7 @@ const DriverViewRoutes = ({ inputUser }) => {
                                         Report Issue
                                         <WarningAmberIcon />
                                     </Button>
-                                    <ReportIssue open={issueDialogOpen} onClose={handleIssueDialogClose} driverUsername={driverUsername} order={currentDelivery} fetchDeliveryData={fetchDeliveryData} />
+                                    <ReportIssue open={issueDialogOpen} onClose={handleIssueDialogClose} driverUsername={otherUser.current || driverUsername} order={currentDelivery} fetchDeliveryData={fetchDeliveryData} />
                                 </>
                             )}
                         </Box>
@@ -379,7 +446,7 @@ const DriverViewRoutes = ({ inputUser }) => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {nextDeliveries.map((row, index) => (
+                                        {nextDeliveries?.map((row, index) => (
                                             <TableRow key={index} sx={{ backgroundColor: getRowColour(row.delayed) }}>
                                                 <TableCell>{row.address}</TableCell>
                                                 <TableCell>{row.customerName}</TableCell>
@@ -419,6 +486,11 @@ const DriverViewRoutes = ({ inputUser }) => {
                         </Typography>
                     </Box>
                 )}
+                {noRoutesFound && (
+                            <Typography variant="body1" color="textSecondary">
+                                No deliveries
+                            </Typography>
+                    )}       
                 <IconButton
                     onClick={toggleDrawer(false)}
                     sx={{

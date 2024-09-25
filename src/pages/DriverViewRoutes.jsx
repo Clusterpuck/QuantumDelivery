@@ -49,15 +49,15 @@ const DriverViewRoutes = ({ inputUser }) => {
             //uses logged in user unless a specific username given to component
             if(otherUser.current)
             {
-                console.log("Fetching for otherUser " + otherUser.current);
+                
                 routeData = await fetchDeliveryRoute(otherUser.current);
             }
             else{
-                console.log("Fetching for driver " + driverUsername);
+                
                 routeData = await fetchDeliveryRoute(driverUsername);
             }
             if (routeData) {
-                console.log("AAAAAA ROUTES DATA :", routeData);
+                
                 const routeDates = extractDeliveryDates(routeData);
                 setDateOptions(routeDates);
             
@@ -69,8 +69,6 @@ const DriverViewRoutes = ({ inputUser }) => {
                 const selectedRoute = routeData.find(route => 
                     route.deliveryDate.split('T')[0] === selectedDateString
                 );
-                console.log("SEKECTED DATE: ", JSON.stringify(selectedDate));
-                console.log("SEKECTED ROUTE: ", JSON.stringify(selectedRoute));
             
                 if (selectedRoute) {
                     setRouteId(selectedRoute.deliveryRouteID);
@@ -193,11 +191,6 @@ const DriverViewRoutes = ({ inputUser }) => {
             }
         }
     }, [noRoutesFound]);
-
-    useEffect(() => { // use effect for fetching the current location
-        console.log("NO ROUTES FOUND: ", noRoutesFound);
-    }, [noRoutesFound]);
-
     return (
         <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
             <Drawer

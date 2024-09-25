@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Box, Paper, Button, Grid, Typography, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { getAccountDetails } from '../store/apiFunctions';
-
-const EditAccountForm = ({ accountId, handleOpenPasswordModal }) => {
+import { getAccountDetails, reactivateAccount } from '../store/apiFunctions'; 
+const EditAccountForm = ({ accountId, handleOpenPasswordModal, accountStatus }) => {
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -14,6 +13,7 @@ const EditAccountForm = ({ accountId, handleOpenPasswordModal }) => {
     });
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
         const fetchAccountData = async () => {
@@ -49,8 +49,54 @@ const EditAccountForm = ({ accountId, handleOpenPasswordModal }) => {
     };
 
     const handleChangePassword = () => {
-        handleOpenPasswordModal(formData.email); // Pass the email to the modal handler
+        handleOpenPasswordModal(formData.email); // Pass the username to the modal handler
     };
+
+    // Function to handle account reactivation
+    const handleReactivate = async () => {
+        try {
+            await reactivateAccount(accountId); // Call the API function to reactivate the account
+            setSuccess(true); 
+            setSuccessMessage("Account is now active!"); 
+            setError(null); 
+            // Optionally fetch the updated account details after reactivation
+            const updatedDetails = await getAccountDetails(accountId);
+            if (updatedDetails) {
+                setFormData({
+                    fullName: updatedDetails.name || '',
+                    email: updatedDetails.username || '',
+                    password: '', // password empty for security
+                    address: updatedDetails.address || '',
+                    phone: updatedDetails.phone || '',
+                    companyRole: updatedDetails.role || '',
+                });
+            }
+        } catch (err) {
+            setError('Failed to reactivate the account.'); 
+        }
+        {success && <Typography color="green">Account is now active!</Typography>}
+    };
+
+    // If the account is inactive, display an error message instead of the form
+    if (accountStatus === 'Inactive') {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%', textAlign: 'center' }}>
+                    <Typography variant="h6">
+                        Account cannot be edited as it is inactive.
+                    </Typography>
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={handleReactivate} 
+                        sx={{ mt: 2 }}
+                    >
+                        Re-activate
+                    </Button>
+                </Paper>
+            </Box>
+        );
+    }
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>

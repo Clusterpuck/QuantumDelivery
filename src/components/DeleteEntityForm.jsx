@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { handleDeleteAccount } from '../store/apiFunctions'; 
+import { deleteAccount } from '../store/apiFunctions'; 
 
 const DeleteEntityForm = ({ entity }) => {
     const [entityId, setEntityId] = useState('');
@@ -20,7 +20,7 @@ const DeleteEntityForm = ({ entity }) => {
 
         if (entity === 'user') {
             try {
-                const result = await handleDeleteAccount(entityId); 
+                const result = await deleteAccount(entityId); 
                 if (result) {
                     setSuccess(true); 
                 } else {
@@ -30,6 +30,7 @@ const DeleteEntityForm = ({ entity }) => {
                 setError('An error occurred while deleting the account.');
                 console.error(err); 
             }
+    
         }
         // TODO: Add logic to delete the entity for other types 
     };

@@ -31,11 +31,12 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                 value={entityId}
                 onChange={handleChange}
                 required
+                error={!!error} // Set error style on the TextField
+                helperText={error} // Display the error message below the TextField
             />
             <Button variant="contained" color="primary" type="submit">
                 Load {entity} for Editing
             </Button>
-            {error && <Typography color="error">{error}</Typography>}
         </Box>
     );
 };

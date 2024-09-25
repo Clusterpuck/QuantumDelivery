@@ -502,15 +502,36 @@ export const getAccountDetails = async (accountId) => {
     }
 };
 
+/**
+ * Function to delete an account by its ID
+ * @param {string} accountId - The ID of the account to be deleted
+ * @returns {Promise<Object>} - The response object from the server
+ */
+export const deleteAccount = async (accountId) => { // Add 'async' keyword here
+   
+    try {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}accounts/${accountId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                // Add any authentication tokens or headers here if needed
+            },
+        });
 
-export const handleDeleteAccount = async (accountId) => {
-    const result = await deleteAccount(accountId);
-    if (result) {
-        console.log('successfully deleted account:' + accountId);
-    } else {
-        console.error('could not delete account');
+        // Check if the response status is OK (status code 200-299)
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Error deleting account');
+        }
+
+        const data = await response.json(); // This may not be necessary if your DELETE response doesn't return data
+        return data; // Return the success message or any other relevant data
+    } catch (error) {
+        console.error('Error deleting account:', error);
+        throw error; // Re-throw the error for further handling if needed
     }
 };
+
 
 ///Input is: const input = {
 //  "orderId": 0,

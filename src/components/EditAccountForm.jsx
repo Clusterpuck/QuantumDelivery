@@ -3,7 +3,7 @@ import { TextField, Box, Paper, Button, Grid, Typography, MenuItem, Select, Inpu
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { getAccountDetails } from '../store/apiFunctions';
 
-const EditAccountForm = ({ accountId, handleOpenPasswordModal }) => {
+const EditAccountForm = ({ accountId, handleOpenPasswordModal, accountStatus }) => {
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -49,8 +49,21 @@ const EditAccountForm = ({ accountId, handleOpenPasswordModal }) => {
     };
 
     const handleChangePassword = () => {
-        handleOpenPasswordModal(formData.email); // Pass the email to the modal handler
+        handleOpenPasswordModal(formData.email); // Pass the username to the modal handler
     };
+
+    // If the account is inactive, display an error message instead of the form
+    if (accountStatus === 'Inactive') {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%', textAlign: 'center' }}>
+                    <Typography variant="h6" color="error">
+                        Account cannot be edited as it is inactive.
+                    </Typography>
+                </Paper>
+            </Box>
+        );
+    }
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>

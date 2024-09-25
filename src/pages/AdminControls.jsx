@@ -8,6 +8,7 @@ import CreateAccountForm from '../components/CreateAccountForm';
 import EditAccountForm from '../components/EditAccountForm'; 
 import EditEntityForm from '../components/EditEntityForm'; 
 import CheckPasswordForm from '../components/CheckPasswordForm';
+import { getAccountDetails } from '../store/apiFunctions'; // Ensure this is imported
 
 const AdminControls = () => {
     const navigate = useNavigate();
@@ -27,6 +28,7 @@ const AdminControls = () => {
     const [accountId, setAccountId] = useState(''); 
     const [openPasswordModal, setOpenPasswordModal] = useState(false); 
     const [usernameForPasswordChange, setUsernameForPasswordChange] = useState('');
+    const [accountStatus, setAccountStatus] = useState(''); // State for account status
 
     const handleOperationChange = (entity) => (event) => {
         setOperations({
@@ -66,11 +68,22 @@ const AdminControls = () => {
         setOpenEditEntityForm(false);
     };
 
-    const handleEditEntitySuccess = (collectedAccountId) => {
-        setAccountId(collectedAccountId);
-        setUserMode('edit');
-        setOpenAccountForm(true);
-        setOpenEditEntityForm(false);
+    const handleEditEntitySuccess = async (collectedAccountId) => {
+        if (collectedAccountId) {
+            setAccountId(collectedAccountId);
+            setUserMode('edit');
+            setOpenAccountForm(true);
+
+            // Fetch the account status after successfully collecting the account ID
+            const accountDetails = await getAccountDetails(collectedAccountId);
+            if (accountDetails) {
+                setAccountStatus(accountDetails.status); // Assuming 'status' holds 'Active' or 'Inactive'
+            }
+            setOpenEditEntityForm(false);
+        } else {
+            // Handle case where no valid ID is provided (if necessary)
+            console.error('No valid Account ID provided.');
+        }
     };
 
     const handleOpenPasswordModal = (username) => {
@@ -174,7 +187,8 @@ const AdminControls = () => {
                     ) : (
                         <EditAccountForm 
                             accountId={accountId} 
-                            handleOpenPasswordModal={handleOpenPasswordModal} // Pass function as prop
+                            handleOpenPasswordModal={handleOpenPasswordModal}
+                            accountStatus={accountStatus} // Pass accountStatus here
                         />
                     )}
                 </Box>

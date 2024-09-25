@@ -13,6 +13,8 @@ import { fetchProducts } from '../store/apiFunctions';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Skeleton from '@mui/material/Skeleton';
+import DeleteIcon from '@mui/icons-material/Delete';
+import {Input} from '@mui/material';
 
 const ProductListForm = ({ sendProductList }) =>
 {
@@ -94,15 +96,8 @@ const ProductListForm = ({ sendProductList }) =>
 
             setSelectedProduct(null);
             setQuantity(1);
-            setSnackbarMessage('Product added successfully!');
-            setSnackbarSeverity('success');
-            setSnackbarOpen(true);
-        } else
-        {
-            setSnackbarMessage('Invalid product selected');
-            setSnackbarSeverity('error');
-            setSnackbarOpen(true);
-        }
+           
+        } 
     };
 
     const handleRemoveProduct = (id) =>
@@ -114,14 +109,20 @@ const ProductListForm = ({ sendProductList }) =>
             return updatedProducts;
         });
 
-        setSnackbarMessage('Product removed successfully!');
-        setSnackbarSeverity('success');
-        setSnackbarOpen(true);
     };
 
     const handleSnackbarClose = () =>
     {
         setSnackbarOpen(false);
+    };
+
+    const handleTableQuantityChange = (productID, newQuantity) => {
+        const updatedProducts = addedProducts.map((product) =>
+            product.id === productID
+                ? { ...product, quantity: Math.max(1, newQuantity) }
+                : product
+        );
+        setAddedProducts(updatedProducts);
     };
 
 
@@ -164,28 +165,40 @@ const ProductListForm = ({ sendProductList }) =>
     const columns = [
         { field: 'id', headerName: 'ID', flex: 0.2 },
         { field: 'name', headerName: 'Name', flex: 0.4 },
-        { field: 'quantity', headerName: 'Quantity', flex: 0.2 },
-        { field: 'unitOfMeasure', headerName: 'Unit', flex: 0.2 },
-
         {
-            field: 'action',
-            headerName: 'Action',
+            field: 'editQuanity',
+            headerName: '',
             flex: 0.2,
             sortable: false,
             disableClickEventBubbling: true,
             
             renderCell: (params) => {
-                const onClick = (e) => {
-                  const currentRow = params.row;
-                  return alert(JSON.stringify(currentRow, null, 4));
-                };
-                
+                return (
+                    <Input
+                        type="number"
+                        value={params.row.quantity}
+                        inputProps={{ min: 1 }}  // Prevent going below 1
+                        onChange={(e) => handleTableQuantityChange(params.row.id, e.target.value)}
+                    />
+                );
+            },
+        },
+        { field: 'unitOfMeasure', headerName: 'Unit', flex: 0.2 },
+
+        {
+            field: 'action',
+            headerName: '',
+            flex: 0.2,
+            sortable: false,
+            disableClickEventBubbling: true,
+            
+            renderCell: (params) => {
                 return (
                     <Button 
                         variant="outlined" 
                         color="error" 
                         size="small" 
-                        onClick={()=>handleRemoveProduct(params.row.id)}>Remove</Button>
+                        onClick={()=>handleRemoveProduct(params.row.id)}><DeleteIcon/></Button>
                 );
             },
         }

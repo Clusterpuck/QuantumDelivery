@@ -1,12 +1,10 @@
-import Register from "../components/Register";
 import AccountDetails from "../pages/AccountDetails" 
 import ViewRoutes from "../pages/ViewRoutes";
 import Login from "../pages/Login";
 import LiveTracking from "../pages/LiveTracking";
 import DailyReports from "../pages/DailyReports";
 import UploadRunsheet from "../pages/UploadRunsheet";
-import Register from "../pages/Register";
-import AddOrder from "../pages/AddOrder";
+import Orders from "../pages/Orders";
 import PrivateRoute from "./PrivateRoute";  
 import DriverViewRoutes from "../pages/DriverViewRoutes";
 import AdminControls from "../pages/AdminControls";
@@ -69,22 +67,18 @@ export const ROUTES = [
     ),
   },
   {
-    path: "/register",
-    element: <Register />,
-  },
-  {
     path: "/home",
     element: (
       <PrivateRoute role="ADMIN">
-        <AddOrder />
+        <Orders />
       </PrivateRoute>
     ),
   },
   {
-    path: "/addorder",
+    path: "/orders",
     element: (
       <PrivateRoute role="admin">
-        <AddOrder />
+        <Orders />
       </PrivateRoute>
     ),
   },

@@ -194,6 +194,7 @@ export const deleteMethod = async (id, endPoint) => {
 
 export const fetchDeliveryRoute = async (driverUsername) => {
     let deliveryRouteData = null;
+    console.log("SENDING USERNAME: ", driverUsername);
     try {
         const endpoint = `DeliveryRoutes/driver/${driverUsername}`;
         const response = await fetch(`${Constants.DATA_ENDPOINT}${endpoint}`, {
@@ -501,15 +502,36 @@ export const getAccountDetails = async (accountId) => {
     }
 };
 
+/**
+ * Function to delete an account by its ID
+ * @param {string} accountId - The ID of the account to be deleted
+ * @returns {Promise<Object>} - The response object from the server
+ */
+export const deleteAccount = async (accountId) => { // Add 'async' keyword here
+   
+    try {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}accounts/${accountId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                // Add any authentication tokens or headers here if needed
+            },
+        });
 
-export const handleDeleteAccount = async (accountId) => {
-    const result = await deleteAccount(accountId);
-    if (result) {
-        console.log('successfully deleted account:' + accountId);
-    } else {
-        console.error('could not delete account');
+        // Check if the response status is OK (status code 200-299)
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Error deleting account');
+        }
+
+        const data = await response.json(); // This may not be necessary if your DELETE response doesn't return data
+        return data; // Return the success message or any other relevant data
+    } catch (error) {
+        console.error('Error deleting account:', error);
+        throw error; // Re-throw the error for further handling if needed
     }
 };
+
 
 ///Input is: const input = {
 //  "orderId": 0,
@@ -622,5 +644,76 @@ export const deleteRouteByDate = async (date) => {
 
     return result;
 };
+
+
+/**
+ * Sends a request to change the user's password
+ *
+ * @async
+ * @param {string} username - The username of the account
+ * @param {string} currentPassword - The user's current password
+ * @param {string} newPassword - The new password the user wants to set
+ * @returns {string|null} - Returns success message or null in case of failure
+ */
+export const changePassword = async (username, oldPassword, newPassword) => {
+    const response = await fetch('https://routingdata.azurewebsites.net/api/accounts/change-password', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            Username: username,
+            CurrentPassword: oldPassword,
+            NewPassword: newPassword
+        }),
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to change password: ${errorText}`);
+    }
+
+    return await response.text();  // Return success message as plain text
+};
+
+
+export const deleteOrder = async (id) => {
+    try {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}orders/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete order with ID: ' + id);
+        }
+        // confirm successful deletion
+        const responseData = await response.json();
+        console.log('Successfully deleted order with ID:', id);
+        return responseData;
+
+    } catch (error) {
+        console.error('Error deleting data with ID:', id, " ", error.message);
+        return null;
+    }
+};
+
+// apiFunctions.js
+export const reactivateAccount = async (accountId) => {
+    const response = await fetch(`${Constants.DATA_ENDPOINT}accounts/reactivate/${accountId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            // Add any authentication headers if needed
+        },
+    });
+    if (!response.ok) {
+        throw new Error('Failed to reactivate account');
+    }
+    return response.json();
+};
+
 
 

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { fetchIssueOrders } from '../store/apiFunctions';
 import {
-    Dialog, Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Paper, Button, Skeleton
+    Box, Snackbar, Alert, Dialog, Table, TableHead, TableBody, TableRow, TableCell, TableContainer, Paper, Button, Skeleton
 } from '@mui/material';
 import '../index.css';
 import EditOrderForm from '../components/EditOrderForm';
+import { deleteOrder } from '../store/apiFunctions';
 
 
 const IssuesTable = () => {
@@ -12,6 +13,11 @@ const IssuesTable = () => {
     const [loadingIssues, setLoadingIssues] = useState(false)
     const [openEditDialog, setOpenEditDialog] = useState(false);;
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const [orderToDelete, setOrderToDelete] = useState(null);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
     const fetchIssues = async () => {
         try {
@@ -40,6 +46,44 @@ const IssuesTable = () => {
         setSelectedOrder(null); 
     };
 
+    const handleDeleteClick = (orderID) => {
+        setOrderToDelete(orderID);
+        setOpenDeleteDialog(true);
+    }
+
+    const handleCancelDelete = () => {
+        setOpenDeleteDialog(false);
+        setOrderToDelete(null);
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            const orderDeleted = await deleteOrder(orderToDelete);
+            if (orderDeleted)
+            {
+            setSnackbarMessage('Order deleted successfully!');
+            setSnackbarSeverity('success');
+            
+            }
+            else
+            {
+            throw new Error('Failed to delete order.');
+            }
+        } catch (error) {
+            setSnackbarMessage(error.message);
+            setSnackbarSeverity('error');
+        } finally {
+            setSnackbarOpen(true);
+            setOpenDeleteDialog(false);
+            fetchIssues();
+            setOrderToDelete(null);
+        }
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
+    };
+
     const TableOfIssues = () => {
         if (loadingIssues) {
             return (
@@ -51,7 +95,7 @@ const IssuesTable = () => {
         }
         else if (issueOrders.length > 0) {
             return (
-                <Table>
+                <Table stickyHeader>
                     <TableHead>
                         <TableRow sx={{ backgroundColor: 'var(--background-colour)' }}>
                             <TableCell>ID</TableCell>
@@ -60,7 +104,7 @@ const IssuesTable = () => {
                             <TableCell>Address</TableCell>
                             <TableCell>Products</TableCell>
                             <TableCell>Notes</TableCell>
-                            <TableCell>Action</TableCell>
+                            <TableCell>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -73,13 +117,22 @@ const IssuesTable = () => {
                                 <TableCell>{order.products.map(product => product.name).join(', ')}</TableCell>
                                 <TableCell>{order.orderNotes}</TableCell>
                                 <TableCell>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={() => handleEditClick(order)}
-                                    >
-                                        Edit
-                                    </Button>
+                                <Box sx={{ display: 'flex', gap: 1 }}> 
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={() => handleEditClick(order)}
+                                            >
+                                                Edit
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                color="error"
+                                                onClick={() => handleDeleteClick(order.orderID)}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </Box>
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -120,16 +173,34 @@ const IssuesTable = () => {
     }, [])
 
     return (
-        <Paper elevation={3} sx={{ padding: 3, width: '100%' }}>
-            <TableContainer component={Paper}>
+        <Box sx={{ width: '100%' }}>
+            <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
 
                 <TableOfIssues />
             </TableContainer>
-
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
             <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth>
                 <EditOrderForm order={selectedOrder} onClose={handleCloseEditDialog} onRefresh={fetchIssues} />
             </Dialog>
-        </Paper>
+            <Dialog open={openDeleteDialog} >
+                <Box sx={{ padding: 2 }}>
+                    <p>Are you sure you want to delete order {orderToDelete}?</p>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Button onClick={handleCancelDelete} color="primary">Cancel</Button>
+                        <Button onClick={handleConfirmDelete} color="error">Delete</Button>
+                    </Box>
+                </Box>
+            </Dialog>
+        </Box>
     );
 };
 export default IssuesTable;

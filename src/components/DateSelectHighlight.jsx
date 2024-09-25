@@ -45,6 +45,7 @@ const DateSelectHighlight = ({highlightedDates, selectedDate, handleDateChange})
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='en-gb' >
       <DesktopDatePicker
         label="Plan Date"
+        minDate={dayjs()}//dayjs gets today as default. therefore sits min date to today
         value={selectedDate}
         onChange={handleDateChange}
         slots={{

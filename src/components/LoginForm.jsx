@@ -66,7 +66,7 @@ const LoginForm = () => {
     
                     // redirect based on role
                     if (response.role === 'ADMIN') {
-                        navigate('/addorder'); // redirect to Admin dashboard
+                        navigate('/orders'); // redirect to Admin dashboard
                     } else if (response.role === 'DRIVER') {
                         navigate('/driverviewroutes'); // redirect to Driver dashboard
                     } else {
@@ -132,10 +132,7 @@ const LoginForm = () => {
                     </Grid>
                     <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', marginTop: 8 }}>
                         <Typography variant="body2" color="primary">
-                            Don't have an QuantaPath account?{' '}
-                            <Link to="/register" style={{ color: '#1976d2', textDecoration: 'none' }}>
-                                Register
-                            </Link>
+                            Don't have an account? Get QuantaPath for your business.
                         </Typography>
                     </Grid>
                 </Grid>

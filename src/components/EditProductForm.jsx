@@ -3,10 +3,10 @@ import { TextField, Box, Paper, Button, Grid, Typography, MenuItem, Select, Inpu
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { getAccountDetails, createAccount } from '../store/apiFunctions'; // Ensure you import createAccount
 
-const AccountForm = ({ mode, accountId }) => {
+const AccountForm = ({ mode, productId }) => {
     const [formData, setFormData] = useState({
-        fullName: '',
-        email: '',
+        productName: '',
+        unitOfMeasure: '',
         password: '',
         address: '',
         phone: '',
@@ -19,7 +19,7 @@ const AccountForm = ({ mode, accountId }) => {
         if (mode === 'edit') {
             const fetchAccountData = async () => {
                 const accountDetails = await getAccountDetails(accountId);
-                console.log('editing, for username: ' + accountId);
+                console.log('editing, for product: ' + accountId);
                 if (accountDetails) {
                     setFormData({
                         fullName: accountDetails.name || '',
@@ -30,7 +30,7 @@ const AccountForm = ({ mode, accountId }) => {
                         companyRole: accountDetails.role || '',
                     });
                 } else {
-                    console.log('No account details found.');
+                    console.log('No product details found.');
                 }
             };
             fetchAccountData();
@@ -55,12 +55,12 @@ const AccountForm = ({ mode, accountId }) => {
                 const result = await createAccount(formData);
                 if (result) {
                     setSuccess(true);
-                    console.log('Account created successfully:', result);
+                    console.log('Product created successfully:', result);
                 } else {
-                    setError('Failed to create account.');
+                    setError('Failed to create product.');
                 }
             } catch (err) {
-                setError('An error occurred while creating the account.');
+                setError('An error occurred while creating the product.');
                 console.error(err);
             }
         }

@@ -10,9 +10,8 @@ import PageLayout from './components/PageLayout';
 import ViewRoutes from './pages/ViewRoutes';
 import LiveTracking from './pages/LiveTracking';
 import DailyReports from './pages/DailyReports';
-import AddOrder from './pages/AddOrder';
+import Orders from './pages/Orders';
 import Login from "./pages/Login";
-import Register from "./pages/Register";
 import AccountDetails from './pages/AccountDetails';
 import PrivateRoute from './constants/PrivateRoute';
 import Unauthorized from './pages/Unauthorized';
@@ -46,7 +45,6 @@ const App = () => {
                 <PageLayout>
                     <Routes>
                         <Route path="/" element={<Login />} />
-                        <Route path="/register" element={<Register />} /> {/* TO DO: move to admin controls page */}
                         <Route path="/login" element={<Login />} />
                         <Route path="/unauthorized" element={<Unauthorized />} /> {/* Unauthorized page */}
 
@@ -71,9 +69,9 @@ const App = () => {
                                 <DailyReports />
                             </PrivateRoute>
                         } />
-                        <Route path="/addorder" element={
+                        <Route path="/orders" element={
                             <PrivateRoute role="ADMIN">
-                                <AddOrder />
+                                <Orders />
                             </PrivateRoute>
                         } />
                         <Route path="/accountdetails" element={
@@ -83,7 +81,7 @@ const App = () => {
                         } />
                         <Route path="/home" element={
                             <PrivateRoute role="ADMIN">
-                                <AddOrder />
+                                <Orders />
                             </PrivateRoute>
                         } />
 

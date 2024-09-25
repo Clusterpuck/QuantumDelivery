@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
+import { Stack } from '@mui/material';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Snackbar from '@mui/material/Snackbar';
@@ -32,6 +33,7 @@ const ProductListForm = ({ sendProductList }) =>
             try
             {
                 const productList = await fetchProducts();
+                console.log("Products gained is " + JSON.stringify(productList));
                 setProducts(productList);
             } catch (error)
             {
@@ -78,7 +80,11 @@ const ProductListForm = ({ sendProductList }) =>
                 {
                     updatedProducts = [
                         ...prev,
-                        { id: selectedProduct.id, name: selectedProduct.name, quantity: quantity }
+                        { 
+                            id: selectedProduct.id, 
+                            name: selectedProduct.name, 
+                            quantity: quantity, 
+                            unitOfMeasure: selectedProduct.unitOfMeasure }
                     ];
                     // Product does not exist, add new entry
                 }
@@ -97,6 +103,20 @@ const ProductListForm = ({ sendProductList }) =>
             setSnackbarSeverity('error');
             setSnackbarOpen(true);
         }
+    };
+
+    const handleRemoveProduct = (id) =>
+    {
+        setAddedProducts((prev) =>
+        {
+            const updatedProducts = prev.filter(product => product.id !== id);
+            sendProductList(updatedProducts);  // Update the parent component with the new product list
+            return updatedProducts;
+        });
+
+        setSnackbarMessage('Product removed successfully!');
+        setSnackbarSeverity('success');
+        setSnackbarOpen(true);
     };
 
     const handleSnackbarClose = () =>
@@ -144,13 +164,39 @@ const ProductListForm = ({ sendProductList }) =>
     const columns = [
         { field: 'id', headerName: 'ID', flex: 0.2 },
         { field: 'name', headerName: 'Name', flex: 0.4 },
-        { field: 'quantity', headerName: 'Quantity', flex: 0.2 }
+        { field: 'quantity', headerName: 'Quantity', flex: 0.2 },
+        { field: 'unitOfMeasure', headerName: 'Unit', flex: 0.2 },
+
+        {
+            field: 'action',
+            headerName: 'Action',
+            flex: 0.2,
+            sortable: false,
+            disableClickEventBubbling: true,
+            
+            renderCell: (params) => {
+                const onClick = (e) => {
+                  const currentRow = params.row;
+                  return alert(JSON.stringify(currentRow, null, 4));
+                };
+                
+                return (
+                    <Button 
+                        variant="outlined" 
+                        color="error" 
+                        size="small" 
+                        onClick={()=>handleRemoveProduct(params.row.id)}>Remove</Button>
+                );
+            },
+        }
+
     ];
 
     const rows = addedProducts.map(product => ({
         id: product.id,
         name: product.name,
-        quantity: product.quantity
+        quantity: product.quantity,
+        unitOfMeasure: product.unitOfMeasure
     }));
 
     return (
@@ -197,7 +243,7 @@ const ProductListForm = ({ sendProductList }) =>
                     rows={rows}
                     columns={columns}
                     pageSize={10}
-                    checkboxSelection />
+                    />
             </Box>
 
             {/* Snackbar for feedback */}

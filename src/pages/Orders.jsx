@@ -11,6 +11,8 @@ import { enableScroll } from '../assets/scroll.js';
 import AddOrder from '../components/AddOrder.jsx';
 import AddIcon from '@mui/icons-material/Add'; // Add Icon
 import CancelIcon from '@mui/icons-material/Cancel';
+import SmsFailedIcon from '@mui/icons-material/SmsFailed';
+import WidgetsIcon from '@mui/icons-material/Widgets';
 
 
 const Orders = () =>
@@ -88,16 +90,16 @@ const Orders = () =>
 
 
     return (
-        <Grid container alignItems="center">
+        <Grid container>
 
-            <Grid item xs={4} md={4}>
+            <Grid item xs={4} md={4} sx={{ display: 'flex', justifyContent: 'flex-start' }}>
                 <Button
                     variant="contained"
                     color="primary"
                     onClick={handleOpenModal}
-                    sx={{ borderRadius: '20px' }}
+                    sx={{ borderRadius: '18px' }}
                 >
-                    <AddIcon sx={{ fontSize: '3.2rem' }} marginRight={20} /> Add New Orders
+                    <AddIcon sx={{ fontSize: '2rem' }} /> Add New Orders
                 </Button>
             </Grid>
 
@@ -114,10 +116,13 @@ const Orders = () =>
             {/**Issues table */}
             <Box maxHeight='30%' sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                 <Paper elevation={3} sx={{ padding: 4, maxWidth: 1500, width: '100%' }}>
-                    <Grid item xs={12} md={12}>
-                        <Typography variant="h4" component="h1" >
-                            Orders With Issues
-                        </Typography>
+                    <Grid item xs={12} md={12} mb={1}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}> {/* Flexbox for inline layout */}
+                            <SmsFailedIcon sx={{ mr: 1 }} /> {/* Add margin to the right of the icon */}
+                            <Typography variant="h4" component="h1">
+                                Orders With Issues
+                            </Typography>
+                        </Box>
                     </Grid>
                     <IssuesTable />
                 </Paper>
@@ -126,9 +131,14 @@ const Orders = () =>
             {/**All orders table */}
             <Box maxHeight='70%' sx={{ display: 'flex', justifyContent: 'center' }} marginTop={4}>
                 <Paper elevation={3} sx={{ padding: 4, maxWidth: 1500, width: '100%' }}>
-                    <Typography variant="h4" component="h1" >
-                        All Orders
-                    </Typography>
+                <Grid item xs={12} md={12} mb={1}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}> {/* Flexbox for inline layout */}
+                            <WidgetsIcon sx={{ mr: 1 }} /> {/* Add margin to the right of the icon */}
+                            <Typography variant="h4" component="h1">
+                                All Orders
+                            </Typography>
+                        </Box>
+                    </Grid>
                     <Box sx={{ height: '100%', width: '100%' }}>
 
                         {loadingOrders ?

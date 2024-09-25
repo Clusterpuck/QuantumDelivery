@@ -14,6 +14,7 @@ import { disableScroll } from '../assets/scroll.js';
 import ReportIssue from '../components/ReportIssue.jsx';
 import { getRowColour } from '../store/helperFunctions.js';
 import Cookies from 'js-cookie';
+import DateSelectHighlight from '../components/DateSelectHighlight.jsx';
 
 
 const DriverViewRoutes = ({ inputUser }) => {

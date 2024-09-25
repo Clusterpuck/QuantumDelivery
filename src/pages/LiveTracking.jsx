@@ -378,13 +378,16 @@ const LiveTracking = () => {
                         sx={{
                             display: 'flex',
                             width: '100%',
-                            marginTop: '20px',
+                            marginTop: '0',
                             backgroundColor: '#819bc5',
                             justifyContent: 'center',
-                            alignItems: 'center',
+                            alignItems: 'flex-end',
                             boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
                             borderRadius: '0 0 16px 16px',
-                            height: '80px', // Adjust the height as needed
+                            height: '100px', // Adjust the height as needed
+                            top: 0,
+                            left:0,
+                            paddingBottom: '15px'
                         }}
                     >
                         <Typography variant="h6" color="black" sx={{ p: 2, fontWeight: 'bold' }}>

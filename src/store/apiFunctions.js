@@ -194,6 +194,7 @@ export const deleteMethod = async (id, endPoint) => {
 
 export const fetchDeliveryRoute = async (driverUsername) => {
     let deliveryRouteData = null;
+    console.log("SENDING USERNAME: ", driverUsername);
     try {
         const endpoint = `DeliveryRoutes/driver/${driverUsername}`;
         const response = await fetch(`${Constants.DATA_ENDPOINT}${endpoint}`, {

@@ -700,4 +700,20 @@ export const deleteOrder = async (id) => {
     }
 };
 
+// apiFunctions.js
+export const reactivateAccount = async (accountId) => {
+    const response = await fetch(`${Constants.DATA_ENDPOINT}accounts/reactivate/${accountId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            // Add any authentication headers if needed
+        },
+    });
+    if (!response.ok) {
+        throw new Error('Failed to reactivate account');
+    }
+    return response.json();
+};
+
+
 

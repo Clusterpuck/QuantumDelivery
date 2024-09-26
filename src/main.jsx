@@ -19,6 +19,7 @@ import Unauthorized from './pages/Unauthorized';
 import AdminControls from './pages/AdminControls';
 import AdminDriverNav from './pages/AdminDriverNav';
 import LandingPage from './pages/LandingPage';
+import Cookies from 'js-cookie';
 import './index.css';
 import './App.css';
 
@@ -41,13 +42,46 @@ const theme = createTheme({
     },
 });
 
+const HomePage = () => {
+    const userRole = Cookies.get('userRole'); // Retrieve the role from the cookie
+    if(userRole)
+    {//userrole defined
+        if(userRole === "ADMIN")
+        {
+            return(
+            <PrivateRoute role="ADMIN">
+                <LandingPage />
+            </PrivateRoute>
+            );
+        }
+        else if( userRole === "DRIVER")
+        {
+            return (
+                <PrivateRoute>
+                    <DriverViewRoutes />
+                </PrivateRoute>
+            );
+        }
+        else
+        {//unmatched role just returns back to login page for now. 
+            return(
+                <Login/>
+            );
+
+        }
+
+    }
+}
+
 const App = () => {
     return (
         <ThemeProvider theme={theme}>
             <Router>
                 <PageLayout>
                     <Routes>
-                        <Route path="/" element={<Login />} />
+                        <Route path="/" element={
+                          <HomePage/>
+                        } />
                         <Route path="/login" element={<Login />} />
                         <Route path="/unauthorized" element={<Unauthorized />} /> {/* Unauthorized page */}
 

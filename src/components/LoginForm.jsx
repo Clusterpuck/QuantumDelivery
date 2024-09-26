@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import { login } from '../store/apiFunctions';
 import {fetchMethod} from '../store/apiFunctions';
 import Cookies from 'js-cookie';
+import { CircularProgress } from '@mui/material';
 
 
 const styleConstants = {
@@ -22,6 +23,7 @@ const LoginForm = () => {
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({ username: '', password: '' });
     const [errorMessage, setErrorMessage] = useState('');
+    const [loadingLogin, setLoadingLogin] = useState(false);
 
     
     const validate = () => {
@@ -52,11 +54,14 @@ const LoginForm = () => {
 
 
 
+
     const handleLogin = async (e) => {
         e.preventDefault();
         if (validate()) {
             try {
+                setLoadingLogin(true);
                 const response = await login(username, password);
+                setLoadingLogin(false);
                 
                 if (response && response.token && response.role) {
                     // store the token and role in cookies or localStorage
@@ -124,8 +129,13 @@ const LoginForm = () => {
                                 </Grid>
                             )}
                             <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center' }}>
-                                <Button type="submit" variant="contained" color="primary">
-                                    Login
+                                <Button 
+                                    type="submit" 
+                                    variant="contained" 
+                                    color="primary"
+                                    disabled = {loadingLogin}
+                                    >
+                                {loadingLogin ? <CircularProgress/> : 'Login'}
                                 </Button>
                             </Grid>
                         </form>

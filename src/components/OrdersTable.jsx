@@ -96,13 +96,13 @@ const OrdersTable = ({ orders, onRefresh }) =>
             <React.Fragment>
                 <TableRow key={row.orderID} sx={{ '& > *': { borderBottom: 'unset' } }}>
                    
-                        <TableCell>{row.orderID}</TableCell>
-                        <TableCell>{dayjs(row.deliveryDate).format('DD/MM/YY')}</TableCell>
-                        <TableCell>{row.address}</TableCell>
-                        <TableCell>{row.customerName}</TableCell>
-                        <TableCell>{row.status}</TableCell>
-                        <TableCell>{row.orderNotes}</TableCell>
-                        <TableCell>
+                <TableCell sx={{ borderBottom: '1px solid grey' }}>{row.orderID}</TableCell>
+                <TableCell sx={{ borderBottom: '1px solid grey' }}>{dayjs(row.deliveryDate).format('DD/MM/YY')}</TableCell>
+                <TableCell sx={{ borderBottom: '1px solid grey' }}>{row.address}</TableCell>
+                <TableCell sx={{ borderBottom: '1px solid grey' }}>{row.customerName}</TableCell>
+                <TableCell sx={{ borderBottom: '1px solid grey' }}>{row.status}</TableCell>
+                <TableCell sx={{ borderBottom: '1px solid grey' }}>{row.orderNotes}</TableCell>
+                <TableCell sx={{ borderBottom: '1px solid grey' }}>
                             {(row.status === 'ISSUE' || row.status === 'PLANNED') && (
                                 <Box sx={{ display: 'flex', gap: 1 }}> {/* Add gap for spacing between buttons */}
                                     <Button
@@ -175,18 +175,12 @@ const OrdersTable = ({ orders, onRefresh }) =>
     return (
         <Box sx={{ width: '100%' }}>
             <TableContainer component={Paper} sx={{ maxHeight: 800 }}>
-                <Table stickyHeader>
+                <Table stickyHeader size='small'>
                     <TableHead>
                         <TableRow>
-                            
-                            <TableCell >ID</TableCell>
-                            <TableCell >Date</TableCell>
-                            <TableCell >Address</TableCell>
-                            <TableCell >Customer Name</TableCell>
-                            <TableCell >Status</TableCell>
-                            <TableCell >Notes</TableCell>
-                            <TableCell >Actions</TableCell>
-                            <TableCell></TableCell>
+                        {['ID', 'Date', 'Address', 'Customer Name', 'Status', 'Notes', 'Actions', ''].map((header) => (
+                    <TableCell key={header} sx={{ borderBottom: '2px solid #582c4d' }}>{header}</TableCell>
+                ))}
                         </TableRow>
                     </TableHead>
                     <TableBody>

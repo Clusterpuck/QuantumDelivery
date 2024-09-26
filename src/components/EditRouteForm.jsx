@@ -5,7 +5,7 @@ import {
     Box, Button, Grid, Paper, Typography, Skeleton, TextField, Autocomplete, Popper
     } from '@mui/material';
 
-const EditRouteForm = ({ route, onRefresh }) => {
+const EditRouteForm = ({ route, onRefresh, onClose }) => {
     const [drivers, setDrivers] = useState(null);
     const [vehicles, setVehicles] = useState(null);
 
@@ -52,6 +52,7 @@ const EditRouteForm = ({ route, onRefresh }) => {
             const responseMessage = await updateRouteDetails(input);
             setMessage(responseMessage);
             onRefresh();
+            onClose();
             console.log("MESSAGE: ", message);
 
         };

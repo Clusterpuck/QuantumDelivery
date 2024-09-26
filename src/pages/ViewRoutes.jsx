@@ -444,7 +444,7 @@ const ViewRoutes = () => {
       </Paper>
 
       <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth>
-                <EditRouteForm route={selectedRouteToEdit} onClose={handleCloseEditDialog} onRefresh={null} />
+                <EditRouteForm route={selectedRouteToEdit} onClose={handleCloseEditDialog} onRefresh={loadRoutes} />
             </Dialog>
       <Snackbar
         open={snackbar.open}

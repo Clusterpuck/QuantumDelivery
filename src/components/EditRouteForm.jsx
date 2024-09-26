@@ -51,7 +51,7 @@ const EditRouteForm = ({ route, onRefresh }) => {
             console.log("SENDING FROM EDIT FORM: ", input);
             const responseMessage = await updateRouteDetails(input);
             setMessage(responseMessage);
-            //onRefresh();
+            onRefresh();
             console.log("MESSAGE: ", message);
 
         };

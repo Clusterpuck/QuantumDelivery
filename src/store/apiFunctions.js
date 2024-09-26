@@ -843,5 +843,58 @@ export const reactivateAccount = async (accountId) => {
     return response.json();
 };
 
+export const fetchAccounts = async () => {
+    let driverData = null
+    try {
+        const driverResponse = await fetch( Constants.DATA_ENDPOINT + 'accounts');
+        if (!driverResponse.ok) {
+            throw new Error('Failed to fetch accounts.');
+        }
+        driverData = await driverResponse.json();
+    } catch (error) {
+        console.error('Error fetching accounts:', error.message);
+    }
+    return driverData;
+};
+
+export const fetchVehicles = async () => {
+    let vehicleData = null
+    try {
+        const vehicleResponse = await fetch( Constants.DATA_ENDPOINT + 'vehicles');
+        if (!vehicleResponse.ok) {
+            throw new Error('Failed to fetch vehicles.');
+        }
+        vehicleData = await vehicleResponse.json();
+    } catch (error) {
+        console.error('Error fetching vehicles:', error.message);
+    }
+    return vehicleData;
+};
+
+///Input is: const input = {
+//    {
+//        "routeID": 0,
+//        "driverUsername": "string",
+//        "vehicleID": "string"
+//      }
+export const updateRouteDetails = async (input) => {
+    console.log("SENDING INPUT: ", JSON.stringify(input));
+    const response = await fetch(`${Constants.DATA_ENDPOINT}deliveryroutes/${input.routeID}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(input),
+    });
+
+    // Check if the response is not OK
+    if (!response.ok) {
+        const errorText = await response.text(); // Get the error message from the response body
+        return `Error: ${errorText}`;
+    } else {
+        return "Route details successfully updated";  // Return success message if request was OK
+    }
+}
+
 
 

@@ -11,7 +11,7 @@ import { deleteOrder } from '../store/apiFunctions';
 const IssuesTable = () => {
     const [issueOrders, setIssueOrders] = useState([]);
     const [loadingIssues, setLoadingIssues] = useState(false)
-    const [openEditDialog, setOpenEditDialog] = useState(false);;
+    const [openEditDialog, setOpenEditDialog] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const [orderToDelete, setOrderToDelete] = useState(null);

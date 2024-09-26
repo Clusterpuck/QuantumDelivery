@@ -16,7 +16,8 @@ const EditEntityForm = ({ entity, onSuccess }) => {
         if (entityId) {
             console.log(`Editing ${entity} with ID:`, entityId);
             onSuccess(entityId); // Pass the entityId back to the parent component
-        } else {
+        } 
+        else {
             setError(`Please provide a valid ${entity === 'user' ? 'Username' : `${entity} ID`}.`);
         }
     };

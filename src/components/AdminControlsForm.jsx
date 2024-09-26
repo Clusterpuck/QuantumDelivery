@@ -5,13 +5,12 @@ const AdminControlsForm = ({ entity, operation, handleOperationChange, handleSub
     return (
         <Grid item xs={12}>
             <Paper elevation={2} sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-               
                 {/* entity name */}
                 <Typography variant="h6" sx={{ minWidth: '150px' }}>
                     {entity.charAt(0).toUpperCase() + entity.slice(1)}
                 </Typography>
 
-                {/*operations dropdown */}
+                {/* operations dropdown */}
                 <FormControl fullWidth sx={{ maxWidth: '200px', marginRight: 2 }}>
                     <InputLabel>Operation</InputLabel>
                     <Select
@@ -22,7 +21,6 @@ const AdminControlsForm = ({ entity, operation, handleOperationChange, handleSub
                     >
                         <MenuItem value="add">Add</MenuItem>
                         <MenuItem value="edit">Edit</MenuItem>
-                        {/* update this to 'delete' */}
                         <MenuItem value="delete">Delete</MenuItem>
                     </Select>
                 </FormControl>

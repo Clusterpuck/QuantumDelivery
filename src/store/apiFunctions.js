@@ -533,7 +533,7 @@ export const deleteAccount = async (accountId) => { // Add 'async' keyword here
         return data; // Return the success message or any other relevant data
     } catch (error) {
         console.error('Error deleting account:', error);
-        throw error; // Re-throw the error for further handling if needed
+        throw error; 
     }
 };
 
@@ -570,6 +570,129 @@ export const updateOrderDetails = async (input) => {
     }
 }
 
+// Function to create a new product
+export const createProduct = async (productData) => {
+    try {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}products`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(productData), // Convert productData to JSON
+        });
+
+        if (!response.ok) {
+            console.error('Error creating product, status:', response.status);
+            throw new Error('Failed to create product');
+        }
+
+        const responseData = await response.json(); // Parse response as JSON
+        return responseData; // Return the created product details
+    } catch (error) {
+        console.error('Error creating product:', error);
+        throw error; 
+    }
+};
+
+// get product details by ID
+export const getProductDetails = async (productId) => {
+    const idAsInt = parseInt(productId, 10); // Convert to integer
+    if (isNaN(idAsInt)) {
+        throw new Error('Invalid product ID: must be an integer');
+    }
+
+    console.log('Fetching product details for ID:', idAsInt); // Log the product ID being fetched
+    try {
+        const url = `${Constants.DATA_ENDPOINT}products/${idAsInt}`;
+        console.log(`Fetching product details from: ${url}`); // Log the full URL
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text(); // Capture response text for detailed error
+            console.error(`Error fetching product details for ID ${idAsInt}, status: ${response.status}, error: ${errorText}`);
+            throw new Error('Failed to fetch product details');
+        }
+
+        const responseData = await response.json(); // Parse response as JSON
+        return responseData; // Return the product details
+    } catch (error) {
+        console.error('Error fetching product details:', error);
+        throw error; 
+    }
+};
+
+export const updateProduct = async (productId, productData) => {
+    try {
+        const id = parseInt(productId, 10); // Ensure productId is an integer
+
+        // Use formData directly if structure is correct
+        const requestData = {
+            Name: productData.Name, // Assuming productData comes directly from formData
+            UnitOfMeasure: productData.UnitOfMeasure,
+        };
+
+        // Check for empty values
+        if (!requestData.Name || !requestData.UnitOfMeasure) {
+            throw new Error("Name and UnitOfMeasure are required fields.");
+        }
+
+        const response = await fetch(`${Constants.DATA_ENDPOINT}products/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData), // Use the mapped requestData
+        });
+
+        // Check if response is not ok
+        if (!response.ok) {
+            const errorDetails = await response.json();
+            console.error('Validation errors:', errorDetails); // Log the entire error details
+            throw new Error(`Failed to update product. Errors: ${JSON.stringify(errorDetails)}`);
+        }
+
+        const responseData = await response.json(); // Parse response as JSON
+        return responseData; // Return the updated product details
+    } catch (error) {
+        console.error('Error updating product:', error);
+        throw error; 
+    }
+};
+
+
+// deletes product by its ID
+export const deleteProduct = async (productId) => {
+    try {
+        // Ensure productId is an integer
+        const id = parseInt(productId, 10);
+        const response = await fetch(`${Constants.DATA_ENDPOINT}products/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+            throw new Error('Failed to delete the product');
+        }
+
+        const responseData = await response.json();
+        console.log('Product deleted successfully:', responseData.message);
+        return responseData;
+
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        return null;
+    }
+};
 
 
 /**

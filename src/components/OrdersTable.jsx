@@ -150,7 +150,7 @@ const OrdersTable = ({ orders, onRefresh }) =>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {row.products.map((product) => (
+                                    {row.products && row.products.map((product) => (
                                         <TableRow key={product.productID}>
                                             <TableCell component="th" scope="row">
                                                 {product.name}

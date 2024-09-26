@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { fetchAccounts, fetchVehicles } from '../store/apiFunctions.js';
-
+import { fetchAccounts, fetchVehicles, updateRouteDetails } from '../store/apiFunctions.js';
+import '../index.css';
 import {
-    Button, Grid, Paper, Typography, Skeleton, TextField, Autocomplete, Popper
+    Box, Button, Grid, Paper, Typography, Skeleton, TextField, Autocomplete, Popper
     } from '@mui/material';
 
 const EditRouteForm = ({ route, onRefresh }) => {
@@ -16,6 +16,7 @@ const EditRouteForm = ({ route, onRefresh }) => {
     const [loadingVehicles, setLoadingVehicles] = useState(false);
 
     const [message, setMessage] = useState('');
+    const [messageType, setMessageType] = useState('');
 
     const loadDrivers = async () => {
         setLoadingDrivers(true);
@@ -41,8 +42,19 @@ const EditRouteForm = ({ route, onRefresh }) => {
     };
 
     const handleSaveChanges = async () => {
+        const input = {
+            routeID: route?.deliveryRouteID,
+            driverUsername: selectedDriver?.username,
+            vehicleID: selectedVehicle?.licensePlate,
+        };
+        
+            console.log("SENDING FROM EDIT FORM: ", input);
+            const responseMessage = await updateRouteDetails(input);
+            setMessage(responseMessage);
+            //onRefresh();
+            console.log("MESSAGE: ", message);
 
-    };
+        };
 
     useEffect(() => {
         loadDrivers();
@@ -109,7 +121,7 @@ const EditRouteForm = ({ route, onRefresh }) => {
     };
 
     return (
-        <Paper elevation={3} sx={{ padding: 3, width: '500px', display: 'flex', flexDirection: 'column',height: '300px',
+        <Paper elevation={3} sx={{ padding: 3, width: '500px', display: 'flex', flexDirection: 'column',height: 'auto',
             overflow: 'hidden' }}>
             <form style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                 {/* Title and Disabled Order ID */}
@@ -141,11 +153,23 @@ const EditRouteForm = ({ route, onRefresh }) => {
                 </Grid>
 
                 {/* Submit Button */}
-                <Grid container justifyContent="center" sx={{ mt: 'auto' }}>
+                <Grid container justifyContent="center" sx={{ mt: 4 }}>
                     <Button variant="contained" color="primary" sx={{ width: '200px' }} onClick={handleSaveChanges}>
                         Save Changes
                     </Button>
                 </Grid>
+                {message && (
+                    <Box mt={2} p={2} sx={{ 
+                        backgroundColor: 'var(--action-colour)',
+                        color: '#ffffff',
+                        borderRadius: '4px',
+                        textAlign: 'center'
+                    }}>
+                        <Typography variant="body1">
+                            {message}
+                        </Typography>
+                    </Box>
+                )}
             </form>         
         </Paper>
     );

@@ -9,6 +9,7 @@ import { useTheme } from '@mui/material/styles';
 import AddRouteForm from '../components/AddRouteForm.jsx';
 import CancelIcon from '@mui/icons-material/Cancel';
 import EditRouteForm from '../components/EditRouteForm';
+import PersonIcon from '@mui/icons-material/Person'; // person icon
 
 // Material-UI Components
 import {
@@ -330,6 +331,10 @@ const ViewRoutes = () => {
                                   <Typography>Vehicle: {route.vehicleId}</Typography>
                                 </Box>
                                 <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
+                                  <PersonIcon color="primary" />
+                                  <Typography>Driver: {route.driverUsername}</Typography>
+                                </Box>
+                                <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
                                   <FormatListNumberedIcon color="primary" />
                                   <Typography>Orders: {route.orders.length}</Typography>
                                 </Box>
@@ -351,6 +356,7 @@ const ViewRoutes = () => {
                                     color="primary"
                                     variant="contained"
                                     size='small'
+                                    disabled={route.orders.some(order => order.status !== 'ASSIGNED')} 
                                   >
                                     Edit Route
                                   </Button>

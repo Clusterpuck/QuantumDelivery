@@ -750,6 +750,7 @@ export const fetchVehicles = async () => {
 //        "vehicleID": "string"
 //      }
 export const updateRouteDetails = async (input) => {
+    console.log("SENDING INPUT: ", JSON.stringify(input));
     const response = await fetch(`${Constants.DATA_ENDPOINT}deliveryroutes/${input.routeID}`, {
         method: 'PUT',
         headers: {

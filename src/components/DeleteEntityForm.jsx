@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { deleteAccount } from '../store/apiFunctions'; 
+import { deleteAccount, deleteProduct } from '../store/apiFunctions'; 
 
 const DeleteEntityForm = ({ entity }) => {
     const [entityId, setEntityId] = useState('');
@@ -28,6 +28,22 @@ const DeleteEntityForm = ({ entity }) => {
                 }
             } catch (err) {
                 setError('An error occurred while deleting the account.');
+                console.error(err); 
+            }
+    
+            
+        }
+
+        else if (entity === 'product') {
+            try {
+                const result = await deleteProduct(entityId); 
+                if (result) {
+                    setSuccess(true); 
+                } else {
+                    setError('Failed to delete product.'); 
+                }
+            } catch (err) {
+                setError('An error occurred while deleting the product.');
                 console.error(err); 
             }
     

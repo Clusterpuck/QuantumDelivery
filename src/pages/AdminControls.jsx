@@ -7,8 +7,10 @@ import DeleteEntityForm from '../components/DeleteEntityForm';
 import CreateAccountForm from '../components/CreateAccountForm';
 import EditAccountForm from '../components/EditAccountForm'; 
 import EditEntityForm from '../components/EditEntityForm'; 
+import CreateProductForm from '../components/CreateProductForm'; 
+import EditProductForm from '../components/EditProductForm'; 
 import CheckPasswordForm from '../components/CheckPasswordForm';
-import { getAccountDetails } from '../store/apiFunctions'; // Ensure this is imported
+import { getAccountDetails } from '../store/apiFunctions';
 
 const AdminControls = () => {
     const navigate = useNavigate();
@@ -23,12 +25,15 @@ const AdminControls = () => {
     const [deleteEntity, setDeleteEntity] = useState(null);
     const [openDelete, setOpenDelete] = useState(false);
     const [openAccountForm, setOpenAccountForm] = useState(false);
+    const [openProductForm, setOpenProductForm] = useState(false);
     const [openEditEntityForm, setOpenEditEntityForm] = useState(false); 
     const [userMode, setUserMode] = useState('add');
     const [accountId, setAccountId] = useState(''); 
+    const [productId, setProductId] = useState('');
     const [openPasswordModal, setOpenPasswordModal] = useState(false); 
     const [usernameForPasswordChange, setUsernameForPasswordChange] = useState('');
-    const [accountStatus, setAccountStatus] = useState(''); // State for account status
+    const [accountStatus, setAccountStatus] = useState('');
+    const [entityType, setEntityType] = useState('user'); // State for entity type
 
     const handleOperationChange = (entity) => (event) => {
         setOperations({
@@ -44,82 +49,64 @@ const AdminControls = () => {
         if (operation === 'delete') {
             setDeleteEntity(entity);
             setOpenDelete(true);
-        } else if (entity === 'user' && operation === 'edit') {
+        } else if (operation === 'edit') {
+            setEntityType(entity); 
             setOpenEditEntityForm(true);
         } else if (entity === 'user' && operation === 'add') {
             setUserMode('add');
             setAccountId('');
             setOpenAccountForm(true);
-        } else if (entity !== 'user') {
+        } else if (entity === 'product' && operation === 'add') {
+            setProductId('');
+            setOpenProductForm(true);
+        } else if (entity !== 'user' || 'product') {
             console.log(`Submitted operation for ${entity}:`, operation);
             navigate('/orders');
         }
     };
 
-    const handleCloseDelete = () => {
-        setOpenDelete(false);
-    };
+    const handleCloseDelete = () => setOpenDelete(false);
+    const handleCloseAccountForm = () => setOpenAccountForm(false);
+    const handleCloseProductForm = () => setOpenProductForm(false);
+    const handleCloseEditEntityForm = () => setOpenEditEntityForm(false);
 
-    const handleCloseAccountForm = () => {
-        setOpenAccountForm(false);
-    };
-
-    const handleCloseEditEntityForm = () => {
-        setOpenEditEntityForm(false);
-    };
-
-    const handleEditEntitySuccess = async (collectedAccountId) => {
-        if (collectedAccountId) {
-            setAccountId(collectedAccountId);
-            setUserMode('edit');
-            setOpenAccountForm(true);
-
-            // Fetch the account status after successfully collecting the account ID
-            const accountDetails = await getAccountDetails(collectedAccountId);
-            if (accountDetails) {
-                setAccountStatus(accountDetails.status); // Assuming 'status' holds 'Active' or 'Inactive'
+    const handleEditEntitySuccess = async (collectedEntityId) => {
+        if (collectedEntityId) {
+            if (entityType === 'user') {
+                setAccountId(collectedEntityId);
+                setUserMode('edit');
+                setOpenAccountForm(true);
+                const accountDetails = await getAccountDetails(collectedEntityId);
+                if (accountDetails) {
+                    setAccountStatus(accountDetails.status);
+                }
+                setOpenEditEntityForm(false);
+            } else if (entityType === 'product') {
+                setProductId(collectedEntityId);
+                setOperations((prev) => ({ ...prev, product: 'edit' })); // Set product operation to 'edit'
+                setOpenProductForm(true);
+                setOpenEditEntityForm(false);
+            } else {
+                console.error('Unsupported entity type for editing.');
             }
-            setOpenEditEntityForm(false);
         } else {
-            // Handle case where no valid ID is provided (if necessary)
-            console.error('No valid Account ID provided.');
+            console.error('No valid Entity ID provided.');
         }
     };
+    
 
     const handleOpenPasswordModal = (username) => {
         setUsernameForPasswordChange(username);
         setOpenPasswordModal(true);
     };
 
-    const handleClosePasswordModal = () => {
-        setOpenPasswordModal(false);
-    };
+    const handleClosePasswordModal = () => setOpenPasswordModal(false);
 
     const entities = ['user', 'customer', 'location', 'product'];
 
     return (
-        <div
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: 8,
-            }}
-        >
-            <Typography
-                variant="h1"
-                component="h1"
-                sx={{
-                    mt: 3,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    fontWeight: 'bold',
-                    fontSize: '3rem',
-                    mb: 3,
-                }}
-            >
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 8 }}>
+            <Typography variant="h1" component="h1" sx={{ mt: 3, display: 'flex', alignItems: 'center', gap: 1, fontWeight: 'bold', fontSize: '3rem', mb: 3 }}>
                 <SettingsIcon sx={{ fontSize: 50 }} />
                 Admin Controls
             </Typography>
@@ -145,19 +132,7 @@ const AdminControls = () => {
                 aria-labelledby="delete-entity-modal"
                 aria-describedby="delete-entity-description"
             >
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        bgcolor: 'background.paper',
-                        boxShadow: 24,
-                        p: 4,
-                        maxWidth: 400,
-                        width: '100%',
-                    }}
-                >
+                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 400, width: '100%' }}>
                     {deleteEntity && <DeleteEntityForm entity={deleteEntity} />}
                 </Box>
             </Modal>
@@ -169,28 +144,20 @@ const AdminControls = () => {
                 aria-labelledby="account-form-modal"
                 aria-describedby="account-form-description"
             >
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        bgcolor: 'background.paper',
-                        boxShadow: 24,
-                        p: 4,
-                        maxWidth: 600,
-                        width: '100%',
-                    }}
-                >
-                    {userMode === 'add' ? (
-                        <CreateAccountForm />
-                    ) : (
-                        <EditAccountForm 
-                            accountId={accountId} 
-                            handleOpenPasswordModal={handleOpenPasswordModal}
-                            accountStatus={accountStatus} // Pass accountStatus here
-                        />
-                    )}
+                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
+                    {userMode === 'add' ? <CreateAccountForm /> : <EditAccountForm accountId={accountId} handleOpenPasswordModal={handleOpenPasswordModal} accountStatus={accountStatus} />}
+                </Box>
+            </Modal>
+
+            {/* Product creation form modal */}
+            <Modal
+                open={openProductForm}
+                onClose={handleCloseProductForm}
+                aria-labelledby="product-form-modal"
+                aria-describedby="product-form-description"
+            >
+                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
+                    {operations.product === 'add' ? <CreateProductForm /> : <EditProductForm productId={productId} />}
                 </Box>
             </Modal>
 
@@ -201,21 +168,9 @@ const AdminControls = () => {
                 aria-labelledby="edit-entity-modal"
                 aria-describedby="edit-entity-description"
             >
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        bgcolor: 'background.paper',
-                        boxShadow: 24,
-                        p: 4,
-                        maxWidth: 400,
-                        width: '100%',
-                    }}
-                >
+                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 400, width: '100%' }}>
                     <EditEntityForm
-                        entity="user"
+                        entity={entityType} // Use dynamic entity type
                         onSuccess={handleEditEntitySuccess}
                     />
                 </Box>
@@ -228,23 +183,8 @@ const AdminControls = () => {
                 aria-labelledby="password-form-modal"
                 aria-describedby="password-form-description"
             >
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        bgcolor: 'background.paper',
-                        boxShadow: 24,
-                        p: 4,
-                        maxWidth: 400,
-                        width: '100%',
-                    }}
-                >
-                    <CheckPasswordForm
-                        username={usernameForPasswordChange} 
-                        onClose={handleClosePasswordModal}
-                    />
+                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 400, width: '100%' }}>
+                    <CheckPasswordForm username={usernameForPasswordChange} onClose={handleClosePasswordModal} />
                 </Box>
             </Modal>
         </div>

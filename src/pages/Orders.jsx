@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Paper, Snackbar, Alert, Divider, Modal, Button, Grid } from '@mui/material';
+import { Box, Paper, Snackbar, Alert, Divider, Modal, Button, Grid,
+    Accordion, AccordionDetails, AccordionSummary,Badge
+ } from '@mui/material';
 import OrdersTable from '../components/OrdersTable.jsx';
 import Typography from '@mui/material/Typography';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
@@ -13,11 +15,13 @@ import AddIcon from '@mui/icons-material/Add'; // Add Icon
 import CancelIcon from '@mui/icons-material/Cancel';
 import SmsFailedIcon from '@mui/icons-material/SmsFailed';
 import WidgetsIcon from '@mui/icons-material/Widgets';
-
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useTheme } from '@mui/material/styles';
 
 const Orders = () =>
 {
     const [orders, setOrders] = useState([]);
+    const [numOfIssues, setNumberOfIssues] = useState(0);
     const [loadingOrders, setLoadingOrders] = useState(0);
     // State for controlling Modal
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,6 +42,8 @@ const Orders = () =>
         loadOrders();
 
     }, []);
+
+    const theme = useTheme();
 
 
     // Modal Style
@@ -91,19 +97,6 @@ const Orders = () =>
 
     return (
         <Grid container>
-
-            {/* <Grid item xs={4} md={4} sx={{ display: 'flex', justifyContent: 'flex-start' }}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleOpenModal}
-                    sx={{ borderRadius: '18px' }}
-                >
-                    <AddIcon sx={{ fontSize: '2rem' }} /> Add New Orders
-                </Button>
-            </Grid> */}
-
-
             <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Typography variant="h3" component="h1" sx={{ display: 'flex', alignItems: 'center' }}>
                     <LibraryAddIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
@@ -111,64 +104,87 @@ const Orders = () =>
                 </Typography>
             </Grid>
 
-            <Grid item xs={4} md={4}></Grid>
+            {/* <Grid item xs={4} md={4}></Grid> */}
+            <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+                {/**Issues table */}
+                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', mt: 4 }}>
+                    <Accordion key={"issuestable"} sx={{ width: '100%' }}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls={`panel--content`}
+                            id={`panel--header`}
+                            sx={{
+                                backgroundColor: theme.palette.primary.accent,  // Set background color
+                                borderBottom: '1px solid grey', // Add a border
+                                borderRadius: '8px',
+                                margin: 0.5,
+                                '&:hover': {
+                                    backgroundColor: theme.palette.secondary.main, // Hover effect
+                                },
+                                '& .MuiTypography-root': {
+                                    fontWeight: 'bold', // Custom font styles for text
+                                    color: theme.palette.text.primary, // Change text color
+                                },
+                            }}
+                        >
+                            <Grid item xs={12} md={12}>
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}> {/* Flexbox for inline layout */}
+                                    <Badge badgeContent={numOfIssues} color="error">
+                                        <SmsFailedIcon color='primary' sx={{ mr: 1 }} />
+                                    </Badge>
+                                    <Typography ml={1.5} variant="h5" component="h1">
+                                        Orders With Issues
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                        </AccordionSummary>
+                        <AccordionDetails key={"issues-details"}>
 
-            {/**Issues table */}
-            <Box maxHeight='30%' sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                <Paper elevation={3} sx={{ padding: 4, maxWidth: 1500, width: '100%' }}>
-                {/* <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleOpenModal}
-                    sx={{ borderRadius: '18px' }}
-                >
-                    <AddIcon sx={{ fontSize: '2rem' }} /> Add New Orders
-                </Button>
-            </Grid> */}
-                    <Grid item xs={12} md={12} mb={1}>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}> {/* Flexbox for inline layout */}
-                            <SmsFailedIcon sx={{ mr: 1 }} /> {/* Add margin to the right of the icon */}
-                            <Typography variant="h4" component="h1">
-                                Orders With Issues
-                            </Typography>
-                        </Box>
-                    </Grid>
-                    <IssuesTable />
-                </Paper>
-            </Box>
+
+                            <IssuesTable setCount={setNumberOfIssues} />
+                        </AccordionDetails>
+                    </Accordion>
+                </Box>
+            </Grid>
 
             {/**All orders table */}
-            <Box maxHeight='70%' sx={{ display: 'flex', justifyContent: 'center' }} marginTop={4}>
-                <Paper elevation={3} sx={{ padding: 4, maxWidth: 1500, width: '100%' }}>
-                <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleOpenModal}
-                    sx={{ borderRadius: '18px' }}
-                >
-                    <AddIcon sx={{ fontSize: '2rem' }} /> Add New Orders
-                </Button>
-            </Grid>
-                <Grid item xs={12} md={12} mb={1}>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}> {/* Flexbox for inline layout */}
-                            <WidgetsIcon sx={{ mr: 1 }} /> {/* Add margin to the right of the icon */}
+            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }} mt={4}>
+                <Paper elevation={3} sx={{ p: 4, maxWidth: 1500, width: '100%' }}>
+                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleOpenModal}
+                            sx={{ borderRadius: '18px' }}
+                        >
+                            <AddIcon sx={{ fontSize: '2rem' }} /> Add New Orders
+                        </Button>
+                    </Grid>
+
+                    <Grid item xs={12} mb={1}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <WidgetsIcon sx={{ mr: 1 }} />
                             <Typography variant="h4" component="h1">
                                 All Orders
                             </Typography>
                         </Box>
                     </Grid>
-                    <Box sx={{ height: '100%', width: '100%' }}>
 
-                        {loadingOrders ?
-                            (<Skeleton variant="rectangular" animation="wave" sx={{ height: '100%' }} />) :
-                            (<OrdersTable orders={orders} onRefresh={refreshOrders} />)}
+                    <Box sx={{ width: '100%', height: '100%' }}>
+                        {loadingOrders ? (
+                            <Skeleton
+                                variant="rectangular"
+                                animation="wave"
+                                sx={{ width: '100%', height: '800px' }}
+                            />
+                        ) : (
+                            <OrdersTable orders={orders} onRefresh={refreshOrders} />
+                        )}
                     </Box>
                 </Paper>
             </Box>
 
-            {/* Modal for AddRouteForm */}
+            {/* Modal for AddOrderForm */}
             <Modal
                 open={isModalOpen}
                 onClose={handleCloseModal}
@@ -183,7 +199,7 @@ const Orders = () =>
                                 variant="h6"
                                 component="h2"
                                 align="left"  // Align text to the left
-                                sx={{ fontWeight: 'bold', mb: 1 }}
+                                sx={{ fontWeight: 'bold', mb:1 }}
                             >
                                 Add Orders
                             </Typography>

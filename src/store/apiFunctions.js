@@ -401,13 +401,15 @@ export const fetchIssueOrders = async () => {
 // };
 export const updateOrderStatus  = async(input) =>{
     try{
-        const response = await fetch(Constants.DATA_ENDPOINT + 'orders/update-order-status', {
-            method: 'POST',
+        const encodedAccountId = encodeURIComponent(accountId);
+        const response = await fetch(`${Constants.DATA_ENDPOINT}accounts/${encodedAccountId}`, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(input),
+            body: JSON.stringify(updatedAccountData),
         });
+        
 
         if (!response.ok) {
             console.error('Response status:', response.status);
@@ -461,9 +463,11 @@ export const createAccount = async (newAccountData) => {
         });
 
         if (!response.ok) {
+            const errorData = await response.json();  // Parse error response for detailed information
+            console.error('Error from API:', errorData);
             console.error('Response status:', response.status);
             console.error('Response status text:', response.statusText);
-            throw new Error('Failed to create account');
+            throw new Error(`Failed to create account: ${errorData.detail || 'Unknown error'}`);
         }
 
         const responseData = await response.json();
@@ -475,6 +479,7 @@ export const createAccount = async (newAccountData) => {
         return null;
     }
 };
+
 
 // account id is the USERNAME and it is stored in the user's cookie for easy access
 export const getAccountDetails = async (accountId) => {
@@ -493,7 +498,7 @@ export const getAccountDetails = async (accountId) => {
         }
 
         const responseData = await response.json();
-        console.log('Successfully fetched account details:', responseData);
+        console.log('Successfully fetched account details for:' + accountId);
         return responseData;
 
     } catch (error) {

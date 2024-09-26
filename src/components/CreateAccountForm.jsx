@@ -25,10 +25,22 @@ const CreateAccountForm = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
+        // Prepare the data to be sent to the backend
+        const newAccountData = {
+            Username: formData.email,       // Email corresponds to Username on the backend
+            Name: formData.fullName,        // fullName corresponds to Name
+            Password: formData.password,    // Password field
+            Phone: formData.phone,          // Phone field
+            Address: formData.address,      // Address field
+            Role: formData.companyRole      // Role corresponds to companyRole
+        };
+
         try {
-            const result = await createAccount(formData);
+            const result = await createAccount(newAccountData);
             if (result) {
                 setSuccess(true);
+                setError(null);
                 console.log('Account created successfully:', result);
             } else {
                 setError('Failed to create account.');

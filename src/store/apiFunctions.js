@@ -743,5 +743,29 @@ export const fetchVehicles = async () => {
     return vehicleData;
 };
 
+///Input is: const input = {
+//    {
+//        "routeID": 0,
+//        "driverUsername": "string",
+//        "vehicleID": "string"
+//      }
+export const updateRouteDetails = async (input) => {
+    const response = await fetch(`${Constants.DATA_ENDPOINT}deliveryroutes/${input.routeID}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(input),
+    });
+
+    // Check if the response is not OK
+    if (!response.ok) {
+        const errorText = await response.text(); // Get the error message from the response body
+        return `Error: ${errorText}`;
+    } else {
+        return "Route details successfully updated";  // Return success message if request was OK
+    }
+}
+
 
 

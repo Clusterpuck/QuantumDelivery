@@ -100,6 +100,7 @@ const OrdersTable = ({ orders, onRefresh }) => {
                                     {(row.status === 'ISSUE' || row.status === 'PLANNED') && (
                                         <Box sx={{ display: 'flex', gap: 1 }}> {/* Add gap for spacing between buttons */}
                                             <Button
+                                                size="small"
                                                 variant="contained"
                                                 color="primary"
                                                 onClick={() => handleEditClick(row)}
@@ -107,6 +108,7 @@ const OrdersTable = ({ orders, onRefresh }) => {
                                                 Edit
                                             </Button>
                                             <Button
+                                                size="small"
                                                 variant="contained"
                                                 color="error"
                                                 onClick={() => handleDeleteClick(row.orderID)}

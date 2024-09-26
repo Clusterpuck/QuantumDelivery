@@ -8,7 +8,7 @@ import EditOrderForm from '../components/EditOrderForm';
 import { deleteOrder } from '../store/apiFunctions';
 
 
-const IssuesTable = () => {
+const IssuesTable = ({setCount}) => {
     const [issueOrders, setIssueOrders] = useState([]);
     const [loadingIssues, setLoadingIssues] = useState(false)
     const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -25,6 +25,7 @@ const IssuesTable = () => {
             const issueData = await fetchIssueOrders();
             if (issueData) {
                 setIssueOrders(issueData);
+                setCount(issueData.length);
             } else {
                 console.error("No orders with issues data returned.");
             }
@@ -89,7 +90,7 @@ const IssuesTable = () => {
             return (
                 <Skeleton sx={{
                     width: '100%',  // Make it responsive to parent container
-                    height: '100px', // Auto-adjust height for responsiveness
+                    height: '400px', // Auto-adjust height for responsiveness
                 }} />
             )
         }
@@ -119,6 +120,7 @@ const IssuesTable = () => {
                                 <TableCell>
                                 <Box sx={{ display: 'flex', gap: 1 }}> 
                                             <Button
+                                                size="small"
                                                 variant="contained"
                                                 color="primary"
                                                 onClick={() => handleEditClick(order)}
@@ -126,6 +128,7 @@ const IssuesTable = () => {
                                                 Edit
                                             </Button>
                                             <Button
+                                                size="small"
                                                 variant="contained"
                                                 color="error"
                                                 onClick={() => handleDeleteClick(order.orderID)}
@@ -173,11 +176,11 @@ const IssuesTable = () => {
     }, [])
 
     return (
-        <Box sx={{ width: '100%' }}>
-            <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
+        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+           <TableContainer component={Paper} sx={{ width: '100%', maxHeight: 400 }}>
 
                 <TableOfIssues />
-            </TableContainer>
+            </TableContainer >
             <Snackbar
                 open={snackbarOpen}
                 autoHideDuration={6000}

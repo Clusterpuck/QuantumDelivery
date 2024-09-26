@@ -9,9 +9,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Cookies from 'js-cookie';
+import { useTheme } from '@mui/material/styles';
 
 // Define the pages for admin and driver
 const admin_pages = [
@@ -30,9 +31,11 @@ const driver_pages = [
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
   
   const authToken = Cookies.get('authToken');
   const authRole = Cookies.get('userRole');
+  const theme = useTheme();
 
   // Determine pages based on role
   const pages = authRole === 'ADMIN' ? admin_pages : authRole === 'DRIVER' ? driver_pages : [];
@@ -149,7 +152,11 @@ function Navbar() {
                   component={Link}
                   to={page.path}
                   onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
+                  sx={{
+                    my: 2,
+                    color: location.pathname === page.path ? theme.palette.primary.accent : 'white', // Highlight current page
+                    display: 'block'
+                  }}
                 >
                   {page.name}
                 </Button>

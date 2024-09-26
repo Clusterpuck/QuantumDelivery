@@ -135,7 +135,7 @@ const LoginForm = () => {
                                     color="primary"
                                     disabled = {loadingLogin}
                                     >
-                                {loadingLogin ? <CircularProgress/> : 'Login'}
+                                {loadingLogin ? <CircularProgress size={24}/> : 'Login'}
                                 </Button>
                             </Grid>
                         </form>

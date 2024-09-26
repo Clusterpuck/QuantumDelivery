@@ -97,7 +97,7 @@ const Orders = () =>
 
     return (
         <Grid container>
-            <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Typography variant="h3" component="h1" sx={{ display: 'flex', alignItems: 'center' }}>
                     <LibraryAddIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
                     Orders

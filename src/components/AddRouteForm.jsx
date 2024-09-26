@@ -154,7 +154,7 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
     const loadOrders = async () =>
     {
         setOrdersLoading(true);
-        const ordersList = await fetchMethod("orders");
+        const ordersList = await fetchMethod("orders/with-products");
         if (ordersList)
         {
 

@@ -224,7 +224,7 @@ const ViewRoutes = () => {
       }}
     >
 
-      <Typography variant="h2" component="h1" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Typography variant="h3" component="h1" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <RouteIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
         Routes
       </Typography>
@@ -240,7 +240,7 @@ const ViewRoutes = () => {
               onClick={handleOpenModal}
               sx={{ borderRadius: '18px' }}
             >
-                            <AddIcon sx={{ fontSize: '2rem' }} /> Add New Routes
+                            <AddIcon sx={{ fontSize: '2rem' }} /> Calculate New Routes
                         </Button>
                     </Grid>
 

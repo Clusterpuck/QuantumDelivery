@@ -1,6 +1,5 @@
 // React and Date Handling
 import React, { useState, useEffect } from 'react';
-
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar"; // Vehicle Icon
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered"; // Orders Icon
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday"; // Date Icon
@@ -9,13 +8,13 @@ import AddIcon from '@mui/icons-material/Add'; // Add Icon
 import { useTheme } from '@mui/material/styles';
 import AddRouteForm from '../components/AddRouteForm.jsx';
 import CancelIcon from '@mui/icons-material/Cancel';
+import EditRouteForm from '../components/EditRouteForm';
 
 // Material-UI Components
-import
-{
-  Button, Grid, Paper, Snackbar,
-  Alert, Typography, Accordion, AccordionDetails, AccordionSummary,
-  Box, Skeleton, Modal
+import {
+Button, Grid, Paper, Snackbar,
+Alert, Typography, Accordion, AccordionDetails, AccordionSummary,
+Box, Skeleton, Modal, Dialog
 } from '@mui/material';
 
 // Material-UI Icons
@@ -31,7 +30,7 @@ import MapWithPins from '../components/MapWithPins.jsx';
 import { fetchMethod, deleteMethod } from '../store/apiFunctions';
 import { formatDate } from '../store/helperFunctions';
 import { enableScroll } from '../assets/scroll.js';
-import {deleteRouteByDate} from '../store/apiFunctions.js'
+import { deleteRouteByDate } from '../store/apiFunctions.js'
 
 
 const styleConstants = {
@@ -40,8 +39,7 @@ const styleConstants = {
 
 
 // Page design for View Routes page
-const ViewRoutes = () =>
-{
+const ViewRoutes = () => {
   const [routes, setRoutes] = useState([]);
   const [routesLoading, setRoutesLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -49,6 +47,9 @@ const ViewRoutes = () =>
     message: '',
     severity: 'success',
   });
+  // for if an edit route dialog is open
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [selectedRouteToEdit, setSelectedRouteToEdit] = useState(false);
 
   // State for controlling Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -69,8 +70,7 @@ const ViewRoutes = () =>
   };
 
 
-  useEffect(() =>
-  {
+  useEffect(() => {
     enableScroll();
     loadRoutes();
 
@@ -82,7 +82,15 @@ const ViewRoutes = () =>
   // Close Modal function
   const handleCloseModal = () => setIsModalOpen(false);
 
+  const handleEditClick = (route) => {
+    setSelectedRouteToEdit(route);
+    setOpenEditDialog(true);
+  };
 
+  const handleCloseEditDialog = () => {
+    setOpenEditDialog(false);
+    setSelectedRouteToEdit(null); 
+};
 
 
 
@@ -91,8 +99,7 @@ const ViewRoutes = () =>
 
 
   /** Deals with user requesting closing the snackbar */
-  const handleSnackbarClose = () =>
-  {
+  const handleSnackbarClose = () => {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
 
@@ -106,23 +113,20 @@ const ViewRoutes = () =>
    * @param {*} id
    * @returns {*}
    */
-  const deleteRoute = async (id) =>
-  {
+  const deleteRoute = async (id) => {
     //console.log("id sent to delete is " + id);
     const result = await deleteMethod(id, 'DeliveryRoutes');
-    if (result)
-    {
+    if (result) {
       //console.log('Item deleted successfully:', result);
       //await loadOrders();
       loadRoutes();
-    } else
-    {
+    } else {
       console.error('Failed to delete item.');
     }
 
   }
 
-  const deleteAllRoutesByDate = async (date) =>{
+  const deleteAllRoutesByDate = async (date) => {
     console.log("In delete all date is " + JSON.stringify(date) + " formatted is " + formatDate(date));
     let result = await deleteRouteByDate(date);
     console.log("Delete all routes response is " + JSON.stringify(result));
@@ -137,24 +141,19 @@ const ViewRoutes = () =>
    * @async
    * @returns {unknown}
    */
-  const loadRoutes = async () =>
-  {//need to update get route to manage getting existing orders
+  const loadRoutes = async () => {//need to update get route to manage getting existing orders
     //should return the same as CalcRoute
     setRoutesLoading(true);
-    try
-    {
+    try {
       const routesList = await fetchMethod('DeliveryRoutes');
-      if (routesList)
-      {
+      if (routesList) {
         //console.log("xxXX Route List is " + JSON.stringify(routesList));
         //setRoutes(routesList);
-        const groupedRoutes = routesList.reduce((acc, route) =>
-        {
+        const groupedRoutes = routesList.reduce((acc, route) => {
           const deliveryDate = new Date(route.deliveryDate).toDateString(); // Convert to string (ignoring time)
 
           // Check if this date already exists in the accumulator
-          if (!acc[deliveryDate])
-          {
+          if (!acc[deliveryDate]) {
             acc[deliveryDate] = []; // Initialize array if it doesn't exist
           }
 
@@ -175,8 +174,7 @@ const ViewRoutes = () =>
         //console.log("xxXXGrouped Routes by Date: ", groupedRoutes);
         return groupedRoutes;
       }
-      else
-      {
+      else {
         // throw error
         console.error('Error fetching delivery routes: ', error);
         setSnackbar({
@@ -185,8 +183,7 @@ const ViewRoutes = () =>
           severity: 'error'
         });
       }
-    } catch (error)
-    {
+    } catch (error) {
       // catch error
       console.error('Error fetching delivery routes: ', error);
       setSnackbar({
@@ -195,8 +192,7 @@ const ViewRoutes = () =>
         severity: 'error'
       });
     }
-    finally
-    {
+    finally {
       setRoutesLoading(false);
     }
   };
@@ -235,15 +231,15 @@ const ViewRoutes = () =>
       <Paper elevation={3} sx={{ padding: 3, maxWidth: 1500, width: '100%' }}>
         <Grid item xs={12} md={12} container spacing={2}>
           <Grid item xs={12} md={12} margin={2} >
-          {/* Add Route Button */}
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            onClick={handleOpenModal}
-          >
-            Add New Routes
-          </Button>
+            {/* Add Route Button */}
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              onClick={handleOpenModal}
+            >
+              Add New Routes
+            </Button>
 
           </Grid>
 
@@ -308,16 +304,16 @@ const ViewRoutes = () =>
                       <AccordionDetails
                         key={`panel-${date}-details`}
                       >
-                         <Grid item xs={12} md={12} sx={{ ml: 'auto' }}>
-                                <Button
-                                  onClick={() => deleteAllRoutesByDate(date)}
-                                  color="error"
-                                  variant="contained"
-                                  size='small'
-                                >
-                                  Delete All Routes For Date: {formatDate(date)}
-                                </Button>
-                              </Grid>
+                        <Grid item xs={12} md={12} sx={{ ml: 'auto' }}>
+                          <Button
+                            onClick={() => deleteAllRoutesByDate(date)}
+                            color="error"
+                            variant="contained"
+                            size='small'
+                          >
+                            Delete All Routes For Date: {formatDate(date)}
+                          </Button>
+                        </Grid>
                         {dateRoutes.map((route) => (
                           <Grid container item xs={12} md={12} sx={{ mb: 5 }}>
                             <Grid item xs={12} md={12} container alignItems="center" spacing={2} sx={{ mb: 2 }}>
@@ -349,6 +345,16 @@ const ViewRoutes = () =>
                                 >
                                   Delete Route
                                 </Button>
+                                <Box mt={1}>
+                                  <Button
+                                    onClick={() => handleEditClick(route)}
+                                    color="primary"
+                                    variant="contained"
+                                    size='small'
+                                  >
+                                    Edit Route
+                                  </Button>
+                                </Box>
                               </Grid>
                             </Grid>
 
@@ -396,7 +402,7 @@ const ViewRoutes = () =>
               </>
             )}
           </Grid>
-          
+
 
           {/* Modal for AddRouteForm */}
           <Modal
@@ -404,34 +410,36 @@ const ViewRoutes = () =>
             onClose={handleCloseModal}
             aria-labelledby="add-route-modal"
             aria-describedby="add-route-form"
-        >
+          >
             <Box sx={modalStyle}>
-                <Grid container alignItems="center">  {/* Use Grid container for alignment */}
-                    <Grid item xs={10}>  {/* Title takes up 10 units */}
-                        <Typography
-                            id="add-route-modal"
-                            variant="h6"
-                            component="h2"
-                            align="left"  // Align text to the left
-                            sx={{ fontWeight: 'bold', mb: 1 }}  // Bold and margin below
-                        >
-                            Calculate New Routes
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={2} textAlign="right">  {/* Button takes up 2 units */}
-                        <Button onClick={handleCloseModal}>
-                            <CancelIcon />
-                        </Button>
-                    </Grid>
+              <Grid container alignItems="center">  {/* Use Grid container for alignment */}
+                <Grid item xs={10}>  {/* Title takes up 10 units */}
+                  <Typography
+                    id="add-route-modal"
+                    variant="h6"
+                    component="h2"
+                    align="left"  // Align text to the left
+                    sx={{ fontWeight: 'bold', mb: 1 }}  // Bold and margin below
+                  >
+                    Calculate New Routes
+                  </Typography>
                 </Grid>
-                <AddRouteForm updateRoutes={loadRoutes} closeView={handleCloseModal} />
+                <Grid item xs={2} textAlign="right">  {/* Button takes up 2 units */}
+                  <Button onClick={handleCloseModal}>
+                    <CancelIcon />
+                  </Button>
+                </Grid>
+              </Grid>
+              <AddRouteForm updateRoutes={loadRoutes} closeView={handleCloseModal} />
             </Box>
-        </Modal>
+          </Modal>
 
         </Grid>
       </Paper>
 
-
+      <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth>
+                <EditRouteForm route={selectedRouteToEdit} onClose={handleCloseEditDialog} onRefresh={null} />
+            </Dialog>
       <Snackbar
         open={snackbar.open}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}

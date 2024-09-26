@@ -715,5 +715,33 @@ export const reactivateAccount = async (accountId) => {
     return response.json();
 };
 
+export const fetchAccounts = async () => {
+    let driverData = null
+    try {
+        const driverResponse = await fetch( Constants.DATA_ENDPOINT + 'accounts');
+        if (!driverResponse.ok) {
+            throw new Error('Failed to fetch accounts.');
+        }
+        driverData = await driverResponse.json();
+    } catch (error) {
+        console.error('Error fetching accounts:', error.message);
+    }
+    return driverData;
+};
+
+export const fetchVehicles = async () => {
+    let vehicleData = null
+    try {
+        const vehicleResponse = await fetch( Constants.DATA_ENDPOINT + 'vehicles');
+        if (!vehicleResponse.ok) {
+            throw new Error('Failed to fetch vehicles.');
+        }
+        vehicleData = await vehicleResponse.json();
+    } catch (error) {
+        console.error('Error fetching vehicles:', error.message);
+    }
+    return vehicleData;
+};
+
 
 

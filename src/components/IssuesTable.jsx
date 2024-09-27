@@ -62,8 +62,7 @@ const IssuesTable = ({setCount, showMessage}) => {
             const orderDeleted = await deleteOrder(orderToDelete);
             if (orderDeleted)
             {
-            setSnackbarMessage('Order deleted successfully!');
-            setSnackbarSeverity('success');
+                showMessage('Order deleted successfully!', 'success');
             
             }
             else
@@ -71,10 +70,8 @@ const IssuesTable = ({setCount, showMessage}) => {
             throw new Error('Failed to delete order.');
             }
         } catch (error) {
-            setSnackbarMessage(error.message);
-            setSnackbarSeverity('error');
+            showMessage(error.message, 'error');
         } finally {
-            setSnackbarOpen(true);
             setOpenDeleteDialog(false);
             fetchIssues();
             setOrderToDelete(null);

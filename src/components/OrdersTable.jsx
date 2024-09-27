@@ -63,8 +63,7 @@ const OrdersTable = ({ orders, onRefresh, showMessage }) =>
             const orderDeleted = await deleteOrder(orderToDelete);
             if (orderDeleted)
             {
-                setSnackbarMessage('Order deleted successfully!');
-                setSnackbarSeverity('success');
+                showMessage('Order deleted successfully!', 'success');
             }
             else
             {
@@ -74,17 +73,13 @@ const OrdersTable = ({ orders, onRefresh, showMessage }) =>
         {
             setSnackbarMessage(error.message);
             setSnackbarSeverity('error');
+            showMessage(error.message, 'error');
 
         } finally
         {
-            setSnackbarOpen(true);
             setOpenDeleteDialog(false);
             setOrderToDelete(null);
-
-            setTimeout(() =>
-            { // refresh after a delay of 1 second, otherwise the snackbar doesnt show.
-                onRefresh();
-            }, 1000);
+            onRefresh();
         }
     };
 

@@ -14,7 +14,7 @@ import IconButton from '@mui/material/IconButton';
 
 //update data us a state object that when changed on the parent object
 //will trigger a refresh of the orders table data. 
-const OrdersTable = ({ orders, onRefresh }) =>
+const OrdersTable = ({ orders, onRefresh, showMessage }) =>
 {
 
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -202,7 +202,7 @@ const OrdersTable = ({ orders, onRefresh }) =>
                 </Alert>
             </Snackbar>
             <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth>
-                <EditOrderForm order={selectedOrder} onClose={handleCloseEditDialog} onRefresh={onRefresh} />
+                <EditOrderForm order={selectedOrder} onClose={handleCloseEditDialog} onRefresh={onRefresh} showMessage={showMessage} />
             </Dialog>
             <Dialog open={openDeleteDialog} >
                 <Box sx={{ padding: 2 }}>

@@ -8,7 +8,7 @@ import EditOrderForm from '../components/EditOrderForm';
 import { deleteOrder } from '../store/apiFunctions';
 
 
-const IssuesTable = ({setCount}) => {
+const IssuesTable = ({setCount, showMessage}) => {
     const [issueOrders, setIssueOrders] = useState([]);
     const [loadingIssues, setLoadingIssues] = useState(false)
     const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -192,7 +192,7 @@ const IssuesTable = ({setCount}) => {
                 </Alert>
             </Snackbar>
             <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth>
-                <EditOrderForm order={selectedOrder} onClose={handleCloseEditDialog} onRefresh={fetchIssues} />
+                <EditOrderForm order={selectedOrder} onClose={handleCloseEditDialog} onRefresh={fetchIssues} showMessage={showMessage} />
             </Dialog>
             <Dialog open={openDeleteDialog} >
                 <Box sx={{ padding: 2 }}>

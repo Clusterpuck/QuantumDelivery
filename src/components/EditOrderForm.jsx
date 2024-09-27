@@ -13,7 +13,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Skeleton from '@mui/material/Skeleton';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-const EditOrderForm = ({ order, onRefresh, onClose }) => {
+const EditOrderForm = ({ order, onRefresh, onClose, showMessage }) => {
     const [customers, setCustomers] = useState(null);
     const [locations, setLocations] = useState(null);
 
@@ -120,14 +120,25 @@ const EditOrderForm = ({ order, onRefresh, onClose }) => {
         };
 
         try {
-            await updateOrderDetails(input);
             const responseMessage = await updateOrderDetails(input);
-            setMessage(responseMessage);
-            setOpenSnackbar(true);
+
+           
+            if (responseMessage.startsWith('Error')) {
+                // Pass error message back to the parent
+                showMessage(responseMessage, 'error');
+            } else {
+                // Pass success message back to the parent
+                showMessage(responseMessage, 'success');
+            }
             onRefresh();
+            onClose();
         } catch (error) {
-            console.error('Failed to save changes:', error);
+            // Handle any unexpected errors here
+            showMessage("Unexpected Error: " + error.message, 'error');
+            onRefresh();
+            onClose();
         }
+
     };
 
     useEffect(() => {

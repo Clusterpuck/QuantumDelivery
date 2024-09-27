@@ -13,9 +13,9 @@ import PersonIcon from '@mui/icons-material/Person'; // person icon
 
 // Material-UI Components
 import {
-Button, Grid, Paper, Snackbar,
-Alert, Typography, Accordion, AccordionDetails, AccordionSummary,
-Box, Skeleton, Modal, Dialog
+  Button, Grid, Paper, Snackbar,
+  Alert, Typography, Accordion, AccordionDetails, AccordionSummary,
+  Box, Skeleton, Modal, Dialog
 } from '@mui/material';
 
 // Material-UI Icons
@@ -77,6 +77,14 @@ const ViewRoutes = () => {
 
   }, [])
 
+  const handleShowMessage = (msg, type) => {
+    setSnackbar({
+      open: true,
+      message: msg,
+      severity: type
+    });
+  };
+
   // Open Modal function
   const handleOpenModal = () => setIsModalOpen(true);
 
@@ -90,8 +98,8 @@ const ViewRoutes = () => {
 
   const handleCloseEditDialog = () => {
     setOpenEditDialog(false);
-    setSelectedRouteToEdit(null); 
-};
+    setSelectedRouteToEdit(null);
+  };
 
 
 
@@ -231,18 +239,18 @@ const ViewRoutes = () => {
 
       <Paper elevation={3} sx={{ padding: 3, maxWidth: 1500, width: '100%' }}>
         <Grid item xs={12} md={12} container spacing={2}>
-          
+
 
           <Grid padding={2} item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button
+            <Button
               variant="contained"
               color="primary"
               onClick={handleOpenModal}
               sx={{ borderRadius: '18px' }}
             >
-                            <AddIcon sx={{ fontSize: '2rem' }} /> Calculate New Routes
-                        </Button>
-                    </Grid>
+              <AddIcon sx={{ fontSize: '2rem' }} /> Calculate New Routes
+            </Button>
+          </Grid>
 
 
           <Grid item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
@@ -356,7 +364,7 @@ const ViewRoutes = () => {
                                     color="primary"
                                     variant="contained"
                                     size='small'
-                                    disabled={route.orders.some(order => order.status !== 'ASSIGNED')} 
+                                    disabled={route.orders.some(order => order.status !== 'ASSIGNED')}
                                   >
                                     Edit Route
                                   </Button>
@@ -444,8 +452,8 @@ const ViewRoutes = () => {
       </Paper>
 
       <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth>
-                <EditRouteForm route={selectedRouteToEdit} onClose={handleCloseEditDialog} onRefresh={loadRoutes} />
-            </Dialog>
+        <EditRouteForm route={selectedRouteToEdit} onClose={handleCloseEditDialog} onRefresh={loadRoutes} showMessage={handleShowMessage} />
+      </Dialog>
       <Snackbar
         open={snackbar.open}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}

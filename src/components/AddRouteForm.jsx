@@ -13,12 +13,22 @@ import WarehouseIcon from '@mui/icons-material/Warehouse';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 
+import IconQuantum from '@mui/icons-material/DeviceHub';  // Example for Quantum
+import IconFleet from '@mui/icons-material/LocalShipping';  // Example for Fleet Optimization
+import IconMap from '@mui/icons-material/Map';  // Example for MapBox
+import ImportantDevicesIcon from '@mui/icons-material/ImportantDevices';
+import ComputerIcon from '@mui/icons-material/Computer';
+import CommuteIcon from '@mui/icons-material/Commute';
+import TimelineIcon from '@mui/icons-material/Timeline';
+
+
+
 import OrdersTable from '../components/OrdersTable.jsx';
 import CustomLoading from '../components/CustomLoading.jsx';
 import
 {
     TextField, Button, Grid, MenuItem, Typography, InputAdornment, Radio, RadioGroup,
-    FormControlLabel, Skeleton
+    FormControlLabel, Switch, Skeleton, FormGroup
 } from '@mui/material';
 
 
@@ -33,9 +43,22 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
     const [datePlannedOrders, setDatePlannedOrders] = useState([]);
     const [numVehicles, setNumVehicles] = useState(1); // default to 1 vehicle
     const [calcType, setCalcType] = useState("brute");
+    const [xkmeans, setXKMeans] = useState("xmeans");
+    const [mappingType, setMappingType] = useState("cartesian");
     const [routesLoading, setRoutesLoading] = useState(false);
     const [maxVehicle, setMaxVehicle] = useState(1);
     const [loadingMaxVehicle, setLoadingMaxVehicle] = useState(true);
+
+    // Custom style for circular icon background
+    const iconStyle = {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 24,     // Adjust size to match the Switch thumb size
+        height: 24,    // Adjust size to match the Switch thumb size
+        borderRadius: '50%',
+        backgroundColor: '#ccc',  // Off-state background color
+    };
 
 
     // Depot handling
@@ -88,6 +111,8 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
             const userInput = {
                 numVehicle: numVehicles,
                 calcType: calcType,
+                type: xkmeans,
+                distance: mappingType,
                 deliveryDate: formatDateToYYYYMMDD(new Date(selectedDate)),
                 depot: selectedDepot,
                 orders: datePlannedOrders.
@@ -129,7 +154,7 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
     const loadOrders = async () =>
     {
         setOrdersLoading(true);
-        const ordersList = await fetchMethod("orders");
+        const ordersList = await fetchMethod("orders/with-products");
         if (ordersList)
         {
 
@@ -254,16 +279,61 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
 
 
     /**
-     * Handles the selector changing calc type between brute and quantum
+     * Handles the switch changing calc type between brute and quantum
      *
      * @param {*} event
      */
     const handleCalcChange = (event) =>
     {
-        setCalcType(event.target.value)
-        // console.log("Calc changed to ", event.target.value);
+        if( event.target.checked)
+        {
+            setCalcType("dwave");
+        }
+        else
+        {
+            setCalcType("brute");
+        }
 
     }
+
+    
+    /**
+     * Handles the switch changing xmeans and kmeans types
+     *
+     * @param {*} event
+     */
+    const handleMeansChange = (event) =>
+    {
+        if( event.target.checked)
+        {//optimise fleet by using xmeans
+            setXKMeans("xmeans");
+        }
+        else
+        {//don't optimise fleet, use cleaner kmeans instead
+            setXKMeans("kmeans");
+        }
+
+    }
+
+    
+    /**
+     * Handles the switch changing cartesian and mapbox
+     *
+     * @param {*} event
+     */
+    const handleMappingChange = (event) =>
+    {
+        if( event.target.checked)
+        {//optimise fleet by using xmeans
+            setMappingType("mapbox");
+        }
+        else
+        {//don't optimise fleet, use cleaner kmeans instead
+            setMappingType("cartesian");
+        }
+
+    }
+    
 
 
 
@@ -403,15 +473,35 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
                 </Grid>
                 {/**Calc type selection */}
                 <Grid item xs={6} md={3}>
-                    <RadioGroup
-                        aria-labelledby="demo-controlled-radio-buttons-group"
-                        name="controlled-radio-buttons-group"
-                        value={calcType}
-                        onChange={handleCalcChange}
-                    >
-                        <FormControlLabel value="brute" control={<Radio />} label="Brute Force" />
-                        <FormControlLabel value="dwave" control={<Radio />} label="Quantum Computer" />
-                    </RadioGroup>
+                <FormGroup>
+    <FormControlLabel
+        control={<Switch 
+            value={calcType} 
+            onChange={handleCalcChange} 
+            icon = {<div style={iconStyle}><ComputerIcon style={{fontSize: 16}}/></div>}
+            checkedIcon={<div style={iconStyle}><ImportantDevicesIcon style={{fontSize: 16}} /></div>} />}
+        label={"Use Quantum"}
+    />
+    <FormControlLabel
+        control={<Switch 
+                defaultChecked 
+                icon = {<div style={iconStyle}><CommuteIcon style={{fontSize: 16}}/> </div>}
+                checkedIcon = {<div style={iconStyle}><IconFleet style={{fontSize: 16}}/> </div>}
+                value={xkmeans} 
+                onChange={handleMeansChange} />}
+        label={<>Optimise Fleet</>}
+    />
+    <FormControlLabel
+        control={<Switch 
+                value={mappingType} 
+                onChange={handleMappingChange} 
+                icon = {<div style={iconStyle}><TimelineIcon style={{fontSize: 16}}/> </div>}
+                checkedIcon = {<div style={iconStyle}><IconMap style={{fontSize: 16}}/> </div>}
+                />}
+        label={<>Use MapBox</>}
+    />
+</FormGroup>
+
                 </Grid>
                 {/**Calculate routes button */}
                 <Grid item xs={12} md={12} container justifyContent="center">

@@ -224,25 +224,25 @@ const ViewRoutes = () => {
       }}
     >
 
-      <Typography variant="h2" component="h1" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Typography variant="h3" component="h1" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <RouteIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
         Routes
       </Typography>
 
       <Paper elevation={3} sx={{ padding: 3, maxWidth: 1500, width: '100%' }}>
         <Grid item xs={12} md={12} container spacing={2}>
-          <Grid item xs={12} md={12} margin={2} >
-            {/* Add Route Button */}
-            <Button
+          
+
+          <Grid padding={2} item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
               variant="contained"
               color="primary"
-              startIcon={<AddIcon />}
               onClick={handleOpenModal}
+              sx={{ borderRadius: '18px' }}
             >
-              Add New Routes
-            </Button>
-
-          </Grid>
+                            <AddIcon sx={{ fontSize: '2rem' }} /> Calculate New Routes
+                        </Button>
+                    </Grid>
 
 
           <Grid item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
@@ -277,7 +277,7 @@ const ViewRoutes = () => {
                         }}
                       >
                         <Grid container margin={0.1}>
-                          <Grid item xs={12} md={4} marginBottom={2} marginTop={2}>
+                          <Grid item xs={12} md={4} marginBottom={1} marginTop={1}>
                             <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
                               <CalendarTodayIcon color="primary" />
                               <Typography variant='h6' >

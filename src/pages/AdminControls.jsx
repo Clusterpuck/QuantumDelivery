@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Paper, Grid, Typography, Modal, Box } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,9 @@ import EditProductForm from '../components/EditProductForm';
 import EditLocationForm from '../components/EditLocationForm'; 
 import EditCustomerForm from '../components/EditCustomerForm'; 
 import CheckPasswordForm from '../components/CheckPasswordForm';
+import { getAccountDetails } from '../store/apiFunctions';
+import {enableScroll} from '../assets/scroll.js';
+
 
 const AdminControls = () => {
     const navigate = useNavigate();
@@ -23,6 +26,11 @@ const AdminControls = () => {
         customer: 'add',
         location: 'add',
         product: 'add',
+    });
+
+    useEffect(() =>
+    {
+        enableScroll();
     });
 
     const [deleteEntity, setDeleteEntity] = useState(null);

@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { fetchAccounts, fetchVehicles, updateRouteDetails } from '../store/apiFunctions.js';
 import '../index.css';
 import {
-    Box, Button, Grid, Paper, Typography, Skeleton, TextField, Autocomplete, Popper
+    IconButton, Box, Button, Grid, Paper, Typography, Skeleton, TextField, Autocomplete, Popper
     } from '@mui/material';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const EditRouteForm = ({ route, onRefresh, onClose }) => {
     const [drivers, setDrivers] = useState(null);
@@ -125,8 +126,16 @@ const EditRouteForm = ({ route, onRefresh, onClose }) => {
         <Paper elevation={3} sx={{ padding: 3, width: '500px', display: 'flex', flexDirection: 'column',height: 'auto',
             overflow: 'hidden' }}>
             <form style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+            <IconButton 
+                color="primary"
+                aria-label="cancel" 
+                onClick={onClose}  // Handle cancel action
+                sx={{ position: 'absolute', top: 8, right: 8}}  // Top-right positioning
+            >
+                <CancelIcon />
+            </IconButton>
                 {/* Title and Disabled Order ID */}
-                <Grid container spacing={2} alignItems="center" justifyContent="space-between">
+                <Grid container spacing={2} alignItems="center" justifyContent="space-between" sx={{ mt: 1 }}>
                     <Grid item>
                         <Typography variant="h5" component="h1">
                             Edit Route

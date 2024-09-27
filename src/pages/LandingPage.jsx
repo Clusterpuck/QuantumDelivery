@@ -15,6 +15,7 @@ import RouteIcon from '@mui/icons-material/Route';
 import QLogo from '../../quantalogo.png';
 import Cookies from 'js-cookie';
 import Skeleton from '@mui/material/Skeleton';
+import {enableScroll} from '../assets/scroll.js';
 import
     {
         Table,
@@ -49,6 +50,7 @@ const LandingPage = () =>
 
         fetchRssFeed();
         fetchHomeData();
+        enableScroll();
     }, []);
 
     const fetchRssFeed = async () => {

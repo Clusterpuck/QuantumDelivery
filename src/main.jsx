@@ -62,15 +62,16 @@ const HomePage = () => {
                 </PrivateRoute>
             );
         }
-        else
-        {//unmatched role just returns back to login page for now. 
-            return(
-                <Login/>
-            );
-
-        }
+        
+    }
+    else
+    {//unmatched role just returns back to login page for now. 
+        return(
+            <Login/>
+        );
 
     }
+    
 }
 
 const App = () => {

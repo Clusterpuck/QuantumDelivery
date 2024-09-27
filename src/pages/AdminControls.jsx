@@ -8,11 +8,12 @@ import CreateAccountForm from '../components/CreateAccountForm';
 import EditAccountForm from '../components/EditAccountForm'; 
 import EditEntityForm from '../components/EditEntityForm'; 
 import CreateProductForm from '../components/CreateProductForm'; 
+import CreateLocation from '../components/CreateLocation'; 
+import CreateCustomer from '../components/CreateCustomer'; 
 import EditProductForm from '../components/EditProductForm'; 
 import EditLocationForm from '../components/EditLocationForm'; 
-import EditCustomerForm from '../components/EditCustomerForm'; // Import the EditCustomerForm
+import EditCustomerForm from '../components/EditCustomerForm'; 
 import CheckPasswordForm from '../components/CheckPasswordForm';
-import { getAccountDetails } from '../store/apiFunctions';
 
 const AdminControls = () => {
     const navigate = useNavigate();
@@ -29,17 +30,17 @@ const AdminControls = () => {
     const [openAccountForm, setOpenAccountForm] = useState(false);
     const [openProductForm, setOpenProductForm] = useState(false);
     const [openLocationForm, setOpenLocationForm] = useState(false);
-    const [openCustomerForm, setOpenCustomerForm] = useState(false); // New state for customer form
+    const [openCustomerForm, setOpenCustomerForm] = useState(false);
     const [openEditEntityForm, setOpenEditEntityForm] = useState(false); 
     const [userMode, setUserMode] = useState('add');
     const [accountId, setAccountId] = useState(''); 
     const [productId, setProductId] = useState('');
     const [locationId, setLocationId] = useState('');
-    const [customerId, setCustomerId] = useState(''); // State for customer ID
+    const [customerId, setCustomerId] = useState(''); 
     const [openPasswordModal, setOpenPasswordModal] = useState(false); 
     const [usernameForPasswordChange, setUsernameForPasswordChange] = useState('');
     const [accountStatus, setAccountStatus] = useState('');
-    const [entityType, setEntityType] = useState('user'); // state for entity type
+    const [entityType, setEntityType] = useState('user'); 
 
     const handleOperationChange = (entity) => (event) => {
         setOperations({
@@ -65,7 +66,13 @@ const AdminControls = () => {
         } else if (entity === 'product' && operation === 'add') {
             setProductId('');
             setOpenProductForm(true);
-        } else if (entity !== 'user' || 'product') {
+        } else if (entity === 'location' && operation === 'add') { // Open location form
+            setLocationId('');
+            setOpenLocationForm(true);
+        } else if (entity === 'customer' && operation === 'add') { // Open customer form
+            setCustomerId('');
+            setOpenCustomerForm(true);
+        } else {
             console.log(`Submitted operation for ${entity}:`, operation);
             navigate('/orders');
         }
@@ -75,28 +82,28 @@ const AdminControls = () => {
     const handleCloseAccountForm = () => setOpenAccountForm(false);
     const handleCloseProductForm = () => setOpenProductForm(false);
     const handleCloseLocationForm = () => setOpenLocationForm(false);
-    const handleCloseCustomerForm = () => setOpenCustomerForm(false); // Close customer form modal
+    const handleCloseCustomerForm = () => setOpenCustomerForm(false); 
     const handleCloseEditEntityForm = () => setOpenEditEntityForm(false);
 
     const handleEditEntitySuccess = (collectedEntityId) => {
         if (collectedEntityId) {
             if (entityType === 'product') {
                 setProductId(collectedEntityId);
-                setOpenProductForm(true); // Open the Product form modal
-                setOpenEditEntityForm(false); // Close EditEntityForm modal
+                setOpenProductForm(true);
+                setOpenEditEntityForm(false);
             } else if (entityType === 'location') {
-                setLocationId(collectedEntityId); // Collect the location ID
-                setOpenLocationForm(true); // Open the Location form modal
-                setOpenEditEntityForm(false); // Close EditEntityForm modal
+                setLocationId(collectedEntityId);
+                setOpenLocationForm(true);
+                setOpenEditEntityForm(false);
             } else if (entityType === 'user') {
                 setAccountId(collectedEntityId);
                 setUserMode('edit');
-                setOpenAccountForm(true); // Open the User form modal
-                setOpenEditEntityForm(false); // Close EditEntityForm modal
-            } else if (entityType === 'customer') { // Handle customer entity
-                setCustomerId(collectedEntityId); // Set the customer ID
-                setOpenCustomerForm(true); // Open the Customer form modal
-                setOpenEditEntityForm(false); // Close EditEntityForm modal
+                setOpenAccountForm(true);
+                setOpenEditEntityForm(false);
+            } else if (entityType === 'customer') {
+                setCustomerId(collectedEntityId);
+                setOpenCustomerForm(true);
+                setOpenEditEntityForm(false);
             } else {
                 console.error("Unsupported entity type for editing.");
             }
@@ -178,7 +185,7 @@ const AdminControls = () => {
                 aria-describedby="location-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
-                    <EditLocationForm locationId={locationId} />
+                    {operations.location === 'add' ? <CreateLocation /> : <EditLocationForm locationId={locationId} />}
                 </Box>
             </Modal>
 
@@ -190,7 +197,7 @@ const AdminControls = () => {
                 aria-describedby="customer-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
-                    <EditCustomerForm customerId={customerId} /> {/* Customer edit form */}
+                    {operations.customer === 'add' ? <CreateCustomer /> : <EditCustomerForm customerId={customerId} />}
                 </Box>
             </Modal>
 
@@ -203,7 +210,7 @@ const AdminControls = () => {
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 400, width: '100%' }}>
                     <EditEntityForm
-                        entity={entityType} // Use dynamic entity type
+                        entity={entityType} 
                         onSuccess={handleEditEntitySuccess}
                     />
                 </Box>

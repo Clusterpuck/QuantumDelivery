@@ -14,7 +14,7 @@ import IconButton from '@mui/material/IconButton';
 
 //update data us a state object that when changed on the parent object
 //will trigger a refresh of the orders table data. 
-const OrdersTable = ({ orders, onRefresh }) =>
+const OrdersTable = ({ orders, onRefresh, showMessage }) =>
 {
 
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -63,8 +63,7 @@ const OrdersTable = ({ orders, onRefresh }) =>
             const orderDeleted = await deleteOrder(orderToDelete);
             if (orderDeleted)
             {
-                setSnackbarMessage('Order deleted successfully!');
-                setSnackbarSeverity('success');
+                showMessage('Order deleted successfully!', 'success');
             }
             else
             {
@@ -74,17 +73,13 @@ const OrdersTable = ({ orders, onRefresh }) =>
         {
             setSnackbarMessage(error.message);
             setSnackbarSeverity('error');
+            showMessage(error.message, 'error');
 
         } finally
         {
-            setSnackbarOpen(true);
             setOpenDeleteDialog(false);
             setOrderToDelete(null);
-
-            setTimeout(() =>
-            { // refresh after a delay of 1 second, otherwise the snackbar doesnt show.
-                onRefresh();
-            }, 1000);
+            onRefresh();
         }
     };
 
@@ -202,7 +197,7 @@ const OrdersTable = ({ orders, onRefresh }) =>
                 </Alert>
             </Snackbar>
             <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth>
-                <EditOrderForm order={selectedOrder} onClose={handleCloseEditDialog} onRefresh={onRefresh} />
+                <EditOrderForm order={selectedOrder} onClose={handleCloseEditDialog} onRefresh={onRefresh} showMessage={showMessage} />
             </Dialog>
             <Dialog open={openDeleteDialog} >
                 <Box sx={{ padding: 2 }}>

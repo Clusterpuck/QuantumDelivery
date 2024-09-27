@@ -36,6 +36,14 @@ const Orders = () =>
         loadOrders();
     };
 
+    const handleShowMessage = (msg, type) => {
+        setSnackbar({
+            open: true,
+            message: msg,
+            severity: type
+        });
+    };
+
     useEffect(() =>
     {
         enableScroll();
@@ -141,7 +149,7 @@ const Orders = () =>
                         <AccordionDetails key={"issues-details"}>
 
 
-                            <IssuesTable setCount={setNumberOfIssues} />
+                            <IssuesTable setCount={setNumberOfIssues} showMessage={handleShowMessage} />
                         </AccordionDetails>
                     </Accordion>
                 </Box>
@@ -178,7 +186,7 @@ const Orders = () =>
                                 sx={{ width: '100%', height: '800px' }}
                             />
                         ) : (
-                            <OrdersTable orders={orders} onRefresh={refreshOrders} />
+                            <OrdersTable orders={orders} onRefresh={refreshOrders} showMessage={handleShowMessage} />
                         )}
                     </Box>
                 </Paper>

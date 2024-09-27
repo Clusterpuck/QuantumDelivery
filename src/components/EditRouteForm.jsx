@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { fetchAccounts, fetchVehicles, updateRouteDetails } from '../store/apiFunctions.js';
 import '../index.css';
 import {
-    Box, Button, Grid, Paper, Typography, Skeleton, TextField, Autocomplete, Popper
+    IconButton, Box, Button, Grid, Paper, Typography, Skeleton, TextField, Autocomplete, Popper
     } from '@mui/material';
+import CancelIcon from '@mui/icons-material/Cancel';
 
-const EditRouteForm = ({ route, onRefresh, onClose }) => {
+const EditRouteForm = ({ route, onRefresh, onClose, showMessage }) => {
     const [drivers, setDrivers] = useState(null);
     const [vehicles, setVehicles] = useState(null);
 
@@ -14,9 +15,6 @@ const EditRouteForm = ({ route, onRefresh, onClose }) => {
 
     const [loadingDrivers, setLoadingDrivers] = useState(false);
     const [loadingVehicles, setLoadingVehicles] = useState(false);
-
-    const [message, setMessage] = useState('');
-    const [messageType, setMessageType] = useState('');
 
     const loadDrivers = async () => {
         setLoadingDrivers(true);
@@ -48,12 +46,25 @@ const EditRouteForm = ({ route, onRefresh, onClose }) => {
             vehicleID: selectedVehicle?.licensePlate,
         };
         
-            console.log("SENDING FROM EDIT FORM: ", input);
+        try {
             const responseMessage = await updateRouteDetails(input);
-            setMessage(responseMessage);
+
+           
+            if (responseMessage.startsWith('Error')) {
+                // Pass error message back to the parent
+                showMessage(responseMessage, 'error');
+            } else {
+                // Pass success message back to the parent
+                showMessage(responseMessage, 'success');
+            }
             onRefresh();
             onClose();
-            console.log("MESSAGE: ", message);
+        } catch (error) {
+            // Handle any unexpected errors here
+            showMessage("Unexpected Error: " + error.message, 'error');
+            onRefresh();
+            onClose();
+        }
 
         };
 
@@ -125,8 +136,16 @@ const EditRouteForm = ({ route, onRefresh, onClose }) => {
         <Paper elevation={3} sx={{ padding: 3, width: '500px', display: 'flex', flexDirection: 'column',height: 'auto',
             overflow: 'hidden' }}>
             <form style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+            <IconButton 
+                color="primary"
+                aria-label="cancel" 
+                onClick={onClose}  // Handle cancel action
+                sx={{ position: 'absolute', top: 8, right: 8}}  // Top-right positioning
+            >
+                <CancelIcon />
+            </IconButton>
                 {/* Title and Disabled Order ID */}
-                <Grid container spacing={2} alignItems="center" justifyContent="space-between">
+                <Grid container spacing={2} alignItems="center" justifyContent="space-between" sx={{ mt: 1 }}>
                     <Grid item>
                         <Typography variant="h5" component="h1">
                             Edit Route
@@ -159,18 +178,6 @@ const EditRouteForm = ({ route, onRefresh, onClose }) => {
                         Save Changes
                     </Button>
                 </Grid>
-                {message && (
-                    <Box mt={2} p={2} sx={{ 
-                        backgroundColor: 'var(--action-colour)',
-                        color: '#ffffff',
-                        borderRadius: '4px',
-                        textAlign: 'center'
-                    }}>
-                        <Typography variant="body1">
-                            {message}
-                        </Typography>
-                    </Box>
-                )}
             </form>         
         </Paper>
     );

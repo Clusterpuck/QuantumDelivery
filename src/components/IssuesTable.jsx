@@ -8,7 +8,7 @@ import EditOrderForm from '../components/EditOrderForm';
 import { deleteOrder } from '../store/apiFunctions';
 
 
-const IssuesTable = ({setCount}) => {
+const IssuesTable = ({setCount, showMessage}) => {
     const [issueOrders, setIssueOrders] = useState([]);
     const [loadingIssues, setLoadingIssues] = useState(false)
     const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -62,8 +62,7 @@ const IssuesTable = ({setCount}) => {
             const orderDeleted = await deleteOrder(orderToDelete);
             if (orderDeleted)
             {
-            setSnackbarMessage('Order deleted successfully!');
-            setSnackbarSeverity('success');
+                showMessage('Order deleted successfully!', 'success');
             
             }
             else
@@ -71,10 +70,8 @@ const IssuesTable = ({setCount}) => {
             throw new Error('Failed to delete order.');
             }
         } catch (error) {
-            setSnackbarMessage(error.message);
-            setSnackbarSeverity('error');
+            showMessage(error.message, 'error');
         } finally {
-            setSnackbarOpen(true);
             setOpenDeleteDialog(false);
             fetchIssues();
             setOrderToDelete(null);
@@ -192,7 +189,7 @@ const IssuesTable = ({setCount}) => {
                 </Alert>
             </Snackbar>
             <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth>
-                <EditOrderForm order={selectedOrder} onClose={handleCloseEditDialog} onRefresh={fetchIssues} />
+                <EditOrderForm order={selectedOrder} onClose={handleCloseEditDialog} onRefresh={fetchIssues} showMessage={showMessage} />
             </Dialog>
             <Dialog open={openDeleteDialog} >
                 <Box sx={{ padding: 2 }}>

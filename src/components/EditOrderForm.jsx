@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { fetchCustomers, fetchLocations, fetchProducts, updateOrderDetails } from '../store/apiFunctions.js';
-import { Input, FormControl, InputLabel, Select, MenuItem, Autocomplete, TextField, Table, TableRow, TableCell, TableBody, TableHead, TableContainer, Paper, Button, Grid, Typography, IconButton, Snackbar, Alert } from '@mui/material';
+import { IconButton, Input, FormControl, InputLabel, Select, MenuItem, Autocomplete, TextField,
+    Table, TableRow, TableCell, TableBody, TableHead, TableContainer, Paper, Button, Grid,
+    Typography, Snackbar, Alert } from '@mui/material';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -9,8 +11,9 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Skeleton from '@mui/material/Skeleton';
+import CancelIcon from '@mui/icons-material/Cancel';
 
-const EditOrderForm = ({ order, onRefresh }) => {
+const EditOrderForm = ({ order, onRefresh, onClose }) => {
     const [customers, setCustomers] = useState(null);
     const [locations, setLocations] = useState(null);
 
@@ -222,8 +225,16 @@ const EditOrderForm = ({ order, onRefresh }) => {
     return (
         <Paper elevation={3} sx={{ padding: 3, width: '700px' }}>
             <form>
+            <IconButton 
+                color="primary"
+                aria-label="cancel" 
+                onClick={onClose}  // Handle cancel action
+                sx={{ position: 'absolute', top: 8, right: 8}}  // Top-right positioning
+            >
+                <CancelIcon />
+            </IconButton>
                 {/* Title and Disabled Order ID */}
-                <Grid container spacing={2} alignItems="center" justifyContent="space-between">
+                <Grid container spacing={2} alignItems="center" justifyContent="space-between" sx={{ mt: 1 }}>
                     <Grid item>
                         <Typography variant="h5" component="h1">
                             Edit Order

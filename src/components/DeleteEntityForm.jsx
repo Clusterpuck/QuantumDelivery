@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { deleteAccount, deleteProduct } from '../store/apiFunctions'; 
+import { deleteAccount, deleteProduct, deleteCustomer, deleteLocation } from '../store/apiFunctions'; 
 
 const DeleteEntityForm = ({ entity }) => {
     const [entityId, setEntityId] = useState('');
@@ -48,7 +48,36 @@ const DeleteEntityForm = ({ entity }) => {
             }
     
         }
-        // TODO: Add logic to delete the entity for other types 
+
+        else if (entity === 'customer') {
+            try {
+                const result = await deleteCustomer(entityId); 
+                if (result) {
+                    setSuccess(true); 
+                } else {
+                    setError('Failed to delete customer'); 
+                }
+            } catch (err) {
+                setError('An error occurred while deleting the customer.');
+                console.error(err); 
+            }
+    
+        }
+
+        else if (entity === 'location') {
+            try {
+                const result = await deleteLocation(entityId); 
+                if (result) {
+                    setSuccess(true); 
+                } else {
+                    setError('Failed to delete location.'); 
+                }
+            } catch (err) {
+                setError('An error occurred while deleting the location.');
+                console.error(err); 
+            }
+    
+        }
     };
 
     return (

@@ -4,7 +4,16 @@ import { Paper, Button, Grid, MenuItem, Select, InputLabel, FormControl, Typogra
 const AdminControlsForm = ({ entity, operation, handleOperationChange, handleSubmit }) => {
     return (
         <Grid item xs={12}>
-            <Paper elevation={2} sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Paper
+                elevation={2}
+                sx={{
+                    padding: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    backgroundColor: '#cedbeb', 
+                }}
+            >
                 {/* entity name */}
                 <Typography variant="h6" sx={{ minWidth: '150px' }}>
                     {entity.charAt(0).toUpperCase() + entity.slice(1)}

@@ -1,39 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
-import { getProductDetails, updateProduct } from '../store/apiFunctions';
+import { getCustomerDetails, updateCustomer } from '../store/apiFunctions'; // Replace with the actual API functions
 
-const EditProductForm = ({ productId }) => {
+const EditCustomerForm = ({ customerId }) => {
     const [formData, setFormData] = useState({
         Name: '',
-        UnitOfMeasure: '',
+        Phone: '',
     });
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
-        const fetchProductData = async () => {
+        const fetchCustomerData = async () => {
             try {
-                const productData = await getProductDetails(productId);
-                if(productData)
-                {
+                const customerData = await getCustomerDetails(customerId); // Fetch customer details
+                if (customerData) {
                     setFormData({
-                        Name: productData.name || '',
-                        UnitOfMeasure: productData.unitOfMeasure || '',
+                        Name: customerData.name || '',
+                        Phone: customerData.phone || '',
                     });
-                }
-                else
-                {
-                    setError('No product details found.');
+                } else {
+                    setError('No customer details found.');
                 }
             } catch (error) {
-                console.error(`Error fetching product details for ID: ${productId}`, error);
-                setError('Failed to load product data, no product found.');
+                console.error(`Error fetching customer details for ID: ${customerId}`, error);
+                setError('Failed to load customer data, no customer found.');
             }
         };
 
-        fetchProductData();
-    }, [productId]);
+        fetchCustomerData();
+    }, [customerId]);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -46,26 +43,24 @@ const EditProductForm = ({ productId }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log('Saving changes...', formData); 
-        console.log('Form Data:', formData);
 
         try {
-            const result = await updateProduct(productId, formData); // update in db
+            const result = await updateCustomer(customerId, formData); // Update customer in DB
 
-            // check result
             if (result) {
                 setSuccess(true);
-                if (!formData.Name || !formData.UnitOfMeasure) {
+                if (!formData.Name || !formData.Phone) {
                     setError("Both fields are required.");
-                    return; 
+                    return;
                 }
-                setSuccessMessage('Product updated successfully!');
-                console.log('Product updated successfully:', result);
+                setSuccessMessage('Customer updated successfully!');
+                console.log('Customer updated successfully:', result);
             } else {
-                setError('Failed to update product.');
+                setError('Failed to update customer.');
             }
         } catch (err) {
-            console.error(err); 
-            setError('An error occurred while updating the product.');
+            console.error(err);
+            setError('An error occurred while updating the customer.');
         }
     };
 
@@ -74,30 +69,30 @@ const EditProductForm = ({ productId }) => {
             <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
                 <Grid container spacing={2} direction="column" alignItems="center">
                     <Typography variant="h5" gutterBottom>
-                        Editing Product {productId}
+                        Editing Customer {customerId}
                     </Typography>
                     <form style={{ width: '80%' }} onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    label="Product Name"
-                                    name="Name" 
+                                    label="Customer Name"
+                                    name="Name"
                                     variant="outlined"
                                     fullWidth
                                     required
-                                    value={formData.Name} 
-                                    onChange={handleInputChange} 
+                                    value={formData.Name}
+                                    onChange={handleInputChange}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    label="Unit of Measure"
-                                    name="UnitOfMeasure" 
+                                    label="Phone Number"
+                                    name="Phone"
                                     variant="outlined"
                                     fullWidth
                                     required
-                                    value={formData.UnitOfMeasure} 
-                                    onChange={handleInputChange} 
+                                    value={formData.Phone}
+                                    onChange={handleInputChange}
                                 />
                             </Grid>
                         </Grid>
@@ -115,4 +110,4 @@ const EditProductForm = ({ productId }) => {
     );
 };
 
-export default EditProductForm;
+export default EditCustomerForm;

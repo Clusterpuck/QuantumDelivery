@@ -694,6 +694,284 @@ export const deleteProduct = async (productId) => {
     }
 };
 
+// deletes customer by their ID
+export const deleteCustomer = async (customerId) => {
+    try {
+        // ensure customerId is an integer
+        const id = parseInt(customerId, 10);
+        const response = await fetch(`${Constants.DATA_ENDPOINT}customers/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        // cxheck if the response is successful
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+
+            if (response.status === 400) {
+                const errorData = await response.json();
+                throw new Error(errorData || 'Customer has associated active orders.');
+            } else if (response.status === 404) {
+                throw new Error('Customer not found.');
+            } else {
+                throw new Error('Failed to delete the customer.');
+            }
+        }
+
+        const responseData = await response.json();
+        console.log('Customer deleted successfully:', responseData.message);
+        return responseData.message;
+
+    } catch (error) {
+        console.error('Error deleting customer:', error);
+        return null;
+    }
+};
+
+// create a new customer
+export const createCustomer = async (customerData) => {
+    if (!customerData || !customerData.Name || !customerData.Phone) {
+        throw new Error('Customer name and phone are required to create a customer.');
+    }
+
+    console.log('Creating new customer:', customerData); // log the customer data being sent
+    try {
+        const url = `${Constants.DATA_ENDPOINT}customers`; // URL for the POST request
+        console.log(`Sending POST request to: ${url}`); // log the full URL
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(customerData), // convert customerData to JSON string
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text(); // capture response text for detailed error
+            console.error(`Error creating customer, status: ${response.status}, error: ${errorText}`);
+            throw new Error('Failed to create customer');
+        }
+
+        const responseData = await response.json(); // parse response as JSON
+        return responseData; // return the created customer data
+    } catch (error) {
+        console.error('Error creating customer:', error);
+        throw error; 
+    }
+};
+
+// edit an existing customer
+export const updateCustomer = async (customerId, customerData) => {
+    const idAsInt = parseInt(customerId, 10); // convert customerId to integer
+    if (isNaN(idAsInt)) {
+        throw new Error('Invalid customer ID: must be an integer');
+    }
+
+    if (!customerData || !customerData.Name || !customerData.Phone) {
+        throw new Error('Customer name and phone are required to edit a customer.');
+    }
+
+    console.log('Editing customer:', idAsInt, customerData); // log the customer data being sent
+    try {
+        const url = `${Constants.DATA_ENDPOINT}customers/${idAsInt}`; 
+        console.log(`Sending PUT request to: ${url}`); 
+
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(customerData), // convert customerData to JSON string
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text(); // capture response text for detailed error
+            console.error(`Error editing customer, status: ${response.status}, error: ${errorText}`);
+            throw new Error('Failed to edit customer');
+        }
+
+        const responseData = await response.json(); // parse response as JSON
+        return responseData; // return the updated customer data
+    } catch (error) {
+        console.error('Error editing customer:', error);
+        throw error; 
+    }
+};
+
+// get customer details by ID
+export const getCustomerDetails = async (customerId) => {
+    const idAsInt = parseInt(customerId, 10); // convert customerId to integer
+    if (isNaN(idAsInt)) {
+        throw new Error('Invalid customer ID: must be an integer');
+    }
+
+    console.log('Fetching customer details for ID:', idAsInt); // log the customer ID being fetched
+    try {
+        const url = `${Constants.DATA_ENDPOINT}customers/${idAsInt}`; 
+        console.log(`Fetching customer details from: ${url}`); // log the full URL
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text(); // capture response text for detailed error
+            console.error(`Error fetching customer details for ID ${idAsInt}, status: ${response.status}, error: ${errorText}`);
+            throw new Error('Failed to fetch customer details');
+        }
+
+        const responseData = await response.json(); // parse response as JSON
+        return responseData; // return the customer details
+    } catch (error) {
+        console.error('Error fetching customer details:', error);
+        throw error; 
+    }
+};
+
+
+// deletes location by its ID
+export const deleteLocation = async (locationId) => {
+    try {
+        // ensure locationId is an integer
+        const id = parseInt(locationId, 10);
+        const response = await fetch(`${Constants.DATA_ENDPOINT}locations/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        // check if the response is successful
+        if (!response.ok) {
+            console.error('Response status:', response.status);
+            console.error('Response status text:', response.statusText);
+
+            if (response.status === 400) {
+                const errorData = await response.json();
+                throw new Error(errorData || 'Cannot delete location due to associated ongoing orders.');
+            } else if (response.status === 404) {
+                throw new Error('Location not found.');
+            } else {
+                throw new Error('Failed to delete the location.');
+            }
+        }
+
+        const responseData = await response.json();
+        console.log('Location deleted successfully:', responseData.message);
+        return responseData.message;
+
+    } catch (error) {
+        console.error('Error deleting location:', error);
+        return null;
+    }
+};
+
+// get location details by ID
+export const getLocationDetails = async (locationId) => {
+    const idAsInt = parseInt(locationId, 10); // convert to integer
+    if (isNaN(idAsInt)) {
+        throw new Error('Invalid location ID: must be an integer');
+    }
+
+    console.log('Fetching location details for ID:', idAsInt); // log the location ID being fetched
+    try {
+        const url = `${Constants.DATA_ENDPOINT}locations/${idAsInt}`;
+        console.log(`Fetching location details from: ${url}`); 
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text(); // capture response text for detailed error
+            console.error(`Error fetching location details for ID ${idAsInt}, status: ${response.status}, error: ${errorText}`);
+            throw new Error('Failed to fetch location details');
+        }
+
+        const responseData = await response.json(); // parse response as JSON
+        return responseData; // return the location details
+    } catch (error) {
+        console.error('Error fetching location details:', error);
+        throw error; 
+    }
+};
+
+// create a new location
+export const createLocation = async (locationData) => {
+    if (!locationData) {
+        throw new Error('Location data is required to create a new location.');
+    }
+
+    console.log('Creating new location with data:', locationData); 
+    try {
+        const url = `${Constants.DATA_ENDPOINT}locations`;
+        console.log(`Sending POST request to: ${url}`); 
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(locationData), 
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text(); 
+            console.error(`Error creating location, status: ${response.status}, error: ${errorText}`);
+            throw new Error('Failed to create location');
+        }
+
+        const responseData = await response.json(); // parse response as JSON
+        return responseData; // return the created location data
+    } catch (error) {
+        console.error('Error creating location:', error);
+        throw error; 
+    }
+};
+
+// edit an existing location
+export const updateLocation = async (locationId, locationData) => {
+    if (!locationId || !locationData) {
+        throw new Error('Location ID and data are required to edit a location.');
+    }
+
+    console.log(`Editing location with ID: ${locationId}`, locationData);
+    try {
+        const url = `${Constants.DATA_ENDPOINT}locations/${locationId}`;
+        console.log(`Sending PUT request to: ${url}`);
+
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(locationData), 
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text(); // capture response text for detailed error
+            console.error(`Error editing location with ID ${locationId}, status: ${response.status}, error: ${errorText}`);
+            throw new Error('Failed to edit location');
+        }
+
+        const responseData = await response.json(); // parse response as JSON
+        return responseData; // return the updated location data
+    } catch (error) {
+        console.error('Error editing location:', error);
+        throw error; 
+    }
+};
+
 
 /**
  * Sends a request to get number of vehicles still available at a select date

@@ -160,7 +160,7 @@ const EditOrderForm = ({ order, onRefresh }) => {
                 <Autocomplete
                     disablePortal
                     id="Customers"
-                    value={customers?.find(customer => customer.name === order?.customerName) || null} // Find the matching customer object
+                    value={selectedCustomer || null} // Find the matching customer object
                     options={customers}
                     getOptionLabel={(option) => option.name}
                     getOptionKey={(option) => option.id}
@@ -182,7 +182,7 @@ const EditOrderForm = ({ order, onRefresh }) => {
                 <Autocomplete
                     disablePortal
                     id="Locations"
-                    value={locations?.find(loc => loc.address === order?.address) || null} // Find the matching location object
+                    value={selectedLocation || null} // Find the matching location object
                     options={locations}
                     getOptionLabel={(option) => option.address}
                     getOptionKey={(option) => option.id}

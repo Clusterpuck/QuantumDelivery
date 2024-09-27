@@ -9,6 +9,8 @@ import EditAccountForm from '../components/EditAccountForm';
 import EditEntityForm from '../components/EditEntityForm'; 
 import CreateProductForm from '../components/CreateProductForm'; 
 import EditProductForm from '../components/EditProductForm'; 
+import EditLocationForm from '../components/EditLocationForm'; 
+import EditCustomerForm from '../components/EditCustomerForm'; // Import the EditCustomerForm
 import CheckPasswordForm from '../components/CheckPasswordForm';
 import { getAccountDetails } from '../store/apiFunctions';
 
@@ -26,14 +28,18 @@ const AdminControls = () => {
     const [openDelete, setOpenDelete] = useState(false);
     const [openAccountForm, setOpenAccountForm] = useState(false);
     const [openProductForm, setOpenProductForm] = useState(false);
+    const [openLocationForm, setOpenLocationForm] = useState(false);
+    const [openCustomerForm, setOpenCustomerForm] = useState(false); // New state for customer form
     const [openEditEntityForm, setOpenEditEntityForm] = useState(false); 
     const [userMode, setUserMode] = useState('add');
     const [accountId, setAccountId] = useState(''); 
     const [productId, setProductId] = useState('');
+    const [locationId, setLocationId] = useState('');
+    const [customerId, setCustomerId] = useState(''); // State for customer ID
     const [openPasswordModal, setOpenPasswordModal] = useState(false); 
     const [usernameForPasswordChange, setUsernameForPasswordChange] = useState('');
     const [accountStatus, setAccountStatus] = useState('');
-    const [entityType, setEntityType] = useState('user'); // State for entity type
+    const [entityType, setEntityType] = useState('user'); // state for entity type
 
     const handleOperationChange = (entity) => (event) => {
         setOperations({
@@ -68,29 +74,32 @@ const AdminControls = () => {
     const handleCloseDelete = () => setOpenDelete(false);
     const handleCloseAccountForm = () => setOpenAccountForm(false);
     const handleCloseProductForm = () => setOpenProductForm(false);
+    const handleCloseLocationForm = () => setOpenLocationForm(false);
+    const handleCloseCustomerForm = () => setOpenCustomerForm(false); // Close customer form modal
     const handleCloseEditEntityForm = () => setOpenEditEntityForm(false);
 
-    const handleEditEntitySuccess = async (collectedEntityId) => {
+    const handleEditEntitySuccess = (collectedEntityId) => {
         if (collectedEntityId) {
-            if (entityType === 'user') {
+            if (entityType === 'product') {
+                setProductId(collectedEntityId);
+                setOpenProductForm(true); // Open the Product form modal
+                setOpenEditEntityForm(false); // Close EditEntityForm modal
+            } else if (entityType === 'location') {
+                setLocationId(collectedEntityId); // Collect the location ID
+                setOpenLocationForm(true); // Open the Location form modal
+                setOpenEditEntityForm(false); // Close EditEntityForm modal
+            } else if (entityType === 'user') {
                 setAccountId(collectedEntityId);
                 setUserMode('edit');
-                setOpenAccountForm(true);
-                const accountDetails = await getAccountDetails(collectedEntityId);
-                if (accountDetails) {
-                    setAccountStatus(accountDetails.status);
-                }
-                setOpenEditEntityForm(false);
-            } else if (entityType === 'product') {
-                setProductId(collectedEntityId);
-                setOperations((prev) => ({ ...prev, product: 'edit' })); // Set product operation to 'edit'
-                setOpenProductForm(true);
-                setOpenEditEntityForm(false);
+                setOpenAccountForm(true); // Open the User form modal
+                setOpenEditEntityForm(false); // Close EditEntityForm modal
+            } else if (entityType === 'customer') { // Handle customer entity
+                setCustomerId(collectedEntityId); // Set the customer ID
+                setOpenCustomerForm(true); // Open the Customer form modal
+                setOpenEditEntityForm(false); // Close EditEntityForm modal
             } else {
-                console.error('Unsupported entity type for editing.');
+                console.error("Unsupported entity type for editing.");
             }
-        } else {
-            console.error('No valid Entity ID provided.');
         }
     };
     
@@ -158,6 +167,30 @@ const AdminControls = () => {
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
                     {operations.product === 'add' ? <CreateProductForm /> : <EditProductForm productId={productId} />}
+                </Box>
+            </Modal>
+
+            {/* Location edit form modal */}
+            <Modal
+                open={openLocationForm}
+                onClose={handleCloseLocationForm}
+                aria-labelledby="location-form-modal"
+                aria-describedby="location-form-description"
+            >
+                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
+                    <EditLocationForm locationId={locationId} />
+                </Box>
+            </Modal>
+
+            {/* Customer edit form modal */}
+            <Modal
+                open={openCustomerForm}
+                onClose={handleCloseCustomerForm}
+                aria-labelledby="customer-form-modal"
+                aria-describedby="customer-form-description"
+            >
+                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
+                    <EditCustomerForm customerId={customerId} /> {/* Customer edit form */}
                 </Box>
             </Modal>
 

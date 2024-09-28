@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
-import { getLocationDetails, updateLocation } from '../store/apiFunctions'; // Replace with actual API functions
+import { getLocationDetails, updateLocation } from '../store/apiFunctions'; 
 
 const EditLocationForm = ({ locationId }) => {
     const [formData, setFormData] = useState({

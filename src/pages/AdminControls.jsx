@@ -41,13 +41,12 @@ const AdminControls = () => {
         enableScroll();
     }, []);
 
-    // Updated handleSubmit function for separate button actions
     const handleSubmit = (entity, action) => {
         if (action === 'delete') {
             setDeleteEntity(entity);
             setOpenDelete(true);
         } else if (action === 'edit') {
-            setEntityType(entity); 
+            setEntityType(entity); // entity should be the type of entity being edited
             setOpenEditEntityForm(true);
         } else if (entity === 'user' && action === 'add') {
             setUserMode('add');

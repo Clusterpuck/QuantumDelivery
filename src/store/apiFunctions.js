@@ -1174,5 +1174,96 @@ export const updateRouteDetails = async (input) => {
     }
 }
 
+// get all accounts
+export const getAccounts = async () => {
+    let accountsData = null;
+    try {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}accounts`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch from endpoint ${endpoint}: ${response.statusText}`);
+        }
+
+        accountsData = await response.json(); 
+       // console.log("Fetched active accounts: ", accountsData);
+    } catch (error) {
+        console.error('Error fetching accounts:', error.message);
+    }
+    return accountsData;
+};
+
+// get all customers
+export const getCustomers = async () => {
+    let customersData = null;
+    try {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}customers`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch from endpoint ${endpoint}: ${response.statusText}`);
+        }
+
+        customersData = await response.json(); 
+       console.log("Fetched active customers: ", customersData); // this line prints fine
+    } catch (error) {
+        console.error('Error fetching customers:', error.message);
+    }
+    return customersData;
+};
+
+// get all locations
+export const getLocations = async () => {
+    let locationsData = null;
+    try {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}locations`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch from endpoint ${endpoint}: ${response.statusText}`);
+        }
+
+        locationsData = await response.json(); 
+       //  console.log("Fetched locations: ", locationsData);
+    } catch (error) {
+        console.error('Error fetching locations:', error.message);
+    }
+    return locationsData;
+};
+
+// get all products
+export const getProducts = async () => {
+    let productsData = null;
+    try {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}products`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch from endpoint ${endpoint}: ${response.statusText}`);
+        }
+
+        productsData = await response.json(); 
+        // console.log("Fetched products: ", productsData);
+    } catch (error) {
+        console.error('Error fetching products:', error.message);
+    }
+    return productsData;
+};
 
 

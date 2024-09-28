@@ -1,7 +1,10 @@
 import React from 'react';
-import { Paper, Button, Grid, MenuItem, Select, InputLabel, FormControl, Typography } from '@mui/material';
+import { Paper, Button, Grid, Typography } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-const AdminControlsForm = ({ entity, operation, handleOperationChange, handleSubmit }) => {
+const AdminControlsForm = ({ entity, handleSubmit }) => {
     return (
         <Grid item xs={12}>
             <Paper
@@ -11,7 +14,7 @@ const AdminControlsForm = ({ entity, operation, handleOperationChange, handleSub
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    backgroundColor: '#cedbeb', 
+                    backgroundColor: '#cedbeb', // Background color
                 }}
             >
                 {/* entity name */}
@@ -19,31 +22,30 @@ const AdminControlsForm = ({ entity, operation, handleOperationChange, handleSub
                     {entity.charAt(0).toUpperCase() + entity.slice(1)}
                 </Typography>
 
-                {/* operations dropdown */}
-                <FormControl fullWidth sx={{ maxWidth: '200px', marginRight: 2 }}>
-                    <InputLabel>Operation</InputLabel>
-                    <Select
-                        value={operation}
-                        onChange={handleOperationChange(entity)}
-                        label="Operation"
-                        required
+                {/* Buttons for Add, Edit, and Delete */}
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <Button
+                        variant="contained"
+                        sx={{ backgroundColor: '#8fc48b', color: '#fff' }}
+                        onClick={() => handleSubmit(entity, 'add')}
                     >
-                        <MenuItem value="add">Add</MenuItem>
-                        <MenuItem value="edit">Edit</MenuItem>
-                        <MenuItem value="delete">Delete</MenuItem>
-                    </Select>
-                </FormControl>
-
-                {/* submit button */}
-                <Button
-                    type="button"
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSubmit(entity)}
-                    sx={{ marginLeft: 2 }}
-                >
-                    Submit
-                </Button>
+                        <AddIcon />
+                    </Button>
+                    <Button
+                        variant="contained"
+                        sx={{ backgroundColor: '#d6b16d', color: '#fff' }}
+                        onClick={() => handleSubmit(entity, 'edit')}
+                    >
+                        <EditIcon />
+                    </Button>
+                    <Button
+                        variant="contained"
+                        sx={{ backgroundColor: '#b57682', color: '#fff' }}
+                        onClick={() => handleSubmit(entity, 'delete')}
+                    >
+                        <DeleteIcon />
+                    </Button>
+                </div>
             </Paper>
         </Grid>
     );

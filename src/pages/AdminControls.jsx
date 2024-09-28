@@ -115,7 +115,7 @@ const AdminControls = () => {
                 Admin Controls
             </Typography>
 
-            <Paper elevation={3} sx={{ padding: 6, maxWidth: 800, width: '100%' }}>
+            <Paper elevation={3} sx={{ padding: 6, maxWidth: 1000, width: '100%' }}>
                 <Grid container spacing={2} justifyContent="center">
                     {entities.map((entity) => (
                         <AdminControlsForm

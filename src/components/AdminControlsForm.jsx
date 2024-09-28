@@ -10,11 +10,12 @@ const AdminControlsForm = ({ entity, handleSubmit }) => {
             <Paper
                 elevation={2}
                 sx={{
-                    padding: 2,
+                    padding: 3,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    backgroundColor: '#cedbeb', // Background color
+                    backgroundColor: '#cedbeb', 
+                    height: '50px', // Increase height
                 }}
             >
                 {/* entity name */}

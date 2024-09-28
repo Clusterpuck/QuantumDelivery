@@ -14,24 +14,11 @@ import EditProductForm from '../components/EditProductForm';
 import EditLocationForm from '../components/EditLocationForm'; 
 import EditCustomerForm from '../components/EditCustomerForm'; 
 import CheckPasswordForm from '../components/CheckPasswordForm';
-import { getAccountDetails } from '../store/apiFunctions';
-import {enableScroll} from '../assets/scroll.js';
+import { enableScroll } from '../assets/scroll.js';
 
 
 const AdminControls = () => {
     const navigate = useNavigate();
-
-    const [operations, setOperations] = useState({
-        user: 'add',
-        customer: 'add',
-        location: 'add',
-        product: 'add',
-    });
-
-    useEffect(() =>
-    {
-        enableScroll();
-    });
 
     const [deleteEntity, setDeleteEntity] = useState(null);
     const [openDelete, setOpenDelete] = useState(false);
@@ -50,38 +37,33 @@ const AdminControls = () => {
     const [accountStatus, setAccountStatus] = useState('');
     const [entityType, setEntityType] = useState('user'); 
 
-    const handleOperationChange = (entity) => (event) => {
-        setOperations({
-            ...operations,
-            [entity]: event.target.value,
-        });
-    };
+    useEffect(() => {
+        enableScroll();
+    }, []);
 
-    const handleSubmit = (entity) => (event) => {
-        event.preventDefault();
-        const operation = operations[entity];
-
-        if (operation === 'delete') {
+    // Updated handleSubmit function for separate button actions
+    const handleSubmit = (entity, action) => {
+        if (action === 'delete') {
             setDeleteEntity(entity);
             setOpenDelete(true);
-        } else if (operation === 'edit') {
+        } else if (action === 'edit') {
             setEntityType(entity); 
             setOpenEditEntityForm(true);
-        } else if (entity === 'user' && operation === 'add') {
+        } else if (entity === 'user' && action === 'add') {
             setUserMode('add');
             setAccountId('');
             setOpenAccountForm(true);
-        } else if (entity === 'product' && operation === 'add') {
+        } else if (entity === 'product' && action === 'add') {
             setProductId('');
             setOpenProductForm(true);
-        } else if (entity === 'location' && operation === 'add') { // Open location form
+        } else if (entity === 'location' && action === 'add') {
             setLocationId('');
             setOpenLocationForm(true);
-        } else if (entity === 'customer' && operation === 'add') { // Open customer form
+        } else if (entity === 'customer' && action === 'add') {
             setCustomerId('');
             setOpenCustomerForm(true);
         } else {
-            console.log(`Submitted operation for ${entity}:`, operation);
+            console.log(`Submitted operation for ${entity}:`, action);
             navigate('/orders');
         }
     };
@@ -90,7 +72,7 @@ const AdminControls = () => {
     const handleCloseAccountForm = () => setOpenAccountForm(false);
     const handleCloseProductForm = () => setOpenProductForm(false);
     const handleCloseLocationForm = () => setOpenLocationForm(false);
-    const handleCloseCustomerForm = () => setOpenCustomerForm(false); 
+    const handleCloseCustomerForm = () => setOpenCustomerForm(false);
     const handleCloseEditEntityForm = () => setOpenEditEntityForm(false);
 
     const handleEditEntitySuccess = (collectedEntityId) => {
@@ -117,7 +99,6 @@ const AdminControls = () => {
             }
         }
     };
-    
 
     const handleOpenPasswordModal = (username) => {
         setUsernameForPasswordChange(username);
@@ -141,8 +122,6 @@ const AdminControls = () => {
                         <AdminControlsForm
                             key={entity}
                             entity={entity}
-                            operation={operations[entity]}
-                            handleOperationChange={handleOperationChange}
                             handleSubmit={handleSubmit}
                         />
                     ))}
@@ -181,7 +160,7 @@ const AdminControls = () => {
                 aria-describedby="product-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
-                    {operations.product === 'add' ? <CreateProductForm /> : <EditProductForm productId={productId} />}
+                    <CreateProductForm />
                 </Box>
             </Modal>
 
@@ -193,7 +172,7 @@ const AdminControls = () => {
                 aria-describedby="location-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
-                    {operations.location === 'add' ? <CreateLocation /> : <EditLocationForm locationId={locationId} />}
+                    {locationId ? <EditLocationForm locationId={locationId} /> : <CreateLocation />}
                 </Box>
             </Modal>
 
@@ -205,7 +184,7 @@ const AdminControls = () => {
                 aria-describedby="customer-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
-                    {operations.customer === 'add' ? <CreateCustomer /> : <EditCustomerForm customerId={customerId} />}
+                    {customerId ? <EditCustomerForm customerId={customerId} /> : <CreateCustomer />}
                 </Box>
             </Modal>
 

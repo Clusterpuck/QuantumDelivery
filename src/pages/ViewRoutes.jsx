@@ -136,9 +136,9 @@ const ViewRoutes = () => {
   }
 
   const deleteAllRoutesByDate = async (date) => {
-    console.log("In delete all date is " + JSON.stringify(date) + " formatted is " + formatDate(date));
+    //console.log("In delete all date is " + JSON.stringify(date) + " formatted is " + formatDate(date));
     let result = await deleteRouteByDate(date);
-    console.log("Delete all routes response is " + JSON.stringify(result));
+    //console.log("Delete all routes response is " + JSON.stringify(result));
     loadRoutes();
   }
 
@@ -265,7 +265,7 @@ const ViewRoutes = () => {
                 {/* Render assigned vehicles */}
                 {Object.entries(routes).map(([date, dateRoutes]) => (
                   <Grid key={date} item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
-                    <Accordion key={date} sx={{ width: '100%' }}>
+                    <Accordion key={date} sx={{ width: '100%' }} slotProps={{ transition: { unmountOnExit: true } }}>
                       <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls={`panel-${date}-content`}
@@ -347,18 +347,12 @@ const ViewRoutes = () => {
                                   <Typography>Orders: {route.orders.length}</Typography>
                                 </Box>
                               </Grid>
+                              {/**Spacer grid */}
+                              <Grid item xs={4} md={4}></Grid>
 
-
-                              <Grid item xs={12} md={2} sx={{ ml: 'auto' }}>
-                                <Button
-                                  onClick={() => deleteRoute(route.deliveryRouteID)}
-                                  color="error"
-                                  variant="contained"
-                                  size='small'
-                                >
-                                  Delete Route
-                                </Button>
-                                <Box mt={1}>
+                            {/**Grid for buttons */}
+                              <Grid container item xs={2} md={3} sx={{ ml: 'auto' }}>
+                                <Grid item xs={6} md={6}>
                                   <Button
                                     onClick={() => handleEditClick(route)}
                                     color="primary"
@@ -368,7 +362,21 @@ const ViewRoutes = () => {
                                   >
                                     Edit Route
                                   </Button>
-                                </Box>
+                                </Grid>
+                                <Grid item xs={6} md={6} >
+                                  <Button
+                                    onClick={() => deleteRoute(route.deliveryRouteID)}
+                                    color="error"
+                                    variant="contained"
+                                    size='small'
+                                    disabled={route.orders.some(order => order.status !== 'ASSIGNED' && 
+                                                                         order.status !== 'CANCELLED')}
+
+                                  >
+                                    Delete Route
+                                  </Button>
+                                </Grid>
+
                               </Grid>
                             </Grid>
 

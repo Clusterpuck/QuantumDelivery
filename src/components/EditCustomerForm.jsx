@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
-import { getCustomerDetails, updateCustomer } from '../store/apiFunctions'; // Replace with the actual API functions
+import { getCustomerDetails, updateCustomer } from '../store/apiFunctions'; 
 
 const EditCustomerForm = ({ customerId }) => {
     const [formData, setFormData] = useState({

@@ -28,6 +28,7 @@ const AdminControlsForm = ({ entity, handleSubmit }) => {
                         variant="contained"
                         sx={{ backgroundColor: '#8fc48b', color: '#fff' }}
                         onClick={() => handleSubmit(entity, 'add')}
+                        title={`Add ${entity.charAt(0).toUpperCase() + entity.slice(1)}`} // Tooltip for Add button
                     >
                         <AddIcon />
                     </Button>
@@ -35,6 +36,7 @@ const AdminControlsForm = ({ entity, handleSubmit }) => {
                         variant="contained"
                         sx={{ backgroundColor: '#d6b16d', color: '#fff' }}
                         onClick={() => handleSubmit(entity, 'edit')}
+                        title={`Edit ${entity.charAt(0).toUpperCase() + entity.slice(1)}`} // Tooltip for Edit button
                     >
                         <EditIcon />
                     </Button>
@@ -42,6 +44,7 @@ const AdminControlsForm = ({ entity, handleSubmit }) => {
                         variant="contained"
                         sx={{ backgroundColor: '#b57682', color: '#fff' }}
                         onClick={() => handleSubmit(entity, 'delete')}
+                        title={`Delete ${entity.charAt(0).toUpperCase() + entity.slice(1)}`} // Tooltip for Delete button
                     >
                         <DeleteIcon />
                     </Button>

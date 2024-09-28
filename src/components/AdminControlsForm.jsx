@@ -24,7 +24,7 @@ const AdminControlsForm = ({ entity, handleSubmit }) => {
                 </Typography>
 
                 {/* Buttons for Add, Edit, and Delete */}
-                <div style={{ display: 'flex', gap: '0px' }}>
+                <div style={{ display: 'flex', gap: '10px' }}>
                     <Button
                         variant="contained"
                         sx={{ backgroundColor: '#8fc48b', color: '#fff' }}

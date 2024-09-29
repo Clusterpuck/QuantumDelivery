@@ -68,6 +68,8 @@ const ViewRoutes = () => {
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
+    maxHeight: '80%',
+    overflowY: 'auto',
   };
 
 

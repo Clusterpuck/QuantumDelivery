@@ -15,13 +15,13 @@ import Skeleton from '@mui/material/Skeleton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {Input} from '@mui/material';
 
-const ProductListForm = ({ sendProductList }) =>
+const ProductListForm = ({ addedProducts, setAddedProducts }) =>
 {
     const [products, setProducts] = useState([]);
     const [loadingProducts, setLoadingProducts] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
-    const [addedProducts, setAddedProducts] = useState([]);
+    //const [addedProducts, setAddedProducts] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
@@ -58,7 +58,7 @@ const ProductListForm = ({ sendProductList }) =>
 
     const handleQuantityChange = (event) =>
     {
-        if( Number(event.target.value) < 1 )
+        if( Number(event.target.value) <= 1 )
         {
             setQuantity(1)
         }
@@ -96,7 +96,6 @@ const ProductListForm = ({ sendProductList }) =>
                     ];
                     // Product does not exist, add new entry
                 }
-                sendProductList(updatedProducts);
                 return updatedProducts;
             });
 
@@ -111,7 +110,6 @@ const ProductListForm = ({ sendProductList }) =>
         setAddedProducts((prev) =>
         {
             const updatedProducts = prev.filter(product => product.id !== id);
-            sendProductList(updatedProducts);  // Update the parent component with the new product list
             return updatedProducts;
         });
 

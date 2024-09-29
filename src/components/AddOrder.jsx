@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Autocomplete, Button, Box, Paper, Grid, TextField, CircularProgress, Snackbar, Alert, Skeleton } from '@mui/material';
+import { Autocomplete, Button, Box, Paper, Grid, TextField, CircularProgress, Snackbar, Alert, Skeleton, selectClasses } from '@mui/material';
 import ProductListForm from '../components/ProductListForm.jsx';
 import SendIcon from '@mui/icons-material/Send';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -173,10 +173,15 @@ const AddOrder = ({ updateOrders }) => {
               />
             </Grid>
 
-            <ProductListForm sendProductList={setSelectedProducts} />
+            <ProductListForm addedProducts={selectedProducts} setAddedProducts={setSelectedProducts} />
 
             <Button type="submit" variant="contained" disabled={submittingOrders}>
-              Submit Order
+              Submit
+              {submittingOrders && <CircularProgress size={18} />}
+              {!submittingOrders && <SendIcon sx={{ marginLeft: 1 }} />}
+            </Button>
+            <Button type="submit" variant="contained" disabled={submittingOrders}>
+              Submit and Close
               {submittingOrders && <CircularProgress size={18} />}
               {!submittingOrders && <SendIcon sx={{ marginLeft: 1 }} />}
             </Button>

@@ -16,6 +16,7 @@ import { getStatusColour } from '../store/helperFunctions.js';
 import dayjs from 'dayjs';
 import NoRouteFound from '../components/NoRouteFound';
 import DateSelectHighlight from '../components/DateSelectHighlight.jsx';
+import Tooltip from '@mui/material/Tooltip';
 
 // Page design for live tracking page
 const LiveTracking = () => {
@@ -402,34 +403,33 @@ const LiveTracking = () => {
                     <RoutesTableView />
 
                 </Box>
+                <Tooltip title={"Hide Route Details"}>  
                 <IconButton
                     onClick={toggleDrawer(false)}
                     sx={{
                         position: 'fixed',
-                        bottom: 16,
+                        top: 80,
                         right: '61%',
-                        backgroundColor: 'rgb(187, 205, 235)',
-                        color: 'black'
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                        color: 'black',
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)'
                     }}
                 >
                     <KeyboardArrowLeftIcon />
                 </IconButton>
+                </Tooltip>
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, position: 'fixed', height: '100vh', width: '100vw', margin: 0, padding: 0, pointerEvents: 'auto', }}>
                 <LiveMap checkedRoutes={checkedRoutes} ordersData={ordersData} routeIdToColour={routeIdToColour} />
                 {!drawerOpen && (
+                    <Tooltip title={"Show Route Details"}>
                     <IconButton
                         onClick={toggleDrawer(true)}
-                        sx={{
-                            position: 'fixed',
-                            bottom: 16,
-                            left: 16,
-                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                            zIndex: 1300,
-                        }}
+                        sx={{ position: 'fixed', top: 80, left: 16, backgroundColor: 'rgba(255, 255, 255, 0.8)', zIndex: 1300,color: 'black',boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)' }}
                     >
                         <KeyboardArrowRightIcon />
                     </IconButton>
+                    </Tooltip>
                 )}
             </Box>
         </Box>

@@ -485,7 +485,7 @@ const DriverViewRoutes = ({ inputUser }) => {
                                 No deliveries
                             </Typography>
                     )}   
-                <Tooltip title={"Hide Route Details"}>  
+                <Tooltip title={"Hide Delivery Progress"}>  
                 <IconButton
                     onClick={toggleDrawer(false)}
                     sx={{
@@ -507,7 +507,7 @@ const DriverViewRoutes = ({ inputUser }) => {
             >
                 
                 {!drawerOpen && (
-                    <Tooltip title={"Show Route Details"}>
+                    <Tooltip title={"Show Delivery Progress"}>
                     <IconButton
                         onClick={toggleDrawer(true)}
                         sx={{ position: 'fixed', top: 80, left: 16, backgroundColor: 'rgba(255, 255, 255, 0.8)', zIndex: 1300,color: 'black',boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)' }}

@@ -128,14 +128,16 @@ const AddOrder = ({ updateOrders, closeModal }) => {
       <Box sx={{ display: 'flex', justifyContent: 'center', maxHeight: '80vh' }}>
         <form onSubmit={submitOrder}> {/* Wrap everything in a form */}
           <Grid container spacing={0.5}>
-            <Grid item xs={6}>
+            <Grid item xs={6} padding={1}>
               <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
                 <DateTimePicker
                   label="Date Required"
                   value={selectedDate}
                   onChange={handleDateChange}
                   size="small"
-                  renderInput={(params) => <TextField {...params} />}
+                  renderInput={(params) => <TextField {...params} />
+                  
+                }
                 />
               </LocalizationProvider>
 
@@ -151,6 +153,7 @@ const AddOrder = ({ updateOrders, closeModal }) => {
                 renderInput={(params) => (
                   <TextField {...params} label="Select Customer" />
                 )}
+                sx={{ mt: 1 }}
               />
 
               <Autocomplete
@@ -165,6 +168,7 @@ const AddOrder = ({ updateOrders, closeModal }) => {
                 renderInput={(params) => (
                   <TextField {...params} label="Select Location" />
                 )}
+                sx={{ mt: 1 }}
               />
             </Grid>
 

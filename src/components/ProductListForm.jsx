@@ -11,7 +11,6 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { DataGrid } from '@mui/x-data-grid';
 import { fetchProducts } from '../store/apiFunctions';
 import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
 import Skeleton from '@mui/material/Skeleton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {Input} from '@mui/material';
@@ -59,7 +58,14 @@ const ProductListForm = ({ sendProductList }) =>
 
     const handleQuantityChange = (event) =>
     {
-        setQuantity(Number(event.target.value));
+        if( Number(event.target.value) < 1 )
+        {
+            setQuantity(1)
+        }
+        else{
+            setQuantity(Number(event.target.value));
+
+        }
     };
 
     const handleAddProduct = () =>

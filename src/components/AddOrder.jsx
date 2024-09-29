@@ -124,6 +124,10 @@ const AddOrder = ({ updateOrders, closeModal }) => {
     }
   };
 
+  const CustomPaper = (props) => (
+    <Paper {...props} sx={{ maxHeight: 200, overflow: 'auto' }} />
+  );
+
   return (
     <>
       <Box sx={{ display: 'flex', justifyContent: 'center', maxHeight: '80vh' }}>
@@ -145,7 +149,7 @@ const AddOrder = ({ updateOrders, closeModal }) => {
 
               <Autocomplete
                 tabIndex={2}
-                disablePortal
+                disablePortal={false}
                 id="Customers"
                 size="small"
                 options={customers || []}
@@ -161,7 +165,7 @@ const AddOrder = ({ updateOrders, closeModal }) => {
 
               <Autocomplete
                 tabIndex={3}
-                disablePortal 
+                disablePortal = {false} 
                 id="Locations"
                 size="small"
                 options={locations || []}

@@ -8,6 +8,7 @@ import 'dayjs/locale/en-gb';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import { fetchCustomers, fetchLocations, postMethod } from '../store/apiFunctions.js';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const AddOrder = ({ updateOrders, closeModal }) => {
   const [selectedDate, setSelectedDate] = useState(dayjs());
@@ -131,6 +132,7 @@ const AddOrder = ({ updateOrders, closeModal }) => {
             <Grid item xs={6} padding={1}>
               <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
                 <DateTimePicker
+                  tabIndex={1}
                   label="Date Required"
                   value={selectedDate}
                   onChange={handleDateChange}
@@ -142,6 +144,7 @@ const AddOrder = ({ updateOrders, closeModal }) => {
               </LocalizationProvider>
 
               <Autocomplete
+                tabIndex={2}
                 disablePortal
                 id="Customers"
                 size="small"
@@ -157,7 +160,8 @@ const AddOrder = ({ updateOrders, closeModal }) => {
               />
 
               <Autocomplete
-                disablePortal
+                tabIndex={3}
+                disablePortal 
                 id="Locations"
                 size="small"
                 options={locations || []}
@@ -174,6 +178,7 @@ const AddOrder = ({ updateOrders, closeModal }) => {
 
             <Grid item xs={6}>
               <TextField
+                tabIndex={5}
                 label="Order Comments"
                 multiline
                 fullWidth
@@ -183,15 +188,20 @@ const AddOrder = ({ updateOrders, closeModal }) => {
               />
             </Grid>
 
-            <ProductListForm addedProducts={selectedProducts} setAddedProducts={setSelectedProducts} />
+            <ProductListForm tabIndex={4} addedProducts={selectedProducts} setAddedProducts={setSelectedProducts} />
 
-            <Button type="submit" variant="contained" disabled={submittingOrders}>
+            <Button
+              tabIndex={6} 
+              type="submit" 
+              variant="contained" 
+              disabled={submittingOrders}>
               Submit
               {submittingOrders && <CircularProgress size={18} />}
               {!submittingOrders && <SendIcon sx={{ marginLeft: 1 }} />}
             </Button>
             <Divider sx={{ marginX: 1 }} />
             <Button 
+              tabIndex={7}
               type="submit" 
               variant="contained" 
               disabled={submittingOrders}
@@ -199,7 +209,11 @@ const AddOrder = ({ updateOrders, closeModal }) => {
               >
               Submit and Close
               {submittingOrders && <CircularProgress size={18} />}
-              {!submittingOrders && <SendIcon sx={{ marginLeft: 1 }} />}
+              {!submittingOrders && <>
+                <SendIcon sx={{ marginLeft: 1 }} /> 
+                <CancelIcon sx={{marginLeft: 1}}/> 
+                </>
+                }
             </Button>
           </Grid>
         </form>

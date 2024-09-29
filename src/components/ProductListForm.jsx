@@ -157,7 +157,7 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
                     value={selectedProduct}
                     onChange={handleProductChange}
                     options={products}
-                    getOptionLabel={(option) => option.name}
+                    getOptionLabel={(option) => `${option.name} (${option.unitOfMeasure})`}
                     renderInput={(params) => <TextField {...params} label="Select Product" variant="outlined" fullWidth />}
                 />
             );

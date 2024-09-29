@@ -64,6 +64,8 @@ const Orders = () =>
         bgcolor: 'background.paper',
         boxShadow: 24,
         p: 2,
+        maxHeight: '80%',
+        overflowY: 'auto',
     };
 
     // Open Modal function
@@ -218,7 +220,7 @@ const Orders = () =>
                             </Button>
                         </Grid>
                     </Grid>
-                    <AddOrder updateOrders={loadOrders} />
+                    <AddOrder updateOrders={loadOrders} closeModal={handleCloseModal} />
                 </Box>
             </Modal>
 

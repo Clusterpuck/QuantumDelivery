@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Autocomplete, Button, Box, Paper, Grid, TextField, CircularProgress, Snackbar, Alert, Skeleton, selectClasses } from '@mui/material';
+import { Autocomplete, Button, Box, Paper, Grid, TextField, CircularProgress, Snackbar, Alert, Skeleton, selectClasses, Divider } from '@mui/material';
 import ProductListForm from '../components/ProductListForm.jsx';
 import SendIcon from '@mui/icons-material/Send';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -9,7 +9,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import { fetchCustomers, fetchLocations, postMethod } from '../store/apiFunctions.js';
 
-const AddOrder = ({ updateOrders }) => {
+const AddOrder = ({ updateOrders, closeModal }) => {
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [orderNote, setOrderNote] = useState('');
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -68,6 +68,12 @@ const AddOrder = ({ updateOrders }) => {
     setSelectedCustomer(null);
     setSelectedLocation(null);
   };
+
+  const handleSubmitAndClose = async (event ) =>{
+    await submitOrder(event);
+    closeModal();
+
+  }
 
   const submitOrder = async (event) => {
     event.preventDefault(); // Prevent page refresh
@@ -180,7 +186,13 @@ const AddOrder = ({ updateOrders }) => {
               {submittingOrders && <CircularProgress size={18} />}
               {!submittingOrders && <SendIcon sx={{ marginLeft: 1 }} />}
             </Button>
-            <Button type="submit" variant="contained" disabled={submittingOrders}>
+            <Divider sx={{ marginX: 1 }} />
+            <Button 
+              type="submit" 
+              variant="contained" 
+              disabled={submittingOrders}
+              onClick={handleSubmitAndClose}
+              >
               Submit and Close
               {submittingOrders && <CircularProgress size={18} />}
               {!submittingOrders && <SendIcon sx={{ marginLeft: 1 }} />}

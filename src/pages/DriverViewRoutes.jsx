@@ -488,7 +488,7 @@ const DriverViewRoutes = ({ inputUser }) => {
                     onClick={toggleDrawer(false)}
                     sx={{
                         position: 'fixed',
-                        bottom: 16,
+                        top: 80,
                         right: isMobile ? '7vw' : '71vw',
                         backgroundColor: 'rgb(187, 205, 235)',
                         color: 'black'
@@ -504,7 +504,7 @@ const DriverViewRoutes = ({ inputUser }) => {
                 {!drawerOpen && (
                     <IconButton
                         onClick={toggleDrawer(true)}
-                        sx={{ position: 'fixed', bottom: 16, left: 16, backgroundColor: 'rgba(255, 255, 255, 0.8)', zIndex: 1300, }}
+                        sx={{ position: 'fixed', top: 80, left: 16, backgroundColor: 'rgba(255, 255, 255, 0.8)', zIndex: 1300, }}
                     >
                         <KeyboardArrowRightIcon />
                     </IconButton>

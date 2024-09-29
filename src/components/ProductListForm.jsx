@@ -11,18 +11,17 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { DataGrid } from '@mui/x-data-grid';
 import { fetchProducts } from '../store/apiFunctions';
 import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
 import Skeleton from '@mui/material/Skeleton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {Input} from '@mui/material';
 
-const ProductListForm = ({ sendProductList }) =>
+const ProductListForm = ({ addedProducts, setAddedProducts }) =>
 {
     const [products, setProducts] = useState([]);
     const [loadingProducts, setLoadingProducts] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
-    const [addedProducts, setAddedProducts] = useState([]);
+    //const [addedProducts, setAddedProducts] = useState([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
@@ -59,7 +58,14 @@ const ProductListForm = ({ sendProductList }) =>
 
     const handleQuantityChange = (event) =>
     {
-        setQuantity(Number(event.target.value));
+        if( Number(event.target.value) <= 1 )
+        {
+            setQuantity(1)
+        }
+        else{
+            setQuantity(Number(event.target.value));
+
+        }
     };
 
     const handleAddProduct = () =>
@@ -90,7 +96,6 @@ const ProductListForm = ({ sendProductList }) =>
                     ];
                     // Product does not exist, add new entry
                 }
-                sendProductList(updatedProducts);
                 return updatedProducts;
             });
 
@@ -105,7 +110,6 @@ const ProductListForm = ({ sendProductList }) =>
         setAddedProducts((prev) =>
         {
             const updatedProducts = prev.filter(product => product.id !== id);
-            sendProductList(updatedProducts);  // Update the parent component with the new product list
             return updatedProducts;
         });
 
@@ -153,7 +157,7 @@ const ProductListForm = ({ sendProductList }) =>
                     value={selectedProduct}
                     onChange={handleProductChange}
                     options={products}
-                    getOptionLabel={(option) => option.name}
+                    getOptionLabel={(option) => `${option.name} (${option.unitOfMeasure})`}
                     renderInput={(params) => <TextField {...params} label="Select Product" variant="outlined" fullWidth />}
                 />
             );

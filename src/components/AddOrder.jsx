@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Autocomplete, Button, Box, Paper, Grid, TextField, CircularProgress, Snackbar, Alert, Skeleton } from '@mui/material';
+import { Autocomplete, Button, Box, Paper, Grid, TextField, CircularProgress, Snackbar, Alert, Skeleton, selectClasses, Divider } from '@mui/material';
 import ProductListForm from '../components/ProductListForm.jsx';
 import SendIcon from '@mui/icons-material/Send';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -8,8 +8,9 @@ import 'dayjs/locale/en-gb';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import { fetchCustomers, fetchLocations, postMethod } from '../store/apiFunctions.js';
+import CancelIcon from '@mui/icons-material/Cancel';
 
-const AddOrder = ({ updateOrders }) => {
+const AddOrder = ({ updateOrders, closeModal }) => {
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [orderNote, setOrderNote] = useState('');
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -69,6 +70,12 @@ const AddOrder = ({ updateOrders }) => {
     setSelectedLocation(null);
   };
 
+  const handleSubmitAndClose = async (event ) =>{
+    await submitOrder(event);
+    closeModal();
+
+  }
+
   const submitOrder = async (event) => {
     event.preventDefault(); // Prevent page refresh
     if (!selectedCustomer || !selectedLocation || selectedProducts.length === 0) {
@@ -122,18 +129,22 @@ const AddOrder = ({ updateOrders }) => {
       <Box sx={{ display: 'flex', justifyContent: 'center', maxHeight: '80vh' }}>
         <form onSubmit={submitOrder}> {/* Wrap everything in a form */}
           <Grid container spacing={0.5}>
-            <Grid item xs={6}>
+            <Grid item xs={6} padding={1}>
               <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
                 <DateTimePicker
+                  tabIndex={1}
                   label="Date Required"
                   value={selectedDate}
                   onChange={handleDateChange}
                   size="small"
-                  renderInput={(params) => <TextField {...params} />}
+                  renderInput={(params) => <TextField {...params} />
+                  
+                }
                 />
               </LocalizationProvider>
 
               <Autocomplete
+                tabIndex={2}
                 disablePortal
                 id="Customers"
                 size="small"
@@ -145,10 +156,12 @@ const AddOrder = ({ updateOrders }) => {
                 renderInput={(params) => (
                   <TextField {...params} label="Select Customer" />
                 )}
+                sx={{ mt: 1 }}
               />
 
               <Autocomplete
-                disablePortal
+                tabIndex={3}
+                disablePortal 
                 id="Locations"
                 size="small"
                 options={locations || []}
@@ -159,11 +172,13 @@ const AddOrder = ({ updateOrders }) => {
                 renderInput={(params) => (
                   <TextField {...params} label="Select Location" />
                 )}
+                sx={{ mt: 1 }}
               />
             </Grid>
 
             <Grid item xs={6}>
               <TextField
+                tabIndex={5}
                 label="Order Comments"
                 multiline
                 fullWidth
@@ -173,12 +188,32 @@ const AddOrder = ({ updateOrders }) => {
               />
             </Grid>
 
-            <ProductListForm sendProductList={setSelectedProducts} />
+            <ProductListForm tabIndex={4} addedProducts={selectedProducts} setAddedProducts={setSelectedProducts} />
 
-            <Button type="submit" variant="contained" disabled={submittingOrders}>
-              Submit Order
+            <Button
+              tabIndex={6} 
+              type="submit" 
+              variant="contained" 
+              disabled={submittingOrders}>
+              Submit
               {submittingOrders && <CircularProgress size={18} />}
               {!submittingOrders && <SendIcon sx={{ marginLeft: 1 }} />}
+            </Button>
+            <Divider sx={{ marginX: 1 }} />
+            <Button 
+              tabIndex={7}
+              type="submit" 
+              variant="contained" 
+              disabled={submittingOrders}
+              onClick={handleSubmitAndClose}
+              >
+              Submit and Close
+              {submittingOrders && <CircularProgress size={18} />}
+              {!submittingOrders && <>
+                <SendIcon sx={{ marginLeft: 1 }} /> 
+                <CancelIcon sx={{marginLeft: 1}}/> 
+                </>
+                }
             </Button>
           </Grid>
         </form>

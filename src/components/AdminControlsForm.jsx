@@ -15,7 +15,7 @@ const AdminControlsForm = ({ entity, handleSubmit }) => {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     backgroundColor: '#cedbeb', 
-                    height: '50px', // Increase height
+                    height: '50px', 
                 }}
             >
                 {/* entity name */}

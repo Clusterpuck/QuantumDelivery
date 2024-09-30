@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Snackbar, Alert, Paper, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Dialog } from '@mui/material';
+import { Snackbar, Alert, Paper, Box, Table, TableBody, TableCell,
+    TableContainer, TableHead, TableRow, Button, Dialog,
+    Tooltip} from '@mui/material';
 import { formatDate } from '../store/helperFunctions';
 import EditOrderForm from '../components/EditOrderForm';
 import dayjs from 'dayjs';
@@ -87,6 +89,8 @@ const OrdersTable = ({ orders, onRefresh, showMessage }) =>
     {
         const { row } = props;
         const [open, setOpen] = useState(false);
+        const isButtonDisabled = row.status !== 'ISSUE' && row.status !== 'PLANNED';
+        const tooltipText = isButtonDisabled ? "Only available for orders with status 'issue' or 'planned'" : '';
         return (
             <React.Fragment>
                 <TableRow key={row.orderID} sx={{ '& > *': { borderBottom: 'unset' } }}>
@@ -98,26 +102,34 @@ const OrdersTable = ({ orders, onRefresh, showMessage }) =>
                 <TableCell sx={{ borderBottom: '1px solid grey' }}>{row.status}</TableCell>
                 <TableCell sx={{ borderBottom: '1px solid grey' }}>{row.orderNotes}</TableCell>
                 <TableCell sx={{ borderBottom: '1px solid grey' }}>
-                            {(row.status === 'ISSUE' || row.status === 'PLANNED') && (
                                 <Box sx={{ display: 'flex', gap: 1 }}> {/* Add gap for spacing between buttons */}
+                                    <Tooltip title={tooltipText} arrow>
+                                <span>
                                     <Button
                                         size="small"
                                         variant="contained"
                                         color="primary"
                                         onClick={() => handleEditClick(row)}
+                                        disabled={isButtonDisabled}
                                     >
                                         Edit
                                     </Button>
+                                </span>
+                            </Tooltip>
+                            <Tooltip title={tooltipText} arrow>
+                                <span>
                                     <Button
                                         size="small"
                                         variant="contained"
                                         color="error"
                                         onClick={() => handleDeleteClick(row.orderID)}
+                                        disabled={isButtonDisabled}
                                     >
                                         Delete
                                     </Button>
+                                </span>
+                            </Tooltip>
                                 </Box>
-                            )}
                         </TableCell>
                         <TableCell>
                         <IconButton

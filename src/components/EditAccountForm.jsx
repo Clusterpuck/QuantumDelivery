@@ -88,16 +88,16 @@ const EditAccountForm = ({ accountId, handleOpenPasswordModal, accountStatus }) 
     
 
     const handleChangePassword = () => {
-        handleOpenPasswordModal(formData.email); // Pass the username to the modal handler
+        handleOpenPasswordModal(formData.email); // pass the username to the modal handler
     };
 
     const handleReactivate = async () => {
         try {
-            await reactivateAccount(accountId); // Call the API function to reactivate the account
+            await reactivateAccount(accountId); // call the API function to reactivate the account
             setSuccess(true); 
             setSuccessMessage("Account is now active!"); 
             setError(null); 
-            const updatedDetails = await getAccountDetails(accountId); // Fetch updated details after reactivation
+            const updatedDetails = await getAccountDetails(accountId); // fetch updated details after reactivation
             if (updatedDetails) {
                 setFormData({
                     fullName: updatedDetails.name || '',

@@ -428,12 +428,15 @@ export const updateOrderStatus  = async(input) =>{
 
 export const editAccount = async (accountId, updatedAccountData) => {
     try {
+        // Remove username from updatedAccountData to prevent it from being sent
+        const { username, ...accountDataWithoutUsername } = updatedAccountData;
+
         const response = await fetch(`${Constants.DATA_ENDPOINT}accounts/${accountId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(updatedAccountData),
+            body: JSON.stringify(accountDataWithoutUsername),  // Send the data excluding the username
         });
 
         if (!response.ok) {
@@ -451,6 +454,7 @@ export const editAccount = async (accountId, updatedAccountData) => {
         return null;
     }
 };
+
 
 export const createAccount = async (newAccountData) => {
     try {

@@ -180,7 +180,7 @@ const EditOrderForm = ({ order, onRefresh, onClose, showMessage }) => {
                     getOptionKey={(option) => option.id}
                     fullWidth
                     onChange={(event, newValue) => handleCustomerChange(newValue)}
-                    renderInput={(params) => <TextField {...params} label="Select Customer" />}
+                    renderInput={(params) => <TextField {...params} label="Select Customer" InputLabelProps={{ shrink: true }} />}
                 />
             );
         }
@@ -202,7 +202,7 @@ const EditOrderForm = ({ order, onRefresh, onClose, showMessage }) => {
                     getOptionKey={(option) => option.id}
                     fullWidth
                     onChange={(event, newValue) => handleLocationChange(newValue)} // Pass the whole object
-                    renderInput={(params) => <TextField {...params} label="Select Location" />}
+                    renderInput={(params) => <TextField {...params} label="Select Location" InputLabelProps={{ shrink: true }} />}
                 />
             );
         }

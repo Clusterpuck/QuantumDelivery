@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import { Dialog, DialogTitle, DialogContent, Button, Box, Typography, TextField } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, Button, Box, Typography,
+    IconButton, TextField } from '@mui/material';
 import { updateOrderDelayed, updateOrderIssue } from '../store/apiFunctions.js';
 import ErrorIcon from '@mui/icons-material/Error';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 import '../index.css';
 
 const ReportIssue = ({ open, onClose, driverUsername, order, fetchDeliveryData}) => {
@@ -87,6 +89,14 @@ const ReportIssue = ({ open, onClose, driverUsername, order, fetchDeliveryData})
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>What type of issue would you like to report?</DialogTitle>
+            <IconButton 
+                color="primary"
+                aria-label="cancel" 
+                onClick={onClose}  // Handle cancel action
+                sx={{ position: 'absolute', top: 8, right: 8}}  // Top-right positioning
+            >
+                <CancelIcon />
+            </IconButton>
             <DialogContent>
                 <Box
                     sx={{

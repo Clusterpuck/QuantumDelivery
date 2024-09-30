@@ -52,15 +52,18 @@ const DriverViewRoutes = ({ inputUser }) => {
             {
                 
                 routeData = await fetchDeliveryRoute(otherUser.current);
+                console.log("fetched for ", otherUser.current);
             }
             else{
                 
                 routeData = await fetchDeliveryRoute(driverUsername);
+                console.log("fetched for ", driverUsername);
             }
             if (routeData) {
                 
                 const routeDates = extractDeliveryDates(routeData);
                 setDateOptions(routeDates);
+                
             
                 setNoRoutesFound(false); // added to reload routes if found on driver change
 
@@ -98,10 +101,12 @@ const DriverViewRoutes = ({ inputUser }) => {
                 }
             } else {
                 console.error("No route data returned.");
+                setDateOptions([]);
                 setNoRoutesFound(true);
             }
         } catch (error) {
             console.error("Error fetching delivery route:", error);
+            setDateOptions([]);
         }
     };
 
@@ -160,9 +165,15 @@ const DriverViewRoutes = ({ inputUser }) => {
         disableScroll();
     }, []);
 
+    useEffect(() => { //disable scrolling on page load
+        console.log("Dates: ", dateOptions);
+    }, [dateOptions]);
+
     useEffect(() => {
         if( inputUser ) {
             otherUser.current=inputUser;
+            console.log("input user: ", inputUser);
+            console.log("other user: ", otherUser.current);
         }
         if (driverUsername) {
             fetchDeliveryData();

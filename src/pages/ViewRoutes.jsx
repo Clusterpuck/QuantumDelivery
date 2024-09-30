@@ -15,7 +15,7 @@ import PersonIcon from '@mui/icons-material/Person'; // person icon
 import {
   Button, Grid, Paper, Snackbar,
   Alert, Typography, Accordion, AccordionDetails, AccordionSummary,
-  Box, Skeleton, Modal, Dialog
+  Box, Skeleton, Modal, Dialog, Tooltip
 } from '@mui/material';
 
 // Material-UI Icons
@@ -352,31 +352,46 @@ const ViewRoutes = () => {
                               {/**Spacer grid */}
                               <Grid item xs={4} md={4}></Grid>
 
-                            {/**Grid for buttons */}
+                              {/**Grid for buttons */}
                               <Grid container item xs={2} md={3} sx={{ ml: 'auto' }}>
                                 <Grid item xs={6} md={6}>
-                                  <Button
-                                    onClick={() => handleEditClick(route)}
-                                    color="primary"
-                                    variant="contained"
-                                    size='small'
-                                    disabled={route.orders.some(order => order.status !== 'ASSIGNED')}
+                                  <Tooltip
+                                    title={route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED') ? "Cannot edit, some orders are not assigned or cancelled." : ""}
+                                    disableHoverListener={!route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')}
                                   >
-                                    Edit Route
-                                  </Button>
+                                    <span>
+                                      <Button
+                                        onClick={() => handleEditClick(route)}
+                                        color="primary"
+                                        variant="contained"
+                                        size='small'
+                                        disabled={route.orders.some(order => order.status !== 'ASSIGNED' &&
+                                          order.status !== 'CANCELLED')}
+                                      >
+                                        Edit Route
+                                      </Button>
+                                    </span>
+                                  </Tooltip>
                                 </Grid>
                                 <Grid item xs={6} md={6} >
-                                  <Button
-                                    onClick={() => deleteRoute(route.deliveryRouteID)}
-                                    color="error"
-                                    variant="contained"
-                                    size='small'
-                                    disabled={route.orders.some(order => order.status !== 'ASSIGNED' && 
-                                                                         order.status !== 'CANCELLED')}
-
+                                  <Tooltip
+                                    title={route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED') ? "Cannot delete, some orders are not assigned or cancelled." : ""}
+                                    disableHoverListener={!route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')}
                                   >
-                                    Delete Route
-                                  </Button>
+                                    <span>
+                                      <Button
+                                        onClick={() => deleteRoute(route.deliveryRouteID)}
+                                        color="error"
+                                        variant="contained"
+                                        size='small'
+                                        disabled={route.orders.some(order => order.status !== 'ASSIGNED' &&
+                                          order.status !== 'CANCELLED')}
+
+                                      >
+                                        Delete Route
+                                      </Button>
+                                    </span>
+                                  </Tooltip>
                                 </Grid>
 
                               </Grid>

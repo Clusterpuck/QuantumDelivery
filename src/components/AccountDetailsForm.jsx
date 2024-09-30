@@ -136,6 +136,9 @@ const AccountDetailsForm = ({ handleOpenPasswordModal }) => {
                                     variant="outlined"
                                     fullWidth
                                     required
+                                    InputProps={{
+                                        readOnly: true,
+                                    }}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>

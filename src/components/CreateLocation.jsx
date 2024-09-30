@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
 import { AddressAutofill, AddressMinimap, useConfirmAddress } from '@mapbox/search-js-react';
 import { createLocation } from '../store/apiFunctions'; 
+import AddressSearch from './AddressSearch';
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
@@ -104,6 +105,7 @@ const CreateLocationForm = () => {
                 <Grid container spacing={2} direction="column" alignItems="center">
                     <form style={{ width: '80%' }} onSubmit={handleFormSubmit}>
                         <Grid container spacing={2}>
+                            <AddressSearch />
                             
                             {/* input field for location name */}
                             <Grid item xs={12} sm={6}>

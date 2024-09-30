@@ -6,6 +6,8 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import {fetchRegion, postLocation} from '../store/apiFunctions';
 import Grid from '@mui/material/Grid';
+import Popper from '@mui/material/Popper';
+import zIndex from '@mui/material/styles/zIndex';
 
 
 // This is a public token, so it's okay to expose it here
@@ -122,6 +124,11 @@ const AddressSearch = ({onCloseForm}) => {
     };
 
 
+const CustomPopper = (props) => {
+    return <Popper {...props} style={{ zIndex: 1300 }} placement="bottom-start" />;
+  };
+
+
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
             <Paper elevation={3} sx={{ padding: 3, maxWidth: 900, width: '100%' }}>
@@ -133,9 +140,13 @@ const AddressSearch = ({onCloseForm}) => {
                 <form ref={formRef} onSubmit={handleFormSubmit}>
                   
 
-                    <Grid item xs={12} sx={styleConstants.fieldSpacing}>
-                        <AddressAutofill accessToken={MAPBOX_ACCESS_TOKEN} onRetrieve={handleAutofillRetrieve}>
+                    <Grid item xs={12} sx={styleConstants.fieldSpacing} >
+                        <AddressAutofill 
+                            accessToken={MAPBOX_ACCESS_TOKEN} 
+                            onRetrieve={handleAutofillRetrieve}
+                            >
                             <TextField
+                                sx={{zIndex: '1300'}}
                                 id='address-line1'
                                 name='address-line1'
                                 variant="outlined"

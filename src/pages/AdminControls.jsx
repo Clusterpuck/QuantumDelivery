@@ -15,7 +15,7 @@ import EditLocationForm from '../components/EditLocationForm';
 import EditCustomerForm from '../components/EditCustomerForm'; 
 import CheckPasswordForm from '../components/CheckPasswordForm';
 import { enableScroll } from '../assets/scroll.js';
-
+import AddressSearch from '../components/AddressSearch.jsx';
 
 const AdminControls = () => {
     const navigate = useNavigate();
@@ -117,6 +117,7 @@ const AdminControls = () => {
 
             <Paper elevation={3} sx={{ padding: 6, maxWidth: 1000, width: '100%' }}>
                 <Grid container spacing={2} justifyContent="center">
+                    <AddressSearch />
                     {entities.map((entity) => (
                         <AdminControlsForm
                             key={entity}

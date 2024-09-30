@@ -40,6 +40,11 @@ const theme = createTheme({
             primary: '#2f2f2f',
         },
     },
+    overrides: {
+        MuiAutocomplete: {
+          popup: { zIndex: 1500 },
+        },
+      },
 });
 
 const HomePage = () => {

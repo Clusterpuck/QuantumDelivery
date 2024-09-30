@@ -18,4 +18,13 @@ margin: 12px;
 border-radius: 4px;
 }
 
+.mapbox-container {
+  position: relative; /* Necessary for z-index to work */
+  z-index: 9999; /* Set your desired z-index */
+}
+
+[class^="mbx"][class$="--Results"] {
+  z-index: 3000 !important; /* Use !important to ensure it overrides */
+}
+
   

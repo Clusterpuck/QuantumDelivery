@@ -16,7 +16,7 @@ const AccountDetailsForm = ({ handleOpenPasswordModal }) => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
-    
+
     // get username from cookie (id) 
     const accountId = Cookies.get('userName');
 
@@ -61,9 +61,6 @@ const AccountDetailsForm = ({ handleOpenPasswordModal }) => {
         setError(null);
         setSuccess(false);
         
-        // Log to check if id is a valid email
-        console.log('Account ID:', accountId);
-    
         const accountDetails = await getAccountDetails(accountId);
 
         // Prepare the updated account data to send to the backend
@@ -75,16 +72,13 @@ const AccountDetailsForm = ({ handleOpenPasswordModal }) => {
             Role: formData.companyRole,      // Role corresponds to companyRole
             Address: formData.address      // Address field
         };
-    
-        // Log the updated account data
-        console.log('Updated Account Data:', updatedAccountData);
-    
+
         // Ensure email is in valid format
         if (!/\S+@\S+\.\S+/.test(updatedAccountData.Username)) {
             setError('Email format is invalid.');
             return;
         }
-    
+
         try {
             const result = await editAccount(accountId, updatedAccountData);
             if (result) {
@@ -98,9 +92,9 @@ const AccountDetailsForm = ({ handleOpenPasswordModal }) => {
             console.error(err);
         }
     };
-    
+
     const handleChangePassword = () => {
-        handleOpenPasswordModal(accountId); // Pass the username to the modal handler
+        handleOpenPasswordModal(accountId); // pass the username to the modal handler
     };
 
     return (
@@ -182,6 +176,7 @@ const AccountDetailsForm = ({ handleOpenPasswordModal }) => {
                                         name="companyRole"
                                         value={formData.companyRole}
                                         onChange={handleInputChange}
+                                        disabled={formData.companyRole === 'DRIVER'} // Disable if the role is "Driver"
                                     >
                                         <MenuItem value="DRIVER" sx={{ textAlign: 'left' }}>Driver</MenuItem>
                                         <MenuItem value="ADMIN" sx={{ textAlign: 'left' }}>Admin</MenuItem>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Snackbar, Alert, Paper, Box, Table, TableBody, TableCell,
     TableContainer, TableHead, TableRow, Button, Dialog,
-    Tooltip} from '@mui/material';
+    Tooltip, Checkbox, FormControlLabel, Grid} from '@mui/material';
 import { formatDate } from '../store/helperFunctions';
 import EditOrderForm from '../components/EditOrderForm';
 import dayjs from 'dayjs';
@@ -15,6 +15,32 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 
+const statusOptions = ["PLANNED", "ON-ROUTE", "DELIVERED", "CANCELLED", "ASSIGNED", "ISSUE"];
+ // Mapping header names to JSON keys
+ const headerMapping = {
+    'ID': 'orderID',
+    'Date': 'deliveryDate',
+    'Address': 'address',
+    'Customer': 'customerName',
+    'Status': 'status',
+    'Notes': 'orderNotes',
+    'Action': '',
+    '':'',
+};
+
+
+const headerWidths = {
+    'ID': '10%',
+    'Date': '10%',
+    'Address': '20%',
+    'Customer': '15%',
+    'Status': '5%',
+    'Notes': '33%',
+    'Action': '5%',
+    '':'2%',
+}
+
+
 const OrdersTable = ({ orders, onRefresh, showMessage }) => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -25,6 +51,8 @@ const OrdersTable = ({ orders, onRefresh, showMessage }) => {
     const [orderToDelete, setOrderToDelete] = useState(null);
     const [sortBy, setSortBy] = useState('deliveryDate'); // Default sort by deliveryDate
     const [sortDirection, setSortDirection] = useState('asc');
+    const [selectedStatuses, setSelectedStatuses] = useState(statusOptions);
+    //const [filteredData, setFilteredData] = useState(orders);
 
     const handleSnackbarClose = () => {
         setSnackbarOpen(false);
@@ -33,6 +61,14 @@ const OrdersTable = ({ orders, onRefresh, showMessage }) => {
     const handleEditClick = (order) => {
         setSelectedOrder(order);
         setOpenEditDialog(true);
+    };
+
+    const handleToggleStatus = (status) => {
+        const updatedStatuses = selectedStatuses.includes(status)
+            ? selectedStatuses.filter(s => s !== status)
+            : [...selectedStatuses, status];
+    
+        setSelectedStatuses(updatedStatuses);
     };
 
     const handleCloseEditDialog = () => {
@@ -49,6 +85,17 @@ const OrdersTable = ({ orders, onRefresh, showMessage }) => {
         setOpenDeleteDialog(false);
         setOrderToDelete(null);
     };
+
+    const visibleRows = React.useMemo(() => {
+        // First filter the rows based on the selected statuses
+        const filteredRows = orders.filter((item) => selectedStatuses.includes(item.status));
+        
+        // Then sort the filtered rows
+        return filteredRows.sort(getComparator(sortDirection, sortBy));
+    }, [orders, selectedStatuses, sortDirection, sortBy]);
+    
+
+    
 
     const handleConfirmDelete = async () => {
         try {
@@ -91,24 +138,9 @@ const OrdersTable = ({ orders, onRefresh, showMessage }) => {
         setSortBy(property);
     };
 
-    // Mapping header names to JSON keys
-    const headerMapping = {
-        'ID': 'orderID',
-        'Date': 'deliveryDate',
-        'Address': 'address',
-        'Customer': 'customerName',
-        'Status': 'status',
-        'Notes': 'orderNotes',
-        'Action': '',
-        '':'',
-    };
+   
 
-    const visibleRows = React.useMemo(
-        () =>
-            [...orders].sort(getComparator(sortDirection, sortBy)),
-        [orders, sortDirection, sortBy]
-    );
-
+   
     function Row(props) {
         const { row } = props;
         const [open, setOpen] = useState(false);
@@ -199,20 +231,29 @@ const OrdersTable = ({ orders, onRefresh, showMessage }) => {
         );
     }
 
-    const headerWidths = {
-        'ID': '7%',
-        'Date': '10%',
-        'Address': '20%',
-        'Customer': '15%',
-        'Status': '5%',
-        'Notes': '33%',
-        'Action': '5%',
-        '':'2%',
-    }
+    
 
     return (
+        
         <Box sx={{ width: '100%' }}>
-            <TableContainer component={Paper} sx={{ maxHeight: 800 }}>
+              <Grid container alignItems="flex-start" justifyContent="flex-start"> {/* Reduce spacing and align items */}
+        {statusOptions.map((status, index) => (
+            <Grid item xs={4} md={2} key={status} sx={{ textAlign: 'left' }}> {/* Ensure items are left-aligned */}
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={selectedStatuses.includes(status)}
+                            onChange={() => handleToggleStatus(status)}
+                            size="small" // Reduce size if you want them smaller
+                        />
+                    }
+                    label={status}
+                    sx={{ marginRight: 0 }}
+                />
+            </Grid>
+        ))}
+    </Grid>
+            <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
                 <Table stickyHeader size='small'>
                     <TableHead>
                         <TableRow>

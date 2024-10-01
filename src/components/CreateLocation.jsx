@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
+import { AddressAutofill, AddressMinimap, useConfirmAddress } from '@mapbox/search-js-react';
+import LocationOnIcon from '@mui/icons-material/LocationOn';  // Importing the LocationOn icon
 import { createLocation } from '../store/apiFunctions'; 
+import AddressSearch from './AddressSearch';
+
+const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
 const CreateLocationForm = () => {
     const [formData, setFormData] = useState({
@@ -13,14 +18,6 @@ const CreateLocationForm = () => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
-
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
-    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -50,78 +47,7 @@ const CreateLocationForm = () => {
     };
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
-                <Grid container spacing={2} direction="column" alignItems="center">
-                    <form style={{ width: '80%' }} onSubmit={handleSubmit}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    label="Location Name"
-                                    name="locationName"
-                                    variant="outlined"
-                                    fullWidth
-                                    required
-                                    value={formData.locationName}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    label="Address"
-                                    name="address"
-                                    variant="outlined"
-                                    fullWidth
-                                    required
-                                    value={formData.address}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    label="City"
-                                    name="city"
-                                    variant="outlined"
-                                    fullWidth
-                                    required
-                                    value={formData.city}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    label="State"
-                                    name="state"
-                                    variant="outlined"
-                                    fullWidth
-                                    required
-                                    value={formData.state}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    label="Zip Code"
-                                    name="zipCode"
-                                    variant="outlined"
-                                    fullWidth
-                                    required
-                                    value={formData.zipCode}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid item xs={12} sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <Button type="submit" variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
-                                Create Location
-                            </Button>
-                            {error && <Typography color="error">{error}</Typography>}
-                            {success && <Typography color="green">{successMessage}</Typography>}
-                        </Grid>
-                    </form>
-                </Grid>
-            </Paper>
-        </Box>
+        <AddressSearch />
     );
 };
 

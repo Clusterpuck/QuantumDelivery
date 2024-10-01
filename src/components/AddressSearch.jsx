@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { AddressAutofill, AddressMinimap, useConfirmAddress } from '@mapbox/search-js-react';
 import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
 import { fetchRegion, postLocation } from '../store/apiFunctions';
+import LocationOnIcon from '@mui/icons-material/LocationOn'; 
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
@@ -15,10 +16,15 @@ const AddressSearch = ({ onCloseForm }) => {
         },
         properties: {},
     });
+
     const [mapKey, setMapKey] = useState(0);
     const { formRef, showConfirm } = useConfirmAddress({
         accessToken: MAPBOX_ACCESS_TOKEN
     });
+
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
         const loadLocation = async () => {
@@ -89,14 +95,19 @@ const AddressSearch = ({ onCloseForm }) => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 900, width: '100%' }}>
+            <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
                 <Grid container spacing={2} direction="column" alignItems="center">
-                    <Typography variant="h5" gutterBottom>
-                        Add Delivery Address
+
+                    {/* Icon at the top */}
+                    <LocationOnIcon sx={{ fontSize: 50, mb: 1}} />  
+                    
+                    {/* Title of the form */}
+                    <Typography variant="h5" gutterBottom sx={{ mb: 1}}>
+                        Create a New Location
                     </Typography>
                     <form ref={formRef} onSubmit={handleFormSubmit} style={{ width: '100%' }}>
                         <Grid container spacing={2}>
-                            <Grid item xs={12}>
+                            <Grid item xs={12} sm={12}>
                                 <TextField
                                     id="address-name"
                                     name="address-name"
@@ -176,18 +187,19 @@ const AddressSearch = ({ onCloseForm }) => {
                         </Box>
 
                         <Grid container justifyContent="space-between" spacing={2}>
-                            <Grid item>
-                                <Button onClick={handleResetMap} variant="contained" color="secondary">
+                        <Grid item xs={12} sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <Button onClick={handleResetMap} variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
                                     Clear Form
                                 </Button>
-                            </Grid>
-                            <Grid item>
-                                <Button type="submit" variant="contained" color="primary">
+                                <Button type="submit" variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
                                     Add Location
                                 </Button>
+                                {error && <Typography color="error">{error}</Typography>}
+                                {success && <Typography color="green">{successMessage}</Typography>}
                             </Grid>
                         </Grid>
                     </form>
+                    
                 </Grid>
             </Paper>
         </Box>

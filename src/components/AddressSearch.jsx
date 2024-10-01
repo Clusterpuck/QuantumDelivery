@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { AddressAutofill, AddressMinimap, useConfirmAddress } from '@mapbox/search-js-react';
 import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
-import { fetchRegion, postLocation } from '../store/apiFunctions';
+import { createLocation, fetchRegion, postLocation } from '../store/apiFunctions';
 import LocationOnIcon from '@mui/icons-material/LocationOn'; 
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
@@ -15,6 +15,14 @@ const AddressSearch = ({ onCloseForm }) => {
             coordinates: defaultCoordinates,
         },
         properties: {},
+    });
+
+    const [formData, setFormData] = useState({
+        locationName: '',
+        address: '',
+        city: '',
+        state: '',
+        zipCode: '',
     });
 
     const [mapKey, setMapKey] = useState(0);
@@ -37,23 +45,63 @@ const AddressSearch = ({ onCloseForm }) => {
         loadLocation();
     }, []);
 
+    // Use effect to adjust Mapbox suggestion dropdown's z-index
+    useEffect(() => {
+        const adjustMapboxZIndex = () => {
+            const results = document.querySelectorAll('[class^="mbx"][class$="--Results"]');
+            results.forEach((result) => {
+                result.style.zIndex = '3000';
+            });
+        };
+
+        // Adjust z-index when the component mounts
+        adjustMapboxZIndex();
+
+        // Add a mutation observer to watch for dynamic changes
+        const observer = new MutationObserver(() => {
+            adjustMapboxZIndex();
+        });
+
+        // Watch for changes in the body element
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        // Cleanup observer when component unmounts
+        return () => observer.disconnect();
+    }, []);
+
     const handleAutofillRetrieve = (response) => {
         setMinimapFeature(response.features[0]);
     };
 
-    const handleFormSubmit = useCallback(async (e) => {
-        e.preventDefault();
+    const handleFormSubmit = async (event) => {
+        event.preventDefault();
+        console.log('Creating location...', formData);
         const result = await showConfirm();
 
-        if (result.type === 'nochange') {
-            const newAddress = new FormData(e.target);
-            newAddress.append('latitude', minimapFeature.geometry.coordinates[0]);
-            newAddress.append('longitude', minimapFeature.geometry.coordinates[1]);
-            sendLocation(newAddress);
-            handleResetMap();
-            onCloseForm();
+        try
+        {
+            const result = await createLocation({
+                Latitude: minimapFeature.geometry.coordinates[0],
+                Longitude: minimapFeature.geometry.coordinates[1],
+                Address: formData.get('address-line1'),
+                City: formData.get('city'),
+                State: formData.get('state'),
+                ZipCode: formData.get('postal-code'),
+            });
+            if (result) {
+                setSuccess(true);
+                setSuccessMessage('Location created successfully!');
+                setError(null); 
+                console.log('Location created successfully:', result);
+                handleResetMap();
+            } else {
+                setError('Failed to create location.');
+            }
+        } catch (err) {
+            setError('An error occurred while creating the location.');
+            console.error(err);
         }
-    }, [showConfirm]);
+    };
 
     const sendLocation = (formData) => {
         const newAddress = {
@@ -143,8 +191,8 @@ const AddressSearch = ({ onCloseForm }) => {
 
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    label="Suburb"
-                                    name="suburb"
+                                    label="City"
+                                    name="city"
                                     variant="outlined"
                                     fullWidth
                                     required

@@ -47,9 +47,7 @@ const CreateLocationForm = () => {
     };
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                    <AddressSearch/>
-        </Box>
+        <AddressSearch />
     );
 };
 

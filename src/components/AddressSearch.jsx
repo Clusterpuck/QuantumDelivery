@@ -118,7 +118,7 @@ const AddressSearch = ({ onCloseForm }) => {
                                 />
                             </Grid>
 
-                            <Grid item xs={12}>
+                            <Grid className="mapbox-container" item xs={12}>
                                 <AddressAutofill accessToken={MAPBOX_ACCESS_TOKEN} onRetrieve={handleAutofillRetrieve}>
                                     <TextField
                                         id="address-line1"
@@ -172,7 +172,7 @@ const AddressSearch = ({ onCloseForm }) => {
                             </Grid>
                         </Grid>
 
-                        <Box sx={{ height: 180, width: '100%', position: 'relative', mt: 2, mb: 5 }}>
+                        <Box className="mapbox-container" sx={{ height: 180, width: '100%', position: 'relative', mt: 2, mb: 5 }}>
                             <AddressMinimap
                                 key={mapKey}
                                 feature={minimapFeature}

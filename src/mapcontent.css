@@ -24,6 +24,7 @@ z-index: 9999; /* Set your desired z-index */
 }
 
 [class^="mbx"][class$="--Results"] {
+visibility: visible !important; /* Ensure it’s visible */
 z-index: 3000 !important; /* Use !important to ensure it overrides */
 }
 

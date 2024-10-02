@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Box, Paper, Button, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { TextField, Box, Paper, Button, Grid, FormControl, InputLabel, Select, MenuItem, Modal } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Cookies from 'js-cookie'; 
 import { getAccountDetails, editAccount } from '../store/apiFunctions'; 
+import CheckPasswordForm from './CheckPasswordForm';
 
-const AccountDetailsForm = ({ handleOpenPasswordModal }) => {
+const AccountDetailsForm = () => {
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -16,6 +17,7 @@ const AccountDetailsForm = ({ handleOpenPasswordModal }) => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [openPasswordModal, setOpenPasswordModal] = useState(false); 
 
     // get username from cookie (id) 
     const accountId = Cookies.get('userName');
@@ -93,9 +95,12 @@ const AccountDetailsForm = ({ handleOpenPasswordModal }) => {
         }
     };
 
-    const handleChangePassword = () => {
-        handleOpenPasswordModal(accountId); // pass the username to the modal handler
-    };
+
+    const handleClosePasswordModal = () => {
+        setOpenPasswordModal(false);
+    }
+
+    
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -135,13 +140,24 @@ const AccountDetailsForm = ({ handleOpenPasswordModal }) => {
                                     }}
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            {/* <Grid item xs={12} sm={6}>
                                 <TextField
                                     label="Password"
                                     name="password"
                                     value={formData.password}
                                     onChange={handleInputChange}
                                     type="password"
+                                    variant="outlined"
+                                    fullWidth
+                                    required
+                                />
+                            </Grid> */}
+                             <Grid item xs={12} sm={12}>
+                                <TextField
+                                    label="Address"
+                                    name="address"
+                                    value={formData.address}
+                                    onChange={handleInputChange}
                                     variant="outlined"
                                     fullWidth
                                     required
@@ -158,17 +174,7 @@ const AccountDetailsForm = ({ handleOpenPasswordModal }) => {
                                     required
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    label="Address"
-                                    name="address"
-                                    value={formData.address}
-                                    onChange={handleInputChange}
-                                    variant="outlined"
-                                    fullWidth
-                                    required
-                                />
-                            </Grid>
+                           
                             <Grid item xs={12} sm={6}>
                                 <FormControl fullWidth required>
                                     <InputLabel>Company Role</InputLabel>
@@ -185,6 +191,14 @@ const AccountDetailsForm = ({ handleOpenPasswordModal }) => {
                             </Grid>
                         </Grid>
                         <Grid item xs={12} sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={()=>setOpenPasswordModal(true)}
+                                sx={{ width: "250px", mb: 2 }}
+                            >
+                                Change Password
+                            </Button>
                             <Button type="submit" variant="contained" color="primary" sx={{ width: "250px" }}>
                                 Save Changes
                             </Button>
@@ -192,6 +206,17 @@ const AccountDetailsForm = ({ handleOpenPasswordModal }) => {
                     </form>
                 </Grid>
             </Paper>
+             {/* Password modal */}
+             <Modal
+                open={openPasswordModal}
+                onClose={handleClosePasswordModal}
+                aria-labelledby="password-form-modal"
+                aria-describedby="password-form-description"
+            >
+                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 400, width: '100%' }}>
+                    <CheckPasswordForm username={accountId} onClose={handleClosePasswordModal} />
+                </Box>
+            </Modal>
         </Box>
     );
 };

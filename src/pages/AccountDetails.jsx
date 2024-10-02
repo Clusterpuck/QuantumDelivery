@@ -18,7 +18,7 @@ const AccountDetails = () => {
             }}
         >
             <h1>Account Details</h1>
-            <AccountDetailsForm/>
+            <AccountDetailsForm />
         </div>
     );
 };

@@ -40,10 +40,31 @@ body {
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: 2.8rem;
   line-height: 1.1;
   font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
 }
+
+h2 {
+  font-size: 2.3rem;
+}
+
+h3 {
+  font-size: 1.8rem;
+}
+
+h4 {
+  font-size: 1.3rem;
+}
+
+h5 {
+  font-size: 1.0rem;
+}
+
+h6 {
+  font-size: 0.8rem;
+}
+
 
 button {
   border-radius: 8px;
@@ -76,4 +97,27 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+html {
+  font-size: 100%; /* 16px */
+}
+
+@media (max-width: 1000px) {
+  html {
+    font-size: 70%; /* 14.4px */
+  }
+}
+
+@media (min-width: 1001px) and (max-width: 1200px) {
+  html {
+    font-size: 100%; /* 16px */
+  }
+}
+
+@media (min-width: 1201px) {
+  html {
+    font-size: 110%; /* 17.6px */
+  }
+}
+
 

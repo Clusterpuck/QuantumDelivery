@@ -138,11 +138,11 @@ const LandingPage = () =>
                 sx={{ borderRadius: '20px', margin: '30px' }}
             >
                 <CardHeader
-                    title={<Typography variant="h4" sx={{ color: '#fff' }}>TODAY'S ORDERS</Typography>}
+                    title={<Typography variant="h5" sx={{ color: '#fff' }}>TODAY'S ORDERS</Typography>}
                     sx={{ backgroundColor: theme.palette.primary.main, padding: '16px' }} // Custom background color and padding
                 />
                 <CardContent>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={1.5}>
                         {/* Each HomePagePill takes full width */}
                         <Grid item xs={12}>
                             <HomePagePill text={"Total Orders"} amount={homeData?.ordersCount} Icon={WidgetsIcon} />
@@ -172,11 +172,11 @@ const LandingPage = () =>
                 <Card elevation={10}
                     sx={{ borderRadius: '20px', margin: '30px' }}>
                     <CardHeader
-                        title={<Typography variant="h4" sx={{ color: '#fff' }}>TODAY'S ROUTES</Typography>}
+                        title={<Typography variant="h5" sx={{ color: '#fff' }}>TODAY'S ROUTES</Typography>}
                         sx={{ backgroundColor: theme.palette.primary.main, padding: '16px' }} // Custom background color and padding
                     />
                     <CardContent>
-                        <Grid container spacing={2}>
+                        <Grid container spacing={1.5}>
                             {/* Each HomePagePill takes full width */}
                             <Grid item xs={12}>
                                 <HomePagePill text={"Total Routes"} amount={homeData?.routesCount} Icon={RouteIcon} />
@@ -246,7 +246,8 @@ const LandingPage = () =>
                         />
                         <Typography variant="h2"
                             sx={{
-                                fontFamily: '"Josefin Sans", sans-serif', // Use the font here
+                                fontFamily: 'monospace',
+                                //fontFamily: '"Josefin Sans", sans-serif', // Use the font here
                             }}
                         >
                             QuantaPath

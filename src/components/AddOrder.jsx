@@ -124,9 +124,6 @@ const AddOrder = ({ updateOrders, closeModal }) => {
     }
   };
 
-  const CustomPaper = (props) => (
-    <Paper {...props} sx={{ maxHeight: 200, overflow: 'auto' }} />
-  );
 
   return (
     <>

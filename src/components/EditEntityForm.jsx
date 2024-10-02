@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography, Autocomplete } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { getAccounts, getProducts, getLocations, getCustomers } from '../store/apiFunctions'; // Import your API functions
+import { getAccounts, getProducts, getLocations, getCustomers } from '../store/apiFunctions'; 
 
 const EditEntityForm = ({ entity, onSuccess }) => {
     const [entityId, setEntityId] = useState('');
@@ -12,7 +12,7 @@ const EditEntityForm = ({ entity, onSuccess }) => {
     const [customers, setCustomers] = useState([]);
     const [selectedItem, setSelectedItem] = useState(null);
 
-    // Fetch data based on entity type
+    // fetch data based on entity type
     useEffect(() => {
         if (entity === 'user') {
             const fetchAccounts = async () => {
@@ -63,7 +63,7 @@ const EditEntityForm = ({ entity, onSuccess }) => {
         } else {
             setEntityId('');
         }
-        setError(null); // Reset error on change
+        setError(null); // reset error on change
     };
 
     const handleSubmit = (event) => {
@@ -98,7 +98,7 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                         : `${option.name} (Phone: ${option.phone})`
                 }
                 filterOptions={(options, { inputValue }) => {
-                    // Custom filter logic based on entity type
+                    // filter logic based on entity type
                     return options.filter(
                         (option) => entity === 'user' 
                             ? option.username.toLowerCase().includes(inputValue.toLowerCase()) ||

@@ -224,22 +224,18 @@ const ViewRoutes = () => {
 
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: 8,
-      }}
-    >
+    <Grid container>
+         
 
-      <Typography variant="h3" component="h3" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+         <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+         <Typography variant="h3" component="h3" sx={{ display: 'flex', alignItems: 'center' }}>
         <RouteIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
         Routes
       </Typography>
+      </Grid>
+      <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }} mt={4}>
+      <Paper elevation={3} sx={{ p: 4, maxWidth: 1500, width: '100%' }}>
 
-      <Paper elevation={3} sx={{ padding: 3, maxWidth: 1500, width: '100%' }}>
         <Grid item xs={12} md={12} container spacing={2}>
 
 
@@ -475,6 +471,7 @@ const ViewRoutes = () => {
 
         </Grid>
       </Paper>
+      </Box>
 
       <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth>
         <EditRouteForm route={selectedRouteToEdit} onClose={handleCloseEditDialog} onRefresh={loadRoutes} showMessage={handleShowMessage} />
@@ -484,12 +481,12 @@ const ViewRoutes = () => {
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
-      >
+        >
         <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
           {snackbar.message}
         </Alert>
       </Snackbar>
-    </div>
+    </Grid>
   );
 };
 

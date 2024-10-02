@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { AddressAutofill, AddressMinimap, useConfirmAddress } from '@mapbox/search-js-react';
 import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
-import { createLocation, fetchRegion, postLocation } from '../store/apiFunctions';
+import { createLocation, fetchRegion } from '../store/apiFunctions';
 import LocationOnIcon from '@mui/icons-material/LocationOn'; 
 
-// This is a public token, so it's okay to expose it here
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
 const AddressSearch = ({ onCloseForm }) => {
@@ -24,6 +23,8 @@ const AddressSearch = ({ onCloseForm }) => {
         city: '',
         state: '',
         zipCode: '',
+        country: '',
+        apartment: '',
     });
 
     const [mapKey, setMapKey] = useState(0);
@@ -65,21 +66,35 @@ const AddressSearch = ({ onCloseForm }) => {
         return () => observer.disconnect();
     }, []);
 
-    // Handle address autofill response
     const handleAutofillRetrieve = (response) => {
         const feature = response.features[0];
+        console.log("Autofill Feature: ", feature);  // debug the feature returned by Mapbox
+    
         setMinimapFeature(feature);
-
+    
+        const placeName = feature.properties?.place_name || ''; 
+        
         const cityContext = feature.context?.find(context => context.id.includes('place'));
+        const suburbContext = feature.context?.find(context => context.id.includes('locality') || context.id.includes('neighborhood'));
         const stateContext = feature.context?.find(context => context.id.includes('region'));
         const zipCodeContext = feature.context?.find(context => context.id.includes('postcode'));
-
+        const countryContext = feature.context?.find(context => context.id.includes('country'));
+    
+        const addressParts = placeName.split(',');
+        const streetAddress = addressParts[0]?.trim() || '';
+        const country = addressParts[addressParts.length - 1]?.trim() || ''; 
+        const zipCode = zipCodeContext ? zipCodeContext.text : ''; // extracting postcode
+    
+        console.log("Constructed Address: ", streetAddress, "Country: ", country);  
+    
         setFormData((prevData) => ({
             ...prevData,
-            address: feature.place_name || '',
+            address: streetAddress, 
             city: cityContext ? cityContext.text : '',
+            suburb: suburbContext ? suburbContext.text : '',  // setting the suburb
             state: stateContext ? stateContext.text : '',
-            zipCode: zipCodeContext ? zipCodeContext.text : '',
+            zipCode: zipCode,  // set zipCode from context
+            country: country, // set country from the last part of place_name
         }));
     };
 
@@ -94,10 +109,13 @@ const AddressSearch = ({ onCloseForm }) => {
                 Latitude: minimapFeature.geometry.coordinates[1],
                 Longitude: minimapFeature.geometry.coordinates[0],
                 Address: formData.address,
-                City: formData.city,
+                Suburb: formData.city,
                 State: formData.state,
-                ZipCode: formData.zipCode,
+                Postcode: formData.zipCode,
+                Country: formData.country,
             };
+
+            console.log("locationData:", locationData); // Debug the location data
 
             const createResult = await createLocation(locationData);
             if (createResult) {
@@ -145,8 +163,8 @@ const AddressSearch = ({ onCloseForm }) => {
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
             <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
                 <Grid container spacing={2} direction="column" alignItems="center">
-                    <LocationOnIcon sx={{ fontSize: 50, mb: 1}} />  
-                    <Typography variant="h5" gutterBottom sx={{ mb: 1}}>
+                    <LocationOnIcon sx={{ fontSize: 50, mb: 1 }} />  
+                    <Typography variant="h5" gutterBottom sx={{ mb: 1 }}>
                         Create a New Location
                     </Typography>
                     <form ref={formRef} onSubmit={handleFormSubmit} style={{ width: '100%' }}>

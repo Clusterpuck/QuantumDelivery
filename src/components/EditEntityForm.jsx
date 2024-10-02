@@ -1,13 +1,68 @@
-import React, { useState } from 'react';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Button, TextField, Typography, Autocomplete } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import { getAccounts, getProducts, getLocations, getCustomers } from '../store/apiFunctions'; // Import your API functions
 
 const EditEntityForm = ({ entity, onSuccess }) => {
     const [entityId, setEntityId] = useState('');
     const [error, setError] = useState(null);
+    const [accounts, setAccounts] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [locations, setLocations] = useState([]);
+    const [customers, setCustomers] = useState([]);
+    const [selectedItem, setSelectedItem] = useState(null);
 
-    const handleChange = (event) => {
-        setEntityId(event.target.value);
+    // Fetch data based on entity type
+    useEffect(() => {
+        if (entity === 'user') {
+            const fetchAccounts = async () => {
+                const fetchedAccounts = await getAccounts();
+                setAccounts(fetchedAccounts || []); // Set to an empty array if null
+            };
+            fetchAccounts();
+        } else if (entity === 'product') {
+            const fetchProducts = async () => {
+                const fetchedProducts = await getProducts();
+                setProducts(fetchedProducts || []); // Set to an empty array if null
+            };
+            fetchProducts();
+        } else if (entity === 'location') {
+            const fetchLocations = async () => {
+                const fetchedLocations = await getLocations();
+                setLocations(fetchedLocations || []); // Set to an empty array if null
+            };
+            fetchLocations();
+        } else if (entity === 'customer') {
+            const fetchCustomers = async () => {
+                const fetchedCustomers = await getCustomers();
+                setCustomers(fetchedCustomers || []); // Set to an empty array if null
+            };
+            fetchCustomers();
+        }
+    }, [entity]);
+
+    const handleAutocompleteChange = (event, newValue) => {
+        setSelectedItem(newValue);
+        if (newValue) {
+            switch (entity) {
+                case 'user':
+                    setEntityId(newValue.username);
+                    break;
+                case 'product':
+                    setEntityId(newValue.id);
+                    break;
+                case 'location':
+                    setEntityId(newValue.id);
+                    break;
+                case 'customer':
+                    setEntityId(newValue.id);
+                    break;
+                default:
+                    setEntityId('');
+            }
+        } else {
+            setEntityId('');
+        }
         setError(null); // Reset error on change
     };
 
@@ -16,8 +71,7 @@ const EditEntityForm = ({ entity, onSuccess }) => {
         if (entityId) {
             console.log(`Editing ${entity} with ID:`, entityId);
             onSuccess(entityId); // Pass the entityId back to the parent component
-        } 
-        else {
+        } else {
             setError(`Please provide a valid ${entity === 'user' ? 'Username' : `${entity} ID`}.`);
         }
     };
@@ -27,13 +81,68 @@ const EditEntityForm = ({ entity, onSuccess }) => {
             <Typography variant="h4" component="h2" sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                 <EditIcon /> Edit {entity}
             </Typography>
-            <TextField
-                label={entity === 'user' ? 'Username' : `${entity} ID`}
-                value={entityId}
-                onChange={handleChange}
-                required
-                error={!!error} // Set error style on the TextField
-                helperText={error} // Display the error message below the TextField
+            <Autocomplete
+                options={
+                    entity === 'user' ? accounts : 
+                    entity === 'product' ? products : 
+                    entity === 'location' ? locations :
+                    customers
+                }
+                getOptionLabel={(option) => 
+                    entity === 'user' 
+                        ? `${option.name} (${option.username})`
+                        : entity === 'product' 
+                        ? `${option.name} (ID: ${option.id})`
+                        : entity === 'location'
+                        ? `${option.address}, ${option.state} (Postcode: ${option.postCode})`
+                        : `${option.name} (Phone: ${option.phone})`
+                }
+                filterOptions={(options, { inputValue }) => {
+                    // Custom filter logic based on entity type
+                    return options.filter(
+                        (option) => entity === 'user' 
+                            ? option.username.toLowerCase().includes(inputValue.toLowerCase()) ||
+                              option.name.toLowerCase().includes(inputValue.toLowerCase()) ||
+                              option.phone.includes(inputValue) ||
+                              option.role.toLowerCase().includes(inputValue.toLowerCase())
+                            : entity === 'product'
+                            ? option.id.toString().includes(inputValue) ||
+                              option.name.toLowerCase().includes(inputValue.toLowerCase())
+                            : entity === 'location'
+                            ? option.id.toString().includes(inputValue) ||
+                              option.address.toLowerCase().includes(inputValue.toLowerCase()) ||
+                              option.postCode.toString().includes(inputValue) ||
+                              option.state.toLowerCase().includes(inputValue.toLowerCase())
+                            : option.id.toString().includes(inputValue) ||
+                              option.name.toLowerCase().includes(inputValue.toLowerCase()) ||
+                              option.phone.includes(inputValue)
+                    );
+                }}
+                onChange={handleAutocompleteChange}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label={
+                            entity === 'user'
+                                ? 'Search by Name, Username, Phone, or Role'
+                                : entity === 'product'
+                                ? 'Search by ID or Name'
+                                : entity === 'location'
+                                ? 'Search by ID, Address, Postcode, or State'
+                                : 'Search by ID, Name, or Phone'
+                        }
+                        variant="outlined"
+                        error={!!error}
+                        helperText={error}
+                    />
+                )}
+                isOptionEqualToValue={(option, value) => 
+                    entity === 'user' 
+                        ? option.username === value.username
+                        : entity === 'product' 
+                        ? option.id === value.id
+                        : option.id === value.id
+                }
             />
             <Button variant="contained" color="primary" type="submit">
                 Load {entity} for Editing

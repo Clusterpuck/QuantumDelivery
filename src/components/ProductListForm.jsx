@@ -14,6 +14,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Skeleton from '@mui/material/Skeleton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {Input} from '@mui/material';
+import {Tooltip} from '@mui/material';
 
 const ProductListForm = ({ addedProducts, setAddedProducts }) =>
 {
@@ -241,15 +242,19 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
                         justifyContent="center"  // Center horizontally (optional)
                         height="100%"           // Make Box take full height of Grid item
                     >
-                        <Button
-                            onClick={handleAddProduct}
-                            variant="contained"
-                            color="primary"
-                            size="small"
-                        >
-                            <AddIcon />
-                            Add Product
-                        </Button>
+                        <Tooltip title={!selectedProduct ? "Select a product to add" : ""} arrow>
+                            <span>
+                                <Button
+                                    onClick={handleAddProduct}
+                                    variant="contained"
+                                    color="primary"
+                                    size="small"
+                                    disabled={!selectedProduct}
+                                >
+                                    Add Product
+                                </Button>
+                            </span>
+                        </Tooltip>
                     </Box>
                 </Grid>
             </Grid>

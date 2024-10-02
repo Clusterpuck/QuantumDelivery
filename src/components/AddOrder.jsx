@@ -63,7 +63,7 @@ const AddOrder = ({ updateOrders, closeModal }) => {
   };
 
   const resetForm = () => {
-    setSelectedDate(dayjs());
+    //setSelectedDate(dayjs()); don't reset for ease of adding multiple orders
     setOrderNote('');
     setSelectedProducts([]);
     setSelectedCustomer(null);
@@ -138,7 +138,7 @@ const AddOrder = ({ updateOrders, closeModal }) => {
                   value={selectedDate}
                   onChange={handleDateChange}
                   size="small"
-                  renderInput={(params) => <TextField {...params} />
+                  renderInput={(params) => <TextField required {...params} />
                   
                 }
                 />
@@ -155,7 +155,7 @@ const AddOrder = ({ updateOrders, closeModal }) => {
                 value={selectedCustomer}
                 onChange={handleCustomerChange}
                 renderInput={(params) => (
-                  <TextField {...params} label="Select Customer" />
+                  <TextField {...params} required label="Select Customer" />
                 )}
                 sx={{ mt: 1 }}
               />
@@ -171,7 +171,7 @@ const AddOrder = ({ updateOrders, closeModal }) => {
                 value={selectedLocation}
                 onChange={handleLocationChange}
                 renderInput={(params) => (
-                  <TextField {...params} label="Select Location" />
+                  <TextField {...params} required label="Select Location" />
                 )}
                 sx={{ mt: 1 }}
               />
@@ -224,6 +224,7 @@ const AddOrder = ({ updateOrders, closeModal }) => {
         open={snackbar.open}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
       </Snackbar>

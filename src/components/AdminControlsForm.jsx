@@ -10,7 +10,7 @@ const AdminControlsForm = ({ entity, handleSubmit }) => {
             <Paper
                 elevation={2}
                 sx={{
-                    padding: 3,
+                    padding: 1,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',

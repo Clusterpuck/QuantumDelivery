@@ -234,7 +234,7 @@ const ViewRoutes = () => {
       }}
     >
 
-      <Typography variant="h3" component="h1" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Typography variant="h3" component="h3" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <RouteIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
         Routes
       </Typography>

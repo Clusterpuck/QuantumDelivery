@@ -121,7 +121,7 @@ const AdminControls = () => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 8 }}>
-            <Typography variant="h1" component="h1" sx={{ mt: 3, display: 'flex', alignItems: 'center', gap: 1, fontWeight: 'bold', fontSize: '3rem', mb: 3 }}>
+            <Typography variant="h3" component="h3" sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
                 <SettingsIcon sx={{ fontSize: 50 }} />
                 Admin Controls
             </Typography>

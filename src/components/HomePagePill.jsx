@@ -23,12 +23,12 @@ const HomePagePill = ({ text, amount, Icon }) =>
           <Grid container alignItems="center" justifyContent="space-between">
             <Grid item sx={{ display: 'flex', alignItems: 'center' }} margin={1}>
               <Icon sx={{color:theme.palette.primary.main}} /> 
-              <Typography variant='h4' color={theme.palette.text.primary} sx={{ marginLeft: '8px' }}>
+              <Typography variant='h5' color={theme.palette.text.primary} sx={{ marginLeft: '8px' }}>
                 {text}
               </Typography>
             </Grid>
             <Grid item margin={1}>
-              <Typography variant='h3' color={theme.palette.primary.main}>
+              <Typography variant='h5' color={theme.palette.primary.main}>
                 {amount}
               </Typography>
             </Grid>

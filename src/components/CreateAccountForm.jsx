@@ -41,12 +41,12 @@ const CreateAccountForm = () => {
             if (result) {
                 setSuccess(true);
                 setError(null);
-                console.log('Account created successfully:', result);
+                console.log('User created successfully:', result);
             } else {
-                setError('Failed to create account.');
+                setError('Failed to create user.');
             }
         } catch (err) {
-            setError('An error occurred while creating the account.');
+            setError('An error occurred while creating the user.');
             console.error(err);
         }
     };
@@ -136,7 +136,7 @@ const CreateAccountForm = () => {
                                 Create Account
                             </Button>
                             {error && <Typography color="error">{error}</Typography>}
-                            {success && <Typography color="green">Account created successfully!</Typography>}
+                            {success && <Typography color="green">User created successfully!</Typography>}
                         </Grid>
                     </form>
                 </Grid>

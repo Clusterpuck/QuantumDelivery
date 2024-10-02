@@ -119,7 +119,7 @@ function Navbar() {
                   </MenuItem>
                 ))}
                 <MenuItem onClick={handleLogout}>
-                  <Typography textAlign="center">Logout</Typography>
+                  <Typography variant='h6' textAlign="center">Logout</Typography>
                 </MenuItem>
               </Menu>
             </Box>

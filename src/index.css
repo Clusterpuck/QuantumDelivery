@@ -102,13 +102,13 @@ html {
   font-size: 100%; /* 16px */
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1000px) {
   html {
-    font-size: 80%; /* 14.4px */
+    font-size: 70%; /* 14.4px */
   }
 }
 
-@media (min-width: 801px) and (max-width: 1200px) {
+@media (min-width: 1001px) and (max-width: 1200px) {
   html {
     font-size: 100%; /* 16px */
   }

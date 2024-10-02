@@ -283,11 +283,11 @@ const ViewRoutes = () => {
                         }}
                       >
                         <Grid container margin={0.1}>
-                          <Grid item xs={12} md={4} marginBottom={1} marginTop={1}>
+                          <Grid item xs={12} md={4} marginBottom={0.5} marginTop={0.5}>
                             <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
                               <CalendarTodayIcon color="primary" />
                               <Typography variant='h6' >
-                                Date: {formatDate(date)}
+                                {formatDate(date)}
                               </Typography>
                             </Box>
                           </Grid>
@@ -318,7 +318,7 @@ const ViewRoutes = () => {
                             variant="contained"
                             size='small'
                           >
-                            Delete All Routes For Date: {formatDate(date)}
+                            Delete All Routes For {formatDate(date)}
                           </Button>
                         </Grid>
                         {dateRoutes.map((route) => (

@@ -15,7 +15,7 @@ import EditLocationForm from '../components/EditLocationForm';
 import EditCustomerForm from '../components/EditCustomerForm'; 
 import CheckPasswordForm from '../components/CheckPasswordForm';
 import { enableScroll } from '../assets/scroll.js';
-
+import { getAccountDetails } from '../store/apiFunctions.js'
 
 const AdminControls = () => {
     const navigate = useNavigate();
@@ -74,20 +74,31 @@ const AdminControls = () => {
     const handleCloseCustomerForm = () => setOpenCustomerForm(false);
     const handleCloseEditEntityForm = () => setOpenEditEntityForm(false);
 
-    const handleEditEntitySuccess = (collectedEntityId) => {
+    const handleEditEntitySuccess = async (collectedEntityId) => {
         if (collectedEntityId) {
-            if (entityType === 'product') {
+            if (entityType === 'user') {
+                try {
+                    const userData = await getAccountDetails(collectedEntityId); 
+                    if (userData.status === 'inactive') {
+                        console.error("User account is inactive and cannot be edited.");
+                        setError("This account is inactive and cannot be edited."); // Display the error
+                        return; // Prevent further action
+                    }
+                    setAccountId(collectedEntityId);
+                    setUserMode('edit');
+                    setOpenAccountForm(true);
+                    setOpenEditEntityForm(false);
+                } catch (err) {
+                    console.error("Error fetching user data:", err);
+                    setError("An error occurred while trying to fetch user data.");
+                }
+            } else if (entityType === 'product') {
                 setProductId(collectedEntityId);
                 setOpenProductForm(true);
                 setOpenEditEntityForm(false);
             } else if (entityType === 'location') {
                 setLocationId(collectedEntityId);
                 setOpenLocationForm(true);
-                setOpenEditEntityForm(false);
-            } else if (entityType === 'user') {
-                setAccountId(collectedEntityId);
-                setUserMode('edit');
-                setOpenAccountForm(true);
                 setOpenEditEntityForm(false);
             } else if (entityType === 'customer') {
                 setCustomerId(collectedEntityId);
@@ -159,7 +170,7 @@ const AdminControls = () => {
                 aria-describedby="product-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
-                    <CreateProductForm />
+                    { productId ? <EditProductForm productId={productId} /> : <CreateProductForm /> }
                 </Box>
             </Modal>
 

@@ -29,7 +29,7 @@ const EditAccountForm = ({ accountId, handleOpenPasswordModal, accountStatus }) 
                     companyRole: accountDetails.role || '',
                 });
             } else {
-                setError('No account details found.');
+                setError('No user details found.');
             }
         };
         fetchAccountData();
@@ -64,7 +64,7 @@ const EditAccountForm = ({ accountId, handleOpenPasswordModal, accountStatus }) 
         };
     
         // Log the updated account data
-        console.log('Updated Account Data:', updatedAccountData);
+        console.log('Updated User Data:', updatedAccountData);
     
         // Ensure email is in valid format
         if (!/\S+@\S+\.\S+/.test(updatedAccountData.Username)) {
@@ -95,7 +95,7 @@ const EditAccountForm = ({ accountId, handleOpenPasswordModal, accountStatus }) 
         try {
             await reactivateAccount(accountId); // Call the API function to reactivate the account
             setSuccess(true); 
-            setSuccessMessage("Account is now active!"); 
+            setSuccessMessage("User is now active!"); 
             setError(null); 
             const updatedDetails = await getAccountDetails(accountId); // Fetch updated details after reactivation
             if (updatedDetails) {
@@ -109,7 +109,7 @@ const EditAccountForm = ({ accountId, handleOpenPasswordModal, accountStatus }) 
                 });
             }
         } catch (err) {
-            setError('Failed to reactivate the account.'); 
+            setError('Failed to reactivate the user.'); 
         }
     };
 
@@ -118,7 +118,7 @@ const EditAccountForm = ({ accountId, handleOpenPasswordModal, accountStatus }) 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                 <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%', textAlign: 'center' }}>
                     <Typography variant="h6">
-                        Account cannot be edited as it is inactive.
+                        User cannot be edited as the account is inactive.
                     </Typography>
                     <Button 
                         variant="contained" 

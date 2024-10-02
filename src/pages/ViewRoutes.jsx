@@ -10,13 +10,15 @@ import AddRouteForm from '../components/AddRouteForm.jsx';
 import CancelIcon from '@mui/icons-material/Cancel';
 import EditRouteForm from '../components/EditRouteForm';
 import PersonIcon from '@mui/icons-material/Person'; // person icon
+import { Switch } from '@mui/material';
 
 // Material-UI Components
-import {
-  Button, Grid, Paper, Snackbar,
-  Alert, Typography, Accordion, AccordionDetails, AccordionSummary,
-  Box, Skeleton, Modal, Dialog, Tooltip
-} from '@mui/material';
+import
+  {
+    Button, Grid, Paper, Snackbar,
+    Alert, Typography, Accordion, AccordionDetails, AccordionSummary,
+    Box, Skeleton, Modal, Dialog, Tooltip
+  } from '@mui/material';
 
 // Material-UI Icons
 import RouteIcon from '@mui/icons-material/Route';
@@ -40,7 +42,8 @@ const styleConstants = {
 
 
 // Page design for View Routes page
-const ViewRoutes = () => {
+const ViewRoutes = () =>
+{
   const [routes, setRoutes] = useState([]);
   const [routesLoading, setRoutesLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -51,6 +54,7 @@ const ViewRoutes = () => {
   // for if an edit route dialog is open
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [selectedRouteToEdit, setSelectedRouteToEdit] = useState(false);
+  const [isActiveRoutes, setIsActiveRoutes] = useState(true);
 
   // State for controlling Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -73,18 +77,31 @@ const ViewRoutes = () => {
   };
 
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     enableScroll();
     loadRoutes();
 
-  }, [])
+  }, []);
 
-  const handleShowMessage = (msg, type) => {
+  useEffect(() =>
+  {
+    loadRoutes();
+  }, [isActiveRoutes]);
+
+  const handleShowMessage = (msg, type) =>
+  {
     setSnackbar({
       open: true,
       message: msg,
       severity: type
     });
+  };
+
+  // Function to handle switch toggle
+  const handleToggle = (event) =>
+  {
+    setIsActiveRoutes(event.target.checked);
   };
 
   // Open Modal function
@@ -93,12 +110,14 @@ const ViewRoutes = () => {
   // Close Modal function
   const handleCloseModal = () => setIsModalOpen(false);
 
-  const handleEditClick = (route) => {
+  const handleEditClick = (route) =>
+  {
     setSelectedRouteToEdit(route);
     setOpenEditDialog(true);
   };
 
-  const handleCloseEditDialog = () => {
+  const handleCloseEditDialog = () =>
+  {
     setOpenEditDialog(false);
     setSelectedRouteToEdit(null);
   };
@@ -110,7 +129,8 @@ const ViewRoutes = () => {
 
 
   /** Deals with user requesting closing the snackbar */
-  const handleSnackbarClose = () => {
+  const handleSnackbarClose = () =>
+  {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
 
@@ -124,20 +144,24 @@ const ViewRoutes = () => {
    * @param {*} id
    * @returns {*}
    */
-  const deleteRoute = async (id) => {
+  const deleteRoute = async (id) =>
+  {
     //console.log("id sent to delete is " + id);
     const result = await deleteMethod(id, 'DeliveryRoutes');
-    if (result) {
+    if (result)
+    {
       //console.log('Item deleted successfully:', result);
       //await loadOrders();
       loadRoutes();
-    } else {
+    } else
+    {
       console.error('Failed to delete item.');
     }
 
   }
 
-  const deleteAllRoutesByDate = async (date) => {
+  const deleteAllRoutesByDate = async (date) =>
+  {
     //console.log("In delete all date is " + JSON.stringify(date) + " formatted is " + formatDate(date));
     let result = await deleteRouteByDate(date);
     //console.log("Delete all routes response is " + JSON.stringify(result));
@@ -152,19 +176,27 @@ const ViewRoutes = () => {
    * @async
    * @returns {unknown}
    */
-  const loadRoutes = async () => {//need to update get route to manage getting existing orders
+  const loadRoutes = async () =>
+  {//need to update get route to manage getting existing orders
     //should return the same as CalcRoute
+    const url = isActiveRoutes
+      ? 'DeliveryRoutes/active'  // Active routes
+      : 'DeliveryRoutes';        // All routes
     setRoutesLoading(true);
-    try {
-      const routesList = await fetchMethod('DeliveryRoutes');
-      if (routesList) {
+    try
+    {
+      const routesList = await fetchMethod(url);
+      if (routesList)
+      {
         //console.log("xxXX Route List is " + JSON.stringify(routesList));
         //setRoutes(routesList);
-        const groupedRoutes = routesList.reduce((acc, route) => {
+        const groupedRoutes = routesList.reduce((acc, route) =>
+        {
           const deliveryDate = new Date(route.deliveryDate).toDateString(); // Convert to string (ignoring time)
 
           // Check if this date already exists in the accumulator
-          if (!acc[deliveryDate]) {
+          if (!acc[deliveryDate])
+          {
             acc[deliveryDate] = []; // Initialize array if it doesn't exist
           }
 
@@ -185,7 +217,8 @@ const ViewRoutes = () => {
         //console.log("xxXXGrouped Routes by Date: ", groupedRoutes);
         return groupedRoutes;
       }
-      else {
+      else
+      {
         // throw error
         console.error('Error fetching delivery routes: ', error);
         setSnackbar({
@@ -194,7 +227,8 @@ const ViewRoutes = () => {
           severity: 'error'
         });
       }
-    } catch (error) {
+    } catch (error)
+    {
       // catch error
       console.error('Error fetching delivery routes: ', error);
       setSnackbar({
@@ -203,7 +237,8 @@ const ViewRoutes = () => {
         severity: 'error'
       });
     }
-    finally {
+    finally
+    {
       setRoutesLoading(false);
     }
   };
@@ -225,252 +260,260 @@ const ViewRoutes = () => {
 
   return (
     <Grid container>
-         
 
-         <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-         <Typography variant="h3" component="h3" sx={{ display: 'flex', alignItems: 'center' }}>
-        <RouteIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
-        Routes
-      </Typography>
+
+      <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Typography variant="h3" component="h3" sx={{ display: 'flex', alignItems: 'center' }}>
+          <RouteIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
+          Routes
+        </Typography>
       </Grid>
       <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }} mt={4}>
-      <Paper elevation={3} sx={{ p: 4, maxWidth: 1500, width: '100%' }}>
+        <Paper elevation={3} sx={{ p: 4, maxWidth: 1500, width: '100%' }}>
 
         <Grid item xs={12} md={12} container spacing={2}>
+  <Grid item xs={2} md={2} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+    <Typography>{isActiveRoutes ? "Active Routes" : "All Routes"}</Typography>
+    <Switch
+      checked={isActiveRoutes}
+      onChange={handleToggle}
+      color="primary"
+    />
+  </Grid>
+  
+  <Grid item xs={10} padding={2} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+    <Button
+      variant="contained"
+      color="primary"
+      onClick={handleOpenModal}
+      sx={{ borderRadius: '18px' }}
+    >
+      <AddIcon sx={{ fontSize: '2rem' }} /> Calculate New Routes
+    </Button>
+  </Grid>
 
 
-          <Grid padding={2} item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleOpenModal}
-              sx={{ borderRadius: '18px' }}
-            >
-              <AddIcon sx={{ fontSize: '2rem' }} /> Calculate New Routes
-            </Button>
-          </Grid>
 
+            <Grid item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
+              {routesLoading ? (
+                <Skeleton sx={{
+                  width: '100%',  // Make it responsive to parent container
+                  height: '100px', // Auto-adjust height for responsiveness
+                }} />
+              ) : (
+                <>
 
-          <Grid item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
-            {routesLoading ? (
-              <Skeleton sx={{
-                width: '100%',  // Make it responsive to parent container
-                height: '100px', // Auto-adjust height for responsiveness
-              }} />
-            ) : (
-              <>
-
-                {/* Render assigned vehicles */}
-                {Object.entries(routes).map(([date, dateRoutes]) => (
-                  <Grid key={date} item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
-                    <Accordion key={date} sx={{ width: '100%' }} slotProps={{ transition: { unmountOnExit: true } }}>
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls={`panel-${date}-content`}
-                        id={`panel-${date}-header`}
-                        sx={{
-                          backgroundColor: theme.palette.primary.accent,  // Set background color
-                          borderBottom: '1px solid grey', // Add a border
-                          borderRadius: '8px',
-                          margin: 0.5,
-                          '&:hover': {
-                            backgroundColor: theme.palette.secondary.main, // Hover effect
-                          },
-                          '& .MuiTypography-root': {
-                            fontWeight: 'bold', // Custom font styles for text
-                            color: theme.palette.text.primary, // Change text color
-                          },
-                        }}
-                      >
-                        <Grid container margin={0.1}>
-                          <Grid item xs={12} md={4} marginBottom={0.5} marginTop={0.5}>
-                            <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
-                              <CalendarTodayIcon color="primary" />
-                              <Typography variant='h6' >
-                                {formatDate(date)}
-                              </Typography>
-                            </Box>
-                          </Grid>
-                          <Grid item xs={6} md={4} marginTop={2}>
-                            <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
-                              <Typography variant="subtitle1">
-                                Total Routes: {dateRoutes.length}
-                              </Typography>
-                            </Box>
-                          </Grid>
-                          <Grid item xs={6} md={4} marginTop={2}>
-                            <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
-                              <Typography variant="subtitle1">
-                                Total Orders: {dateRoutes.reduce((acc, curr) => acc + curr.orders.length, 0)}
-                              </Typography>
-                            </Box>
-                          </Grid>
-                        </Grid>
-
-                      </AccordionSummary>
-                      <AccordionDetails
-                        key={`panel-${date}-details`}
-                      >
-                        <Grid item xs={12} md={12} sx={{ ml: 'auto' }}>
-                          <Button
-                            onClick={() => deleteAllRoutesByDate(date)}
-                            color="error"
-                            variant="contained"
-                            size='small'
-                          >
-                            Delete All Routes For {formatDate(date)}
-                          </Button>
-                        </Grid>
-                        {dateRoutes.map((route) => (
-                          <Grid container item xs={12} md={12} sx={{ mb: 5 }}>
-                            <Grid item xs={12} md={12} container alignItems="center" spacing={2} sx={{ mb: 2 }}>
-
-                              {/* Route Details with Icons */}
-                              <Grid item xs={6} md={5}>
-                                <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
-                                  <LabelIcon color="primary" />
-                                  <Typography>ID: {route.deliveryRouteID}</Typography>
-                                </Box>
-
-                                <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
-                                  <DirectionsCarIcon color="primary" />
-                                  <Typography>Vehicle: {route.vehicleId}</Typography>
-                                </Box>
-                                <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
-                                  <PersonIcon color="primary" />
-                                  <Typography>Driver: {route.driverUsername}</Typography>
-                                </Box>
-                                <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
-                                  <FormatListNumberedIcon color="primary" />
-                                  <Typography>Orders: {route.orders.length}</Typography>
-                                </Box>
-                              </Grid>
-                              {/**Spacer grid */}
-                              <Grid item xs={4} md={4}></Grid>
-
-                              {/**Grid for buttons */}
-                              <Grid container item xs={2} md={3} sx={{ ml: 'auto' }}>
-                                <Grid item xs={6} md={6}>
-                                  <Tooltip
-                                    title={route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED') ? "Cannot edit, some orders are not assigned or cancelled." : ""}
-                                    disableHoverListener={!route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')}
-                                  >
-                                    <span>
-                                      <Button
-                                        onClick={() => handleEditClick(route)}
-                                        color="primary"
-                                        variant="contained"
-                                        size='small'
-                                        disabled={route.orders.some(order => order.status !== 'ASSIGNED' &&
-                                          order.status !== 'CANCELLED')}
-                                      >
-                                        Edit Route
-                                      </Button>
-                                    </span>
-                                  </Tooltip>
-                                </Grid>
-                                <Grid item xs={6} md={6} >
-                                  <Tooltip
-                                    title={route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED') ? "Cannot delete, some orders are not assigned or cancelled." : ""}
-                                    disableHoverListener={!route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')}
-                                  >
-                                    <span>
-                                      <Button
-                                        onClick={() => deleteRoute(route.deliveryRouteID)}
-                                        color="error"
-                                        variant="contained"
-                                        size='small'
-                                        disabled={route.orders.some(order => order.status !== 'ASSIGNED' &&
-                                          order.status !== 'CANCELLED')}
-
-                                      >
-                                        Delete Route
-                                      </Button>
-                                    </span>
-                                  </Tooltip>
-                                </Grid>
-
-                              </Grid>
+                  {/* Render assigned vehicles */}
+                  {Object.entries(routes).map(([date, dateRoutes]) => (
+                    <Grid key={date} item xs={12} md={12} container spacing={2} alignItems="center" maxWidth='1200px'>
+                      <Accordion key={date} sx={{ width: '100%' }} slotProps={{ transition: { unmountOnExit: true } }}>
+                        <AccordionSummary
+                          expandIcon={<ExpandMoreIcon />}
+                          aria-controls={`panel-${date}-content`}
+                          id={`panel-${date}-header`}
+                          sx={{
+                            backgroundColor: theme.palette.primary.accent,  // Set background color
+                            borderBottom: '1px solid grey', // Add a border
+                            borderRadius: '8px',
+                            margin: 0.5,
+                            '&:hover': {
+                              backgroundColor: theme.palette.secondary.main, // Hover effect
+                            },
+                            '& .MuiTypography-root': {
+                              fontWeight: 'bold', // Custom font styles for text
+                              color: theme.palette.text.primary, // Change text color
+                            },
+                          }}
+                        >
+                          <Grid container margin={0.1}>
+                            <Grid item xs={12} md={4} marginBottom={0.5} marginTop={0.5}>
+                              <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
+                                <CalendarTodayIcon color="primary" />
+                                <Typography variant='h6' >
+                                  {formatDate(date)}
+                                </Typography>
+                              </Box>
                             </Grid>
+                            <Grid item xs={6} md={4} marginTop={2}>
+                              <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
+                                <Typography variant="subtitle1">
+                                  Total Routes: {dateRoutes.length}
+                                </Typography>
+                              </Box>
+                            </Grid>
+                            <Grid item xs={6} md={4} marginTop={2}>
+                              <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
+                                <Typography variant="subtitle1">
+                                  Total Orders: {dateRoutes.reduce((acc, curr) => acc + curr.orders.length, 0)}
+                                </Typography>
+                              </Box>
+                            </Grid>
+                          </Grid>
 
-                            {/* Grid container for table and map side by side */}
-                            <Grid container item xs={12} spacing={2}>
-                              {/* DataGrid for orders */}
-                              <Grid item xs={12} md={7} sx={styleConstants.fieldSpacing}>
-                                <DataGrid
-                                  rows={route.orders
-                                    .slice()
-                                    .sort((a, b) => a.position - b.position)
-                                    .map((order) => ({ id: order.orderID, ...order }))}
-                                  columns={columns}
-                                  pageSize={5}
-                                  autoHeight
-                                  density='compact'
-                                />
+                        </AccordionSummary>
+                        <AccordionDetails
+                          key={`panel-${date}-details`}
+                        >
+                          <Grid item xs={12} md={12} sx={{ ml: 'auto' }}>
+                            <Button
+                              onClick={() => deleteAllRoutesByDate(date)}
+                              color="error"
+                              variant="contained"
+                              size='small'
+                            >
+                              Delete All Routes For {formatDate(date)}
+                            </Button>
+                          </Grid>
+                          {dateRoutes.map((route) => (
+                            <Grid container item xs={12} md={12} sx={{ mb: 5 }}>
+                              <Grid item xs={12} md={12} container alignItems="center" spacing={2} sx={{ mb: 2 }}>
+
+                                {/* Route Details with Icons */}
+                                <Grid item xs={6} md={5}>
+                                  <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
+                                    <LabelIcon color="primary" />
+                                    <Typography>ID: {route.deliveryRouteID}</Typography>
+                                  </Box>
+
+                                  <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
+                                    <DirectionsCarIcon color="primary" />
+                                    <Typography>Vehicle: {route.vehicleId}</Typography>
+                                  </Box>
+                                  <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
+                                    <PersonIcon color="primary" />
+                                    <Typography>Driver: {route.driverUsername}</Typography>
+                                  </Box>
+                                  <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
+                                    <FormatListNumberedIcon color="primary" />
+                                    <Typography>Orders: {route.orders.length}</Typography>
+                                  </Box>
+                                </Grid>
+                                {/**Spacer grid */}
+                                <Grid item xs={4} md={4}></Grid>
+
+                                {/**Grid for buttons */}
+                                <Grid container item xs={2} md={3} sx={{ ml: 'auto' }}>
+                                  <Grid item xs={6} md={6}>
+                                    <Tooltip
+                                      title={route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED') ? "Cannot edit, some orders are not assigned or cancelled." : ""}
+                                      disableHoverListener={!route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')}
+                                    >
+                                      <span>
+                                        <Button
+                                          onClick={() => handleEditClick(route)}
+                                          color="primary"
+                                          variant="contained"
+                                          size='small'
+                                          disabled={route.orders.some(order => order.status !== 'ASSIGNED' &&
+                                            order.status !== 'CANCELLED')}
+                                        >
+                                          Edit Route
+                                        </Button>
+                                      </span>
+                                    </Tooltip>
+                                  </Grid>
+                                  <Grid item xs={6} md={6} >
+                                    <Tooltip
+                                      title={route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED') ? "Cannot delete, some orders are not assigned or cancelled." : ""}
+                                      disableHoverListener={!route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')}
+                                    >
+                                      <span>
+                                        <Button
+                                          onClick={() => deleteRoute(route.deliveryRouteID)}
+                                          color="error"
+                                          variant="contained"
+                                          size='small'
+                                          disabled={route.orders.some(order => order.status !== 'ASSIGNED' &&
+                                            order.status !== 'CANCELLED')}
+
+                                        >
+                                          Delete Route
+                                        </Button>
+                                      </span>
+                                    </Tooltip>
+                                  </Grid>
+
+                                </Grid>
                               </Grid>
 
-                              {/* Map for orders */}
-                              <Grid item xs={12} md={5} sx={styleConstants.fieldSpacing}>
-                                {route.orders && route.orders.length > 0 ? (
-
-                                  <MapWithPins
-                                    inputLocations={route.orders
+                              {/* Grid container for table and map side by side */}
+                              <Grid container item xs={12} spacing={2}>
+                                {/* DataGrid for orders */}
+                                <Grid item xs={12} md={7} sx={styleConstants.fieldSpacing}>
+                                  <DataGrid
+                                    rows={route.orders
                                       .slice()
                                       .sort((a, b) => a.position - b.position)
-                                      .map((order) => ({
-                                        latitude: order.latitude,
-                                        longitude: order.longitude,
-                                      }))}
+                                      .map((order) => ({ id: order.orderID, ...order }))}
+                                    columns={columns}
+                                    pageSize={5}
+                                    autoHeight
+                                    density='compact'
                                   />
-                                ) : (
-                                  <p>No Orders</p>
-                                )}
+                                </Grid>
+
+                                {/* Map for orders */}
+                                <Grid item xs={12} md={5} sx={styleConstants.fieldSpacing}>
+                                  {route.orders && route.orders.length > 0 ? (
+
+                                    <MapWithPins
+                                      inputLocations={route.orders
+                                        .slice()
+                                        .sort((a, b) => a.position - b.position)
+                                        .map((order) => ({
+                                          latitude: order.latitude,
+                                          longitude: order.longitude,
+                                        }))}
+                                    />
+                                  ) : (
+                                    <p>No Orders</p>
+                                  )}
+                                </Grid>
                               </Grid>
                             </Grid>
-                          </Grid>
-                        ))}
-                      </AccordionDetails>
+                          ))}
+                        </AccordionDetails>
 
-                    </Accordion>
+                      </Accordion>
+                    </Grid>
+                  ))}
+                </>
+              )}
+            </Grid>
+
+
+            {/* Modal for AddRouteForm */}
+            <Modal
+              open={isModalOpen}
+              onClose={handleCloseModal}
+              aria-labelledby="add-route-modal"
+              aria-describedby="add-route-form"
+            >
+              <Box sx={modalStyle}>
+                <Grid container alignItems="center">  {/* Use Grid container for alignment */}
+                  <Grid item xs={10}>  {/* Title takes up 10 units */}
+                    <Typography
+                      id="add-route-modal"
+                      variant="h6"
+                      component="h2"
+                      align="left"  // Align text to the left
+                      sx={{ fontWeight: 'bold', mb: 1 }}  // Bold and margin below
+                    >
+                      Calculate New Routes
+                    </Typography>
                   </Grid>
-                ))}
-              </>
-            )}
+                  <Grid item xs={2} textAlign="right">  {/* Button takes up 2 units */}
+                    <Button onClick={handleCloseModal}>
+                      <CancelIcon />
+                    </Button>
+                  </Grid>
+                </Grid>
+                <AddRouteForm updateRoutes={loadRoutes} closeView={handleCloseModal} />
+              </Box>
+            </Modal>
+
           </Grid>
-
-
-          {/* Modal for AddRouteForm */}
-          <Modal
-            open={isModalOpen}
-            onClose={handleCloseModal}
-            aria-labelledby="add-route-modal"
-            aria-describedby="add-route-form"
-          >
-            <Box sx={modalStyle}>
-              <Grid container alignItems="center">  {/* Use Grid container for alignment */}
-                <Grid item xs={10}>  {/* Title takes up 10 units */}
-                  <Typography
-                    id="add-route-modal"
-                    variant="h6"
-                    component="h2"
-                    align="left"  // Align text to the left
-                    sx={{ fontWeight: 'bold', mb: 1 }}  // Bold and margin below
-                  >
-                    Calculate New Routes
-                  </Typography>
-                </Grid>
-                <Grid item xs={2} textAlign="right">  {/* Button takes up 2 units */}
-                  <Button onClick={handleCloseModal}>
-                    <CancelIcon />
-                  </Button>
-                </Grid>
-              </Grid>
-              <AddRouteForm updateRoutes={loadRoutes} closeView={handleCloseModal} />
-            </Box>
-          </Modal>
-
-        </Grid>
-      </Paper>
+        </Paper>
       </Box>
 
       <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth>
@@ -481,7 +524,7 @@ const ViewRoutes = () => {
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
-        >
+      >
         <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
           {snackbar.message}
         </Alert>

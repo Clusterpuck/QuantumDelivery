@@ -8,6 +8,7 @@ const CreateAccountForm = () => {
         fullName: '',
         email: '',
         password: '',
+        confirmPassword: '',
         address: '',
         phone: '',
         companyRole: '',
@@ -25,29 +26,37 @@ const CreateAccountForm = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        if( formData.password !== formData.confirmPassword )
+        {
+            setError("Password don't match");
+        }
+        else
+        {
+            
+                    // Prepare the data to be sent to the backend
+                    const newAccountData = {
+                        Username: formData.email,       // Email corresponds to Username on the backend
+                        Name: formData.fullName,        // fullName corresponds to Name
+                        Password: formData.password,    // Password field
+                        Phone: formData.phone,          // Phone field
+                        Address: formData.address,      // Address field
+                        Role: formData.companyRole      // Role corresponds to companyRole
+                    };
+            
+                    try {
+                        const result = await createAccount(newAccountData);
+                        if (result) {
+                            setSuccess(true);
+                            setError(null);
+                            console.log('User created successfully:', result);
+                        } else {
+                            setError('Failed to create user.');
+                        }
+                    } catch (err) {
+                        setError('An error occurred while creating the user.');
+                        console.error(err);
+                    }
 
-        // Prepare the data to be sent to the backend
-        const newAccountData = {
-            Username: formData.email,       // Email corresponds to Username on the backend
-            Name: formData.fullName,        // fullName corresponds to Name
-            Password: formData.password,    // Password field
-            Phone: formData.phone,          // Phone field
-            Address: formData.address,      // Address field
-            Role: formData.companyRole      // Role corresponds to companyRole
-        };
-
-        try {
-            const result = await createAccount(newAccountData);
-            if (result) {
-                setSuccess(true);
-                setError(null);
-                console.log('User created successfully:', result);
-            } else {
-                setError('Failed to create user.');
-            }
-        } catch (err) {
-            setError('An error occurred while creating the user.');
-            console.error(err);
         }
     };
 
@@ -96,6 +105,18 @@ const CreateAccountForm = () => {
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
+                                <TextField
+                                    label="Confirm Password"
+                                    name="confirmPassword"
+                                    type="password"
+                                    variant="outlined"
+                                    fullWidth
+                                    required
+                                    value={formData.confirmPassword}
+                                    onChange={handleInputChange}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={12}>
                                 <TextField
                                     label="Address"
                                     name="address"

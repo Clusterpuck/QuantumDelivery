@@ -94,7 +94,7 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                         : entity === 'product' 
                         ? `${option.name} (ID: ${option.id})`
                         : entity === 'location'
-                        ? `${option.address}, ${option.state} (Postcode: ${option.postCode})`
+                        ? `${option.description}, ${option.address}, ${option.state} (Postcode: ${option.postCode})`
                         : `${option.name} (Phone: ${option.phone})`
                 }
                 filterOptions={(options, { inputValue }) => {
@@ -112,7 +112,8 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                             ? option.id.toString().includes(inputValue) ||
                               option.address.toLowerCase().includes(inputValue.toLowerCase()) ||
                               option.postCode.toString().includes(inputValue) ||
-                              option.state.toLowerCase().includes(inputValue.toLowerCase())
+                              option.state.toLowerCase().includes(inputValue.toLowerCase()) ||
+                              option.description.toLowerCase().includes(inputValue.toLowerCase())
                             : option.id.toString().includes(inputValue) ||
                               option.name.toLowerCase().includes(inputValue.toLowerCase()) ||
                               option.phone.includes(inputValue)

@@ -167,7 +167,7 @@ const AddOrder = ({ updateOrders, closeModal }) => {
                 size="small"
                 options={locations || []}
                 loading={loadingLocations}
-                getOptionLabel={(option) => option.address}
+                getOptionLabel={(option) => option.address + "," + option.description}
                 value={selectedLocation}
                 onChange={handleLocationChange}
                 renderInput={(params) => (

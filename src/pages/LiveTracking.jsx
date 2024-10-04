@@ -199,7 +199,7 @@ const LiveTracking = () => {
         else if (routesData && routesData.length === 0) {
             return <NoRouteFound />;}
         else if (routesData) {
-            return (
+            return ( // AREA OF INTEREST
                 <>
                     <Box sx={{ display: 'flex', justifyContent: 'center',gap: 5, margin: 2}}>
                         <Button variant="contained" color="primary" onClick={checkAllRoutes}>

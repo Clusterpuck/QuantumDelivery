@@ -8,7 +8,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Typography from '@mui/material/Typography';
 import { login } from '../store/apiFunctions';
-import {fetchMethod} from '../store/apiFunctions';
 import Cookies from 'js-cookie';
 import { CircularProgress } from '@mui/material';
 

@@ -17,7 +17,7 @@ const AccountDetailsForm = ({ handleOpenPasswordModal }) => {
     const [success, setSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
 
-    // get username from cookie (id) 
+    // get username from cookie (id) and authToken
     const accountId = Cookies.get('userName');
 
     useEffect(() => {

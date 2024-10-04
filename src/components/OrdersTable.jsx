@@ -28,6 +28,8 @@ const statusOptions = ["PLANNED", "ON-ROUTE", "DELIVERED", "CANCELLED", "ASSIGNE
     '':'',
 };
 
+// Disabled order statuses by default
+const disabledStatuses = ["DELIVERED", "CANCELLED"];
 
 const headerWidths = {
     'ID': '10%',
@@ -51,7 +53,9 @@ const OrdersTable = ({ orders, onRefresh, showMessage }) => {
     const [orderToDelete, setOrderToDelete] = useState(null);
     const [sortBy, setSortBy] = useState('deliveryDate'); // Default sort by deliveryDate
     const [sortDirection, setSortDirection] = useState('asc');
-    const [selectedStatuses, setSelectedStatuses] = useState(statusOptions);
+    const [selectedStatuses, setSelectedStatuses] = useState(
+        statusOptions.filter(status => !disabledStatuses.includes(status)) // Exclude "DELIVERED" and "CANCELLED"
+    );
     //const [filteredData, setFilteredData] = useState(orders);
 
     const handleSnackbarClose = () => {

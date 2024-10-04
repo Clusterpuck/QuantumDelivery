@@ -3,6 +3,7 @@ import { AddressAutofill, AddressMinimap, useConfirmAddress } from '@mapbox/sear
 import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
 import { createLocation, fetchRegion } from '../store/apiFunctions';
 import LocationOnIcon from '@mui/icons-material/LocationOn'; 
+import { Description } from '@mui/icons-material';
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
@@ -113,6 +114,7 @@ const AddressSearch = ({ onCloseForm }) => {
                 State: formData.state,
                 Postcode: formData.zipCode,
                 Country: formData.country,
+                Description: formData.locationName,
             };
 
             console.log("locationData:", locationData); // Debug the location data

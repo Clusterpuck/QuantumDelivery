@@ -523,7 +523,7 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
 
                             <AltRouteIcon />
 
-                            Calculate Routes
+                            Create Routes
                         </Button>
                     )}
                 </Grid>

@@ -508,7 +508,7 @@ const ViewRoutes = () =>
                     </Button>
                   </Grid>
                 </Grid>
-                <AddRouteForm updateRoutes={loadRoutes} closeView={handleCloseModal} />
+                <AddRouteForm updateRoutes={loadRoutes} closeView={handleCloseModal} showMessage={handleShowMessage} />
               </Box>
             </Modal>
 

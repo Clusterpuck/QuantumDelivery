@@ -28,12 +28,12 @@ import CustomLoading from '../components/CustomLoading.jsx';
 import
 {
     TextField, Button, Grid, MenuItem, Typography, InputAdornment, Radio, RadioGroup,
-    FormControlLabel, Switch, Skeleton, FormGroup, Tooltip
+    FormControlLabel, Switch, Skeleton, FormGroup, Tooltip, Snackbar, Alert
 } from '@mui/material';
 
 
 
-const AddRouteForm = ({ updateRoutes, closeView }) =>
+const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
 {
 
     const [selectedDate, setSelectedDate] = useState(dayjs());
@@ -48,6 +48,11 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
     const [routesLoading, setRoutesLoading] = useState(false);
     const [maxVehicle, setMaxVehicle] = useState(1);
     const [loadingMaxVehicle, setLoadingMaxVehicle] = useState(true);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success',
+    });
 
     // Custom style for circular icon background
     const iconStyle = {
@@ -80,7 +85,23 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
         return `${year}-${month}-${day}`;
     };
 
+    const refreshOrders = async () =>
+        {
+            loadOrders();
+        };
 
+    const handleShowMessage = (msg, type) => {
+        setSnackbar({
+            open: true,
+            message: msg,
+            severity: type
+        });
+    };
+
+    const handleSnackbarClose = () =>
+        {
+            setSnackbar(prev => ({ ...prev, open: false }));
+        };
 
     /**
      * If orders are loaded and the datePlanned orders are defined and have values
@@ -120,7 +141,14 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
             };
 
             //console.log("Payload being sent: ", JSON.stringify(userInput));
-            await postDeliveryRoutes(userInput);
+            const responseMessage = await postDeliveryRoutes(userInput);
+            if (responseMessage === null) {
+                showMessage('Route failed to create');
+            }
+            else {
+                showMessage('Route created successfully');
+            }
+
             //needs to return all routes, not just new routes
             updateRoutes();
             //send instead of relying on set due to asynch setting
@@ -533,6 +561,17 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
                         </Button>
                     )}
                 </Grid>
+
+                <Snackbar
+                    open={snackbar.open}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                    autoHideDuration={6000}
+                    onClose={handleSnackbarClose}
+                >
+                    <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+                        {snackbar.message}
+                    </Alert>
+                </Snackbar>
             </Grid>
 
             {/* unassigned orders component */}
@@ -546,7 +585,7 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
                             <Typography variant="h6">
                                 Unassigned Orders: {datePlannedOrders.length}
                             </Typography>
-                            <OrdersTable orders={datePlannedOrders} />
+                            <OrdersTable orders={datePlannedOrders} onRefresh={refreshOrders} showMessage={handleShowMessage}/>
                         </>
 
                     )}

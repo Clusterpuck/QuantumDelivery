@@ -28,7 +28,7 @@ import CustomLoading from '../components/CustomLoading.jsx';
 import
 {
     TextField, Button, Grid, MenuItem, Typography, InputAdornment, Radio, RadioGroup,
-    FormControlLabel, Switch, Skeleton, FormGroup
+    FormControlLabel, Switch, Skeleton, FormGroup, Tooltip
 } from '@mui/material';
 
 
@@ -474,23 +474,28 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
                 {/**Calc type selection */}
                 <Grid item xs={6} md={3}>
                 <FormGroup>
-    <FormControlLabel
-        control={<Switch 
-            value={calcType} 
-            onChange={handleCalcChange} 
-            icon = {<div style={iconStyle}><ComputerIcon style={{fontSize: 16}}/></div>}
-            checkedIcon={<div style={iconStyle}><ImportantDevicesIcon style={{fontSize: 16}} /></div>} />}
-        label={"Use Quantum"}
-    />
-    <FormControlLabel
-        control={<Switch 
-                defaultChecked 
-                icon = {<div style={iconStyle}><CommuteIcon style={{fontSize: 16}}/> </div>}
-                checkedIcon = {<div style={iconStyle}><IconFleet style={{fontSize: 16}}/> </div>}
-                value={xkmeans} 
-                onChange={handleMeansChange} />}
-        label={<>Optimise Fleet</>}
-    />
+    <Tooltip title="Enable quantum calculation to optimise route" placement="left">
+        <FormControlLabel
+            control={<Switch 
+                    value={calcType} 
+                    onChange={handleCalcChange} 
+                    icon = {<div style={iconStyle}><ComputerIcon style={{fontSize: 16}}/></div>}
+                    checkedIcon={<div style={iconStyle}><ImportantDevicesIcon style={{fontSize: 16}} /></div>} />}
+            label={"Use Quantum"}
+        />
+    </Tooltip>
+    <Tooltip title="Enable fleet routing optimisation to minimise vehicle usage" placement="left">
+        <FormControlLabel
+            control={<Switch 
+                    defaultChecked 
+                    icon = {<div style={iconStyle}><CommuteIcon style={{fontSize: 16}}/> </div>}
+                    checkedIcon = {<div style={iconStyle}><IconFleet style={{fontSize: 16}}/> </div>}
+                    value={xkmeans} 
+                    onChange={handleMeansChange} />}
+            label={<>Optimise Fleet</>}
+        />
+    </Tooltip>
+    <Tooltip title="Enable realistic travel distances for more accurate routing" placement="left">
     <FormControlLabel
         control={<Switch 
                 value={mappingType} 
@@ -500,6 +505,7 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
                 />}
         label={<>Use MapBox</>}
     />
+    </Tooltip>
 </FormGroup>
 
                 </Grid>

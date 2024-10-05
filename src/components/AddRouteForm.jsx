@@ -33,7 +33,7 @@ import
 
 
 
-const AddRouteForm = ({ updateRoutes, closeView }) =>
+const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
 {
 
     const [selectedDate, setSelectedDate] = useState(dayjs());
@@ -141,7 +141,14 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
             };
 
             //console.log("Payload being sent: ", JSON.stringify(userInput));
-            await postDeliveryRoutes(userInput);
+            const responseMessage = await postDeliveryRoutes(userInput);
+            if (responseMessage === null) {
+                showMessage('Route failed to create');
+            }
+            else {
+                showMessage('Route created successfully');
+            }
+
             //needs to return all routes, not just new routes
             updateRoutes();
             //send instead of relying on set due to asynch setting
@@ -554,6 +561,17 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
                         </Button>
                     )}
                 </Grid>
+
+                <Snackbar
+                    open={snackbar.open}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                    autoHideDuration={6000}
+                    onClose={handleSnackbarClose}
+                >
+                    <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+                        {snackbar.message}
+                    </Alert>
+                </Snackbar>
             </Grid>
 
             {/* unassigned orders component */}
@@ -572,17 +590,6 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
 
                     )}
             </Grid>
-
-            <Snackbar
-                open={snackbar.open}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                autoHideDuration={6000}
-                onClose={handleSnackbarClose}
-            >
-                <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
-                    {snackbar.message}
-                </Alert>
-            </Snackbar>
         </Grid>
     )
 }

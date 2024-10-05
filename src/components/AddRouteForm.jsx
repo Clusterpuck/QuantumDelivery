@@ -503,7 +503,7 @@ const AddRouteForm = ({ updateRoutes, closeView }) =>
                 icon = {<div style={iconStyle}><TimelineIcon style={{fontSize: 16}}/> </div>}
                 checkedIcon = {<div style={iconStyle}><IconMap style={{fontSize: 16}}/> </div>}
                 />}
-        label={<>Use MapBox</>}
+        label={<>Use Traffic Data</>}
     />
     </Tooltip>
 </FormGroup>

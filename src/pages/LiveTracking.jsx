@@ -39,6 +39,7 @@ const LiveTracking = () => {
     const [dateOptions, setDateOptions] = useState([]);
 
     const [selectedDate, setSelectedDate] = useState(dayjs());
+    const [selectAll, setSelectAll] = useState(true)
 
     const colourPalette = [
 
@@ -51,6 +52,17 @@ const LiveTracking = () => {
 
     const handleDateChange = (date) => { // logic for showing orders from a specific date is still yet to be implemented.
         setSelectedDate(date);
+    };
+
+    // Responsible for check all routes
+    const handleSelectAllChange = (event) => {
+        const checked = event.target.checked;
+        const newCheckedRoutes = {};
+        routesData.forEach(route => {
+            newCheckedRoutes[route.deliveryRouteID] = checked; // Set to checked or unchecked based on the state
+        });
+        setCheckedRoutes(newCheckedRoutes);
+        setSelectAll(checked); // Update the selectAll state
     };
 
     /**
@@ -201,18 +213,20 @@ const LiveTracking = () => {
         else if (routesData) {
             return (
                 <>
-                    <Box sx={{ display: 'flex', justifyContent: 'center',gap: 5, margin: 2}}>
-                        <Button variant="contained" color="primary" onClick={checkAllRoutes}>
-                            Check All Routes
-                        </Button>
-                        <Button variant="contained" color="secondary" onClick={uncheckAllRoutes}>
-                            Uncheck All Routes
-                        </Button>
-                    </Box>
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell></TableCell>
+                            <TableCell>
+                                <Checkbox
+                                    sx={{
+                                        '& .MuiSvgIcon-root': {
+                                            fontSize: 28, // Adjust the size of the checkbox icon
+                                        },
+                                    }}
+                                    checked={selectAll}
+                                    onChange={handleSelectAllChange} // Call the new function
+                                />    
+                            </TableCell>
                             <TableCell>Route ID</TableCell>
                             <TableCell>Driver</TableCell>
                             <TableCell>Vehicle ID</TableCell>
@@ -347,6 +361,14 @@ const LiveTracking = () => {
             setCheckedRoutes(initialCheckedRoutes);
         }
     }, [routesData]);
+
+    // update selectAll state based on checkedRoutes
+    useEffect(() => {
+        if (routesData) {
+            const allChecked = routesData.every(route => !!checkedRoutes[route.deliveryRouteID]);
+            setSelectAll(allChecked);
+        }
+    }, [checkedRoutes, routesData]);
 
 
     return (

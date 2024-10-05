@@ -39,6 +39,7 @@ function Navbar() {
 
   // Determine pages based on role
   const pages = authRole === 'ADMIN' ? admin_pages : authRole === 'DRIVER' ? driver_pages : [];
+  const home_path = authRole === 'ADMIN' ? '/home' : authRole === 'DRIVER' ? '/driverviewroutes' : '/login'; // Default to login if no role
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -62,7 +63,7 @@ function Navbar() {
             variant="h6"
             noWrap
             component={Link}
-            to="/home"
+            to={home_path}
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -129,7 +130,7 @@ function Navbar() {
             variant="h6"
             noWrap
             component={Link}
-            to="/home"
+            to={home_path}
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },

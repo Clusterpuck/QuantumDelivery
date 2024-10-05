@@ -288,7 +288,7 @@ const ViewRoutes = () =>
       onClick={handleOpenModal}
       sx={{ borderRadius: '18px' }}
     >
-      <AddIcon sx={{ fontSize: '2rem' }} /> Calculate New Routes
+      <AddIcon sx={{ fontSize: '2rem' }} /> Create New Routes
     </Button>
   </Grid>
 
@@ -499,7 +499,7 @@ const ViewRoutes = () =>
                       align="left"  // Align text to the left
                       sx={{ fontWeight: 'bold', mb: 1 }}  // Bold and margin below
                     >
-                      Calculate New Routes
+                      Create New Routes
                     </Typography>
                   </Grid>
                   <Grid item xs={2} textAlign="right">  {/* Button takes up 2 units */}
@@ -508,7 +508,7 @@ const ViewRoutes = () =>
                     </Button>
                   </Grid>
                 </Grid>
-                <AddRouteForm updateRoutes={loadRoutes} closeView={handleCloseModal} />
+                <AddRouteForm updateRoutes={loadRoutes} closeView={handleCloseModal} showMessage={handleShowMessage} />
               </Box>
             </Modal>
 

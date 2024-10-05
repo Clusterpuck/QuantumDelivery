@@ -21,9 +21,7 @@ import ComputerIcon from '@mui/icons-material/Computer';
 import CommuteIcon from '@mui/icons-material/Commute';
 import TimelineIcon from '@mui/icons-material/Timeline';
 
-
-
-import OrdersTable from '../components/OrdersTable.jsx';
+import PlannedOrdersTable from './PlannedOrdersTable.jsx';
 import CustomLoading from '../components/CustomLoading.jsx';
 import
 {
@@ -585,7 +583,7 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
                             <Typography variant="h6">
                                 Unassigned Orders: {datePlannedOrders.length}
                             </Typography>
-                            <OrdersTable orders={datePlannedOrders} onRefresh={refreshOrders} showMessage={handleShowMessage}/>
+                            <PlannedOrdersTable orders={datePlannedOrders} onRefresh={refreshOrders} showMessage={handleShowMessage} />
                         </>
 
                     )}

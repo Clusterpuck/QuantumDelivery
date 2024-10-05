@@ -212,7 +212,17 @@ const LiveTracking = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell></TableCell>
+                            <TableCell>
+                                <Checkbox
+                                    sx={{
+                                        '& .MuiSvgIcon-root': {
+                                            fontSize: 28, // Adjust the size of the checkbox icon
+                                        },
+                                    }}
+                                    defaultChecked
+                                    checked={checkAllRoutes} // Control the checkbox state 
+                                />    
+                            </TableCell>
                             <TableCell>Route ID</TableCell>
                             <TableCell>Driver</TableCell>
                             <TableCell>Vehicle ID</TableCell>

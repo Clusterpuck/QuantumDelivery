@@ -1,5 +1,6 @@
 import * as Constants from '../Constants.js';
 import {formatDate } from './helperFunctions.js';
+import Cookies from 'js-cookie';
 
 export const fetchRegion = async () => {
     let data = null
@@ -26,62 +27,90 @@ export const fetchRegion = async () => {
 };
 
 export const fetchCustomers = async () => {
-    let ipData = null
+    let customersData = null; 
     try {
-        const ipResponse = await fetch( Constants.DATA_ENDPOINT + 'customers');
-        if (!ipResponse.ok) {
-            throw new Error('Failed to fetch IP address');
+        const token = Cookies.get('authToken'); // Retrieve the token from the cookie
+        const response = await fetch(Constants.DATA_ENDPOINT + 'customers', {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json', // Set the content type
+                'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch customers'); // Provide a more descriptive error
         }
-        ipData = await ipResponse.json();
-        //console.log("Data is " + JSON.stringify(ipData) );
-        // Use user's IP address to fetch region information
+
+        customersData = await response.json(); // Parse the response as JSON
+        console.log("Fetched customer data:", customersData); // Log the fetched data for debugging
+
     } catch (error) {
-        console.error('Error fetching region:', error.message);
+        console.error('Error fetching customers:', error.message); // Log the error message
     }
-    return ipData
+    return customersData; 
 };
 
 export const fetchLocations = async () => {
-    let ipData = null
+    let locationsData = null; 
     try {
-        const ipResponse = await fetch( Constants.DATA_ENDPOINT + 'locations');
-        if (!ipResponse.ok) {
-            throw new Error('Failed to fetch IP address');
+        const token = Cookies.get('authToken'); // Retrieve the token from the cookie
+        const response = await fetch(Constants.DATA_ENDPOINT + 'locations', {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json', // Set the content type
+                'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch locations'); // Provide a more descriptive error
         }
-        ipData = await ipResponse.json();
-        //console.log("Data is " + JSON.stringify(ipData) );
-        // Use user's IP address to fetch region information
+
+        locationsData = await response.json(); // Parse the response as JSON
+        console.log("Fetched locations data:", locationsData); // Log the fetched data for debugging
+
     } catch (error) {
-        console.error('Error fetching region:', error.message);
+        console.error('Error fetching locations:', error.message); // Log the error message
     }
-    return ipData
+    return locationsData; 
 };
 
-
 export const fetchProducts = async () => {
-    let ipData = null
+    let productsData = null; 
     try {
-        const ipResponse = await fetch( Constants.DATA_ENDPOINT + 'products');
-        if (!ipResponse.ok) {
-            throw new Error('Failed to fetch product data');
+        const token = Cookies.get('authToken'); // Retrieve the token from the cookie
+        const response = await fetch(Constants.DATA_ENDPOINT + 'products', {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json', // Set the content type
+                'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch product data'); // Provide a more descriptive error
         }
-        ipData = await ipResponse.json();
-        //console.log("Data is " + JSON.stringify(ipData) );
-        // Use user's IP address to fetch region information
+
+        productsData = await response.json(); // Parse the response as JSON
+        console.log("Fetched products data:", productsData); // Log the fetched data for debugging
+
     } catch (error) {
-        console.error('Error fetching region:', error.message);
+        console.error('Error fetching products:', error.message); // Log the error message
     }
-    return ipData
+    return productsData; 
 };
 
 
 
 export const postLocation = async (newLocation) => {
     try {
+        const token = Cookies.get('authToken');
         const response = await fetch( Constants.DATA_ENDPOINT + 'locations', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(newLocation),
         });
@@ -102,10 +131,12 @@ export const postLocation = async (newLocation) => {
 
 export const postCustomer = async (newCustomer) => {
     try {
+        const token = Cookies.get('authToken');
         const response = await fetch( Constants.DATA_ENDPOINT + 'customers', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(newCustomer),
         });
@@ -127,10 +158,12 @@ export const postCustomer = async (newCustomer) => {
 //may need to change to throw exceptions further to give speicific call data
 export const postMethod = async (newData, endPoint) => {
     try {
+        const token = Cookies.get('authToken');
         const response = await fetch( Constants.DATA_ENDPOINT + endPoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(newData),
         });
@@ -153,27 +186,38 @@ export const postMethod = async (newData, endPoint) => {
 
 
 export const fetchMethod = async (endpoint) => {
-    let ipData = null
+    let responseData = null;
     try {
-        const ipResponse = await fetch( Constants.DATA_ENDPOINT + endpoint);
-        if (!ipResponse.ok) {
-            throw new Error('Failed to fetch from endpoint ', endpoint);
+        const token = Cookies.get('authToken'); // Retrieve the token from the cookie
+        const response = await fetch(Constants.DATA_ENDPOINT + endpoint, {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json', // Set the content type
+                ...(token && { 'Authorization': `Bearer ${token}` }), // Include the token if it exists
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch from endpoint: ${endpoint}`); // Use template literals for error messages
         }
-        ipData = await ipResponse.json();
-        // console.log("Fetch Method. Data is " + JSON.stringify(ipData) );
-        // Use user's IP address to fetch region information
+
+        responseData = await response.json(); // Parse the response as JSON
+        console.log("Fetch Method. Data is:", responseData); // Log the fetched data for debugging
+
     } catch (error) {
-        console.error('Error fetching from endpoint:', endpoint,' ', error.message);
+        console.error('Error fetching from endpoint:', endpoint, error.message); // Log the error message
     }
-    return ipData
+    return responseData; 
 };
 
 export const deleteMethod = async (id, endPoint) => {
     try {
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}${endPoint}/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -197,10 +241,12 @@ export const fetchDeliveryRoute = async (driverUsername) => {
     console.log("SENDING USERNAME: ", driverUsername);
     try {
         const endpoint = `DeliveryRoutes/driver/${driverUsername}`;
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}${endpoint}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -219,10 +265,12 @@ export const fetchDeliveryRoute = async (driverUsername) => {
 export const postDeliveryRoutes = async (newInput) => {
     try {
         console.log("sending ", JSON.stringify(newInput));
+        const token = Cookies.get('authToken');
         const response = await fetch(Constants.DATA_ENDPOINT + 'deliveryroutes', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(newInput),
         });
@@ -245,10 +293,13 @@ export const postDeliveryRoutes = async (newInput) => {
 
 export const startDeliveryRoute = async(routeId) => {
     try {
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}deliveryroutes/start/${routeId}`, {
             method: 'PUT',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'accept': '*/*'
+                
             }
         });
 
@@ -272,10 +323,12 @@ export const startDeliveryRoute = async(routeId) => {
 export const updateOrderStatusFromRoute = async(input) =>{
     console.log("xxXXBody to send to update status " + JSON.stringify(input))
     try{
+        const token = Cookies.get('authToken');
         const response = await fetch(Constants.DATA_ENDPOINT + 'deliveryroutes/update-status', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(input),
         });
@@ -302,10 +355,12 @@ export const updateOrderStatusFromRoute = async(input) =>{
 // };
 export const updateOrderDelayed = async(input) =>{
     try{
+        const token = Cookies.get('authToken');
         const response = await fetch(Constants.DATA_ENDPOINT + 'deliveryroutes/update-delayed', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(input),
         });
@@ -332,10 +387,12 @@ export const updateOrderDelayed = async(input) =>{
 // };
 export const updateOrderIssue = async(input) =>{
     try{
+        const token = Cookies.get('authToken');
         const response = await fetch(Constants.DATA_ENDPOINT + 'deliveryroutes/update-issue', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(input),
         });
@@ -382,17 +439,26 @@ export const login = async (username, password) => {
 };
 
 export const fetchIssueOrders = async () => {
-    let orderData = null
+    let orderData = null;
     try {
-        const orderResponse = await fetch( Constants.DATA_ENDPOINT + 'orders/issues');
+        const token = Cookies.get('authToken'); // Retrieve the token from the cookie
+        const orderResponse = await fetch(Constants.DATA_ENDPOINT + 'orders/issues', {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json', // Set the content type
+                ...(token && { 'Authorization': `Bearer ${token}` }), // Include the token if it exists
+            },
+        });
+
         if (!orderResponse.ok) {
             throw new Error('Failed to fetch issue orders data');
         }
-        orderData = await orderResponse.json();
+
+        orderData = await orderResponse.json(); // Parse the response as JSON
     } catch (error) {
-        console.error('Error fetching issue orders data:', error.message);
+        console.error('Error fetching issue orders data:', error.message); // Log the error
     }
-    return orderData
+    return orderData; 
 };
 
 ///Input is: const input = {
@@ -402,10 +468,12 @@ export const fetchIssueOrders = async () => {
 export const updateOrderStatus  = async(input) =>{
     try{
         const encodedAccountId = encodeURIComponent(accountId);
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}accounts/${encodedAccountId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(updatedAccountData),
         });
@@ -431,10 +499,12 @@ export const editAccount = async (accountId, updatedAccountData) => {
         // Remove username from updatedAccountData to prevent it from being sent
         const { username, ...accountDataWithoutUsername } = updatedAccountData;
 
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}accounts/${accountId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(accountDataWithoutUsername),  // Send the data excluding the username
         });
@@ -458,10 +528,12 @@ export const editAccount = async (accountId, updatedAccountData) => {
 
 export const createAccount = async (newAccountData) => {
     try {
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}accounts`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(newAccountData),
         });
@@ -488,10 +560,12 @@ export const createAccount = async (newAccountData) => {
 // account id is the USERNAME and it is stored in the user's cookie for easy access
 export const getAccountDetails = async (accountId) => {
     try {
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}accounts/${accountId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -516,14 +590,15 @@ export const getAccountDetails = async (accountId) => {
  * @param {string} accountId - The ID of the account to be deleted
  * @returns {Promise<Object>} - The response object from the server
  */
-export const deleteAccount = async (accountId) => { // Add 'async' keyword here
+export const deleteAccount = async (accountId) => { 
    
     try {
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}accounts/${accountId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                // Add any authentication tokens or headers here if needed
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -533,7 +608,7 @@ export const deleteAccount = async (accountId) => { // Add 'async' keyword here
             throw new Error(errorData.message || 'Error deleting account');
         }
 
-        const data = await response.json(); // This may not be necessary if your DELETE response doesn't return data
+        const data = await response.json(); 
         return data; // Return the success message or any other relevant data
     } catch (error) {
         console.error('Error deleting account:', error);
@@ -557,10 +632,12 @@ export const deleteAccount = async (accountId) => { // Add 'async' keyword here
 //  ]
 //}
 export const updateOrderDetails = async (input) => {
+    const token = Cookies.get('authToken');
     const response = await fetch(`${Constants.DATA_ENDPOINT}orders/${input.orderId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(input),
     });
@@ -577,10 +654,12 @@ export const updateOrderDetails = async (input) => {
 // Function to create a new product
 export const createProduct = async (productData) => {
     try {
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}products`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(productData), // Convert productData to JSON
         });
@@ -610,10 +689,12 @@ export const getProductDetails = async (productId) => {
         const url = `${Constants.DATA_ENDPOINT}products/${idAsInt}`;
         console.log(`Fetching product details from: ${url}`); // Log the full URL
 
+        const token = Cookies.get('authToken');
         const response = await fetch(url, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -646,10 +727,12 @@ export const updateProduct = async (productId, productData) => {
             throw new Error("Name and UnitOfMeasure are required fields.");
         }
 
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}products/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(requestData), // Use the mapped requestData
         });
@@ -675,10 +758,12 @@ export const deleteProduct = async (productId) => {
     try {
         // Ensure productId is an integer
         const id = parseInt(productId, 10);
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}products/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -703,10 +788,12 @@ export const deleteCustomer = async (customerId) => {
     try {
         // ensure customerId is an integer
         const id = parseInt(customerId, 10);
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}customers/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -746,10 +833,12 @@ export const createCustomer = async (customerData) => {
         const url = `${Constants.DATA_ENDPOINT}customers`; // URL for the POST request
         console.log(`Sending POST request to: ${url}`); // log the full URL
 
+        const token = Cookies.get('authToken');
         const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(customerData), // convert customerData to JSON string
         });
@@ -784,10 +873,12 @@ export const updateCustomer = async (customerId, customerData) => {
         const url = `${Constants.DATA_ENDPOINT}customers/${idAsInt}`; 
         console.log(`Sending PUT request to: ${url}`); 
 
+        const token = Cookies.get('authToken');
         const response = await fetch(url, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(customerData), // convert customerData to JSON string
         });
@@ -818,10 +909,12 @@ export const getCustomerDetails = async (customerId) => {
         const url = `${Constants.DATA_ENDPOINT}customers/${idAsInt}`; 
         console.log(`Fetching customer details from: ${url}`); // log the full URL
 
+        const token = Cookies.get('authToken');
         const response = await fetch(url, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -845,10 +938,12 @@ export const deleteLocation = async (locationId) => {
     try {
         // ensure locationId is an integer
         const id = parseInt(locationId, 10);
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}locations/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -889,10 +984,12 @@ export const getLocationDetails = async (locationId) => {
         const url = `${Constants.DATA_ENDPOINT}locations/${idAsInt}`;
         console.log(`Fetching location details from: ${url}`); 
 
+        const token = Cookies.get('authToken');
         const response = await fetch(url, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -921,10 +1018,12 @@ export const createLocation = async (locationData) => {
         const url = `${Constants.DATA_ENDPOINT}locations`;
         console.log(`Sending POST request to: ${url}`); 
 
+        const token = getCookie('authToken');
         const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(locationData), 
         });
@@ -954,10 +1053,12 @@ export const updateLocation = async (locationId, locationData) => {
         const url = `${Constants.DATA_ENDPOINT}locations/${locationId}`;
         console.log(`Sending PUT request to: ${url}`);
 
+        const token = Cookies.get('authToken');
         const response = await fetch(url, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(locationData), 
         });
@@ -991,9 +1092,16 @@ export const fetchNumVehicles = async (date) => {
         const formattedDate = new Date(date).toISOString().split('T')[0]; // Get only the 'yyyy-MM-dd' part
         const endpoint = Constants.DATA_ENDPOINT + "Vehicles/num-on-date/" + encodeURIComponent(formattedDate); // Use query param
         
-        console.log("End points sent is " + endpoint + " date is: " + formattedDate);
+        console.log("Endpoint sent is " + endpoint + " date is: " + formattedDate);
 
-        const ipResponse = await fetch(endpoint);
+        const token = Cookies.get('authToken'); 
+        const ipResponse = await fetch(endpoint, {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json', // Set the content type
+                ...(token && { 'Authorization': `Bearer ${token}` }), 
+            },
+        });
         
         if (!ipResponse.ok) {
             throw new Error('Failed to fetch from endpoint ' + endpoint);
@@ -1007,7 +1115,6 @@ export const fetchNumVehicles = async (date) => {
     }
     return ipData;
 };
-
 
 export const deleteRouteByDate = async (date) => {
     console.log("In delete by date API function. Incoming date is: " + JSON.stringify(date));
@@ -1032,10 +1139,12 @@ export const deleteRouteByDate = async (date) => {
         console.log("Sending DELETE request to: " + endpoint + " with date: " + formattedDate);
         
         // Send the DELETE request to the API
+        const token = Cookies.get('authToken');
         const response = await fetch(endpoint, {
             method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             }
         });
         
@@ -1066,10 +1175,12 @@ export const deleteRouteByDate = async (date) => {
  * @returns {string|null} - Returns success message or null in case of failure
  */
 export const changePassword = async (username, oldPassword, newPassword) => {
+    const token = Cookies.get('authToken');
     const response = await fetch('https://routingdata.azurewebsites.net/api/accounts/change-password', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
             Username: username,
@@ -1089,10 +1200,12 @@ export const changePassword = async (username, oldPassword, newPassword) => {
 
 export const deleteOrder = async (id) => {
     try {
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}orders/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -1112,11 +1225,12 @@ export const deleteOrder = async (id) => {
 
 // apiFunctions.js
 export const reactivateAccount = async (accountId) => {
+    const token = Cookies.get('authToken');
     const response = await fetch(`${Constants.DATA_ENDPOINT}accounts/reactivate/${accountId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            // Add any authentication headers if needed
+            'Authorization': `Bearer ${token}`,
         },
     });
     if (!response.ok) {
@@ -1140,12 +1254,21 @@ export const fetchAccounts = async () => {
 };
 
 export const fetchVehicles = async () => {
-    let vehicleData = null
+    let vehicleData = null;
     try {
-        const vehicleResponse = await fetch( Constants.DATA_ENDPOINT + 'vehicles');
+        const token = Cookies.get('authToken'); 
+        const vehicleResponse = await fetch(Constants.DATA_ENDPOINT + 'vehicles', {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json', // Set the content type
+                ...(token && { 'Authorization': `Bearer ${token}` }), 
+            },
+        });
+
         if (!vehicleResponse.ok) {
             throw new Error('Failed to fetch vehicles.');
         }
+        
         vehicleData = await vehicleResponse.json();
     } catch (error) {
         console.error('Error fetching vehicles:', error.message);
@@ -1161,10 +1284,12 @@ export const fetchVehicles = async () => {
 //      }
 export const updateRouteDetails = async (input) => {
     console.log("SENDING INPUT: ", JSON.stringify(input));
+    const token = Cookies.get('authToken');
     const response = await fetch(`${Constants.DATA_ENDPOINT}deliveryroutes/${input.routeID}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(input),
     });
@@ -1182,10 +1307,12 @@ export const updateRouteDetails = async (input) => {
 export const getAccounts = async () => {
     let accountsData = null;
     try {
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}accounts`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -1205,10 +1332,12 @@ export const getAccounts = async () => {
 export const getCustomers = async () => {
     let customersData = null;
     try {
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}customers`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -1228,10 +1357,12 @@ export const getCustomers = async () => {
 export const getLocations = async () => {
     let locationsData = null;
     try {
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}locations`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 
@@ -1251,10 +1382,12 @@ export const getLocations = async () => {
 export const getProducts = async () => {
     let productsData = null;
     try {
+        const token = Cookies.get('authToken');
         const response = await fetch(`${Constants.DATA_ENDPOINT}products`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
         });
 

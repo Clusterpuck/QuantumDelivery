@@ -11,7 +11,7 @@ import { fetchCustomers, fetchLocations, postMethod } from '../store/apiFunction
 import CancelIcon from '@mui/icons-material/Cancel';
 
 const AddOrder = ({ updateOrders, closeModal, showMessage }) => {
-  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [selectedDate, setSelectedDate] = useState(null);
   const [orderNote, setOrderNote] = useState('');
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -146,13 +146,13 @@ const AddOrder = ({ updateOrders, closeModal, showMessage }) => {
               <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en-gb">
                 <DateTimePicker
                   tabIndex={1}
-                  label="Date Required"
+                  label="Delivery Date"
                   value={selectedDate}
                   onChange={handleDateChange}
                   size="small"
-                  renderInput={(params) => <TextField required {...params} />
-                  
-                }
+                  renderInput={(params) => <TextField required {...params} />}
+                  minDate={dayjs(`${dayjs().year()}-01-01`)}
+                  maxDate={dayjs(`${dayjs().year()+1}-12-31`)}
                 />
               </LocalizationProvider>
 

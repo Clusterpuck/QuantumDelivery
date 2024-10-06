@@ -10,7 +10,7 @@ import { DateTimePicker } from '@mui/x-date-pickers';
 import { fetchCustomers, fetchLocations, postMethod } from '../store/apiFunctions.js';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-const AddOrder = ({ updateOrders, closeModal }) => {
+const AddOrder = ({ updateOrders, closeModal, showMessage }) => {
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [orderNote, setOrderNote] = useState('');
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -71,17 +71,27 @@ const AddOrder = ({ updateOrders, closeModal }) => {
   };
 
   const handleSubmitAndClose = async (event ) =>{
-    await submitOrder(event);
-    closeModal();
-
+    const success = await submitOrder(event);
+    if (success) {
+      showMessage('Order submitted successfully!', 'success');
+      closeModal();
+    }
   }
 
   const submitOrder = async (event) => {
     event.preventDefault(); // Prevent page refresh
-    if (!selectedCustomer || !selectedLocation || selectedProducts.length === 0) {
+    if (!selectedCustomer || !selectedLocation) {
       setSnackbar({
         open: true,
         message: 'Please fill in all required fields.',
+        severity: 'error',
+      });
+      return;
+    }
+    if (selectedProducts.length === 0){
+      setSnackbar({
+        open: true,
+        message: 'Please add products.',
         severity: 'error',
       });
       return;
@@ -115,12 +125,14 @@ const AddOrder = ({ updateOrders, closeModal }) => {
         severity: 'success',
       });
       resetForm(); // Clear form after successful submission
+      return true; // Success
     } else {
       setSnackbar({
         open: true,
         message: 'Failed to submit order.',
         severity: 'error',
       });
+      return false; // Fail
     }
   };
 

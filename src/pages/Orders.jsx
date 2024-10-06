@@ -85,7 +85,7 @@ const Orders = () =>
             const filteredOrders = loadOrders.filter(order => order.status !== "CANCELLED");
             setOrders(filteredOrders);
 
-            console.log("Orders recieved are ", JSON.stringify(filteredOrders));
+            console.log("Orders received are ", JSON.stringify(filteredOrders));
         } else
         {
             console.error('Error fetching orders:', error);
@@ -220,7 +220,7 @@ const Orders = () =>
                             </Button>
                         </Grid>
                     </Grid>
-                    <AddOrder updateOrders={loadOrders} closeModal={handleCloseModal} />
+                    <AddOrder updateOrders={loadOrders} closeModal={handleCloseModal} showMessage={handleShowMessage} />
                 </Box>
             </Modal>
 

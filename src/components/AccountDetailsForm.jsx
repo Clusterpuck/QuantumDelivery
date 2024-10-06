@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Box, Paper, Button, Grid, FormControl, InputLabel, Select, MenuItem, Modal } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 import Cookies from 'js-cookie'; 
 import { getAccountDetails, editAccount } from '../store/apiFunctions'; 
 import CheckPasswordForm from './CheckPasswordForm';
@@ -214,6 +215,16 @@ const AccountDetailsForm = () => {
                 aria-describedby="password-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 400, width: '100%' }}>
+                <Button
+                    onClick={handleClosePasswordModal}
+                    sx={{
+                        position: 'absolute',
+                        top: 16,
+                        right: 16,
+                    }}
+                >
+                    <CancelIcon />
+                </Button>
                     <CheckPasswordForm username={accountId} onClose={handleClosePasswordModal} />
                 </Box>
             </Modal>

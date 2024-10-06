@@ -59,13 +59,23 @@ function Navbar() {
     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
+          {/* Logo image only visible on medium and larger screens */}
+          <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+            <img 
+              src="/quantalogo.png" 
+              alt="Company Logo" 
+              style={{ height: 40 }} 
+            />
+          </Box>
+
           <Typography
             variant="h6"
             noWrap
             component={Link}
             to={home_path}
             sx={{
-              mr: 2,
+              mr: 4,
+              ml: 2,
               display: { xs: 'none', md: 'flex' },
               fontFamily: 'monospace',
               fontWeight: 700,
@@ -119,8 +129,14 @@ function Navbar() {
                     </Typography>
                   </MenuItem>
                 ))}
+                {/* Logout option for mobile view */}
                 <MenuItem onClick={handleLogout}>
-                  <Typography variant='h6' textAlign="center">Logout</Typography>
+                <Typography
+                  textAlign="center"
+                  sx={{ fontSize: 'inherit', textDecoration: 'none', color: 'inherit' }}
+                >
+                  Logout
+              </Typography>
                 </MenuItem>
               </Menu>
             </Box>
@@ -174,7 +190,11 @@ function Navbar() {
                 >
                   <AccountCircleIcon fontSize="inherit" />
                 </IconButton>
-                <Button onClick={handleLogout} sx={{ color: 'white', ml: 2 }}>
+                {/* Logout option for larger screens */}
+                <Button 
+                  onClick={handleLogout} 
+                  sx={{ color: 'white', ml: 2, display: { xs: 'none', md: 'inline-flex' } }}
+                >
                   Logout
                 </Button>
               </>
@@ -183,6 +203,7 @@ function Navbar() {
         </Toolbar>
       </Container>
     </AppBar>
+
   );
 }
 

@@ -1453,6 +1453,29 @@ export const updateVehicle = async (id, updatedVehicle) => {
     }
 };
 
+// GET: api/Vehicles
+export const getVehicles = async () => {
+    try {
+        const token = Cookies.get('authToken');
+        const response = await fetch(`${Constants.DATA_ENDPOINT}vehicles`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch vehicles');
+        }
+
+        const vehiclesData = await response.json();
+        return vehiclesData;
+
+    } catch (error) {
+        console.error('Error fetching vehicles:', error);
+    }
+};
+
 // POST: api/Vehicles
 // creates a new vehicle
 export const createVehicle = async (newVehicle) => {

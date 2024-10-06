@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography, Autocomplete } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { getAccounts, getProducts, getLocations, getCustomers } from '../store/apiFunctions'; 
+import { getAccounts, getProducts, getLocations, getCustomers, getVehicles } from '../store/apiFunctions'; 
 
 const EditEntityForm = ({ entity, onSuccess }) => {
     const [entityId, setEntityId] = useState('');
@@ -10,35 +10,40 @@ const EditEntityForm = ({ entity, onSuccess }) => {
     const [products, setProducts] = useState([]);
     const [locations, setLocations] = useState([]);
     const [customers, setCustomers] = useState([]);
+    const [vehicles, setVehicles] = useState([]);
     const [selectedItem, setSelectedItem] = useState(null);
 
     // fetch data based on entity type
     useEffect(() => {
-        if (entity === 'account') {
-            const fetchAccounts = async () => {
-                const fetchedAccounts = await getAccounts();
-                setAccounts(fetchedAccounts || []); // Set to an empty array if null
-            };
-            fetchAccounts();
-        } else if (entity === 'product') {
-            const fetchProducts = async () => {
-                const fetchedProducts = await getProducts();
-                setProducts(fetchedProducts || []); // Set to an empty array if null
-            };
-            fetchProducts();
-        } else if (entity === 'location') {
-            const fetchLocations = async () => {
-                const fetchedLocations = await getLocations();
-                setLocations(fetchedLocations || []); // Set to an empty array if null
-            };
-            fetchLocations();
-        } else if (entity === 'customer') {
-            const fetchCustomers = async () => {
-                const fetchedCustomers = await getCustomers();
-                setCustomers(fetchedCustomers || []); // Set to an empty array if null
-            };
-            fetchCustomers();
-        }
+        const fetchEntities = async () => {
+            let fetchedEntities;
+            switch (entity) {
+                case 'account':
+                    fetchedEntities = await getAccounts();
+                    setAccounts(fetchedEntities || []);
+                    break;
+                case 'product':
+                    fetchedEntities = await getProducts();
+                    setProducts(fetchedEntities || []);
+                    break;
+                case 'location':
+                    fetchedEntities = await getLocations();
+                    setLocations(fetchedEntities || []);
+                    break;
+                case 'customer':
+                    fetchedEntities = await getCustomers();
+                    setCustomers(fetchedEntities || []);
+                    break;
+                case 'vehicle':
+                    fetchedEntities = await getVehicles();
+                    setVehicles(fetchedEntities || []);
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        fetchEntities();
     }, [entity]);
 
     const handleAutocompleteChange = (event, newValue) => {
@@ -49,12 +54,11 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                     setEntityId(newValue.username);
                     break;
                 case 'product':
-                    setEntityId(newValue.id);
-                    break;
                 case 'location':
+                case 'customer':
                     setEntityId(newValue.id);
                     break;
-                case 'customer':
+                case 'vehicle':
                     setEntityId(newValue.id);
                     break;
                 default:
@@ -86,7 +90,9 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                     entity === 'account' ? accounts : 
                     entity === 'product' ? products : 
                     entity === 'location' ? locations :
-                    customers
+                    entity === 'customer' ? customers :
+                    entity === 'vehicle' ? vehicles :
+                    []
                 }
                 getOptionLabel={(option) => 
                     entity === 'account' 
@@ -95,7 +101,9 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                         ? `${option.name} (ID: ${option.id})`
                         : entity === 'location'
                         ? `${option.description}, ${option.address}, ${option.state} (Postcode: ${option.postCode})`
-                        : `${option.name} (Phone: ${option.phone})`
+                        : entity === 'customer'
+                        ? `${option.name} (Phone: ${option.phone})`
+                        : `${option.licenseplate} (Status: ${option.status})`
                 }
                 filterOptions={(options, { inputValue }) => {
                     // filter logic based on entity type
@@ -114,9 +122,12 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                               option.postCode.toString().includes(inputValue) ||
                               option.state.toLowerCase().includes(inputValue.toLowerCase()) ||
                               option.description.toLowerCase().includes(inputValue.toLowerCase())
-                            : option.id.toString().includes(inputValue) ||
+                            : entity === 'customer'
+                            ? option.id.toString().includes(inputValue) ||
                               option.name.toLowerCase().includes(inputValue.toLowerCase()) ||
                               option.phone.includes(inputValue)
+                            : option.licenseplate.toString().includes(inputValue) ||
+                              option.status.toLowerCase().includes(inputValue.toLowerCase())
                     );
                 }}
                 onChange={handleAutocompleteChange}
@@ -130,7 +141,9 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                                 ? 'Search by ID or Name'
                                 : entity === 'location'
                                 ? 'Search by ID, Address, Postcode, or State'
-                                : 'Search by ID, Name, or Phone'
+                                : entity === 'customer'
+                                ? 'Search by ID, Name, or Phone'
+                                : 'Search by Vehicle License Plate or Status'
                         }
                         variant="outlined"
                         error={!!error}
@@ -141,6 +154,10 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                     entity === 'account' 
                         ? option.username === value.username
                         : entity === 'product' 
+                        ? option.id === value.id
+                        : entity === 'location'
+                        ? option.id === value.id
+                        : entity === 'customer'
                         ? option.id === value.id
                         : option.id === value.id
                 }

@@ -56,6 +56,15 @@ const ViewRoutes = () =>
   const [selectedRouteToEdit, setSelectedRouteToEdit] = useState(false);
   const [isActiveRoutes, setIsActiveRoutes] = useState(true);
 
+  // for delete route dialog
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [routeToDelete, setRouteToDelete] = useState(null);
+
+  // for delete routes for date dialog
+  const [openDeleteAllDialog, setOpenDeleteAllDialog] = useState(false);
+  const [dateToDelete, setDateToDelete] = useState(null);
+  const [dateToDeleteRead, setDateToDeleteRead] = useState(null); // Display only
+
   // State for controlling Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -122,6 +131,27 @@ const ViewRoutes = () =>
     setSelectedRouteToEdit(null);
   };
 
+  const handleDeleteClick = (routeID) => {
+    setRouteToDelete(routeID);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleCancelDelete = () => {
+    setOpenDeleteDialog(false);
+    setRouteToDelete(null);
+  };
+
+  const handleDeleteAllClick = (date) => {
+    setDateToDelete(date);
+    setDateToDeleteRead(date);
+    setOpenDeleteAllDialog(true);
+  };
+
+  const handleCancelDeleteAll = () => {
+    setOpenDeleteAllDialog(false);
+    setDateToDelete(null);
+  };
+
   /** Deals with user requesting closing the snackbar */
   const handleSnackbarClose = () =>
   {
@@ -129,37 +159,71 @@ const ViewRoutes = () =>
   };
 
   /**
-   * Delete route send a route to be deleted by ID
+   * Send a route to be deleted by ID
    * Once sent, routes and orders are reloaded. 
    *
    * @async
-   * @param {*} id
+   * @param {*}
    * @returns {*}
    */
-  const deleteRoute = async (id) =>
-  {
-    //console.log("id sent to delete is " + id);
-    const result = await deleteMethod(id, 'DeliveryRoutes');
-    if (result)
-    {
-      //console.log('Item deleted successfully:', result);
-      //await loadOrders();
-      loadRoutes();
-    } else
-    {
-      console.error('Failed to delete item.');
+  const handleConfirmDelete = async () => {
+    try {
+      const result = await deleteMethod(routeToDelete, 'DeliveryRoutes');
+      if (result)
+        {
+          //console.log('Item deleted successfully:', result);
+          //await loadOrders();
+          loadRoutes();
+          setSnackbar({
+            open: true,
+            message: 'Route deleted successfully!',
+            severity: 'success'
+          });
+        } else
+        {
+          console.error('Failed to delete item.');
+        }
     }
-
+    catch (error) {
+      setSnackbarMessage(error.message);
+      setSnackbarSeverity('error');
+      showMessage(error.message, 'error');
+  } finally {
+      setOpenDeleteDialog(false);
+      setRouteToDelete(null);
   }
 
-  const deleteAllRoutesByDate = async (date) =>
-  {
-    //console.log("In delete all date is " + JSON.stringify(date) + " formatted is " + formatDate(date));
-    let result = await deleteRouteByDate(date);
-    //console.log("Delete all routes response is " + JSON.stringify(result));
-    loadRoutes();
-  }
+  };
 
+  const deleteAllRoutesByDate = async () =>
+    {
+      try {
+        let result = await deleteRouteByDate(dateToDelete);
+        if (result)
+          {
+            //console.log('Item deleted successfully:', result);
+            //await loadOrders();
+            loadRoutes();
+            setSnackbar({
+              open: true,
+              message: 'Routes deleted successfully!',
+              severity: 'success'
+            });
+          } else
+          {
+            console.error('Failed to delete item.');
+          }
+      }
+      catch (error) {
+        setSnackbarMessage(error.message);
+        setSnackbarSeverity('error');
+        showMessage(error.message, 'error');
+      } 
+      finally {
+          setOpenDeleteAllDialog(false);
+          setRouteToDelete(null);
+      }
+    }
 
   /**
    * Loads all the routes in the database
@@ -348,12 +412,12 @@ const ViewRoutes = () =>
                         >
                           <Grid item xs={12} md={12} sx={{ ml: 'auto' }}>
                             <Button
-                              onClick={() => deleteAllRoutesByDate(date)}
+                              onClick={() => handleDeleteAllClick(date)}
                               color="error"
                               variant="outlined"
                               size='small'
                             >
-                              Delete All Routes For {formatDate(date)}
+                              Delete All Routes For {formatDate(date)} {/*HERE*/}
                             </Button>
                           </Grid>
                           {dateRoutes.map((route) => (
@@ -411,7 +475,7 @@ const ViewRoutes = () =>
                                     >
                                       <span>
                                         <Button
-                                          onClick={() => deleteRoute(route.deliveryRouteID)}
+                                          onClick={() => handleDeleteClick(route.deliveryRouteID)}
                                           color="error"
                                           variant="outlined"
                                           size='small'
@@ -510,6 +574,24 @@ const ViewRoutes = () =>
 
       <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth>
         <EditRouteForm route={selectedRouteToEdit} onClose={handleCloseEditDialog} onRefresh={loadRoutes} showMessage={handleShowMessage} />
+      </Dialog>
+      <Dialog open={openDeleteDialog} onClose={handleCancelDelete} maxWidth>
+          <Box sx={{ p: 2 }}>
+              <Typography>Are you sure you want to delete this route?</Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                  <Button onClick={handleCancelDelete}>Cancel</Button>
+                  <Button onClick={handleConfirmDelete} color="error">Delete</Button>
+              </Box>
+          </Box>
+      </Dialog>
+      <Dialog open={openDeleteAllDialog} onClose={handleCancelDeleteAll} maxWidth>
+          <Box sx={{ p: 2 }}>
+              <Typography>Are you sure you want to delete all routes for the {formatDate(dateToDeleteRead)}?</Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                  <Button onClick={handleCancelDeleteAll}>Cancel</Button>
+                  <Button onClick={deleteAllRoutesByDate} color="error">Delete</Button>
+              </Box>
+          </Box>
       </Dialog>
       <Snackbar
         open={snackbar.open}

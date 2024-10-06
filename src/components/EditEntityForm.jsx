@@ -14,7 +14,7 @@ const EditEntityForm = ({ entity, onSuccess }) => {
 
     // fetch data based on entity type
     useEffect(() => {
-        if (entity === 'user') {
+        if (entity === 'account') {
             const fetchAccounts = async () => {
                 const fetchedAccounts = await getAccounts();
                 setAccounts(fetchedAccounts || []); // Set to an empty array if null
@@ -45,7 +45,7 @@ const EditEntityForm = ({ entity, onSuccess }) => {
         setSelectedItem(newValue);
         if (newValue) {
             switch (entity) {
-                case 'user':
+                case 'account':
                     setEntityId(newValue.username);
                     break;
                 case 'product':
@@ -72,7 +72,7 @@ const EditEntityForm = ({ entity, onSuccess }) => {
             console.log(`Editing ${entity} with ID:`, entityId);
             onSuccess(entityId); // Pass the entityId back to the parent component
         } else {
-            setError(`Please provide a valid ${entity === 'user' ? 'Username' : `${entity} ID`}.`);
+            setError(`Please provide a valid ${entity === 'account' ? 'Username' : `${entity} ID`}.`);
         }
     };
 
@@ -83,13 +83,13 @@ const EditEntityForm = ({ entity, onSuccess }) => {
             </Typography>
             <Autocomplete
                 options={
-                    entity === 'user' ? accounts : 
+                    entity === 'account' ? accounts : 
                     entity === 'product' ? products : 
                     entity === 'location' ? locations :
                     customers
                 }
                 getOptionLabel={(option) => 
-                    entity === 'user' 
+                    entity === 'account' 
                         ? `${option.name} (${option.username})`
                         : entity === 'product' 
                         ? `${option.name} (ID: ${option.id})`
@@ -100,7 +100,7 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                 filterOptions={(options, { inputValue }) => {
                     // filter logic based on entity type
                     return options.filter(
-                        (option) => entity === 'user' 
+                        (option) => entity === 'account' 
                             ? option.username.toLowerCase().includes(inputValue.toLowerCase()) ||
                               option.name.toLowerCase().includes(inputValue.toLowerCase()) ||
                               option.phone.includes(inputValue) ||
@@ -124,7 +124,7 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                     <TextField
                         {...params}
                         label={
-                            entity === 'user'
+                            entity === 'account'
                                 ? 'Search by Name, Username, Phone, or Role'
                                 : entity === 'product'
                                 ? 'Search by ID or Name'
@@ -138,7 +138,7 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                     />
                 )}
                 isOptionEqualToValue={(option, value) => 
-                    entity === 'user' 
+                    entity === 'account' 
                         ? option.username === value.username
                         : entity === 'product' 
                         ? option.id === value.id

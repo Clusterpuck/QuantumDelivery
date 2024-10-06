@@ -49,7 +49,7 @@ const AdminControls = () => {
         } else if (action === 'edit') {
             setEntityType(entity); // entity should be the type of entity being edited
             setOpenEditEntityForm(true);
-        } else if (entity === 'user' && action === 'add') {
+        } else if (entity === 'account' && action === 'add') {
             setUserMode('add');
             setAccountId('');
             setOpenAccountForm(true);
@@ -77,11 +77,11 @@ const AdminControls = () => {
 
     const handleEditEntitySuccess = async (collectedEntityId) => {
         if (collectedEntityId) {
-            if (entityType === 'user') {
+            if (entityType === 'account') {
                 try {
                     const userData = await getAccountDetails(collectedEntityId); 
                     if (userData.status === 'inactive') {
-                        console.error("User account is inactive and cannot be edited.");
+                        console.error("Account is inactive and cannot be edited.");
                         setError("This account is inactive and cannot be edited."); // Display the error
                         return; // Prevent further action
                     }
@@ -90,7 +90,7 @@ const AdminControls = () => {
                     setOpenAccountForm(true);
                     setOpenEditEntityForm(false);
                 } catch (err) {
-                    console.error("Error fetching user data:", err);
+                    console.error("Error fetching account data:", err);
                     setError("An error occurred while trying to fetch user data.");
                 }
             } else if (entityType === 'product') {
@@ -118,7 +118,7 @@ const AdminControls = () => {
 
     const handleClosePasswordModal = () => setOpenPasswordModal(false);
 
-    const entities = ['user', 'customer', 'location', 'product'];
+    const entities = ['account', 'customer', 'location', 'product'];
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 8 }}>

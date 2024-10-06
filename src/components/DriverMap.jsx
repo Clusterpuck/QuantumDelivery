@@ -111,6 +111,10 @@ const DriverMap = ({start,end}) =>
                     'circle-color': '#3887be'
                 }
             });
+
+            new mapboxgl.Marker({ color: '#FF0000' })
+                .setLngLat(end)
+                .addTo(map.current);
         });
     }, [start, end]);
 

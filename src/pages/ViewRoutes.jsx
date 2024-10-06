@@ -122,19 +122,11 @@ const ViewRoutes = () =>
     setSelectedRouteToEdit(null);
   };
 
-
-
-
-
-
-
   /** Deals with user requesting closing the snackbar */
   const handleSnackbarClose = () =>
   {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
-
-
 
   /**
    * Delete route send a route to be deleted by ID

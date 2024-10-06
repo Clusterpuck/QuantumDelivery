@@ -7,9 +7,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import '../index.css';
 
-const ReportIssue = ({ open, onClose, driverUsername, order, fetchDeliveryData}) => {
-    const [error, setError] = React.useState(null);
-    const [success, setSuccess] = React.useState(null);
+const ReportIssue = ({ open, onClose, driverUsername, order, fetchDeliveryData, showMessage}) => {
     const [isDelayed, setIsDelayed] = useState(order?.delayed);
     const [isIssueOpen, setIsIssueOpen] = useState(false); // for the message box when a driver reports an issue.
     const [issueNote, setIssueNote] = useState(''); // issue note
@@ -26,18 +24,17 @@ const ReportIssue = ({ open, onClose, driverUsername, order, fetchDeliveryData})
         try {
             const result = await updateOrderDelayed(input);
             if (result) {
-                console.log("Successfully set order to delayed");
-                setSuccess('Delay reported successfully. Thank you!');  // set success message
-                setError(null);  // clear any previous error messages
+                console.log("about to call show message");
+                showMessage('Delay reported successfully. Thank you!', 'success');
                 setIsDelayed(true); 
                 await fetchDeliveryData();
+                onClose();
             } else {
                 throw new Error("Failed to update order status");
             }
         } catch (err) {
-            console.error("Error updating order to delayed:", err);
-            setError("Something went wrong. Failed to submit delay report.");
-            setSuccess(null);  // clear any success messages if error occurs
+            showMessage("Failed to update order to delayed", 'error');
+            onClose();
         }
     }
 
@@ -48,47 +45,37 @@ const ReportIssue = ({ open, onClose, driverUsername, order, fetchDeliveryData})
             driverNote: issueNote,
         };
 
-        console.log("ISSUE LOG: ", input);
-
         try {
             const result = await updateOrderIssue(input);
             if (result) {
-                console.log("Successfully reported issue with the order");
-                setSuccess('Issue reported successfully. Thank you!');
-                setError(null);
+                showMessage('Issue reported successfully. Thank you!', 'success');
                 setIsIssueOpen(false); // Close the issue box after submission
                 setIsIssueSubmitted(true);
                 await fetchDeliveryData();
+                onClose();
             } else {
                 throw new Error("Failed to report issue");
             }
         } catch (err) {
             console.error("Error reporting issue:", err);
-            setError("Something went wrong. Failed to submit the issue.");
-            setSuccess(null);
+            onClose();
         }
     };
 
     useEffect(() => { //reset success / error messages when dialog reopens
         if (open) {
-            setSuccess(null);
-            setError(null);
             setIsDelayed(order?.delayed);
-            setIsIssueOpen(false); // reset issue box state when the dialog reopens
+            setIsIssueOpen(false); 
             setIssueNote(''); 
             setIsIssueSubmitted(false);
         }
     }, [open]);
 
-    useEffect(() =>
-    {
-        console.log("ISDELAYED ", isDelayed )
-    }
-    , [isDelayed]);
-
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>What type of issue would you like to report?</DialogTitle>
+            <DialogTitle sx={{ 
+            marginTop: 3
+        }}>What type of issue would you like to report?</DialogTitle>
             <IconButton 
                 color="primary"
                 aria-label="cancel" 
@@ -104,41 +91,9 @@ const ReportIssue = ({ open, onClose, driverUsername, order, fetchDeliveryData})
                         flexDirection: 'column', 
                         gap: 2, 
                         width: '100%',
-                        marginTop: 2
+                        marginTop: 0
                     }}
                 >
-                    {error && (
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                padding: 2,
-                                borderRadius: 1,
-                                backgroundColor: 'var(--action-colour)',
-                            }}
-                        >
-                            <ErrorIcon sx={{ color: 'var(--secondary-colour)' }}/>
-                            <Typography variant="body2" sx={{ marginLeft: 1, color: 'var(--secondary-colour)' }}>
-                                {error}
-                            </Typography>
-                        </Box>
-                    )}
-                    {success && (
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                padding: 2,
-                                borderRadius: 1,
-                                backgroundColor: 'var(--action-colour)', 
-                            }}
-                        >
-                            <CheckCircleIcon sx={{ color: 'var(--secondary-colour)' }} />
-                            <Typography variant="body2" sx={{ marginLeft: 1, color: 'var(--secondary-colour)' }}>
-                                {success}
-                            </Typography>
-                        </Box>
-                    )}
                     <Button 
                         variant="outlined" 
                         onClick={handleOrderDelayed}

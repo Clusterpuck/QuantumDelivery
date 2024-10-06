@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef} from 'react';
-import {useMediaQuery, Box, Drawer, IconButton, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, CircularProgress } from '@mui/material';
+import {Snackbar, Alert,useMediaQuery, Box, Drawer, IconButton, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, CircularProgress } from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -17,6 +17,7 @@ import Cookies from 'js-cookie';
 import DateSelectHighlight from '../components/DateSelectHighlight.jsx';
 import dayjs from 'dayjs';
 import Tooltip from '@mui/material/Tooltip';
+import '../index.css';
 
 
 const DriverViewRoutes = ({ inputUser }) => {
@@ -36,6 +37,11 @@ const DriverViewRoutes = ({ inputUser }) => {
     const driverUsername = Cookies.get('userName'); // username of logged in user, Admins will see no routes
     const [selectedDate, setSelectedDate] = useState(dayjs());
     const [dateOptions, setDateOptions] = useState([]);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success',
+      });
 
     const toggleDrawer = (open) => () => { setDrawerOpen(open); }
     const handlePhoneDialog = (open) => () => { setPhoneDialogOpen(open); };
@@ -113,6 +119,21 @@ const DriverViewRoutes = ({ inputUser }) => {
     const handleDateChange = (date) => {
         setSelectedDate(date);
     };
+
+    const handleShowMessage = (msg, type) =>
+        {
+          setSnackbar({
+            open: true,
+            message: msg,
+            severity: type
+          });
+          console.log("SHOW MESSAGE CALLED");
+        };
+
+        const handleSnackbarClose = () =>
+            {
+              setSnackbar(prev => ({ ...prev, open: false }));
+            };
 
     function extractDeliveryDates(routes) {
         // Extract delivery dates
@@ -236,7 +257,7 @@ const DriverViewRoutes = ({ inputUser }) => {
                         borderRadius: '0 0 16px 16px',
                     }}
                 >
-                    <Typography variant="h6" color="black" sx={{ p: 2, fontWeight: 'bold' }}>
+                    <Typography variant="h6" color="var(--text-colour)" sx={{ p: 2, fontWeight: 'bold' }}>
                         Delivery Progress
                     </Typography>
                     <Box sx={{ mb: 2 }}> 
@@ -262,10 +283,10 @@ const DriverViewRoutes = ({ inputUser }) => {
                             }}
                         >
                             {anyPlanned && (
-                                <Button variant="outlined" color="primary" onClick={handleStartDelivery}
+                                <Button variant="contained" color="primary" onClick={handleStartDelivery}
                                     sx={{
                                         flex: 1,
-                                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)'
+                                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)'
                                     }}>
                                     Start Delivery
                                     <LocalShippingIcon sx={{ marginLeft: 2 }} />
@@ -307,16 +328,16 @@ const DriverViewRoutes = ({ inputUser }) => {
                                 left: 0,
                                 width: 'calc(100% - 32px)%',
                                 p: 0,
-                                backgroundColor: '#582c4d',
+                                backgroundColor: 'var(--background-colour)',
                                 justifyContent: 'center',
                                 alignItems: 'center',
                                 boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
                                 margin: 2,
                                 marginTop: 1,
-                                borderRadius: 4,
+                                borderRadius: 1,
                             }}
                         >
-                            <Typography variant="h6" color="white" sx={{ p: 2, fontSize: '0.875rem', fontWeight: 'bold' }}>
+                            <Typography variant="h6" color="var(--text-colour)" sx={{ p: 2, fontSize: '0.875rem', fontWeight: 'bold' }}>
                                 Current Delivery
                             </Typography>
                         </Box>
@@ -401,7 +422,7 @@ const DriverViewRoutes = ({ inputUser }) => {
                                         Report Issue
                                         <WarningAmberIcon />
                                     </Button>
-                                    <ReportIssue open={issueDialogOpen} onClose={handleIssueDialogClose} driverUsername={otherUser.current || driverUsername} order={currentDelivery} fetchDeliveryData={fetchDeliveryData} />
+                                    <ReportIssue open={issueDialogOpen} onClose={handleIssueDialogClose} driverUsername={otherUser.current || driverUsername} order={currentDelivery} fetchDeliveryData={fetchDeliveryData} showMessage={handleShowMessage} />
                                 </>
                             )}
                         </Box>
@@ -412,15 +433,15 @@ const DriverViewRoutes = ({ inputUser }) => {
                                 left: 0,
                                 width: 'calc(100% - 32px)',
                                 p: 0,
-                                backgroundColor: '#819bc5',
+                                backgroundColor: 'var(--background-colour)',
                                 justifyContent: 'center',
                                 alignItems: 'center',
                                 boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
                                 margin: 2,
-                                borderRadius: 4,
+                                borderRadius: 1,
                             }}
                         >
-                            <Typography variant="h6" color="white" sx={{ p: 2, fontSize: '0.875rem', fontWeight: 'bold' }}>
+                            <Typography variant="h6" color="var(--text-colour)" sx={{ p: 2, fontSize: '0.875rem', fontWeight: 'bold' }}>
                                 Next Deliveries
                             </Typography>
                         </Box>
@@ -571,6 +592,16 @@ const DriverViewRoutes = ({ inputUser }) => {
                     )}
                 </Box>
             </Box>
+            <Snackbar
+        open={snackbar.open}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
             <Dialog
                 open={phoneDialogOpen}
                 onClose={handlePhoneDialog(false)}

@@ -63,7 +63,7 @@ const ViewRoutes = () =>
   // for delete routes for date dialog
   const [openDeleteAllDialog, setOpenDeleteAllDialog] = useState(false);
   const [dateToDelete, setDateToDelete] = useState(null);
-  const [dateToDeleteRead, setDateToDeleteRead] = useState(null); // Read only
+  const [dateToDeleteRead, setDateToDeleteRead] = useState(null); // Display only
 
   // State for controlling Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -195,16 +195,7 @@ const ViewRoutes = () =>
 
   };
 
-
-  const deleteAllRoutesByDate = async (date) =>
-  {
-    //console.log("In delete all date is " + JSON.stringify(date) + " formatted is " + formatDate(date));
-    let result = await deleteRouteByDate(date);
-    //console.log("Delete all routes response is " + JSON.stringify(result));
-    loadRoutes();
-  }
-
-  const deleteAllRoutesByDateV2 = async () =>
+  const deleteAllRoutesByDate = async () =>
     {
       try {
         let result = await deleteRouteByDate(dateToDelete);
@@ -598,7 +589,7 @@ const ViewRoutes = () =>
               <Typography>Are you sure you want to delete all routes for the {formatDate(dateToDeleteRead)}?</Typography>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                   <Button onClick={handleCancelDeleteAll}>Cancel</Button>
-                  <Button onClick={deleteAllRoutesByDateV2} color="error">Delete</Button>
+                  <Button onClick={deleteAllRoutesByDate} color="error">Delete</Button>
               </Box>
           </Box>
       </Dialog>

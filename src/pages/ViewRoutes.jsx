@@ -174,6 +174,11 @@ const ViewRoutes = () =>
           //console.log('Item deleted successfully:', result);
           //await loadOrders();
           loadRoutes();
+          setSnackbar({
+            open: true,
+            message: 'Route deleted successfully!',
+            severity: 'success'
+          });
         } else
         {
           console.error('Failed to delete item.');
@@ -208,6 +213,11 @@ const ViewRoutes = () =>
             //console.log('Item deleted successfully:', result);
             //await loadOrders();
             loadRoutes();
+            setSnackbar({
+              open: true,
+              message: 'Routes deleted successfully!',
+              severity: 'success'
+            });
           } else
           {
             console.error('Failed to delete item.');

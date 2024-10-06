@@ -19,7 +19,14 @@ const AdminControlsForm = ({ entity, handleSubmit }) => {
                 }}
             >
                 {/* entity name */}
-                <Typography variant="h6" sx={{ minWidth: '150px' }}>
+                <Typography 
+                variant="h6" 
+                sx={{ 
+                    minWidth: '150px', 
+                    textAlign: 'left',
+                    marginLeft: '16px' 
+                }}
+                >
                     {entity.charAt(0).toUpperCase() + entity.slice(1)}
                 </Typography>
 

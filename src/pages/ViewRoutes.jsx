@@ -56,6 +56,10 @@ const ViewRoutes = () =>
   const [selectedRouteToEdit, setSelectedRouteToEdit] = useState(false);
   const [isActiveRoutes, setIsActiveRoutes] = useState(true);
 
+  // for delete route dialog
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [routeToDelete, setRouteToDelete] = useState(null);
+
   // State for controlling Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -122,6 +126,16 @@ const ViewRoutes = () =>
     setSelectedRouteToEdit(null);
   };
 
+  const handleDeleteClick = (routeID) => {
+    setRouteToDelete(routeID);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleCancelDelete = () => {
+    setOpenDeleteDialog(false);
+    setRouteToDelete(null);
+  };
+
   /** Deals with user requesting closing the snackbar */
   const handleSnackbarClose = () =>
   {
@@ -129,28 +143,37 @@ const ViewRoutes = () =>
   };
 
   /**
-   * Delete route send a route to be deleted by ID
+   * Send a route to be deleted by ID
    * Once sent, routes and orders are reloaded. 
    *
    * @async
-   * @param {*} id
+   * @param {*}
    * @returns {*}
    */
-  const deleteRoute = async (id) =>
-  {
-    //console.log("id sent to delete is " + id);
-    const result = await deleteMethod(id, 'DeliveryRoutes');
-    if (result)
-    {
-      //console.log('Item deleted successfully:', result);
-      //await loadOrders();
-      loadRoutes();
-    } else
-    {
-      console.error('Failed to delete item.');
+  const handleConfirmDelete = async () => {
+    try {
+      const result = await deleteMethod(routeToDelete, 'DeliveryRoutes');
+      if (result)
+        {
+          //console.log('Item deleted successfully:', result);
+          //await loadOrders();
+          loadRoutes();
+        } else
+        {
+          console.error('Failed to delete item.');
+        }
     }
-
+    catch (error) {
+      setSnackbarMessage(error.message);
+      setSnackbarSeverity('error');
+      showMessage(error.message, 'error');
+  } finally {
+      setOpenDeleteDialog(false);
+      setRouteToDelete(null);
   }
+
+  };
+
 
   const deleteAllRoutesByDate = async (date) =>
   {
@@ -411,7 +434,7 @@ const ViewRoutes = () =>
                                     >
                                       <span>
                                         <Button
-                                          onClick={() => deleteRoute(route.deliveryRouteID)}
+                                          onClick={() => handleDeleteClick(route.deliveryRouteID)}
                                           color="error"
                                           variant="outlined"
                                           size='small'
@@ -510,6 +533,15 @@ const ViewRoutes = () =>
 
       <Dialog open={openEditDialog} onClose={handleCloseEditDialog} maxWidth>
         <EditRouteForm route={selectedRouteToEdit} onClose={handleCloseEditDialog} onRefresh={loadRoutes} showMessage={handleShowMessage} />
+      </Dialog>
+      <Dialog open={openDeleteDialog} onClose={handleCancelDelete} maxWidth>
+          <Box sx={{ p: 2 }}>
+              <Typography>Are you sure you want to delete this route?</Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                  <Button onClick={handleCancelDelete}>Cancel</Button>
+                  <Button onClick={handleConfirmDelete} color="error">Delete</Button>
+              </Box>
+          </Box>
       </Dialog>
       <Snackbar
         open={snackbar.open}

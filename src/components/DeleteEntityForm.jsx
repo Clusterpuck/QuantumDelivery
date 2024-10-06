@@ -15,7 +15,7 @@ const DeleteEntityForm = ({ entity }) => {
 
     // fetch data based on entity type
     useEffect(() => {
-        if (entity === 'user') {
+        if (entity === 'account') {
             const fetchAccounts = async () => {
                 const fetchedAccounts = await getAccounts();
                 setAccounts(fetchedAccounts || []); // Set to an empty array if null
@@ -46,7 +46,7 @@ const DeleteEntityForm = ({ entity }) => {
         setSelectedItem(newValue);
         if (newValue) {
             switch (entity) {
-                case 'user':
+                case 'account':
                     setEntityId(newValue.username);
                     break;
                 case 'product':
@@ -74,7 +74,7 @@ const DeleteEntityForm = ({ entity }) => {
         try {
             let result;
             switch (entity) {
-                case 'user':
+                case 'account':
                     result = await deleteAccount(entityId);
                     break;
                 case 'product':
@@ -109,13 +109,13 @@ const DeleteEntityForm = ({ entity }) => {
             </Typography>
             <Autocomplete
                 options={
-                    entity === 'user' ? accounts :
+                    entity === 'account' ? accounts :
                     entity === 'product' ? products :
                     entity === 'location' ? locations :
                     customers
                 }
                 getOptionLabel={(option) =>
-                    entity === 'user'
+                    entity === 'account'
                         ? `${option.name} (${option.username})`
                         : entity === 'product'
                         ? `${option.name} (ID: ${option.id})`
@@ -126,7 +126,7 @@ const DeleteEntityForm = ({ entity }) => {
                 filterOptions={(options, { inputValue }) => {
                     // custom filter logic based on entity type
                     return options.filter(
-                        (option) => entity === 'user'
+                        (option) => entity === 'account'
                             ? option.username.toLowerCase().includes(inputValue.toLowerCase()) ||
                               option.name.toLowerCase().includes(inputValue.toLowerCase()) ||
                               option.phone.includes(inputValue) ||
@@ -150,7 +150,7 @@ const DeleteEntityForm = ({ entity }) => {
                     <TextField
                         {...params}
                         label={
-                            entity === 'user'
+                            entity === 'account'
                                 ? 'Search by Name, Username, Phone, or Role'
                                 : entity === 'product'
                                 ? 'Search by ID or Name'
@@ -164,7 +164,7 @@ const DeleteEntityForm = ({ entity }) => {
                     />
                 )}
                 isOptionEqualToValue={(option, value) =>
-                    entity === 'user'
+                    entity === 'account'
                         ? option.username === value.username
                         : entity === 'product'
                         ? option.id === value.id

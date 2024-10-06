@@ -10,10 +10,12 @@ import EditAccountForm from '../components/EditAccountForm';
 import EditEntityForm from '../components/EditEntityForm'; 
 import CreateProductForm from '../components/CreateProductForm'; 
 import CreateLocation from '../components/CreateLocation'; 
+import CreateVehicleForm from '../components/CreateVehicleForm'; 
 import CreateCustomer from '../components/CreateCustomer'; 
 import EditProductForm from '../components/EditProductForm'; 
 import EditLocationForm from '../components/EditLocationForm'; 
 import EditCustomerForm from '../components/EditCustomerForm'; 
+import EditVehicleForm from '../components/EditVehicleForm'; 
 import CheckPasswordForm from '../components/CheckPasswordForm';
 import { enableScroll } from '../assets/scroll.js';
 import { getAccountDetails } from '../store/apiFunctions.js'
@@ -37,6 +39,9 @@ const AdminControls = () => {
     const [usernameForPasswordChange, setUsernameForPasswordChange] = useState('');
     const [accountStatus, setAccountStatus] = useState('');
     const [entityType, setEntityType] = useState('user'); 
+    const [openVehicleForm, setOpenVehicleForm] = useState(false);
+    const [vehicleId, setVehicleId] = useState('');
+
 
     useEffect(() => {
         enableScroll();
@@ -47,7 +52,7 @@ const AdminControls = () => {
             setDeleteEntity(entity);
             setOpenDelete(true);
         } else if (action === 'edit') {
-            setEntityType(entity); // entity should be the type of entity being edited
+            setEntityType(entity);
             setOpenEditEntityForm(true);
         } else if (entity === 'account' && action === 'add') {
             setUserMode('add');
@@ -62,6 +67,9 @@ const AdminControls = () => {
         } else if (entity === 'customer' && action === 'add') {
             setCustomerId('');
             setOpenCustomerForm(true);
+        } else if (entity === 'vehicle' && action === 'add') {
+            setVehicleId('');
+            setOpenVehicleForm(true);
         } else {
             console.log(`Submitted operation for ${entity}:`, action);
             navigate('/orders');
@@ -118,7 +126,7 @@ const AdminControls = () => {
 
     const handleClosePasswordModal = () => setOpenPasswordModal(false);
 
-    const entities = ['account', 'customer', 'location', 'product'];
+    const entities = ['account', 'customer', 'location', 'product', 'vehicle'];
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 8 }}>
@@ -295,6 +303,29 @@ const AdminControls = () => {
                     <CheckPasswordForm username={usernameForPasswordChange} onClose={handleClosePasswordModal} />
                 </Box>
             </Modal>
+
+            {/* vehicle modal */}
+            <Modal
+                open={openVehicleForm}
+                onClose={() => setOpenVehicleForm(false)}
+                aria-labelledby="vehicle-form-modal"
+                aria-describedby="vehicle-form-description"
+            >
+                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
+                    <Button
+                        onClick={() => setOpenVehicleForm(false)}
+                        sx={{
+                            position: 'absolute',
+                            top: 16,
+                            right: 16,
+                        }}
+                    >
+                        <CancelIcon />
+                    </Button>
+                    {vehicleId ? <EditVehicleForm vehicleId={vehicleId} /> : <CreateVehicleForm />}
+                </Box>
+            </Modal>
+
         </div>
     );
 };

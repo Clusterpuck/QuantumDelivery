@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography, Autocomplete } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { deleteAccount, deleteProduct, deleteCustomer, deleteLocation, getAccounts, getProducts, getCustomers, getLocations } from '../store/apiFunctions'; 
+import { deleteAccount, deleteProduct, deleteCustomer, deleteLocation, deleteVehicle, getAccounts, getProducts, getCustomers, getLocations, getVehicles } from '../store/apiFunctions'; 
 
 const DeleteEntityForm = ({ entity }) => {
     const [entityId, setEntityId] = useState('');
@@ -11,35 +11,39 @@ const DeleteEntityForm = ({ entity }) => {
     const [products, setProducts] = useState([]);
     const [locations, setLocations] = useState([]);
     const [customers, setCustomers] = useState([]);
+    const [vehicles, setVehicles] = useState([]);
     const [selectedItem, setSelectedItem] = useState(null);
 
     // fetch data based on entity type
     useEffect(() => {
-        if (entity === 'account') {
-            const fetchAccounts = async () => {
-                const fetchedAccounts = await getAccounts();
-                setAccounts(fetchedAccounts || []); // Set to an empty array if null
-            };
-            fetchAccounts();
-        } else if (entity === 'product') {
-            const fetchProducts = async () => {
-                const fetchedProducts = await getProducts();
-                setProducts(fetchedProducts || []); // Set to an empty array if null
-            };
-            fetchProducts();
-        } else if (entity === 'location') {
-            const fetchLocations = async () => {
-                const fetchedLocations = await getLocations();
-                setLocations(fetchedLocations || []); // Set to an empty array if null
-            };
-            fetchLocations();
-        } else if (entity === 'customer') {
-            const fetchCustomers = async () => {
-                const fetchedCustomers = await getCustomers();
-                setCustomers(fetchedCustomers || []); // Set to an empty array if null
-            };
-            fetchCustomers();
-        }
+        const fetchData = async () => {
+            switch (entity) {
+                case 'account':
+                    const fetchedAccounts = await getAccounts();
+                    setAccounts(fetchedAccounts || []);
+                    break;
+                case 'product':
+                    const fetchedProducts = await getProducts();
+                    setProducts(fetchedProducts || []);
+                    break;
+                case 'location':
+                    const fetchedLocations = await getLocations();
+                    setLocations(fetchedLocations || []);
+                    break;
+                case 'customer':
+                    const fetchedCustomers = await getCustomers();
+                    setCustomers(fetchedCustomers || []);
+                    break;
+                case 'vehicle':
+                    const fetchedVehicles = await getVehicles();
+                    setVehicles(fetchedVehicles || []);
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        fetchData();
     }, [entity]);
 
     const handleAutocompleteChange = (event, newValue) => {
@@ -56,6 +60,9 @@ const DeleteEntityForm = ({ entity }) => {
                     setEntityId(newValue.id);
                     break;
                 case 'customer':
+                    setEntityId(newValue.id);
+                    break;
+                case 'vehicle':
                     setEntityId(newValue.id);
                     break;
                 default:
@@ -86,6 +93,9 @@ const DeleteEntityForm = ({ entity }) => {
                 case 'location':
                     result = await deleteLocation(entityId);
                     break;
+                case 'vehicle':
+                    result = await deleteVehicle(entityId);
+                    break;
                 default:
                     setError('Invalid entity');
                     return;
@@ -112,7 +122,8 @@ const DeleteEntityForm = ({ entity }) => {
                     entity === 'account' ? accounts :
                     entity === 'product' ? products :
                     entity === 'location' ? locations :
-                    customers
+                    entity === 'customer' ? customers :
+                    vehicles
                 }
                 getOptionLabel={(option) =>
                     entity === 'account'
@@ -121,10 +132,11 @@ const DeleteEntityForm = ({ entity }) => {
                         ? `${option.name} (ID: ${option.id})`
                         : entity === 'location'
                         ? `${option.description}, ${option.address}, ${option.state} (Postcode: ${option.postCode})`
-                        : `${option.name} (Phone: ${option.phone})`
+                        : entity === 'customer'
+                        ? `${option.name} (Phone: ${option.phone})`
+                        : `${option.licenseplate} (Status: ${option.status})`
                 }
                 filterOptions={(options, { inputValue }) => {
-                    // custom filter logic based on entity type
                     return options.filter(
                         (option) => entity === 'account'
                             ? option.username.toLowerCase().includes(inputValue.toLowerCase()) ||
@@ -140,9 +152,12 @@ const DeleteEntityForm = ({ entity }) => {
                               option.postCode.toString().includes(inputValue) ||
                               option.state.toLowerCase().includes(inputValue.toLowerCase()) || 
                               option.description.toLowerCase().includes(inputValue.toLowerCase())
-                            : option.id.toString().includes(inputValue) ||
+                            : entity === 'customer'
+                            ? option.id.toString().includes(inputValue) ||
                               option.name.toLowerCase().includes(inputValue.toLowerCase()) ||
                               option.phone.includes(inputValue)
+                            : option.licenseplate.toString().includes(inputValue) ||
+                              option.status.toLowerCase().includes(inputValue.toLowerCase())
                     );
                 }}
                 onChange={handleAutocompleteChange}
@@ -156,7 +171,9 @@ const DeleteEntityForm = ({ entity }) => {
                                 ? 'Search by ID or Name'
                                 : entity === 'location'
                                 ? 'Search by ID, Address, Postcode, or State'
-                                : 'Search by ID, Name, or Phone'
+                                : entity === 'customer'
+                                ? 'Search by ID, Name, or Phone'
+                                : 'Search by Vehicle license plate or status'
                         }
                         variant="outlined"
                         error={!!error}
@@ -167,6 +184,10 @@ const DeleteEntityForm = ({ entity }) => {
                     entity === 'account'
                         ? option.username === value.username
                         : entity === 'product'
+                        ? option.id === value.id
+                        : entity === 'location'
+                        ? option.id === value.id
+                        : entity === 'customer'
                         ? option.id === value.id
                         : option.id === value.id
                 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef} from 'react';
-import {useMediaQuery, Box, Drawer, IconButton, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, CircularProgress } from '@mui/material';
+import {Snackbar, Alert,useMediaQuery, Box, Drawer, IconButton, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, CircularProgress } from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -37,6 +37,11 @@ const DriverViewRoutes = ({ inputUser }) => {
     const driverUsername = Cookies.get('userName'); // username of logged in user, Admins will see no routes
     const [selectedDate, setSelectedDate] = useState(dayjs());
     const [dateOptions, setDateOptions] = useState([]);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success',
+      });
 
     const toggleDrawer = (open) => () => { setDrawerOpen(open); }
     const handlePhoneDialog = (open) => () => { setPhoneDialogOpen(open); };
@@ -114,6 +119,21 @@ const DriverViewRoutes = ({ inputUser }) => {
     const handleDateChange = (date) => {
         setSelectedDate(date);
     };
+
+    const handleShowMessage = (msg, type) =>
+        {
+          setSnackbar({
+            open: true,
+            message: msg,
+            severity: type
+          });
+          console.log("SHOW MESSAGE CALLED");
+        };
+
+        const handleSnackbarClose = () =>
+            {
+              setSnackbar(prev => ({ ...prev, open: false }));
+            };
 
     function extractDeliveryDates(routes) {
         // Extract delivery dates
@@ -402,7 +422,7 @@ const DriverViewRoutes = ({ inputUser }) => {
                                         Report Issue
                                         <WarningAmberIcon />
                                     </Button>
-                                    <ReportIssue open={issueDialogOpen} onClose={handleIssueDialogClose} driverUsername={otherUser.current || driverUsername} order={currentDelivery} fetchDeliveryData={fetchDeliveryData} />
+                                    <ReportIssue open={issueDialogOpen} onClose={handleIssueDialogClose} driverUsername={otherUser.current || driverUsername} order={currentDelivery} fetchDeliveryData={fetchDeliveryData} showMessage={handleShowMessage} />
                                 </>
                             )}
                         </Box>
@@ -572,6 +592,16 @@ const DriverViewRoutes = ({ inputUser }) => {
                     )}
                 </Box>
             </Box>
+            <Snackbar
+        open={snackbar.open}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
             <Dialog
                 open={phoneDialogOpen}
                 onClose={handlePhoneDialog(false)}

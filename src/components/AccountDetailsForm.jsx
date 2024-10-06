@@ -19,6 +19,7 @@ const AccountDetailsForm = () => {
     const [success, setSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [openPasswordModal, setOpenPasswordModal] = useState(false); 
+    const [editRole, setEditRole] = useState(false);
 
     // get username from cookie (id) and authToken
     const accountId = Cookies.get('userName');
@@ -37,6 +38,12 @@ const AccountDetailsForm = () => {
                             phone: accountDetails.phone || '',
                             companyRole: accountDetails.role || '',
                         });
+
+                        if (accountDetails.role === 'ADMIN') {
+                            setEditRole(true);
+                        } else {
+                            setEditRole(false);
+                        }
                     } else {
                         setError('No account details found.');
                     }
@@ -183,7 +190,7 @@ const AccountDetailsForm = () => {
                                         name="companyRole"
                                         value={formData.companyRole}
                                         onChange={handleInputChange}
-                                        disabled={formData.companyRole === 'DRIVER'} // Disable if the role is "Driver"
+                                        disabled={!editRole} // Disable if the role is "Driver"
                                     >
                                         <MenuItem value="DRIVER" sx={{ textAlign: 'left' }}>Driver</MenuItem>
                                         <MenuItem value="ADMIN" sx={{ textAlign: 'left' }}>Admin</MenuItem>

@@ -60,6 +60,11 @@ const ViewRoutes = () =>
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [routeToDelete, setRouteToDelete] = useState(null);
 
+  // for delete routes for date dialog
+  const [openDeleteAllDialog, setOpenDeleteAllDialog] = useState(false);
+  const [dateToDelete, setDateToDelete] = useState(null);
+  const [dateToDeleteRead, setDateToDeleteRead] = useState(null); // Read only
+
   // State for controlling Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -136,6 +141,17 @@ const ViewRoutes = () =>
     setRouteToDelete(null);
   };
 
+  const handleDeleteAllClick = (date) => {
+    setDateToDelete(date);
+    setDateToDeleteRead(date);
+    setOpenDeleteAllDialog(true);
+  };
+
+  const handleCancelDeleteAll = () => {
+    setOpenDeleteAllDialog(false);
+    setDateToDelete(null);
+  };
+
   /** Deals with user requesting closing the snackbar */
   const handleSnackbarClose = () =>
   {
@@ -183,6 +199,30 @@ const ViewRoutes = () =>
     loadRoutes();
   }
 
+  const deleteAllRoutesByDateV2 = async () =>
+    {
+      try {
+        let result = await deleteRouteByDate(dateToDelete);
+        if (result)
+          {
+            //console.log('Item deleted successfully:', result);
+            //await loadOrders();
+            loadRoutes();
+          } else
+          {
+            console.error('Failed to delete item.');
+          }
+      }
+      catch (error) {
+        setSnackbarMessage(error.message);
+        setSnackbarSeverity('error');
+        showMessage(error.message, 'error');
+      } 
+      finally {
+          setOpenDeleteAllDialog(false);
+          setRouteToDelete(null);
+      }
+    }
 
   /**
    * Loads all the routes in the database
@@ -371,12 +411,12 @@ const ViewRoutes = () =>
                         >
                           <Grid item xs={12} md={12} sx={{ ml: 'auto' }}>
                             <Button
-                              onClick={() => deleteAllRoutesByDate(date)}
+                              onClick={() => handleDeleteAllClick(date)}
                               color="error"
                               variant="outlined"
                               size='small'
                             >
-                              Delete All Routes For {formatDate(date)}
+                              Delete All Routes For {formatDate(date)} {/*HERE*/}
                             </Button>
                           </Grid>
                           {dateRoutes.map((route) => (
@@ -540,6 +580,15 @@ const ViewRoutes = () =>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                   <Button onClick={handleCancelDelete}>Cancel</Button>
                   <Button onClick={handleConfirmDelete} color="error">Delete</Button>
+              </Box>
+          </Box>
+      </Dialog>
+      <Dialog open={openDeleteAllDialog} onClose={handleCancelDeleteAll} maxWidth>
+          <Box sx={{ p: 2 }}>
+              <Typography>Are you sure you want to delete all routes for the {formatDate(dateToDeleteRead)}?</Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                  <Button onClick={handleCancelDeleteAll}>Cancel</Button>
+                  <Button onClick={deleteAllRoutesByDateV2} color="error">Delete</Button>
               </Box>
           </Box>
       </Dialog>

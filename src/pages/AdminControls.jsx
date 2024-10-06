@@ -191,6 +191,16 @@ const AdminControls = () => {
                 aria-describedby="product-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
+                <Button
+                    onClick={handleCloseProductForm}
+                    sx={{
+                        position: 'absolute',
+                        top: 16,
+                        right: 16,
+                    }}
+                >
+                    <CancelIcon />
+                </Button>
                     { productId ? <EditProductForm productId={productId} /> : <CreateProductForm /> }
                 </Box>
             </Modal>
@@ -203,6 +213,16 @@ const AdminControls = () => {
                 aria-describedby="location-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
+                <Button
+                    onClick={handleCloseLocationForm}
+                    sx={{
+                        position: 'absolute',
+                        top: 16,
+                        right: 16,
+                    }}
+                >
+                    <CancelIcon />
+                </Button>
                     {locationId ? <EditLocationForm locationId={locationId} /> : <CreateLocation />}
                 </Box>
             </Modal>
@@ -215,6 +235,16 @@ const AdminControls = () => {
                 aria-describedby="customer-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
+                <Button
+                    onClick={handleCloseCustomerForm}
+                    sx={{
+                        position: 'absolute',
+                        top: 16,
+                        right: 16,
+                    }}
+                >
+                    <CancelIcon />
+                </Button>
                     {customerId ? <EditCustomerForm customerId={customerId} /> : <CreateCustomer />}
                 </Box>
             </Modal>
@@ -252,6 +282,16 @@ const AdminControls = () => {
                 aria-describedby="password-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 400, width: '100%' }}>
+                <Button
+                    onClick={handleClosePasswordModal}
+                    sx={{
+                        position: 'absolute',
+                        top: 16,
+                        right: 16,
+                    }}
+                >
+                    <CancelIcon />
+                </Button>
                     <CheckPasswordForm username={usernameForPasswordChange} onClose={handleClosePasswordModal} />
                 </Box>
             </Modal>

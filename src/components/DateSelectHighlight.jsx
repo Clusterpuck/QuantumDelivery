@@ -25,6 +25,8 @@ const DateSelectHighlight = ({highlightedDates, selectedDate, handleDateChange})
       dayjs(day).isSame(highlightedDate, 'day')  // Using dayjs's `isSame` method for comparison
     );
 
+    const isPastDate = dayjs(day).isBefore(dayjs(), 'day');
+
     return (
       <PickersDay
         {...other}
@@ -33,8 +35,8 @@ const DateSelectHighlight = ({highlightedDates, selectedDate, handleDateChange})
         disableMargin
         style={{
           ...(isHighlighted && {
-            backgroundColor: '#e0983a', // Highlight color
-            color: 'white', // Text color
+            backgroundColor: isPastDate ? '#d3d3d3' : '#e0983a', // Grey out past highlighted days
+            color: isPastDate ? 'grey' : 'white', // Change text color for past days
           }),
         }}
       />

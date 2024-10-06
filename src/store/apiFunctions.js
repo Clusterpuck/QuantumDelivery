@@ -1404,6 +1404,7 @@ export const getProducts = async () => {
 };
 
 // GET: api/Vehicles/{id}
+// gets a vehicles details by its id
 export const getVehicle = async (id) => {
     try {
         const token = Cookies.get('authToken');
@@ -1427,6 +1428,7 @@ export const getVehicle = async (id) => {
 };
 
 // PUT: api/Vehicles/{id}
+// updates a vehicles details
 export const updateVehicle = async (id, updatedVehicle) => {
     try {
         const token = Cookies.get('authToken');
@@ -1522,3 +1524,64 @@ export const getVehicles = async () => {
     }
 };
 
+        if (!response.ok) {
+            throw new Error('Failed to update vehicle');
+        }
+
+        const responseData = await response.json();
+        console.log('Successfully updated vehicle:', responseData);
+
+    } catch (error) {
+        console.error('Error updating vehicle:', error);
+    }
+};
+
+// POST: api/Vehicles
+// creates a new vehicle
+export const createVehicle = async (newVehicle) => {
+    try {
+        const token = Cookies.get('authToken');
+        const response = await fetch(`${Constants.DATA_ENDPOINT}vehicles`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(newVehicle),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to create vehicle');
+        }
+
+        const responseData = await response.json();
+        console.log('Successfully created vehicle:', responseData);
+
+    } catch (error) {
+        console.error('Error creating vehicle:', error);
+    }
+};
+
+// DELETE: api/Vehicles/{id}
+// deletes a vehicle
+export const deleteVehicle = async (id) => {
+    try {
+        const token = Cookies.get('authToken');
+        const response = await fetch(`${Constants.DATA_ENDPOINT}vehicles/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete vehicle');
+        }
+
+        const responseData = await response.json();
+        console.log('Successfully deleted vehicle:', responseData.message);
+
+    } catch (error) {
+        console.error('Error deleting vehicle:', error);
+    }
+};

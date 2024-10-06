@@ -118,7 +118,7 @@ const IssuesTable = ({setCount, showMessage}) => {
                                 <Box sx={{ display: 'flex', gap: 1 }}> 
                                             <Button
                                                 size="small"
-                                                variant="contained"
+                                                variant="outlined"
                                                 color="primary"
                                                 onClick={() => handleEditClick(order)}
                                             >
@@ -126,7 +126,7 @@ const IssuesTable = ({setCount, showMessage}) => {
                                             </Button>
                                             <Button
                                                 size="small"
-                                                variant="contained"
+                                                variant="outlined"
                                                 color="error"
                                                 onClick={() => handleDeleteClick(order.orderID)}
                                             >

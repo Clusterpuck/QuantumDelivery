@@ -358,7 +358,7 @@ const ViewRoutes = () =>
                             <Button
                               onClick={() => deleteAllRoutesByDate(date)}
                               color="error"
-                              variant="contained"
+                              variant="outlined"
                               size='small'
                             >
                               Delete All Routes For {formatDate(date)}
@@ -402,7 +402,7 @@ const ViewRoutes = () =>
                                         <Button
                                           onClick={() => handleEditClick(route)}
                                           color="primary"
-                                          variant="contained"
+                                          variant="outlined"
                                           size='small'
                                           disabled={route.orders.some(order => order.status !== 'ASSIGNED' &&
                                             order.status !== 'CANCELLED')}
@@ -421,7 +421,7 @@ const ViewRoutes = () =>
                                         <Button
                                           onClick={() => deleteRoute(route.deliveryRouteID)}
                                           color="error"
-                                          variant="contained"
+                                          variant="outlined"
                                           size='small'
                                           disabled={route.orders.some(order => order.status !== 'ASSIGNED' &&
                                             order.status !== 'CANCELLED')}

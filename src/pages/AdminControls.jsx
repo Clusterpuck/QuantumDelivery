@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Paper, Grid, Typography, Modal, Box } from '@mui/material';
+import { Paper, Grid, Typography, Modal, Box, Button } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
+import CancelIcon from '@mui/icons-material/Cancel';
 import { useNavigate } from 'react-router-dom';
 import AdminControlsForm from '../components/AdminControlsForm';
 import DeleteEntityForm from '../components/DeleteEntityForm';
@@ -146,6 +147,16 @@ const AdminControls = () => {
                 aria-describedby="delete-entity-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 400, width: '100%' }}>
+                <Button
+                    onClick={handleCloseDelete}
+                    sx={{
+                        position: 'absolute',
+                        top: 16,
+                        right: 16,
+                    }}
+                >
+                    <CancelIcon />
+                </Button>
                     {deleteEntity && <DeleteEntityForm entity={deleteEntity} />}
                 </Box>
             </Modal>
@@ -158,6 +169,16 @@ const AdminControls = () => {
                 aria-describedby="account-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
+                <Button
+                    onClick={handleCloseAccountForm}
+                    sx={{
+                        position: 'absolute',
+                        top: 16,
+                        right: 16,
+                    }}
+                >
+                    <CancelIcon />
+                </Button>
                     {userMode === 'add' ? <CreateAccountForm /> : <EditAccountForm accountId={accountId} handleOpenPasswordModal={handleOpenPasswordModal} accountStatus={accountStatus} />}
                 </Box>
             </Modal>
@@ -206,6 +227,16 @@ const AdminControls = () => {
                 aria-describedby="edit-entity-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 400, width: '100%' }}>
+                <Button
+                    onClick={handleCloseEditEntityForm}
+                    sx={{
+                        position: 'absolute',
+                        top: 16,
+                        right: 16,
+                    }}
+                >
+                    <CancelIcon />
+                </Button>
                     <EditEntityForm
                         entity={entityType} 
                         onSuccess={handleEditEntitySuccess}

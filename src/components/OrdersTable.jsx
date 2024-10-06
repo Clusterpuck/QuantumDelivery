@@ -42,7 +42,6 @@ const headerWidths = {
     '':'2%',
 }
 
-
 const OrdersTable = ({ orders, onRefresh, showMessage }) => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -166,7 +165,7 @@ const OrdersTable = ({ orders, onRefresh, showMessage }) => {
                                 <span>
                                     <Button
                                         size="small"
-                                        variant="contained"
+                                        variant="outlined"
                                         color="primary"
                                         onClick={() => handleEditClick(row)}
                                         disabled={isButtonDisabled}
@@ -179,7 +178,7 @@ const OrdersTable = ({ orders, onRefresh, showMessage }) => {
                                 <span>
                                     <Button
                                         size="small"
-                                        variant="contained"
+                                        variant="outlined"
                                         color="error"
                                         onClick={() => handleDeleteClick(row.orderID)}
                                         disabled={isButtonDisabled}

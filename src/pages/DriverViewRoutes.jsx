@@ -3,6 +3,7 @@ import {Snackbar, Alert,useMediaQuery, Box, Drawer, IconButton, Typography, Butt
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import PhoneIcon from '@mui/icons-material/Phone';
+import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
@@ -609,6 +610,17 @@ const DriverViewRoutes = ({ inputUser }) => {
                 fullWidth
                 maxWidth="sm"
             >
+                <Button
+                    onClick={handlePhoneDialog(false)}
+                    sx={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                    }}
+                >
+                    <CancelIcon />
+                </Button>
+                
                 <DialogTitle>Call {currentDelivery?.customerName}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>

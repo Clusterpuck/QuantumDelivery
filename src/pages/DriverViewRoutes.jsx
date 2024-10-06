@@ -127,7 +127,6 @@ const DriverViewRoutes = ({ inputUser }) => {
             message: msg,
             severity: type
           });
-          console.log("SHOW MESSAGE CALLED");
         };
 
         const handleSnackbarClose = () =>
@@ -179,6 +178,8 @@ const DriverViewRoutes = ({ inputUser }) => {
                 setCurrentDelivery(nextDeliveries[0] || null);
                 setNextDeliveries(remainingDeliveries);
             }
+
+            handleShowMessage("Order marked as delivered", "success");
         }
     };
 

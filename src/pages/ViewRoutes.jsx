@@ -11,13 +11,21 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import EditRouteForm from '../components/EditRouteForm';
 import PersonIcon from '@mui/icons-material/Person'; // person icon
 import { Switch } from '@mui/material';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import MoreTimeIcon from '@mui/icons-material/MoreTime';
+import FeedbackIcon from '@mui/icons-material/Feedback';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
+import InsertInvitationIcon from '@mui/icons-material/InsertInvitation';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import { LinearProgress } from '@mui/material';
 
 // Material-UI Components
 import
   {
     Button, Grid, Paper, Snackbar,
     Alert, Typography, Accordion, AccordionDetails, AccordionSummary,
-    Box, Skeleton, Modal, Dialog, Tooltip
+    Box, Skeleton, Modal, Dialog, Tooltip, Badge
   } from '@mui/material';
 
 // Material-UI Icons
@@ -131,23 +139,27 @@ const ViewRoutes = () =>
     setSelectedRouteToEdit(null);
   };
 
-  const handleDeleteClick = (routeID) => {
+  const handleDeleteClick = (routeID) =>
+  {
     setRouteToDelete(routeID);
     setOpenDeleteDialog(true);
   };
 
-  const handleCancelDelete = () => {
+  const handleCancelDelete = () =>
+  {
     setOpenDeleteDialog(false);
     setRouteToDelete(null);
   };
 
-  const handleDeleteAllClick = (date) => {
+  const handleDeleteAllClick = (date) =>
+  {
     setDateToDelete(date);
     setDateToDeleteRead(date);
     setOpenDeleteAllDialog(true);
   };
 
-  const handleCancelDeleteAll = () => {
+  const handleCancelDeleteAll = () =>
+  {
     setOpenDeleteAllDialog(false);
     setDateToDelete(null);
   };
@@ -166,64 +178,71 @@ const ViewRoutes = () =>
    * @param {*}
    * @returns {*}
    */
-  const handleConfirmDelete = async () => {
-    try {
+  const handleConfirmDelete = async () =>
+  {
+    try
+    {
       const result = await deleteMethod(routeToDelete, 'DeliveryRoutes');
       if (result)
-        {
-          //console.log('Item deleted successfully:', result);
-          //await loadOrders();
-          loadRoutes();
-          setSnackbar({
-            open: true,
-            message: 'Route deleted successfully!',
-            severity: 'success'
-          });
-        } else
-        {
-          console.error('Failed to delete item.');
-        }
+      {
+        //console.log('Item deleted successfully:', result);
+        //await loadOrders();
+        loadRoutes();
+        setSnackbar({
+          open: true,
+          message: 'Route deleted successfully!',
+          severity: 'success'
+        });
+      } else
+      {
+        console.error('Failed to delete item.');
+      }
     }
-    catch (error) {
+    catch (error)
+    {
       setSnackbarMessage(error.message);
       setSnackbarSeverity('error');
       showMessage(error.message, 'error');
-  } finally {
+    } finally
+    {
       setOpenDeleteDialog(false);
       setRouteToDelete(null);
-  }
+    }
 
   };
 
   const deleteAllRoutesByDate = async () =>
+  {
+    try
     {
-      try {
-        let result = await deleteRouteByDate(dateToDelete);
-        if (result)
-          {
-            //console.log('Item deleted successfully:', result);
-            //await loadOrders();
-            loadRoutes();
-            setSnackbar({
-              open: true,
-              message: 'Routes deleted successfully!',
-              severity: 'success'
-            });
-          } else
-          {
-            console.error('Failed to delete item.');
-          }
-      }
-      catch (error) {
-        setSnackbarMessage(error.message);
-        setSnackbarSeverity('error');
-        showMessage(error.message, 'error');
-      } 
-      finally {
-          setOpenDeleteAllDialog(false);
-          setRouteToDelete(null);
+      let result = await deleteRouteByDate(dateToDelete);
+      if (result)
+      {
+        //console.log('Item deleted successfully:', result);
+        //await loadOrders();
+        loadRoutes();
+        setSnackbar({
+          open: true,
+          message: 'Routes deleted successfully!',
+          severity: 'success'
+        });
+      } else
+      {
+        console.error('Failed to delete item.');
       }
     }
+    catch (error)
+    {
+      setSnackbarMessage(error.message);
+      setSnackbarSeverity('error');
+      showMessage(error.message, 'error');
+    }
+    finally
+    {
+      setOpenDeleteAllDialog(false);
+      setRouteToDelete(null);
+    }
+  }
 
   /**
    * Loads all the routes in the database
@@ -313,42 +332,158 @@ const ViewRoutes = () =>
   ];
 
 
+  const RouteState = ({ dateRoutes }) =>
+  {
+
+    // Active Routes: A route is active if none of the orders in that route have the 'ASSIGNED' status.
+    const activeRoutes = dateRoutes.filter(route =>
+      route.orders.some(order => order.status === 'ON-ROUTE')
+    );
+
+    // Planned Routes: A route is planned if some of the orders in that route have the 'ASSIGNED' status.
+    const plannedRoutes = dateRoutes.filter(route =>
+      route.orders.some(order => order.status === 'ASSIGNED')
+    );
+
+    // Finished Routes: A route is finished if all orders in that route have either 'DELIVERED' or 'ISSUE' status.
+    const finishedRoutes = dateRoutes.filter(route =>
+      route.orders.every(order => order.status === 'DELIVERED' || order.status === 'ISSUE' || order.status === 'CANCELLED')
+    );
+
+    return (
+      <Grid container>
+        <Grid item xs={4} md={3} >
+          <Badge
+            showZero
+            badgeContent={activeRoutes.length}
+            color={activeRoutes.length > 0 ? "success" : "primary"}
+          >
+            <DirectionsRunIcon sx= {{color: theme.palette.primary.darkaccent }} />
+          </Badge>
+          <Typography variant="subtitle2">
+            Active
+          </Typography>
+
+        </Grid>
+        <Grid item xs={4} md={3} >
+          <Badge
+            showZero
+            badgeContent={plannedRoutes.length}
+            color="info"
+          >
+            <InsertInvitationIcon sx= {{color: theme.palette.primary.darkaccent }} />
+          </Badge>
+          <Typography variant="subtitle2">
+            Planned
+          </Typography>
+
+        </Grid>
+        <Grid item xs={4} md={3} >
+          <Badge
+            showZero
+            badgeContent={finishedRoutes.length}
+            color="primary"
+          >
+            <CheckCircleOutlineIcon sx= {{color: theme.palette.primary.darkaccent }} />
+          </Badge>
+          <Typography variant="subtitle2">
+            Finished
+          </Typography>
+
+        </Grid>
+        {/*<Grid item xs={4} md={12/5}>
+           <Box display="flex" flexDirection="column" alignItems="center">
+            <Badge>
+              <LocalShippingIcon color="primary" />
+            </Badge>
+            <Typography variant="subtitle2" textAlign="center">
+              Delivered: {dateRoutes.reduce((acc, curr) => acc + curr.orders.filter(order => order.status === 'DELIVERED').length, 0)}/
+              {dateRoutes.reduce((acc, curr) => acc + curr.orders.length, 0)}
+            </Typography>
+
+            {/* Progress Bar */}
+        {/* <LinearProgress
+              variant="determinate"
+              value={(() =>
+              {
+                const delivered = dateRoutes.reduce((acc, curr) => acc + curr.orders.filter(order => order.status === 'DELIVERED').length, 0);
+                const total = dateRoutes.reduce((acc, curr) => acc + curr.orders.length, 0);
+                return total > 0 ? (delivered / total) * 100 : 0; // Calculate percentage
+              })()}
+              sx={{ width: '100%', marginTop: 1 }} // Make the bar full width with a margin on top
+            /> 
+          </Box> 
+        </Grid>*/}
+        <Grid item xs={4} md={3} >
+          <Badge
+            showZero
+            badgeContent={dateRoutes.reduce((acc, curr) =>
+              acc + curr.orders.filter(order => order.delayed).length, 0)} // Ensuring it shows 0
+            color={dateRoutes.reduce((acc, curr) =>
+              acc + curr.orders.filter(order => order.delayed).length, 0) > 0 ? "error" : "primary"}
+          >
+            <MoreTimeIcon sx= {{color: theme.palette.primary.darkaccent }} />
+          </Badge>
+          <Typography variant="subtitle2">
+            Delayed
+          </Typography>
+        </Grid>
+        {/* <Grid item xs={4} md={12/5} >
+          <Badge
+            showZero
+            badgeContent={dateRoutes.reduce((acc, curr) =>
+              acc + curr.orders.filter(order => order.status === 'ISSUE').length, 0)} // Ensuring it shows 0
+            color={dateRoutes.reduce((acc, curr) =>
+              acc + curr.orders.filter(order => order.status === 'ISSUE').length, 0) > 0 ? "error" : "primary"}
+          >
+            <FeedbackIcon color='primary' sx={{ mr: 1 }} />
+          </Badge>
+          <Typography variant="subtitle1">
+            Issues
+          </Typography>
+        </Grid> */}
+
+      </Grid>
+    );
+  };
+
+
 
   return (
     <Grid container>
 
 
-      
+
       <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }} mt={4}>
         <Paper elevation={3} sx={{ p: 4, maxWidth: 1500, width: '100%' }}>
 
-        <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <Typography variant="h3" component="h3" sx={{ display: 'flex', alignItems: 'center' }}>
-          <RouteIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
-          Routes
-        </Typography>
-      </Grid>
+          <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Typography variant="h3" component="h3" sx={{ display: 'flex', alignItems: 'center' }}>
+              <RouteIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
+              Routes
+            </Typography>
+          </Grid>
 
-        <Grid item xs={12} md={12} container spacing={2}>
-  <Grid item xs={2} md={2} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-    <Typography>{isActiveRoutes ? "Active Routes" : "All Routes"}</Typography>
-    <Switch
-      checked={isActiveRoutes}
-      onChange={handleToggle}
-      color="primary"
-    />
-  </Grid>
-  
-  <Grid item xs={10} padding={2} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-    <Button
-      variant="contained"
-      color="primary"
-      onClick={handleOpenModal}
-      sx={{ borderRadius: '18px' }}
-    >
-      <AddIcon sx={{ fontSize: '2rem' }} /> Create New Routes
-    </Button>
-  </Grid>
+          <Grid item xs={12} md={12} container spacing={2}>
+            <Grid item xs={2} md={2} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+              <Typography>{isActiveRoutes ? "Active Routes" : "All Routes"}</Typography>
+              <Switch
+                checked={isActiveRoutes}
+                onChange={handleToggle}
+                color="primary"
+              />
+            </Grid>
+
+            <Grid item xs={10} padding={2} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleOpenModal}
+                sx={{ borderRadius: '18px' }}
+              >
+                <AddIcon sx={{ fontSize: '2rem' }} /> Create New Routes
+              </Button>
+            </Grid>
 
 
 
@@ -383,58 +518,64 @@ const ViewRoutes = () =>
                             },
                           }}
                         >
-                          <Grid container margin={0.1}>
-                            <Grid item xs={12} md={4} marginBottom={0.5} marginTop={0.5}>
-                              <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
+                          <Grid container >
+                            <Grid item xs={12} md={2} >
+                              <Box display="flex" alignItems="center" sx={{ gap: 1, height: '100%' }}>
                                 <CalendarTodayIcon color="primary" />
                                 <Typography variant='h6' >
                                   {formatDate(date)}
                                 </Typography>
                               </Box>
                             </Grid>
-                            <Grid item xs={6} md={4} marginTop={2}>
+                            <Grid item xs={12} md={10}>
                               <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
-                                <Typography variant="subtitle1">
-                                  Total Routes: {dateRoutes.length}
-                                </Typography>
+                                <RouteState dateRoutes={dateRoutes} />
                               </Box>
                             </Grid>
-                            <Grid item xs={6} md={4} marginTop={2}>
-                              <Box display="flex" alignItems="center" sx={{ gap: 1 }}>
-                                <Typography variant="subtitle1">
-                                  Total Orders: {dateRoutes.reduce((acc, curr) => acc + curr.orders.length, 0)}
-                                </Typography>
-                              </Box>
+                            <Grid item md={12}>
+                              <LinearProgress
+                                variant="determinate"
+                                color='primary'
+                                
+                                value={(() =>
+                                {
+                                  const delivered = dateRoutes.reduce((acc, curr) => acc + curr.orders.filter(order => order.status === 'DELIVERED').length, 0);
+                                  const total = dateRoutes.reduce((acc, curr) => acc + curr.orders.length, 0);
+                                  return total > 0 ? (delivered / total) * 100 : 0; // Calculate percentage
+                                })()}
+                                sx={{ width: '100%', marginTop: 1, }} // Make the bar full width with a margin on top
+                              />
                             </Grid>
                           </Grid>
+
 
                         </AccordionSummary>
                         <AccordionDetails
                           key={`panel-${date}-details`}
                         >
                           <Grid item xs={12} md={12} sx={{ ml: 'auto' }}>
-                          <Tooltip
-                            title={dateRoutes.every(route => 
-                              route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')
-                            ) ? "Cannot delete, all routes have orders that are not assigned or cancelled." : ""}
-                            disableHoverListener={!dateRoutes.every(route => 
-                              route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')
-                            )}
-                          >
-                            <span>
-                              <Button
-                                onClick={() => handleDeleteAllClick(date)}
-                                color="error"
-                                variant="outlined"
-                                size='small'
-                                disabled={dateRoutes.every(route => 
-                                  route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')
-                                )}
-                              >
-                                Delete All Routes For {formatDate(date)} {/*HERE*/}
-                              </Button>
-                            </span>
-                          </Tooltip>
+                            <Tooltip
+                              title={dateRoutes.every(route =>
+                                route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')
+                              ) ? "Cannot delete, all routes have orders that are not assigned or cancelled." : ""}
+                              disableHoverListener={!dateRoutes.every(route =>
+                                route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')
+                              )}
+                            >
+                              <span>
+                                <Button
+                                  onClick={() => handleDeleteAllClick(date)}
+                                  color="error"
+                                  variant="outlined"
+                                  size='small'
+                                  disabled={dateRoutes.every(route =>
+                                    route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')
+                                  )}
+                                >
+                                  Delete All Routes For {formatDate(date)} {/*HERE*/}
+                                </Button>
+                              </span>
+                            </Tooltip>
                           </Grid>
                           {dateRoutes.map((route) => (
                             <Grid container item xs={12} md={12} sx={{ mb: 5 }}>
@@ -592,23 +733,23 @@ const ViewRoutes = () =>
         <EditRouteForm route={selectedRouteToEdit} onClose={handleCloseEditDialog} onRefresh={loadRoutes} showMessage={handleShowMessage} />
       </Dialog>
       <Dialog open={openDeleteDialog} onClose={handleCancelDelete} maxWidth>
-          <Box sx={{ p: 2 }}>
-              <Typography>Are you sure you want to delete this route?</Typography>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                  <Button onClick={handleCancelDelete}>Cancel</Button>
-                  <Button onClick={handleConfirmDelete} color="error">Delete</Button>
-              </Box>
+        <Box sx={{ p: 2 }}>
+          <Typography>Are you sure you want to delete this route?</Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+            <Button onClick={handleCancelDelete}>Cancel</Button>
+            <Button onClick={handleConfirmDelete} color="error">Delete</Button>
           </Box>
+        </Box>
       </Dialog>
       <Dialog open={openDeleteAllDialog} onClose={handleCancelDeleteAll} maxWidth>
-          <Box sx={{ p: 2 }}>
-              <Typography>Are you sure you want to delete all <strong>planned routes</strong> for the {formatDate(dateToDeleteRead)}?</Typography>
-              <Typography>This will not delete active or finished routes.</Typography>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                  <Button onClick={handleCancelDeleteAll}>Cancel</Button>
-                  <Button onClick={deleteAllRoutesByDate} color="error">Delete</Button>
-              </Box>
+        <Box sx={{ p: 2 }}>
+          <Typography>Are you sure you want to delete all <strong>planned routes</strong> for the {formatDate(dateToDeleteRead)}?</Typography>
+          <Typography>This will not delete active or finished routes.</Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+            <Button onClick={handleCancelDeleteAll}>Cancel</Button>
+            <Button onClick={deleteAllRoutesByDate} color="error">Delete</Button>
           </Box>
+        </Box>
       </Dialog>
       <Snackbar
         open={snackbar.open}

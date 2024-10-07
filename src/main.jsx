@@ -37,6 +37,9 @@ const theme = createTheme({
             main: '#D4DEED',                        // Highlight color
             accent: '#e6e8ef',                      // Secondary color
         },
+        tertiary:{
+            main: 'red'
+        },
         background: {
             default: '#D4DEED',                     // Background color
             paper: '#F1F4F9',                       // Paper color (background for cards, etc.)

@@ -28,13 +28,16 @@ const theme = createTheme({
         primary: {
             main: '#582c4d',
             accent: '#7390BF',
+            lightaccent: '#D4DEED',
+            mediumaccent: '#B7C8E1',
+            darkaccent: '#243856',
         },
         secondary: {
             main: '#f7d1cd',
         },
         background: {
-            default: '#819BC5',
-            paper: '#e6e8ef'
+            default: '#819BC5', 
+            paper: '#e6e8ef'//''
         },
         text: {
             primary: '#2f2f2f',

@@ -49,6 +49,8 @@ function Navbar() {
     setAnchorElNav(null);
   };
 
+  const username = Cookies.get('userName').split('@')[0]
+
   const handleLogout = () => {
     Cookies.remove('authToken');
     Cookies.remove('userRole');
@@ -186,13 +188,17 @@ function Navbar() {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             {authToken && (
               <>
+             
                 <IconButton
                   component={Link}
                   to="/accountdetails"
-                  sx={{ color: 'inherit', ml: 2, fontSize: 32 }}
+                  sx={{ color: 'inherit', ml: 2 }}
                 >
                   <AccountCircleIcon fontSize="inherit" />
                 </IconButton>
+                <Typography variant = "h7">
+                {username}
+              </Typography>
                 {/* Logout option for larger screens */}
                 <Button 
                   onClick={handleLogout} 

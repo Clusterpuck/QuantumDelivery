@@ -49,7 +49,7 @@ function Navbar() {
     setAnchorElNav(null);
   };
 
-  const username = Cookies.get('userName').split('@')[0]
+  const username = Cookies.get('userName') ? Cookies.get('userName').split('@')[0] : '';
 
   const handleLogout = () => {
     Cookies.remove('authToken');

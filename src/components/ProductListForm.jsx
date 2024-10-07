@@ -26,6 +26,8 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+    const [isQuantityValid, setIsQuantityValid] = useState(true);
+
 
     useEffect(() =>
     {
@@ -59,19 +61,20 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
 
     const handleQuantityChange = (event) =>
     {
-        if( Number(event.target.value) <= 1 )
+        const value = Number(event.target.value)
+        setQuantity(value)
+        if( value < 1 || value > 999)
         {
-            setQuantity(1)
+            setIsQuantityValid(false);
         }
         else{
-            setQuantity(Number(event.target.value));
-
+            setIsQuantityValid(true);
         }
     };
 
     const handleAddProduct = () =>
     {
-        if (selectedProduct)
+        if (selectedProduct && isQuantityValid)
         {
             setAddedProducts(prev =>
             {
@@ -231,8 +234,9 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
                         fullWidth
                         value={quantity}
                         onChange={handleQuantityChange}
-                        inputProps={{ min: 1 }}
                         size="small"
+                        error={!isQuantityValid} // Set error prop based on validity
+                        helperText={!isQuantityValid ? "Quantity must be between 1 and 999" : ""}
                     />
                 </Grid>
                 <Grid item xs={2} justifyContent="center">
@@ -249,7 +253,7 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
                                     variant="contained"
                                     color="primary"
                                     size="small"
-                                    disabled={!selectedProduct}
+                                    disabled={!selectedProduct || !isQuantityValid}
                                 >
                                     Add Product
                                 </Button>

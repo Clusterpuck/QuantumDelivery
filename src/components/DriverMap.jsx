@@ -8,7 +8,7 @@ import {disableScroll} from '../assets/scroll.js';
 // Set your Mapbox access token here
 mapboxgl.accessToken = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
-const DriverMap = ({start,end}) => 
+const DriverMap = ({start,end, destination}) => 
 {
     const mapContainer = useRef(null);
     const map = useRef(null);
@@ -136,7 +136,7 @@ const DriverMap = ({start,end}) =>
                     top:0,
                     left: 0,
                     width: '100vw',
-                    height: '20vh',
+                    height: '18vh',
                     paddingTop: '80px',
                     backgroundColor: '#fff',
                     overflowY: 'auto',
@@ -144,11 +144,15 @@ const DriverMap = ({start,end}) =>
                     zIndex: 1,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    flexDirection: 'column'
+                    flexDirection: 'column',
+                    
                 }}
             >
+                <Box sx={{ textAlign: 'center', fontWeight: 'bold', marginBottom: '10px' }}>
+                    Heading to: {destination}
+                </Box>
                 {steps.length > 0 && (
-                    <Box sx={{ textAlign: 'center' }}>
+                    <Box sx={{ textAlign: 'center'}}>
                         <p>{steps[currentStepIndex].maneuver.instruction}</p>
                         <Box
                             sx={{ 

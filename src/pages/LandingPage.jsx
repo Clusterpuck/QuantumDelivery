@@ -16,6 +16,10 @@ import QLogo from '../../quantalogo.png';
 import Cookies from 'js-cookie';
 import Skeleton from '@mui/material/Skeleton';
 import {enableScroll} from '../assets/scroll.js';
+import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import InsertInvitationIcon from '@mui/icons-material/InsertInvitation';
+import OutboxIcon from '@mui/icons-material/Outbox';
 import
     {
         Table,
@@ -138,7 +142,7 @@ const LandingPage = () =>
                 sx={{ borderRadius: '20px', margin: '30px' }}
             >
                 <CardHeader
-                    title={<Typography variant="h5" >TODAY'S ORDERS</Typography>}
+                    title={<Typography variant="h4" >Today's Orders</Typography>}
                     sx={{ backgroundColor: theme.palette.primary.mediumaccent, padding: '16px' }} // Custom background color and padding
                 />
                 <CardContent>
@@ -149,6 +153,9 @@ const LandingPage = () =>
                         </Grid>
                         <Grid item xs={12}>
                             <HomePagePill text={"Active Orders"} amount={homeData?.activeOrdersCount} Icon={LocalShippingIcon} />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <HomePagePill text={"Delivered Orders"} amount={homeData?.deliveredCount} Icon={OutboxIcon} />
                         </Grid>
                         <Grid item xs={12}>
                             <HomePagePill text={"Issues"} amount={homeData?.ordersWithIssues?.length} Icon={FmdBadIcon} />
@@ -185,7 +192,7 @@ const LandingPage = () =>
                 <Card elevation={10}
                     sx={{ borderRadius: '20px', margin: '30px' }}>
                     <CardHeader 
-                        title={<Typography variant="h5">TODAY'S ROUTES</Typography>}
+                        title={<Typography variant="h4">Today's Routes</Typography>}
                         sx={{ backgroundColor: theme.palette.primary.mediumaccent, padding: '16px' }} // Custom background color and padding
                     />
                     <CardContent>
@@ -193,6 +200,15 @@ const LandingPage = () =>
                             {/* Each HomePagePill takes full width */}
                             <Grid item xs={12}>
                                 <HomePagePill text={"Total Routes"} amount={homeData?.routesCount} Icon={RouteIcon} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <HomePagePill text={"Active Routes"} amount={homeData?.activeRouteCount} Icon={DirectionsRunIcon} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <HomePagePill text={"Planned Routes"} amount={homeData?.plannedRouteCount} Icon={InsertInvitationIcon} />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <HomePagePill text={"Finished Routes"} amount={homeData?.finishedRouteCount} Icon={CheckCircleOutlineIcon} />
                             </Grid>
                             <Grid item xs={12}>
                                 <Typography variant="h5" sx={{ fontWeight: 'bold' }}>Drivers on Routes</Typography>

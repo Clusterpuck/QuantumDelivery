@@ -4,7 +4,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import HomePagePill from '../components/HomePagePill.jsx';
-import { CardHeader, Grid } from '@mui/material';
+import { Button, CardActions, CardHeader, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { fetchMethod } from '../store/apiFunctions.js';
 import WidgetsIcon from '@mui/icons-material/Widgets';
@@ -133,13 +133,13 @@ const LandingPage = () =>
     {
         console.log("In orders card");
         return (
-            <Link to="/orders">
+          
             <Card elevation={10}
                 sx={{ borderRadius: '20px', margin: '30px' }}
             >
                 <CardHeader
-                    title={<Typography variant="h5" sx={{ color: '#fff' }}>TODAY'S ORDERS</Typography>}
-                    sx={{ backgroundColor: theme.palette.primary.main, padding: '16px' }} // Custom background color and padding
+                    title={<Typography variant="h5" >TODAY'S ORDERS</Typography>}
+                    sx={{ backgroundColor: theme.palette.primary.accent, padding: '16px' }} // Custom background color and padding
                 />
                 <CardContent>
                     <Grid container spacing={1.5}>
@@ -158,8 +158,10 @@ const LandingPage = () =>
                         </Grid>
                     </Grid>
                 </CardContent>
+                <CardActions sx={{ justifyContent: 'center', paddingBottom: '16px' }}>
+                    <Button variant='contained' size="large" component={Link} to="/orders" >See Details</Button>
+                </CardActions>
             </Card>
-            </Link>
         );
     };
 
@@ -167,13 +169,12 @@ const LandingPage = () =>
     {
 
         return (
-            <Link to="/viewroutes">
             <Box sx={{ minWidth: 275 }}>
                 <Card elevation={10}
                     sx={{ borderRadius: '20px', margin: '30px' }}>
                     <CardHeader
-                        title={<Typography variant="h5" sx={{ color: '#fff' }}>TODAY'S ROUTES</Typography>}
-                        sx={{ backgroundColor: theme.palette.primary.main, padding: '16px' }} // Custom background color and padding
+                        title={<Typography variant="h5">TODAY'S ROUTES</Typography>}
+                        sx={{ backgroundColor: theme.palette.primary.accent, padding: '16px' }} // Custom background color and padding
                     />
                     <CardContent>
                         <Grid container spacing={1.5}>
@@ -186,22 +187,32 @@ const LandingPage = () =>
                                 <TableContainer component={Paper} sx={{ borderRadius: '10px', boxShadow: 'none' }}>
                                 <Box sx={{ maxHeight: '200px', overflowY: 'auto' }}>
                                     <Table size="small">
-                                        <TableBody>
-                                            {homeData?.driversOnRoutes.map((driver, index) => (
-                                                <TableRow key={index}>
-                                                    <TableCell sx={{ borderBottom: '1px solid #ccc', textAlign: 'center' }}>{driver}</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
+                                            <TableBody>
+                                                {homeData?.driversOnRoutes && homeData.driversOnRoutes.length > 0 ? (
+                                                    homeData.driversOnRoutes.map((driver, index) => (
+                                                        <TableRow key={index}>
+                                                            <TableCell sx={{ borderBottom: '1px solid #ccc', textAlign: 'center' }}>{driver}</TableCell>
+                                                        </TableRow>
+                                                    ))
+                                                ) : (
+                                                    <TableRow>
+                                                        <TableCell sx={{ borderBottom: 'none', textAlign: 'center', padding: '16px' }}>
+                                                            No Drivers
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )}
+                                            </TableBody>
                                     </Table>
                                     </Box>
                                 </TableContainer>
                             </Grid>
                         </Grid>
                     </CardContent>
+                    <CardActions sx={{ justifyContent: 'center', paddingBottom: '16px' }}>
+                    <Button variant='contained' size="large" component={Link} to="/viewroutes" >See Details</Button>
+                </CardActions>
                 </Card>
             </Box>
-            </Link>
         );
     };
 

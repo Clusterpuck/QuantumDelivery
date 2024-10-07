@@ -94,7 +94,6 @@ const Orders = () =>
 
     const filteredOrders = useMemo(() => {
         const query = searchQuery.toLowerCase();
-        //const query = searchQueryRef.current.toLowerCase();
         if (orders.length > 0) {
             return orders.filter(order => 
                 order.orderID.toString().includes(query) ||

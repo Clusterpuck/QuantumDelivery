@@ -13,6 +13,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Cookies from 'js-cookie';
 import { useTheme } from '@mui/material/styles';
+import QLogo from '../../quantalogo.png';
+
 
 // Define the pages for admin and driver
 const admin_pages = [
@@ -64,7 +66,7 @@ function Navbar() {
           {/* Logo image only visible on medium and larger screens */}
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
             <img 
-              src="/quantalogo.png" 
+              src={QLogo}
               alt="Company Logo" 
               style={{ height: 40 }} 
             />

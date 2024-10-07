@@ -29,19 +29,18 @@ const AdminControls = () => {
     const [openProductForm, setOpenProductForm] = useState(false);
     const [openLocationForm, setOpenLocationForm] = useState(false);
     const [openCustomerForm, setOpenCustomerForm] = useState(false);
+    const [openVehicleForm, setOpenVehicleForm] = useState(false);
     const [openEditEntityForm, setOpenEditEntityForm] = useState(false); 
     const [userMode, setUserMode] = useState('add');
     const [accountId, setAccountId] = useState(''); 
     const [productId, setProductId] = useState('');
     const [locationId, setLocationId] = useState('');
     const [customerId, setCustomerId] = useState(''); 
+    const [vehicleId, setVehicleId] = useState('');
     const [openPasswordModal, setOpenPasswordModal] = useState(false); 
     const [usernameForPasswordChange, setUsernameForPasswordChange] = useState('');
     const [accountStatus, setAccountStatus] = useState('');
     const [entityType, setEntityType] = useState('user'); 
-    const [openVehicleForm, setOpenVehicleForm] = useState(false);
-    const [vehicleId, setVehicleId] = useState('');
-
 
     useEffect(() => {
         enableScroll();
@@ -89,6 +88,7 @@ const AdminControls = () => {
                 try {
                     const userData = await getAccountDetails(collectedEntityId); 
                     if (userData.status === 'inactive') {
+                        setAccountStatus('inactive')
                         console.error("Account is inactive and cannot be edited.");
                         setError("This account is inactive and cannot be edited."); // Display the error
                         return; // Prevent further action
@@ -112,6 +112,10 @@ const AdminControls = () => {
             } else if (entityType === 'customer') {
                 setCustomerId(collectedEntityId);
                 setOpenCustomerForm(true);
+                setOpenEditEntityForm(false);
+            } else if (entityType === 'vehicle') {
+                setVehicleId(collectedEntityId);
+                setOpenVehicleForm(true);
                 setOpenEditEntityForm(false);
             } else {
                 console.error("Unsupported entity type for editing.");

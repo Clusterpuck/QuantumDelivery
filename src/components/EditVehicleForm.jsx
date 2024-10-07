@@ -72,7 +72,7 @@ const EditVehicleForm = ({ vehicleId }) => {
                     </Typography>
                     <form style={{ width: '80%' }} onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12} sm={12} sx={{ display: 'flex', flexDirection: 'column', allignItems: 'center' }}>
                                 <TextField
                                     label="License Plate"
                                     name="LicensePlate"

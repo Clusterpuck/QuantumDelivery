@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { Box, Paper, Snackbar, Alert, Divider, Modal, Button, Grid,
     Accordion, AccordionDetails, AccordionSummary,Badge, TextField
  } from '@mui/material';
@@ -17,15 +17,18 @@ import SmsFailedIcon from '@mui/icons-material/SmsFailed';
 import WidgetsIcon from '@mui/icons-material/Widgets';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTheme } from '@mui/material/styles';
+import debounce from 'lodash/debounce';
+
 
 const Orders = () =>
 {
     const [orders, setOrders] = useState([]);
-    const [filteredOrders, setFilteredOrders] = useState(orders);
+    //const [filteredOrders, setFilteredOrders] = useState(orders);
     const [numOfIssues, setNumberOfIssues] = useState(0);
     const [loadingOrders, setLoadingOrders] = useState(0);
     // State for controlling Modal
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [searchQuery, setSearchQuery ] = useState('');
     const searchQueryRef = useRef('');
     const [snackbar, setSnackbar] = useState({
         open: false,
@@ -46,6 +49,7 @@ const Orders = () =>
         });
     };
 
+
     useEffect(() =>
     {
         enableScroll();
@@ -53,11 +57,7 @@ const Orders = () =>
 
     }, []);
 
-    // Initial filter on mount
-    useEffect(() => {
-        setFilteredOrders(orders);
-    }, [orders]);
-
+   
     const theme = useTheme();
 
 
@@ -81,10 +81,9 @@ const Orders = () =>
     // Close Modal function
     const handleCloseModal = () => setIsModalOpen(false);
 
-    const handleInputChange = (event) => {
-        searchQueryRef.current = event.target.value;
-        filterOrders();
-    };
+    const handleInputChange = useCallback(debounce((event) => {
+        setSearchQuery(event.target.value);
+    }, 300), []);
 
     const formatDateForSearch = (isoDate) => {
         const date = new Date(isoDate);
@@ -94,18 +93,21 @@ const Orders = () =>
         return `${day}/${month}/${year}`;
     };
 
-    const filterOrders = () => {
-        const query = searchQueryRef.current.toLowerCase();
-        const filtered = orders.filter(order => 
-            order.orderID.toString().includes(query) ||
-            formatDateForSearch(order.dateOrdered).includes(query) ||
-            order.address.toLowerCase().includes(query) ||
-            order.customerName.toLowerCase().includes(query) ||
-            order.orderNotes.toLowerCase().includes(query) ||
-            order.status.toLowerCase().includes(query)
-        );
-        setFilteredOrders(filtered);
-    };
+    const filteredOrders = useMemo(() => {
+        const query = searchQuery.toLowerCase();
+        //const query = searchQueryRef.current.toLowerCase();
+        if (orders.length > 0) {
+            return orders.filter(order => 
+                order.orderID.toString().includes(query) ||
+                formatDateForSearch(order.dateOrdered).includes(query) ||
+                order.address.toLowerCase().includes(query) ||
+                order.customerName.toLowerCase().includes(query) ||
+                order.orderNotes.toLowerCase().includes(query) ||
+                order.status.toLowerCase().includes(query)
+            );
+        }
+        return orders;
+    }, [orders, searchQuery]);
 
     const loadOrders = async () =>
     {

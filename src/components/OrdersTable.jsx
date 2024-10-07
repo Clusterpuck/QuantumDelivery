@@ -90,11 +90,16 @@ const OrdersTable = ({ orders, onRefresh, showMessage }) => {
     };
 
     const visibleRows = React.useMemo(() => {
-        // First filter the rows based on the selected statuses
-        const filteredRows = orders.filter((item) => selectedStatuses.includes(item.status));
-        
-        // Then sort the filtered rows
-        return filteredRows.sort(getComparator(sortDirection, sortBy));
+        if( orders )
+        {
+            // First filter the rows based on the selected statuses
+            const filteredRows = orders.filter((item) => selectedStatuses.includes(item.status));
+            
+            // Then sort the filtered rows
+            return filteredRows.sort(getComparator(sortDirection, sortBy));
+
+        }
+        return [];
     }, [orders, selectedStatuses, sortDirection, sortBy]);
     
 

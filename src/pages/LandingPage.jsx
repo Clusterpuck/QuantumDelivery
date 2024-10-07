@@ -139,7 +139,7 @@ const LandingPage = () =>
             >
                 <CardHeader
                     title={<Typography variant="h5" >TODAY'S ORDERS</Typography>}
-                    sx={{ backgroundColor: theme.palette.primary.accent, padding: '16px' }} // Custom background color and padding
+                    sx={{ backgroundColor: theme.palette.primary.mediumaccent, padding: '16px' }} // Custom background color and padding
                 />
                 <CardContent>
                     <Grid container spacing={1.5}>
@@ -159,7 +159,19 @@ const LandingPage = () =>
                     </Grid>
                 </CardContent>
                 <CardActions sx={{ justifyContent: 'center', paddingBottom: '16px' }}>
-                    <Button variant='contained' size="large" component={Link} to="/orders" >See Details</Button>
+                    <Button 
+                        variant='contained' 
+                        size="large" 
+                        component={Link} to="/orders"
+                        sx={{
+                            // Prevent color change on hover
+                            '&:hover': {
+                                color: 'white', // Keep text color the same on hover
+                            },
+                        }}
+                         >
+                            See Details
+                        </Button>
                 </CardActions>
             </Card>
         );
@@ -172,9 +184,9 @@ const LandingPage = () =>
             <Box sx={{ minWidth: 275 }}>
                 <Card elevation={10}
                     sx={{ borderRadius: '20px', margin: '30px' }}>
-                    <CardHeader
+                    <CardHeader 
                         title={<Typography variant="h5">TODAY'S ROUTES</Typography>}
-                        sx={{ backgroundColor: theme.palette.primary.accent, padding: '16px' }} // Custom background color and padding
+                        sx={{ backgroundColor: theme.palette.primary.mediumaccent, padding: '16px' }} // Custom background color and padding
                     />
                     <CardContent>
                         <Grid container spacing={1.5}>
@@ -209,7 +221,19 @@ const LandingPage = () =>
                         </Grid>
                     </CardContent>
                     <CardActions sx={{ justifyContent: 'center', paddingBottom: '16px' }}>
-                    <Button variant='contained' size="large" component={Link} to="/viewroutes" >See Details</Button>
+                    <Button 
+                        color='primary' 
+                        variant='contained' 
+                        size="large" 
+                        component={Link} to="/viewroutes" 
+                        sx={{
+                            // Prevent color change on hover
+                            '&:hover': {
+                                color: 'white', // Keep text color the same on hover
+                            },
+                        }}
+                    >See Details
+                    </Button>
                 </CardActions>
                 </Card>
             </Box>
@@ -217,7 +241,9 @@ const LandingPage = () =>
     };
 
     return (
-        <Grid container spacing={2} sx={{ minWidth: 275, mt: 2 }}>
+        <Grid container sx={{ minWidth: 275, mt: 2 }}>
+            <Paper elevation={3} sx={{ p: 4, maxWidth: 1500, width: '100%' }}>
+            <Grid container spacing={2} sx={{ minWidth: 275, mt: 2 }}>
             <Grid container spacing={2}>
                 <Grid item xs={12} md={3}>
                     <Typography variant='h6'>
@@ -279,6 +305,8 @@ const LandingPage = () =>
             <Grid item xs={12} md={6}>
                 {loadingHomeData ? <Skeleton variant="rectangular" height={400} /> : <RoutesCard />}
             </Grid>
+            </Grid>
+            </Paper>
         </Grid>
 
     );

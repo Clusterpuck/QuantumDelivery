@@ -106,6 +106,8 @@ const Orders = () =>
 
 
     return (
+        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }} mt={4}>
+                <Paper elevation={3} sx={{ p: 4, maxWidth: 1500, width: '100%' }}>
         <Grid container>
             <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Typography variant="h3" component="h3" sx={{ display: 'flex', alignItems: 'center' }}>
@@ -124,12 +126,12 @@ const Orders = () =>
                             aria-controls={`panel--content`}
                             id={`panel--header`}
                             sx={{
-                                backgroundColor: theme.palette.primary.accent,  // Set background color
+                                backgroundColor: theme.palette.primary.mediumaccent,  // Set background color
                                 borderBottom: '1px solid grey', // Add a border
                                 borderRadius: '8px',
                                 margin: 0.5,
                                 '&:hover': {
-                                    backgroundColor: theme.palette.secondary.main, // Hover effect
+                                    backgroundColor: theme.palette.primary.lightaccent, // Hover effect
                                 },
                                 '& .MuiTypography-root': {
                                     fontWeight: 'bold', // Custom font styles for text
@@ -237,6 +239,8 @@ const Orders = () =>
 
 
         </Grid>
+        </Paper>
+        </Box>
     );
 };
 

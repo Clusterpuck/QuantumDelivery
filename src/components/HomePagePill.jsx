@@ -16,7 +16,7 @@ const HomePagePill = ({ text, amount, Icon }) =>
         boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',  // Add shadow here
         borderRadius: '20px',                          // Optional: soften edges
         width: '100%',
-        background: theme.palette.primary.mediumaccent
+        background: theme.palette.primary.lightaccent
       }}
 
     >

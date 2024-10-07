@@ -14,6 +14,7 @@ import IconButton from '@mui/material/IconButton';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
+import { useTheme } from '@mui/material/styles';
 
 const statusOptions = ["PLANNED", "ON-ROUTE", "DELIVERED", "CANCELLED", "ASSIGNED", "ISSUE"];
  // Mapping header names to JSON keys
@@ -42,6 +43,7 @@ const headerWidths = {
 
 
 const PlannedOrdersTable = ({ orders, onRefresh, showMessage }) => {
+    const theme = useTheme();
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
@@ -155,7 +157,18 @@ const PlannedOrdersTable = ({ orders, onRefresh, showMessage }) => {
                     <TableCell sx={{ borderBottom: '1px solid grey' }}>{row.address}</TableCell>
                     <TableCell sx={{ borderBottom: '1px solid grey' }}>{row.customerName}</TableCell>
                     <TableCell sx={{ borderBottom: '1px solid grey' }}>{row.status}</TableCell>
-                    <TableCell sx={{ borderBottom: '1px solid grey' }}>{row.orderNotes}</TableCell>
+                    <TableCell 
+                        sx={{ 
+                            borderBottom: '1px solid grey', 
+                            textOverflow: 'ellipsis', // For truncating text
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                            maxWidth: '100px',
+                            }}>
+                        <Tooltip title={row.orderNotes} arrow>
+                            {row.orderNotes}
+                        </Tooltip>
+                    </TableCell>
                     <TableCell sx={{ borderBottom: '1px solid grey' }}>
                         <Box sx={{ display: 'flex', gap: 1 }}>
                             <Tooltip title={tooltipText} arrow>
@@ -192,7 +205,8 @@ const PlannedOrdersTable = ({ orders, onRefresh, showMessage }) => {
                             size="small"
                             onClick={() => setOpen(!open)}
                         >
-                            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                            {open ? <KeyboardArrowUpIcon sx={{color: theme.palette.primary.main}} /> : 
+                                    <KeyboardArrowDownIcon sx={{color: theme.palette.primary.main}} />}
                         </IconButton>
                     </TableCell>
                 </TableRow>
@@ -251,9 +265,10 @@ const PlannedOrdersTable = ({ orders, onRefresh, showMessage }) => {
                                     {header}
                                      {/* Show ▲ or ▼ based on sorting state */}
                                     {header !== 'Action' && header !== '' && sortBy === headerMapping[header]
-                                        ? (sortDirection === 'asc' ? <ArrowUpwardIcon/> : <ArrowDownwardIcon/>)
+                                        ? (sortDirection === 'asc' ? <ArrowUpwardIcon sx={{color: theme.palette.primary.main}}/> 
+                                            : <ArrowDownwardIcon sx={{color: theme.palette.primary.main}}/>)
                                         : header !== 'Action' && header !== '' 
-                                        ? <SwapVertIcon/>
+                                        ? <SwapVertIcon sx={{color: theme.palette.primary.main}}/>
                                         : null}
                                 </TableCell>
                             ))}

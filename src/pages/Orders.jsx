@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Box, Paper, Snackbar, Alert, Divider, Modal, Button, Grid,
-    Accordion, AccordionDetails, AccordionSummary,Badge
+    Accordion, AccordionDetails, AccordionSummary,Badge, TextField
  } from '@mui/material';
 import OrdersTable from '../components/OrdersTable.jsx';
 import Typography from '@mui/material/Typography';
@@ -21,10 +21,12 @@ import { useTheme } from '@mui/material/styles';
 const Orders = () =>
 {
     const [orders, setOrders] = useState([]);
+    const [filteredOrders, setFilteredOrders] = useState(orders);
     const [numOfIssues, setNumberOfIssues] = useState(0);
     const [loadingOrders, setLoadingOrders] = useState(0);
     // State for controlling Modal
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const searchQueryRef = useRef('');
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: '',
@@ -51,6 +53,11 @@ const Orders = () =>
 
     }, []);
 
+    // Initial filter on mount
+    useEffect(() => {
+        setFilteredOrders(orders);
+    }, [orders]);
+
     const theme = useTheme();
 
 
@@ -74,7 +81,31 @@ const Orders = () =>
     // Close Modal function
     const handleCloseModal = () => setIsModalOpen(false);
 
+    const handleInputChange = (event) => {
+        searchQueryRef.current = event.target.value;
+        filterOrders();
+    };
 
+    const formatDateForSearch = (isoDate) => {
+        const date = new Date(isoDate);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+        const year = String(date.getFullYear()).slice(-2); // Get last two digits of the year
+        return `${day}/${month}/${year}`;
+    };
+
+    const filterOrders = () => {
+        const query = searchQueryRef.current.toLowerCase();
+        const filtered = orders.filter(order => 
+            order.orderID.toString().includes(query) ||
+            formatDateForSearch(order.dateOrdered).includes(query) ||
+            order.address.toLowerCase().includes(query) ||
+            order.customerName.toLowerCase().includes(query) ||
+            order.orderNotes.toLowerCase().includes(query) ||
+            order.status.toLowerCase().includes(query)
+        );
+        setFilteredOrders(filtered);
+    };
 
     const loadOrders = async () =>
     {
@@ -160,24 +191,30 @@ const Orders = () =>
             {/**All orders table */}
             <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }} mt={4}>
                 <Paper elevation={3} sx={{ p: 4, maxWidth: 1500, width: '100%' }}>
-                    <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleOpenModal}
-                            sx={{ borderRadius: '18px' }}
-                        >
-                            <AddIcon sx={{ fontSize: '2rem' }} /> Add New Orders
-                        </Button>
-                    </Grid>
-
-                    <Grid item xs={12} mb={1}>
+                    <Grid item xs={12} mb={1} sx={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <WidgetsIcon sx={{ mr: 1 }} />
                             <Typography variant="h4" component="h1">
                                 All Orders
                             </Typography>
                         </Box>
+                    </Grid>
+
+                    <Grid item xs={12} mb={1} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <TextField
+                            variant="outlined"
+                            size="small"
+                            placeholder="Search..."
+                            onChange={handleInputChange}
+                        />
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleOpenModal}
+                        sx={{ borderRadius: '18px' }}
+                    >
+                        <AddIcon sx={{ fontSize: '2rem' }} /> Add New Orders
+                    </Button>
                     </Grid>
 
                     <Box sx={{ width: '100%', height: '100%' }}>
@@ -188,7 +225,7 @@ const Orders = () =>
                                 sx={{ width: '100%', height: '800px' }}
                             />
                         ) : (
-                            <OrdersTable orders={orders} onRefresh={refreshOrders} showMessage={handleShowMessage} />
+                            <OrdersTable orders={filteredOrders} onRefresh={refreshOrders} showMessage={handleShowMessage} />
                         )}
                     </Box>
                 </Paper>

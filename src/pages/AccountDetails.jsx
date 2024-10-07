@@ -17,7 +17,7 @@ const AccountDetails = () => {
                 gap: 8,
             }}
         >
-            <h1>Account Details</h1>
+            
             <AccountDetailsForm />
         </div>
     );

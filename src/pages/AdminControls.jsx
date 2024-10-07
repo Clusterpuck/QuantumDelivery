@@ -6,21 +6,22 @@ import { useNavigate } from 'react-router-dom';
 import AdminControlsForm from '../components/AdminControlsForm';
 import DeleteEntityForm from '../components/DeleteEntityForm';
 import CreateAccountForm from '../components/CreateAccountForm';
-import EditAccountForm from '../components/EditAccountForm'; 
-import EditEntityForm from '../components/EditEntityForm'; 
-import CreateProductForm from '../components/CreateProductForm'; 
-import CreateLocation from '../components/CreateLocation'; 
-import CreateVehicleForm from '../components/CreateVehicleForm'; 
-import CreateCustomer from '../components/CreateCustomer'; 
-import EditProductForm from '../components/EditProductForm'; 
-import EditLocationForm from '../components/EditLocationForm'; 
-import EditCustomerForm from '../components/EditCustomerForm'; 
-import EditVehicleForm from '../components/EditVehicleForm'; 
+import EditAccountForm from '../components/EditAccountForm';
+import EditEntityForm from '../components/EditEntityForm';
+import CreateProductForm from '../components/CreateProductForm';
+import CreateLocation from '../components/CreateLocation';
+import CreateVehicleForm from '../components/CreateVehicleForm';
+import CreateCustomer from '../components/CreateCustomer';
+import EditProductForm from '../components/EditProductForm';
+import EditLocationForm from '../components/EditLocationForm';
+import EditCustomerForm from '../components/EditCustomerForm';
+import EditVehicleForm from '../components/EditVehicleForm';
 import CheckPasswordForm from '../components/CheckPasswordForm';
 import { enableScroll } from '../assets/scroll.js';
 import { getAccountDetails } from '../store/apiFunctions.js'
 
-const AdminControls = () => {
+const AdminControls = () =>
+{
     const navigate = useNavigate();
 
     const [deleteEntity, setDeleteEntity] = useState(null);
@@ -29,48 +30,58 @@ const AdminControls = () => {
     const [openProductForm, setOpenProductForm] = useState(false);
     const [openLocationForm, setOpenLocationForm] = useState(false);
     const [openCustomerForm, setOpenCustomerForm] = useState(false);
-    const [openEditEntityForm, setOpenEditEntityForm] = useState(false); 
+    const [openEditEntityForm, setOpenEditEntityForm] = useState(false);
     const [userMode, setUserMode] = useState('add');
-    const [accountId, setAccountId] = useState(''); 
+    const [accountId, setAccountId] = useState('');
     const [productId, setProductId] = useState('');
     const [locationId, setLocationId] = useState('');
-    const [customerId, setCustomerId] = useState(''); 
-    const [openPasswordModal, setOpenPasswordModal] = useState(false); 
+    const [customerId, setCustomerId] = useState('');
+    const [openPasswordModal, setOpenPasswordModal] = useState(false);
     const [usernameForPasswordChange, setUsernameForPasswordChange] = useState('');
     const [accountStatus, setAccountStatus] = useState('');
-    const [entityType, setEntityType] = useState('user'); 
+    const [entityType, setEntityType] = useState('user');
     const [openVehicleForm, setOpenVehicleForm] = useState(false);
     const [vehicleId, setVehicleId] = useState('');
 
 
-    useEffect(() => {
+    useEffect(() =>
+    {
         enableScroll();
     }, []);
 
-    const handleSubmit = (entity, action) => {
-        if (action === 'delete') {
+    const handleSubmit = (entity, action) =>
+    {
+        if (action === 'delete')
+        {
             setDeleteEntity(entity);
             setOpenDelete(true);
-        } else if (action === 'edit') {
+        } else if (action === 'edit')
+        {
             setEntityType(entity);
             setOpenEditEntityForm(true);
-        } else if (entity === 'account' && action === 'add') {
+        } else if (entity === 'account' && action === 'add')
+        {
             setUserMode('add');
             setAccountId('');
             setOpenAccountForm(true);
-        } else if (entity === 'product' && action === 'add') {
+        } else if (entity === 'product' && action === 'add')
+        {
             setProductId('');
             setOpenProductForm(true);
-        } else if (entity === 'location' && action === 'add') {
+        } else if (entity === 'location' && action === 'add')
+        {
             setLocationId('');
             setOpenLocationForm(true);
-        } else if (entity === 'customer' && action === 'add') {
+        } else if (entity === 'customer' && action === 'add')
+        {
             setCustomerId('');
             setOpenCustomerForm(true);
-        } else if (entity === 'vehicle' && action === 'add') {
+        } else if (entity === 'vehicle' && action === 'add')
+        {
             setVehicleId('');
             setOpenVehicleForm(true);
-        } else {
+        } else
+        {
             console.log(`Submitted operation for ${entity}:`, action);
             navigate('/orders');
         }
@@ -83,12 +94,17 @@ const AdminControls = () => {
     const handleCloseCustomerForm = () => setOpenCustomerForm(false);
     const handleCloseEditEntityForm = () => setOpenEditEntityForm(false);
 
-    const handleEditEntitySuccess = async (collectedEntityId) => {
-        if (collectedEntityId) {
-            if (entityType === 'account') {
-                try {
-                    const userData = await getAccountDetails(collectedEntityId); 
-                    if (userData.status === 'inactive') {
+    const handleEditEntitySuccess = async (collectedEntityId) =>
+    {
+        if (collectedEntityId)
+        {
+            if (entityType === 'account')
+            {
+                try
+                {
+                    const userData = await getAccountDetails(collectedEntityId);
+                    if (userData.status === 'inactive')
+                    {
                         console.error("Account is inactive and cannot be edited.");
                         setError("This account is inactive and cannot be edited."); // Display the error
                         return; // Prevent further action
@@ -97,29 +113,35 @@ const AdminControls = () => {
                     setUserMode('edit');
                     setOpenAccountForm(true);
                     setOpenEditEntityForm(false);
-                } catch (err) {
+                } catch (err)
+                {
                     console.error("Error fetching account data:", err);
                     setError("An error occurred while trying to fetch user data.");
                 }
-            } else if (entityType === 'product') {
+            } else if (entityType === 'product')
+            {
                 setProductId(collectedEntityId);
                 setOpenProductForm(true);
                 setOpenEditEntityForm(false);
-            } else if (entityType === 'location') {
+            } else if (entityType === 'location')
+            {
                 setLocationId(collectedEntityId);
                 setOpenLocationForm(true);
                 setOpenEditEntityForm(false);
-            } else if (entityType === 'customer') {
+            } else if (entityType === 'customer')
+            {
                 setCustomerId(collectedEntityId);
                 setOpenCustomerForm(true);
                 setOpenEditEntityForm(false);
-            } else {
+            } else
+            {
                 console.error("Unsupported entity type for editing.");
             }
         }
     };
 
-    const handleOpenPasswordModal = (username) => {
+    const handleOpenPasswordModal = (username) =>
+    {
         setUsernameForPasswordChange(username);
         setOpenPasswordModal(true);
     };
@@ -130,13 +152,14 @@ const AdminControls = () => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 8 }}>
-            <Typography variant="h3" component="h3" sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-                <SettingsIcon sx={{ fontSize: 50 }} />
-                Admin Controls
-            </Typography>
+
 
             <Paper elevation={3} sx={{ padding: 6, maxWidth: 1000, width: '100%' }}>
                 <Grid container spacing={2} justifyContent="center">
+                    <Typography variant="h3" component="h3" sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
+                        <SettingsIcon sx={{ fontSize: 50 }} />
+                        Admin Controls
+                    </Typography>
                     {entities.map((entity) => (
                         <AdminControlsForm
                             key={entity}
@@ -155,16 +178,16 @@ const AdminControls = () => {
                 aria-describedby="delete-entity-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 400, width: '100%' }}>
-                <Button
-                    onClick={handleCloseDelete}
-                    sx={{
-                        position: 'absolute',
-                        top: 16,
-                        right: 16,
-                    }}
-                >
-                    <CancelIcon />
-                </Button>
+                    <Button
+                        onClick={handleCloseDelete}
+                        sx={{
+                            position: 'absolute',
+                            top: 16,
+                            right: 16,
+                        }}
+                    >
+                        <CancelIcon />
+                    </Button>
                     {deleteEntity && <DeleteEntityForm entity={deleteEntity} />}
                 </Box>
             </Modal>
@@ -177,16 +200,16 @@ const AdminControls = () => {
                 aria-describedby="account-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
-                <Button
-                    onClick={handleCloseAccountForm}
-                    sx={{
-                        position: 'absolute',
-                        top: 16,
-                        right: 16,
-                    }}
-                >
-                    <CancelIcon />
-                </Button>
+                    <Button
+                        onClick={handleCloseAccountForm}
+                        sx={{
+                            position: 'absolute',
+                            top: 16,
+                            right: 16,
+                        }}
+                    >
+                        <CancelIcon />
+                    </Button>
                     {userMode === 'add' ? <CreateAccountForm /> : <EditAccountForm accountId={accountId} handleOpenPasswordModal={handleOpenPasswordModal} accountStatus={accountStatus} />}
                 </Box>
             </Modal>
@@ -199,17 +222,17 @@ const AdminControls = () => {
                 aria-describedby="product-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
-                <Button
-                    onClick={handleCloseProductForm}
-                    sx={{
-                        position: 'absolute',
-                        top: 16,
-                        right: 16,
-                    }}
-                >
-                    <CancelIcon />
-                </Button>
-                    { productId ? <EditProductForm productId={productId} /> : <CreateProductForm /> }
+                    <Button
+                        onClick={handleCloseProductForm}
+                        sx={{
+                            position: 'absolute',
+                            top: 16,
+                            right: 16,
+                        }}
+                    >
+                        <CancelIcon />
+                    </Button>
+                    {productId ? <EditProductForm productId={productId} /> : <CreateProductForm />}
                 </Box>
             </Modal>
 
@@ -221,16 +244,16 @@ const AdminControls = () => {
                 aria-describedby="location-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
-                <Button
-                    onClick={handleCloseLocationForm}
-                    sx={{
-                        position: 'absolute',
-                        top: 16,
-                        right: 16,
-                    }}
-                >
-                    <CancelIcon />
-                </Button>
+                    <Button
+                        onClick={handleCloseLocationForm}
+                        sx={{
+                            position: 'absolute',
+                            top: 16,
+                            right: 16,
+                        }}
+                    >
+                        <CancelIcon />
+                    </Button>
                     {locationId ? <EditLocationForm locationId={locationId} /> : <CreateLocation />}
                 </Box>
             </Modal>
@@ -243,16 +266,16 @@ const AdminControls = () => {
                 aria-describedby="customer-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
-                <Button
-                    onClick={handleCloseCustomerForm}
-                    sx={{
-                        position: 'absolute',
-                        top: 16,
-                        right: 16,
-                    }}
-                >
-                    <CancelIcon />
-                </Button>
+                    <Button
+                        onClick={handleCloseCustomerForm}
+                        sx={{
+                            position: 'absolute',
+                            top: 16,
+                            right: 16,
+                        }}
+                    >
+                        <CancelIcon />
+                    </Button>
                     {customerId ? <EditCustomerForm customerId={customerId} /> : <CreateCustomer />}
                 </Box>
             </Modal>
@@ -265,18 +288,18 @@ const AdminControls = () => {
                 aria-describedby="edit-entity-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 400, width: '100%' }}>
-                <Button
-                    onClick={handleCloseEditEntityForm}
-                    sx={{
-                        position: 'absolute',
-                        top: 16,
-                        right: 16,
-                    }}
-                >
-                    <CancelIcon />
-                </Button>
+                    <Button
+                        onClick={handleCloseEditEntityForm}
+                        sx={{
+                            position: 'absolute',
+                            top: 16,
+                            right: 16,
+                        }}
+                    >
+                        <CancelIcon />
+                    </Button>
                     <EditEntityForm
-                        entity={entityType} 
+                        entity={entityType}
                         onSuccess={handleEditEntitySuccess}
                     />
                 </Box>
@@ -290,16 +313,16 @@ const AdminControls = () => {
                 aria-describedby="password-form-description"
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 400, width: '100%' }}>
-                <Button
-                    onClick={handleClosePasswordModal}
-                    sx={{
-                        position: 'absolute',
-                        top: 16,
-                        right: 16,
-                    }}
-                >
-                    <CancelIcon />
-                </Button>
+                    <Button
+                        onClick={handleClosePasswordModal}
+                        sx={{
+                            position: 'absolute',
+                            top: 16,
+                            right: 16,
+                        }}
+                    >
+                        <CancelIcon />
+                    </Button>
                     <CheckPasswordForm username={usernameForPasswordChange} onClose={handleClosePasswordModal} />
                 </Box>
             </Modal>

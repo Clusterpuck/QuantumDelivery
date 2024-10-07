@@ -318,14 +318,16 @@ const ViewRoutes = () =>
     <Grid container>
 
 
-      <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      
+      <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }} mt={4}>
+        <Paper elevation={3} sx={{ p: 4, maxWidth: 1500, width: '100%' }}>
+
+        <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Typography variant="h3" component="h3" sx={{ display: 'flex', alignItems: 'center' }}>
           <RouteIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
           Routes
         </Typography>
       </Grid>
-      <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }} mt={4}>
-        <Paper elevation={3} sx={{ p: 4, maxWidth: 1500, width: '100%' }}>
 
         <Grid item xs={12} md={12} container spacing={2}>
   <Grid item xs={2} md={2} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>

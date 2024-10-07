@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
     Button, Drawer, Box, IconButton, Typography, Table, TableBody, TableCell,
-    TableHead, TableRow, Checkbox, Collapse, Skeleton
+    TableHead, TableRow, Checkbox, Collapse, Skeleton, Grid
 } from '@mui/material';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
@@ -17,9 +17,12 @@ import dayjs from 'dayjs';
 import NoRouteFound from '../components/NoRouteFound';
 import DateSelectHighlight from '../components/DateSelectHighlight.jsx';
 import Tooltip from '@mui/material/Tooltip';
+import { useTheme } from '@mui/material/styles';
+import { useActionData } from 'react-router-dom';
 
 // Page design for live tracking page
 const LiveTracking = () => {
+    const theme = useTheme();
     const [drawerOpen, setDrawerOpen] = React.useState(true); // state for whether drawer is open
     const [routesData, setRoutesData] = React.useState(null); // routes data, returned by 'get delivery routes'
     const [allRoutesData, setAllRoutesData] = useState(null); //raw data recieved from fetch method, unfiltered
@@ -402,44 +405,51 @@ const LiveTracking = () => {
                             display: 'flex',
                             width: '100%',
                             marginTop: '0',
-                            backgroundColor: '#819bc5',
+                            backgroundColor: theme.palette.primary.mediumaccent,
                             justifyContent: 'center',
                             alignItems: 'flex-end',
                             boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
                             borderRadius: '0 0 16px 16px',
-                            height: '100px', // Adjust the height as needed
+                            height: '110px', // Adjust the height as needed
                             top: 0,
                             left:0,
                             paddingBottom: '15px'
                         }}
                     >
+                        <Grid container >
+                        <Grid item xs={12} md={5}>
                         <Typography variant="h6" color="black" sx={{ p: 2, fontWeight: 'bold' }}>
                             Route Details
                         </Typography>
+                        </Grid>
+                        <Grid item xs={12} md ={7} sx={{paddingRight: '70px', minWidth: '250px'}}>
                         <DateSelectHighlight
                             highlightedDates={dateOptions}
                             selectedDate={selectedDate}
                             handleDateChange={handleDateChange}
                             />
+                        </Grid>
+                       
+                        </Grid>
                     </Box>
                     <RoutesTableView />
+                    <Tooltip title={"Hide Route Details"}>  
+                        <IconButton
+                            onClick={toggleDrawer(false)}
+                            sx={{
+                                position: 'fixed',
+                                top: 80,
+                                right: '61%',
+                                backgroundColor: theme.palette.primary.main,
+                                color: 'white',
+                                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)'
+                            }}
+                        >
+                            <KeyboardArrowLeftIcon />
+                        </IconButton>
+                        </Tooltip>
 
                 </Box>
-                <Tooltip title={"Hide Route Details"}>  
-                <IconButton
-                    onClick={toggleDrawer(false)}
-                    sx={{
-                        position: 'fixed',
-                        top: 80,
-                        right: '61%',
-                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                        color: 'black',
-                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)'
-                    }}
-                >
-                    <KeyboardArrowLeftIcon />
-                </IconButton>
-                </Tooltip>
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, position: 'fixed', height: '100vh', width: '100vw', margin: 0, padding: 0, pointerEvents: 'auto', }}>
                 <LiveMap checkedRoutes={checkedRoutes} ordersData={ordersData} routeIdToColour={routeIdToColour} />
@@ -447,7 +457,15 @@ const LiveTracking = () => {
                     <Tooltip title={"Show Route Details"}>
                     <IconButton
                         onClick={toggleDrawer(true)}
-                        sx={{ position: 'fixed', top: 80, left: 16, backgroundColor: 'rgba(255, 255, 255, 0.8)', zIndex: 1300,color: 'black',boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)' }}
+                        sx={{ 
+                            position: 'fixed', 
+                            top: 80, 
+                            left: 16, 
+                            backgroundColor: theme.palette.primary.main, 
+                            zIndex: 1300, 
+                            color: 'white',
+                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)' 
+                        }}
                     >
                         <KeyboardArrowRightIcon />
                     </IconButton>

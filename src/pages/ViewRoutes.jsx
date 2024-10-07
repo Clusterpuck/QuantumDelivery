@@ -411,14 +411,28 @@ const ViewRoutes = () =>
                           key={`panel-${date}-details`}
                         >
                           <Grid item xs={12} md={12} sx={{ ml: 'auto' }}>
-                            <Button
-                              onClick={() => handleDeleteAllClick(date)}
-                              color="error"
-                              variant="outlined"
-                              size='small'
-                            >
-                              Delete All Routes For {formatDate(date)} {/*HERE*/}
-                            </Button>
+                          <Tooltip
+                            title={dateRoutes.every(route => 
+                              route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')
+                            ) ? "Cannot delete, all routes have orders that are not assigned or cancelled." : ""}
+                            disableHoverListener={!dateRoutes.every(route => 
+                              route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')
+                            )}
+                          >
+                            <span>
+                              <Button
+                                onClick={() => handleDeleteAllClick(date)}
+                                color="error"
+                                variant="outlined"
+                                size='small'
+                                disabled={dateRoutes.every(route => 
+                                  route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')
+                                )}
+                              >
+                                Delete All Routes For {formatDate(date)} {/*HERE*/}
+                              </Button>
+                            </span>
+                          </Tooltip>
                           </Grid>
                           {dateRoutes.map((route) => (
                             <Grid container item xs={12} md={12} sx={{ mb: 5 }}>
@@ -586,7 +600,8 @@ const ViewRoutes = () =>
       </Dialog>
       <Dialog open={openDeleteAllDialog} onClose={handleCancelDeleteAll} maxWidth>
           <Box sx={{ p: 2 }}>
-              <Typography>Are you sure you want to delete all routes for the {formatDate(dateToDeleteRead)}?</Typography>
+              <Typography>Are you sure you want to delete all <strong>planned routes</strong> for the {formatDate(dateToDeleteRead)}?</Typography>
+              <Typography>This will not delete active or finished routes.</Typography>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                   <Button onClick={handleCancelDeleteAll}>Cancel</Button>
                   <Button onClick={deleteAllRoutesByDate} color="error">Delete</Button>

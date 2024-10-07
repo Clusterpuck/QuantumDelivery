@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
-import { Box, Paper, Snackbar, Alert, Divider, Modal, Button, Grid,
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { Box, Paper, Snackbar, Alert, Modal, Button, Grid,
     Accordion, AccordionDetails, AccordionSummary,Badge, TextField
  } from '@mui/material';
 import OrdersTable from '../components/OrdersTable.jsx';
@@ -29,7 +29,6 @@ const Orders = () =>
     // State for controlling Modal
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchQuery, setSearchQuery ] = useState('');
-    const searchQueryRef = useRef('');
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: '',

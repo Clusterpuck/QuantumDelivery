@@ -91,7 +91,9 @@ const LoginForm = () => {
             <Paper elevation={3} sx={{ padding: 3, maxWidth: 400, width: '100%' }}>
                 <Grid container spacing={2} justifyContent="center" alignItems="center">
                     <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center' }}>
-                        <AccountCircleIcon sx={{ fontSize: 80, mb: 2 }} />
+                    <Typography variant="h3" component="h3" >
+                        Login
+                    </Typography>
                     </Grid>
                     <Grid item xs={12}>
                         <form onSubmit={handleLogin}>

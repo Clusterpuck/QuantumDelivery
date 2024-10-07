@@ -2,8 +2,10 @@ import React from 'react';
 import MinorCrashIcon from '@mui/icons-material/MinorCrash';
 import { Box, Typography } from '@mui/material';
 import { LineWeight } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
 
 const NoRouteFound = () => {
+    const theme = useTheme();
     return (
         <Box
             sx={{
@@ -17,7 +19,7 @@ const NoRouteFound = () => {
                 p: 2
             }}
         >
-            <MinorCrashIcon sx={{ fontSize: 100, color: '#582c4d', fontWeight:'bold' }} />
+            <MinorCrashIcon sx={{ fontSize: 100, color: theme.palette.primary.darkaccent, fontWeight:'bold' }} />
             <Typography variant="h6" color="textSecondary" sx={{ mt: 2 } }>
                 No routes to display.
             </Typography>

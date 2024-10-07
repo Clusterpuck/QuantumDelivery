@@ -1,9 +1,15 @@
 :root {
-  --background-colour: #819BC5;
-  --highlight-colour: #f7d1cd;
+  --background-colour: #FFFFFF;
+  --highlight-colour: #582c4d;
   --action-colour: #582c4d;
+  --lightaction-colour: #C185B1;
   --secondary-colour: #e6e8ef;
   --text-colour: #2f2f2f;
+  --accent-colour: #7390BF;
+  --lightaccent-colour: #D4DEED;
+  --mediumaccent-colour: #B7C8E1;
+  --darkaccent-colour: #243856;
+  --paper-colour: #F1F4F9;
 
   
 

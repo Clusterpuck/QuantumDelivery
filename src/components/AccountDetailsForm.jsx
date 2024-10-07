@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Box, Paper, Button, Grid, FormControl, InputLabel, Select, MenuItem, Modal } from '@mui/material';
+import { TextField, Box, Paper, Button, Grid, FormControl, InputLabel, Select, MenuItem, Modal, Typography } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Cookies from 'js-cookie'; 
@@ -112,10 +112,13 @@ const AccountDetailsForm = () => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
+            <Paper elevation={3} sx={{ padding: 2, maxWidth: 800, width: '100%' }}>
                 <Grid container spacing={2} direction="column" alignItems="center">
                     <Grid item>
                         <AccountCircleIcon sx={{ fontSize: 80, mb: 2, alignItems: 'center' }}/>
+                        <Typography variant="h3" component="h3" >
+                            Account Details
+                        </Typography>
                     </Grid>
                     <Grid item>
                         {/* Form Starts Here */}

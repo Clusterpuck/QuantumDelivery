@@ -26,18 +26,23 @@ import './App.css';
 const theme = createTheme({
     palette: {
         primary: {
-            main: '#582c4d',
-            accent: '#7390BF',
+            main: '#582c4d',                        // Action color
+            light: '#F1E4EE',                       // Light action color
+            accent: '#7390BF',                      // Accent color
+            lightaccent: '#D4DEED',                 // Light accent color
+            mediumaccent: '#B7C8E1',                // Medium accent color
+            darkaccent: '#243856',                  // Dark accent color
         },
         secondary: {
-            main: '#f7d1cd',
+            main: '#D4DEED',                        // Highlight color
+            accent: '#e6e8ef',                      // Secondary color
         },
         background: {
-            default: '#819BC5',
-            paper: '#e6e8ef'
+            default: '#D4DEED',                     // Background color
+            paper: '#F1F4F9',                       // Paper color (background for cards, etc.)
         },
         text: {
-            primary: '#2f2f2f',
+            primary: '#2f2f2f',                     // Primary text color
         },
     },
 });

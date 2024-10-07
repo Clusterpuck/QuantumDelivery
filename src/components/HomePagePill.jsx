@@ -16,19 +16,19 @@ const HomePagePill = ({ text, amount, Icon }) =>
         boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',  // Add shadow here
         borderRadius: '20px',                          // Optional: soften edges
         width: '100%',
-        background: theme.palette.primary.accent
+        background: theme.palette.primary.lightaccent
       }}
 
     >
           <Grid container alignItems="center" justifyContent="space-between">
             <Grid item sx={{ display: 'flex', alignItems: 'center' }} margin={1}>
-              <Icon sx={{color:theme.palette.primary.main}} /> 
+              <Icon sx={{color:theme.palette.primary.darkaccent}} /> 
               <Typography variant='h5' color={theme.palette.text.primary} sx={{ marginLeft: '8px' }}>
                 {text}
               </Typography>
             </Grid>
             <Grid item margin={1}>
-              <Typography variant='h5' color={theme.palette.primary.main}>
+              <Typography variant='h5' color={theme.palette.text.primary}>
                 {amount}
               </Typography>
             </Grid>

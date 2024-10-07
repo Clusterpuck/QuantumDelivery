@@ -4,7 +4,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import HomePagePill from '../components/HomePagePill.jsx';
-import { CardHeader, Grid } from '@mui/material';
+import { Button, CardActions, CardHeader, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { fetchMethod } from '../store/apiFunctions.js';
 import WidgetsIcon from '@mui/icons-material/Widgets';
@@ -133,13 +133,13 @@ const LandingPage = () =>
     {
         console.log("In orders card");
         return (
-            <Link to="/orders">
+          
             <Card elevation={10}
                 sx={{ borderRadius: '20px', margin: '30px' }}
             >
                 <CardHeader
-                    title={<Typography variant="h5" sx={{ color: '#fff' }}>TODAY'S ORDERS</Typography>}
-                    sx={{ backgroundColor: theme.palette.primary.main, padding: '16px' }} // Custom background color and padding
+                    title={<Typography variant="h5" >TODAY'S ORDERS</Typography>}
+                    sx={{ backgroundColor: theme.palette.primary.mediumaccent, padding: '16px' }} // Custom background color and padding
                 />
                 <CardContent>
                     <Grid container spacing={1.5}>
@@ -158,8 +158,22 @@ const LandingPage = () =>
                         </Grid>
                     </Grid>
                 </CardContent>
+                <CardActions sx={{ justifyContent: 'center', paddingBottom: '16px' }}>
+                    <Button 
+                        variant='contained' 
+                        size="large" 
+                        component={Link} to="/orders"
+                        sx={{
+                            // Prevent color change on hover
+                            '&:hover': {
+                                color: 'white', // Keep text color the same on hover
+                            },
+                        }}
+                         >
+                            See Details
+                        </Button>
+                </CardActions>
             </Card>
-            </Link>
         );
     };
 
@@ -167,13 +181,12 @@ const LandingPage = () =>
     {
 
         return (
-            <Link to="/viewroutes">
             <Box sx={{ minWidth: 275 }}>
                 <Card elevation={10}
                     sx={{ borderRadius: '20px', margin: '30px' }}>
-                    <CardHeader
-                        title={<Typography variant="h5" sx={{ color: '#fff' }}>TODAY'S ROUTES</Typography>}
-                        sx={{ backgroundColor: theme.palette.primary.main, padding: '16px' }} // Custom background color and padding
+                    <CardHeader 
+                        title={<Typography variant="h5">TODAY'S ROUTES</Typography>}
+                        sx={{ backgroundColor: theme.palette.primary.mediumaccent, padding: '16px' }} // Custom background color and padding
                     />
                     <CardContent>
                         <Grid container spacing={1.5}>
@@ -186,27 +199,51 @@ const LandingPage = () =>
                                 <TableContainer component={Paper} sx={{ borderRadius: '10px', boxShadow: 'none' }}>
                                 <Box sx={{ maxHeight: '200px', overflowY: 'auto' }}>
                                     <Table size="small">
-                                        <TableBody>
-                                            {homeData?.driversOnRoutes.map((driver, index) => (
-                                                <TableRow key={index}>
-                                                    <TableCell sx={{ borderBottom: '1px solid #ccc', textAlign: 'center' }}>{driver}</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
+                                            <TableBody>
+                                                {homeData?.driversOnRoutes && homeData.driversOnRoutes.length > 0 ? (
+                                                    homeData.driversOnRoutes.map((driver, index) => (
+                                                        <TableRow key={index}>
+                                                            <TableCell sx={{ borderBottom: '1px solid #ccc', textAlign: 'center' }}>{driver}</TableCell>
+                                                        </TableRow>
+                                                    ))
+                                                ) : (
+                                                    <TableRow>
+                                                        <TableCell sx={{ borderBottom: 'none', textAlign: 'center', padding: '16px' }}>
+                                                            No Drivers
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )}
+                                            </TableBody>
                                     </Table>
                                     </Box>
                                 </TableContainer>
                             </Grid>
                         </Grid>
                     </CardContent>
+                    <CardActions sx={{ justifyContent: 'center', paddingBottom: '16px' }}>
+                    <Button 
+                        color='primary' 
+                        variant='contained' 
+                        size="large" 
+                        component={Link} to="/viewroutes" 
+                        sx={{
+                            // Prevent color change on hover
+                            '&:hover': {
+                                color: 'white', // Keep text color the same on hover
+                            },
+                        }}
+                    >See Details
+                    </Button>
+                </CardActions>
                 </Card>
             </Box>
-            </Link>
         );
     };
 
     return (
-        <Grid container spacing={2} sx={{ minWidth: 275, mt: 2 }}>
+        <Grid container sx={{ minWidth: 275, mt: 2 }}>
+            <Paper elevation={3} sx={{ p: 4, maxWidth: 1500, width: '100%' }}>
+            <Grid container spacing={2} sx={{ minWidth: 275, mt: 2 }}>
             <Grid container spacing={2}>
                 <Grid item xs={12} md={3}>
                     <Typography variant='h6'>
@@ -268,6 +305,8 @@ const LandingPage = () =>
             <Grid item xs={12} md={6}>
                 {loadingHomeData ? <Skeleton variant="rectangular" height={400} /> : <RoutesCard />}
             </Grid>
+            </Grid>
+            </Paper>
         </Grid>
 
     );

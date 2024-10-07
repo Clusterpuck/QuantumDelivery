@@ -19,6 +19,7 @@ import DateSelectHighlight from '../components/DateSelectHighlight.jsx';
 import dayjs from 'dayjs';
 import Tooltip from '@mui/material/Tooltip';
 import '../index.css';
+import { useTheme } from '@mui/material/styles';
 
 
 const DriverViewRoutes = ({ inputUser }) => {
@@ -48,6 +49,7 @@ const DriverViewRoutes = ({ inputUser }) => {
     const handlePhoneDialog = (open) => () => { setPhoneDialogOpen(open); };
     const handleIssueDialogOpen = () => { setIssueDialogOpen(true); };
     const handleIssueDialogClose = () => { setIssueDialogOpen(false); };
+    const theme = useTheme();
 
     const fetchDeliveryData = async () => {
         try {
@@ -524,10 +526,10 @@ const DriverViewRoutes = ({ inputUser }) => {
                     onClick={toggleDrawer(false)}
                     sx={{
                         position: 'fixed',
-                        top: 80,
+                        top: 77,
                         right: isMobile ? '7vw' : '71vw',
-                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                        color: 'black',
+                        backgroundColor: theme.palette.primary.main,
+                        color: 'white',
                         boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)'
                     }}
                 >
@@ -544,7 +546,14 @@ const DriverViewRoutes = ({ inputUser }) => {
                     <Tooltip title={"Show Delivery Progress"}>
                     <IconButton
                         onClick={toggleDrawer(true)}
-                        sx={{ position: 'fixed', top: 80, left: 16, backgroundColor: 'rgba(255, 255, 255, 0.8)', zIndex: 1300,color: 'black',boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)' }}
+                        sx={{ 
+                            position: 'fixed', 
+                            top: 77, 
+                            left: 16, 
+                            backgroundColor: theme.palette.primary.main, 
+                            zIndex: 1300, 
+                            color: 'white', 
+                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.3)' }}
                     >
                         <KeyboardArrowRightIcon />
                     </IconButton>
@@ -589,7 +598,7 @@ const DriverViewRoutes = ({ inputUser }) => {
                         </Box>
                     ) : (
                         currentLocation.length > 0 && (
-                            (<DriverMap start={currentLocation} end={[currentDelivery?.longitude, currentDelivery?.latitude]} />)
+                            (<DriverMap start={currentLocation} end={[currentDelivery?.longitude, currentDelivery?.latitude]} destination={currentDelivery?.address}/>)
                         )
                     )}
                 </Box>

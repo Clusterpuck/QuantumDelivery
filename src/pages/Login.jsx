@@ -20,7 +20,6 @@ const Login = () => {
                 gap: 8,
             }}
         >
-            <h1>Login</h1>
             <LoginForm/>
         </div>
     );

@@ -49,6 +49,8 @@ function Navbar() {
     setAnchorElNav(null);
   };
 
+  const username = Cookies.get('userName').split('@')[0]
+
   const handleLogout = () => {
     Cookies.remove('authToken');
     Cookies.remove('userRole');
@@ -56,7 +58,7 @@ function Navbar() {
   };
 
   return (
-    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, backgroundColor: theme.palette.primary.lightaccent, color: theme.palette.text.primary }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Logo image only visible on medium and larger screens */}
@@ -117,6 +119,7 @@ function Navbar() {
                   display: { xs: 'block', md: 'none' },
                 }}
               >
+                {/**Drop down menu options */}
                 {pages.map((page) => (
                   <MenuItem key={page.name} onClick={handleCloseNavMenu}>
                     <Typography
@@ -171,9 +174,11 @@ function Navbar() {
                   onClick={handleCloseNavMenu}
                   sx={{
                     my: 2,
-                    color: location.pathname === page.path ? theme.palette.primary.accent : 'white', // Highlight current page
-                    display: 'block'
-                  }}
+                    color: location.pathname === page.path ? theme.palette.primary.darkaccent : theme.palette.text.primary, // Highlight current page
+                    display: 'block',
+                    textDecoration: location.pathname === page.path ? 'underline' : 'none', // Underline when selected
+                    fontWeight: location.pathname === page.path ? 'bold' : 'normal', // Bold when selected
+                }}
                 >
                   {page.name}
                 </Button>
@@ -183,17 +188,21 @@ function Navbar() {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             {authToken && (
               <>
+             
                 <IconButton
                   component={Link}
                   to="/accountdetails"
-                  sx={{ color: 'white', ml: 2, fontSize: 32 }}
+                  sx={{ color: 'inherit', ml: 2 }}
                 >
                   <AccountCircleIcon fontSize="inherit" />
                 </IconButton>
+                <Typography variant = "h7">
+                {username}
+              </Typography>
                 {/* Logout option for larger screens */}
                 <Button 
                   onClick={handleLogout} 
-                  sx={{ color: 'white', ml: 2, display: { xs: 'none', md: 'inline-flex' } }}
+                  sx={{ color: 'inherit', ml: 2, display: { xs: 'none', md: 'inline-flex' } }}
                 >
                   Logout
                 </Button>

@@ -526,7 +526,7 @@ const DriverViewRoutes = ({ inputUser }) => {
                     onClick={toggleDrawer(false)}
                     sx={{
                         position: 'fixed',
-                        top: 80,
+                        top: 77,
                         right: isMobile ? '7vw' : '71vw',
                         backgroundColor: theme.palette.primary.main,
                         color: 'white',
@@ -548,7 +548,7 @@ const DriverViewRoutes = ({ inputUser }) => {
                         onClick={toggleDrawer(true)}
                         sx={{ 
                             position: 'fixed', 
-                            top: 80, 
+                            top: 77, 
                             left: 16, 
                             backgroundColor: theme.palette.primary.main, 
                             zIndex: 1300, 
@@ -598,7 +598,7 @@ const DriverViewRoutes = ({ inputUser }) => {
                         </Box>
                     ) : (
                         currentLocation.length > 0 && (
-                            (<DriverMap start={currentLocation} end={[currentDelivery?.longitude, currentDelivery?.latitude]} />)
+                            (<DriverMap start={currentLocation} end={[currentDelivery?.longitude, currentDelivery?.latitude]} destination={currentDelivery?.address}/>)
                         )
                     )}
                 </Box>

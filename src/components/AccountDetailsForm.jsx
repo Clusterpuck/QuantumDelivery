@@ -70,7 +70,6 @@ const AccountDetailsForm = () => {
         event.preventDefault();
         setError(null);
         setSuccess(false);
-        
         const accountDetails = await getAccountDetails(accountId);
 
         // Prepare the updated account data to send to the backend
@@ -89,7 +88,7 @@ const AccountDetailsForm = () => {
             return;
         }
 
-        if (!/(?:\d\s?){10}/.test(updatedAccountData.Phone)) {
+        if (!/^(?:\d\s*){10}$/.test(updatedAccountData.Phone)) {
             setError('Phone number must contain 10 digits')
             return;
         }

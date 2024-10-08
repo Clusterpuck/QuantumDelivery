@@ -42,7 +42,7 @@ const CreateAccountForm = () => {
                 Role: formData.companyRole      // Role corresponds to companyRole
             };
 
-            if (!/(?:\d\s?){10}/.test(updatedAccountData.Phone)) {
+            if (!/^(?:\d\s*){10}$/.test(newAccountData.Phone)) {
                 setError('Phone number must contain 10 digits')
                 return;
             }

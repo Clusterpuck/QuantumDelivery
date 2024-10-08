@@ -19,6 +19,11 @@ import EditVehicleForm from '../components/EditVehicleForm';
 import CheckPasswordForm from '../components/CheckPasswordForm';
 import { enableScroll } from '../assets/scroll.js';
 import { getAccountDetails } from '../store/apiFunctions.js'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import PersonIcon from '@mui/icons-material/Person';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 
 const AdminControls = () =>
 {
@@ -169,6 +174,14 @@ const AdminControls = () =>
 
     const entities = ['account', 'customer', 'location', 'product', 'vehicle'];
 
+    const entityIcons = {
+        account: AccountCircleIcon,
+        customer: PersonIcon,
+        location: LocationOnIcon,
+        product: ShoppingCartIcon,
+        vehicle: DirectionsCarIcon,
+    };
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 8 }}>
 
@@ -184,6 +197,7 @@ const AdminControls = () =>
                             key={entity}
                             entity={entity}
                             handleSubmit={handleSubmit}
+                            Icon = {entityIcons[entity]}
                         />
                     ))}
                 </Grid>

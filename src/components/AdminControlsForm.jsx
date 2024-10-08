@@ -3,8 +3,9 @@ import { Paper, Button, Grid, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const AdminControlsForm = ({ entity, handleSubmit }) => {
+const AdminControlsForm = ({ entity, handleSubmit, Icon }) => {
     return (
         <Grid item xs={12}>
             <Paper
@@ -19,6 +20,8 @@ const AdminControlsForm = ({ entity, handleSubmit }) => {
                 }}
             >
                 {/* entity name */}
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Icon />
                 <Typography 
                 variant="h6" 
                 sx={{ 
@@ -29,6 +32,7 @@ const AdminControlsForm = ({ entity, handleSubmit }) => {
                 >
                     {entity.charAt(0).toUpperCase() + entity.slice(1)}
                 </Typography>
+                </div>
 
                 {/* Buttons for Add, Edit, and Delete */}
                 <div style={{ display: 'flex', gap: '10px' }}>

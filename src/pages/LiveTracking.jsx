@@ -427,6 +427,7 @@ const LiveTracking = () => {
                             highlightedDates={dateOptions}
                             selectedDate={selectedDate}
                             handleDateChange={handleDateChange}
+                            highlightedMessage="Active Routes"
                             />
                         </Grid>
                        

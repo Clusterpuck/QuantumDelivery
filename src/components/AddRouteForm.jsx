@@ -466,7 +466,7 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
                         height: '100px', // Auto-adjust height for responsiveness
                     }} /> :
 
-                        <DateSelectHighlight highlightedDates={unassignedDates} selectedDate={selectedDate} handleDateChange={handleDateChange} />
+                        <DateSelectHighlight highlightedDates={unassignedDates} selectedDate={selectedDate} handleDateChange={handleDateChange} highlightedMessage="Unassigned Orders" />
                     }
                 </Grid>
                 {/* Dropdown for selecting number of vehicles and Regenerate button */}

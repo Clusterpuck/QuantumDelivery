@@ -1018,7 +1018,7 @@ export const createLocation = async (locationData) => {
         const url = `${Constants.DATA_ENDPOINT}locations`;
         console.log(`Sending POST request to: ${url}`); 
 
-        const token = getCookie('authToken');
+        const token = Cookies.get('authToken');
         const response = await fetch(url, {
             method: 'POST',
             headers: {

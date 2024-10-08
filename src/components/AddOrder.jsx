@@ -27,6 +27,7 @@ const AddOrder = ({ updateOrders, closeModal, showMessage }) => {
     severity: 'success',
   });
 
+
   useEffect(() => {
     loadCustomers();
     loadLocations();
@@ -55,7 +56,9 @@ const AddOrder = ({ updateOrders, closeModal, showMessage }) => {
   };
 
   const handleCustomerChange = (event, newValue) => {
+  
     setSelectedCustomer(newValue);
+    setSelectedLocation(null);
   };
 
   const handleLocationChange = (event, newValue) => {
@@ -177,10 +180,11 @@ const AddOrder = ({ updateOrders, closeModal, showMessage }) => {
                 disablePortal = {false} 
                 id="Locations"
                 size="small"
-                options={locations || []}
+                options={locations && selectedCustomer ? locations.filter(location => location.customerID === selectedCustomer.id) : []}
                 loading={loadingLocations}
                 getOptionLabel={(option) => option.address + "," + option.description}
                 value={selectedLocation}
+                noOptionsText={selectedCustomer ? "Customer has no locations" : "Select a customer first"}
                 onChange={handleLocationChange}
                 renderInput={(params) => (
                   <TextField {...params} required label="Select Location" />

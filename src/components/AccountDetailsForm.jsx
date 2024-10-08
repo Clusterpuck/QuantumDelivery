@@ -89,6 +89,11 @@ const AccountDetailsForm = () => {
             return;
         }
 
+        if (!/(?:\d\s?){10}/.test(updatedAccountData.Phone)) {
+            setError('Phone number must contain 10 digits')
+            return;
+        }
+
         try {
             const result = await editAccount(accountId, updatedAccountData);
             if (result) {

@@ -269,6 +269,7 @@ const DriverViewRoutes = ({ inputUser }) => {
                             highlightedDates={dateOptions}
                             selectedDate={selectedDate}
                             handleDateChange={handleDateChange}
+                            highlightedMessage="Assigned Routes"
                             />
                             </Box>
                 </Box>

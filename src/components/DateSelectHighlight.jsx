@@ -5,6 +5,8 @@ import TextField from '@mui/material/TextField';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import { useTheme } from '@mui/material/styles';
+import Tooltip from '@mui/material/Tooltip';
+
 
 
 /**
@@ -16,8 +18,7 @@ import { useTheme } from '@mui/material/styles';
  * @param {*} param0.handleDateChange //the function to change date selection
  * @returns {*}
  */
-const DateSelectHighlight = ({highlightedDates, selectedDate, handleDateChange}) => {
-
+const DateSelectHighlight = ({highlightedDates, selectedDate, handleDateChange, highlightedMessage}) => {
 
   const HighlightedDay = (props) => {
     const { day, outsideCurrentMonth, ...other } = props;
@@ -28,19 +29,23 @@ const DateSelectHighlight = ({highlightedDates, selectedDate, handleDateChange})
 
     const isPastDate = dayjs(day).isBefore(dayjs(), 'day');
 
+    const tooltipMessage = isHighlighted ? highlightedMessage : '';
+
     return (
-      <PickersDay
-        {...other}
-        day={day}
-        outsideCurrentMonth={outsideCurrentMonth}
-        disableMargin
-        style={{
-          ...(isHighlighted && {
-            backgroundColor: isPastDate ? '#d3d3d3' : '#e0983a', // Grey out past highlighted days
-            color: isPastDate ? 'grey' : 'white', // Change text color for past days
-          }),
-        }}
-      />
+      <Tooltip title={tooltipMessage} arrow placement="top" enterDelay={500} >
+        <PickersDay
+          {...other}
+          day={day}
+          outsideCurrentMonth={outsideCurrentMonth}
+          disableMargin
+          style={{
+            ...(isHighlighted && {
+              backgroundColor: isPastDate ? '#d3d3d3' : '#e0983a', // Grey out past highlighted days
+              color: isPastDate ? 'grey' : 'white', // Change text color for past days
+            }),
+          }}
+        />
+      </Tooltip>
     );
   };
 

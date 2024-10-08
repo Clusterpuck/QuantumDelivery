@@ -1491,11 +1491,12 @@ export const createVehicle = async (newVehicle) => {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to create vehicle');
+            throw new Error(`Failed to create vehicle: ${response.status} ${response.statusText}`);
         }
 
         const responseData = await response.json();
         console.log('Successfully created vehicle:', responseData);
+        return responseData;
 
     } catch (error) {
         console.error('Error creating vehicle:', error);
@@ -1515,13 +1516,25 @@ export const deleteVehicle = async (id) => {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to delete vehicle');
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to delete vehicle');
         }
 
+        // Check for 204 No Content and handle it accordingly
+        if (response.status === 204) {
+            console.log('Vehicle deleted successfully.');
+            return true; // Indicate success
+        }
+
+        // Fallback if there is a body (though in 204 there shouldn't be)
         const responseData = await response.json();
         console.log('Successfully deleted vehicle:', responseData.message);
+        return true;
 
     } catch (error) {
-        console.error('Error deleting vehicle:', error);
+        console.error('Error deleting vehicle:', error.message); // Log the specific error message
+        return false;
     }
 };
+
+

@@ -143,10 +143,10 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
             //console.log("Payload being sent: ", JSON.stringify(userInput));
             const responseMessage = await postDeliveryRoutes(userInput);
             if (responseMessage === null) {
-                showMessage('Route failed to create');
+                showMessage('Route failed to create', 'error');
             }
             else {
-                showMessage('Route created successfully');
+                showMessage('Route created successfully', 'success');
             }
 
             //needs to return all routes, not just new routes

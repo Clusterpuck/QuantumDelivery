@@ -126,9 +126,10 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
     };
 
     const handleTableQuantityChange = (productID, newQuantity) => {
+        const quantity = Math.floor(Number(newQuantity));
         const updatedProducts = addedProducts.map((product) =>
             product.id === productID
-                ? { ...product, quantity: Math.max(1, Math.min(999, Number(newQuantity))) }
+                ? { ...product, quantity: Math.max(1, Math.min(999, Number(quantity))) }
                 : product
         );
         setAddedProducts(updatedProducts);

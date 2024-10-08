@@ -30,14 +30,12 @@ const CreateCustomerForm = () => {
             Phone: formData.customerPhone,
         };
         
-        //TODO should be g
         if (!/^(?:\d\s*){10}$/.test(newCustomer.Phone)) {
             setError('Phone number must contain 10 digits')
             return;
         }
 
         try {
-            console.log("Here2")
             const result = await createCustomer(newCustomer);
 
             if (result) {

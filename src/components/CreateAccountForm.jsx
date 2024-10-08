@@ -160,8 +160,8 @@ const CreateAccountForm = () => {
                             <Button type="submit" variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
                                 Create Account
                             </Button>
-                            {error && <Typography color="error">{error}</Typography>}
-                            {success && <Typography color="green">Account created successfully!</Typography>}
+                            {error && <Typography color="error">{error}</Typography>} {/* TODO GET RID OF THIS*/}
+                            {success && <Typography color="green">Account created successfully!</Typography>} {/* TODO GET RID OF THIS*/}
                         </Grid>
                     </form>
                 </Grid>

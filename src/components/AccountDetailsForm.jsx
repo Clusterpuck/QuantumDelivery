@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Box, Paper, Button, Grid, FormControl, InputLabel, Select, MenuItem, Modal, Typography } from '@mui/material';
+import { TextField, Box, Paper, Button, Grid, FormControl, InputLabel, Select, MenuItem, Modal, Typography, Snackbar, Alert } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Cookies from 'js-cookie'; 
@@ -20,6 +20,24 @@ const AccountDetailsForm = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [openPasswordModal, setOpenPasswordModal] = useState(false); 
     const [editRole, setEditRole] = useState(false);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success',
+    });
+
+    const handleShowMessage = (msg, type) => {
+        setSnackbar({
+            open: true,
+            message: msg,
+            severity: type
+        });
+    };
+
+    const handleSnackbarClose = () =>
+        {
+            setSnackbar(prev => ({ ...prev, open: false }));
+        };
 
     // get username from cookie (id) and authToken
     const accountId = Cookies.get('userName');
@@ -60,6 +78,16 @@ const AccountDetailsForm = () => {
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
+
+        if (name === 'phone') {
+            // Validate the value against the regex
+            if (!/^(?:\d\s*){10}$/.test(value) && value !== '') {
+                setError('Phone number must contain exactly 10 digits.');
+            } else {
+                setError(null); // Clear error if valid
+            }
+        }
+
         setFormData({
             ...formData,
             [name]: value,
@@ -90,6 +118,7 @@ const AccountDetailsForm = () => {
 
         if (!/^(?:\d\s*){10}$/.test(updatedAccountData.Phone)) {
             setError('Phone number must contain 10 digits')
+            handleShowMessage('Phone number must contain 10 digits', 'error')
             return;
         }
 
@@ -97,9 +126,12 @@ const AccountDetailsForm = () => {
             const result = await editAccount(updatedAccountData.Username, updatedAccountData);
             if (result) {
                 setSuccess(true);
-                setSuccessMessage('Account updated successfully!');
+                handleShowMessage('Account updated successfully!', 'success')
+                //setSuccessMessage('Account updated successfully!');
             } else {
-                setError('Failed to update account.');
+                //setError('Failed to update account.');
+                handleShowMessage('Failed to update account.', 'error')
+                
             }
         } catch (err) {
             setError('An error occurred while updating the account.');
@@ -187,9 +219,10 @@ const AccountDetailsForm = () => {
                                     variant="outlined"
                                     fullWidth
                                     required
+                                    error={!!error}
                                 />
-                            </Grid>
-                           
+                                {error && <Typography color="error">{error}</Typography>}
+                            </Grid>  
                             <Grid item xs={12} sm={6}>
                                 <FormControl fullWidth required>
                                     <InputLabel>Company Role</InputLabel>
@@ -217,6 +250,8 @@ const AccountDetailsForm = () => {
                             <Button type="submit" variant="contained" color="primary" sx={{ width: "250px" }}>
                                 Save Changes
                             </Button>
+                            {error && <Typography color="error">{error}</Typography>}
+                            {success && <Typography color="green">Account created successfully!</Typography>}
                         </Grid>
                     </form>
                 </Grid>
@@ -242,6 +277,16 @@ const AccountDetailsForm = () => {
                     <CheckPasswordForm username={accountId} onClose={handleClosePasswordModal} />
                 </Box>
             </Modal>
+            <Snackbar
+                open={snackbar.open}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
+            >
+                <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };

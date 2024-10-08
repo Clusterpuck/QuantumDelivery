@@ -135,7 +135,7 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
                 type: xkmeans,
                 distance: mappingType,
                 deliveryDate: formatDateToYYYYMMDD(new Date(selectedDate)),
-                depot: selectedDepot,
+                depot: selectedDepot?.id,
                 orders: datePlannedOrders.
                     map(order => order.orderID) // all orders
             };
@@ -491,6 +491,10 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
             setSelectedDepot(depots[0]);
         }
     }, [depots]);
+
+    useEffect(() => {
+        console.log("SELECTED DEPOT ID: ", JSON.stringify(selectedDepot?.id));
+    }, [selectedDepot]);
 
     const DepotAutocomplete = () => {
         if (depotsLoading) {

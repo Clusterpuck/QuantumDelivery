@@ -46,17 +46,16 @@ const EditVehicleForm = ({ vehicleId }) => {
         try {
             const result = await updateVehicle(vehicleId, formData); 
 
-            if (result) {
+            console.log('vehicleId:', vehicleId); // Should be the same as formData.LicensePlate
+            console.log('formData.LicensePlate:', formData.LicensePlate);
+
+            if (result && result.message) {
                 setSuccess(true);
-                if (!formData.LicensePlate) {
-                    setError("Both fields are required.");
-                    return;
-                }
-                setSuccessMessage('Vehicle updated successfully!');
+                setSuccessMessage(result.message); 
                 console.log('Vehicle updated successfully:', result);
             } else {
                 setError('Failed to update vehicle.');
-            }
+            }            
         } catch (err) {
             console.error(err);
             setError('An error occurred while updating the vehicle.');
@@ -72,7 +71,7 @@ const EditVehicleForm = ({ vehicleId }) => {
                     </Typography>
                     <form style={{ width: '80%' }} onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12} sm={12}>
                                 <TextField
                                     label="License Plate"
                                     name="LicensePlate"

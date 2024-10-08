@@ -152,6 +152,12 @@ const AdminControls = () =>
                 setCustomerId(collectedEntityId);
                 setOpenCustomerForm(true);
                 setOpenEditEntityForm(false);
+            }
+            else if (entityType === 'vehicle')
+            {
+                setVehicleId(collectedEntityId);
+                setOpenVehicleForm(true);
+                setOpenEditEntityForm(false);
             } else
             {
                 console.error("Unsupported entity type for editing.");

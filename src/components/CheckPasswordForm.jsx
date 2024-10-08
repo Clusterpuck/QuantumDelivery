@@ -5,7 +5,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { changePassword } from '../store/apiFunctions'; 
 
-const CheckPasswordForm = ({ username }) => {
+const CheckPasswordForm = ({ username, onClose, showMessage }) => {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState(''); // New state for confirmation
@@ -55,6 +55,8 @@ const CheckPasswordForm = ({ username }) => {
             if (result) {
                 console.log(result);  // "Password changed successfully!"
                 setSuccess(true); // If you want to indicate success
+                showMessage('Password changed successfully!', 'success');
+                onClose();
             } else {
                 console.error('Password change failed');
                 setError('Password change failed.');
@@ -138,7 +140,7 @@ const CheckPasswordForm = ({ username }) => {
             </Button>
 
             {error && <Typography color="error">{error}</Typography>}
-            {success && <Typography color="green">Password changed successfully!</Typography>}
+            {/*success && <Typography color="green">Password changed successfully!</Typography>*/}
         </Box>
     );
 };

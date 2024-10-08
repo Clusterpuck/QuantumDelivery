@@ -72,8 +72,8 @@ const EditAccountForm = ({ accountId, handleOpenPasswordModal, accountStatus }) 
             return;
         }
 
-        if (!/^(?:\d\s*){10}$/.test(updatedAccountData.Phone)) {
-            setError('Phone number must contain 10 digits')
+        if (!/^(?:(?:\+61|0)4\d{2} ?\d{3} ?\d{3}|(?:\+61|0)(2|3|7|8)\d{8}|(?:\+61|0)1800 ?\d{3} ?\d{3}|(?:\+61|0)13\d{6}|(?:\+61|0)1900 ?\d{6})$/.test(updatedAccountData.Phone)) {
+            setError('Phone number is invalid')
             return;
         }
     

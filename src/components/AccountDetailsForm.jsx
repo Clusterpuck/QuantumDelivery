@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Box, Paper, Button, Grid, FormControl, InputLabel, Select, MenuItem, Modal, Typography } from '@mui/material';
+import { TextField, Box, Paper, Button, Grid, FormControl, InputLabel, Select, MenuItem, Modal, Typography, Snackbar, Alert } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import Cookies from 'js-cookie'; 
@@ -20,6 +20,24 @@ const AccountDetailsForm = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [openPasswordModal, setOpenPasswordModal] = useState(false); 
     const [editRole, setEditRole] = useState(false);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success',
+    });
+
+    const handleShowMessage = (msg, type) => {
+        setSnackbar({
+            open: true,
+            message: msg,
+            severity: type
+        });
+    };
+
+    const handleSnackbarClose = () =>
+        {
+            setSnackbar(prev => ({ ...prev, open: false }));
+        };
 
     // get username from cookie (id) and authToken
     const accountId = Cookies.get('userName');
@@ -46,13 +64,17 @@ const AccountDetailsForm = () => {
                         }
                     } else {
                         setError('No account details found.');
+                        handleShowMessage('No account details found.', 'error')
+                        
                     }
                 } catch (err) {
                     setError('Failed to fetch account details.');
+                    handleShowMessage('Failed to fetch account details.', 'error')
                     console.error(err);
                 }
             } else {
                 setError('No account ID found.');
+                handleShowMessage('No account ID found.', 'error')
             }
         };
         fetchAccountData();
@@ -60,6 +82,16 @@ const AccountDetailsForm = () => {
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
+
+        if (name === 'phone') {
+            // Validate the value against the regex
+            if (!/^(?:(?:\+61|0)4\d{2} ?\d{3} ?\d{3}|(?:\+61|0)(2|3|7|8)\d{8}|(?:\+61|0)1800 ?\d{3} ?\d{3}|(?:\+61|0)13\d{6}|(?:\+61|0)1900 ?\d{6})$/.test(value) && value !== '') {
+                setError('Invalid phone number');
+            } else {
+                setError(null); // Clear error if valid
+            }
+        }
+
         setFormData({
             ...formData,
             [name]: value,
@@ -88,8 +120,9 @@ const AccountDetailsForm = () => {
             return;
         }
 
-        if (!/^(?:\d\s*){10}$/.test(updatedAccountData.Phone)) {
-            setError('Phone number must contain 10 digits')
+        if (!/^(?:(?:\+61|0)4\d{2} ?\d{3} ?\d{3}|(?:\+61|0)(2|3|7|8)\d{8}|(?:\+61|0)1800 ?\d{3} ?\d{3}|(?:\+61|0)13\d{6}|(?:\+61|0)1900 ?\d{6})$/.test(updatedAccountData.Phone)) {
+            setError('Phone number is invalid')
+            //handleShowMessage('Phone number must contain 10 digits', 'error')
             return;
         }
 
@@ -97,12 +130,15 @@ const AccountDetailsForm = () => {
             const result = await editAccount(updatedAccountData.Username, updatedAccountData);
             if (result) {
                 setSuccess(true);
-                setSuccessMessage('Account updated successfully!');
+                handleShowMessage('Account updated successfully!', 'success')
             } else {
                 setError('Failed to update account.');
+                handleShowMessage('Failed to update account.', 'error')
+                
             }
         } catch (err) {
             setError('An error occurred while updating the account.');
+            handleShowMessage('An error occurred while updating the account.', 'error')
             console.error(err);
         }
     };
@@ -187,9 +223,10 @@ const AccountDetailsForm = () => {
                                     variant="outlined"
                                     fullWidth
                                     required
+                                    error={!!error}
                                 />
-                            </Grid>
-                           
+                                {error && <Typography color="error">{error}</Typography>}
+                            </Grid>  
                             <Grid item xs={12} sm={6}>
                                 <FormControl fullWidth required>
                                     <InputLabel>Company Role</InputLabel>
@@ -239,9 +276,19 @@ const AccountDetailsForm = () => {
                 >
                     <CancelIcon />
                 </Button>
-                    <CheckPasswordForm username={accountId} onClose={handleClosePasswordModal} />
+                    <CheckPasswordForm username={accountId} onClose={handleClosePasswordModal} showMessage={handleShowMessage} />
                 </Box>
             </Modal>
+            <Snackbar
+                open={snackbar.open}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
+            >
+                <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };

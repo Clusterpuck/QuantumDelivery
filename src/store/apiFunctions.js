@@ -1525,3 +1525,31 @@ export const deleteVehicle = async (id) => {
         console.error('Error deleting vehicle:', error);
     }
 };
+
+export const fetchDepots = async() =>
+{
+    let depotData = null; 
+    try {
+        const token = Cookies.get('authToken'); // Retrieve the token from the cookie
+        const response = await fetch(Constants.DATA_ENDPOINT + 'locations/depots', {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json', // Set the content type
+                'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch depots');
+        }
+
+        depotData = await response.json(); // Parse the response as JSON
+        console.log("Fetched customer data:", depotData); // Log the fetched data for debugging
+
+    }
+    catch (error)
+    {
+        console.error('Error fetching depots:', error.message); // Log the error message
+    }
+    return depotData; 
+};

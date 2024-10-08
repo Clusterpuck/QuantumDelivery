@@ -96,8 +96,14 @@ const LiveMap = ({ checkedRoutes, ordersData, routeIdToColour }) => {
         for (const routeId in ordersData) {
             if (checkedRoutes[routeId]) {
                 routeIds.push(routeId);
+                const depotCoordinates = [ordersData[routeId][0].depotLongitude, ordersData[routeId][0].depotLatitude];
                 const orders = ordersData[routeId].sort((a, b) => a.position - b.position);
-                const routeCoordinates = orders.map(order => [order.longitude, order.latitude]);
+                const routeCoordinates = [depotCoordinates, ...orders.map(order => [order.longitude, order.latitude]), depotCoordinates];
+
+                const depotMarker = new mapboxgl.Marker({ color: 'purple' })
+                    .setLngLat(depotCoordinates)
+                    .addTo(map.current);
+                newMarkers.push(depotMarker);
 
                 orders.forEach(order => {
                     const el = document.createElement('div');

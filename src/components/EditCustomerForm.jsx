@@ -74,10 +74,12 @@ const EditCustomerForm = ({ customerId }) => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
-                <Grid container spacing={2} direction="column" alignItems="center">
-                    <Typography variant="h5" gutterBottom>
-                        Editing Customer {customerId}
+            <Grid container spacing={2} alignItems="center" justifyContent="center">
+                    <Typography variant="h5" margin={1}>
+                        Editing Customer 
+                    </Typography>
+                    <Typography variant='subheading'>
+                        {customerId}
                     </Typography>
                     <form style={{ width: '80%' }} onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
@@ -113,7 +115,6 @@ const EditCustomerForm = ({ customerId }) => {
                         </Grid>
                     </form>
                 </Grid>
-            </Paper>
         </Box>
     );
 };

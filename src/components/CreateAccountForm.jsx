@@ -66,15 +66,16 @@ const CreateAccountForm = () => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
-                <Grid container spacing={2} direction="column" alignItems="center">
-                    <Grid item>
-                        <AccountCircleIcon sx={{ fontSize: 80, mb: 2 }} />
-                    </Grid>
-                    <form style={{ width: '80%' }} onSubmit={handleSubmit}>
+            <Grid container spacing={2} alignItems="center" justifyContent="center">
+                <AccountCircleIcon sx={{ mr: 1 }} /> {/* Adds margin to the right of the icon */}
+                                <Typography margin={1} variant="h4">
+                                    Add Account
+                                </Typography>
+                    <form onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
+                                    size='small'
                                     label="Full Name"
                                     name="fullName"
                                     variant="outlined"
@@ -86,6 +87,7 @@ const CreateAccountForm = () => {
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
+                                size='small'
                                     label="Email"
                                     name="email"
                                     type="email"
@@ -98,6 +100,7 @@ const CreateAccountForm = () => {
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
+                                size='small'
                                     label="Password"
                                     name="password"
                                     type="password"
@@ -110,6 +113,7 @@ const CreateAccountForm = () => {
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
+                                size='small'
                                     label="Confirm Password"
                                     name="confirmPassword"
                                     type="password"
@@ -122,6 +126,7 @@ const CreateAccountForm = () => {
                             </Grid>
                             <Grid item xs={12} sm={12}>
                                 <TextField
+                                size='small'
                                     label="Address"
                                     name="address"
                                     variant="outlined"
@@ -133,6 +138,7 @@ const CreateAccountForm = () => {
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
+                                size='small'
                                     label="Phone Number"
                                     name="phone"
                                     variant="outlined"
@@ -143,12 +149,13 @@ const CreateAccountForm = () => {
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <FormControl fullWidth required>
+                                <FormControl size='small' fullWidth required>
                                     <InputLabel>Company Role</InputLabel>
                                     <Select
                                         name="companyRole"
                                         value={formData.companyRole}
                                         onChange={handleInputChange}
+                                        label="Company Role" // a bit hacky but adding this here adds the label, but the font is hidden
                                     >
                                         <MenuItem value="DRIVER">Driver</MenuItem>
                                         <MenuItem value="ADMIN">Admin</MenuItem>
@@ -165,7 +172,6 @@ const CreateAccountForm = () => {
                         </Grid>
                     </form>
                 </Grid>
-            </Paper>
         </Box>
     );
 };

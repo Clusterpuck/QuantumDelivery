@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Box, Paper, Button, Grid, Typography, Autocomplete } from '@mui/material';
 import { fetchCustomers, getLocationDetails, updateLocation } from '../store/apiFunctions'; 
+import EditLocationAltIcon from '@mui/icons-material/EditLocationAlt';
 
 const EditLocationForm = ({ locationId }) => {
     const [formData, setFormData] = useState({
@@ -110,10 +111,13 @@ const EditLocationForm = ({ locationId }) => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
-                <Grid container spacing={2} direction="column" alignItems="center">
-                    <Typography variant="h5" gutterBottom>
-                        Editing Location {locationId}
+                 <Grid container spacing={2} alignItems="center" justifyContent="center">
+                    <EditLocationAltIcon  />  
+                    <Typography variant="h5" margin={1}>
+                        Editing Location
+                    </Typography>
+                    <Typography variant='subheading'>
+                        {locationId}
                     </Typography>
                     <form style={{ width: '80%' }} onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
@@ -228,7 +232,6 @@ const EditLocationForm = ({ locationId }) => {
                         </Grid>
                     </form>
                 </Grid>
-            </Paper>
         </Box>
     );
 };

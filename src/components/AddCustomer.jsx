@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import { postCustomer } from '../store/apiFunctions';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 
 const AddCustomer = ( {onCloseForm} ) => {
     const [name, setName] = useState('');

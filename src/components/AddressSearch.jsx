@@ -184,11 +184,10 @@ const AddressSearch = ({ onCloseForm }) => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
-                <Grid container spacing={2} direction="column" alignItems="center">
-                    <LocationOnIcon sx={{ fontSize: 50, mb: 1 }} />  
-                    <Typography variant="h5" gutterBottom sx={{ mb: 1 }}>
-                        Create a New Location
+            <Grid container spacing={2} alignItems="center" justifyContent="center">
+                    <LocationOnIcon  />  
+                    <Typography variant="h5" margin={1}>
+                        Create Location
                     </Typography>
                     <form ref={formRef} onSubmit={handleFormSubmit} style={{ width: '100%' }}>
                         <Grid container spacing={2}>
@@ -284,7 +283,7 @@ const AddressSearch = ({ onCloseForm }) => {
                             </Grid>
                         </Grid>
 
-                        <Box sx={{ height: 180, width: '100%', position: 'relative', mt: 2, mb: 5 }}>
+                        <Box sx={{ height: 150, width: '100%', position: 'relative', mt: 2, mb: 5 }}>
                             <AddressMinimap
                                 key={mapKey}
                                 feature={minimapFeature}
@@ -300,9 +299,9 @@ const AddressSearch = ({ onCloseForm }) => {
 
                         <Grid container justifyContent="space-between" spacing={2}>
                             <Grid item xs={12} sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <Button onClick={handleResetMap} variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
+                                {/* <Button onClick={handleResetMap} variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
                                     Clear Form
-                                </Button>
+                                </Button> */}
                                 <Button type="submit" variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
                                     Add Location
                                 </Button>
@@ -312,7 +311,6 @@ const AddressSearch = ({ onCloseForm }) => {
                         </Grid>
                     </form>
                 </Grid>
-            </Paper>
         </Box>
     );
 };

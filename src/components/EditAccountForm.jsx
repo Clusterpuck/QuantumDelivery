@@ -121,7 +121,6 @@ const EditAccountForm = ({ accountId, handleOpenPasswordModal, accountStatus }) 
     if (accountStatus === 'Inactive') {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%', textAlign: 'center' }}>
                     <Typography variant="h6">
                         Account cannot be edited as the it is inactive.
                     </Typography>
@@ -133,27 +132,27 @@ const EditAccountForm = ({ accountId, handleOpenPasswordModal, accountStatus }) 
                     >
                         Re-activate
                     </Button>
-                </Paper>
             </Box>
         );
     }
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
-                <Grid container spacing={2} direction="column" alignItems="center">
-                    <Grid item>
-                        <AccountCircleIcon sx={{ fontSize: 80, mb: 2 }} />
-                    </Grid>
-                    <form style={{ width: '80%' }} onSubmit={handleSubmit}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    label="Full Name"
-                                    name="fullName"
-                                    variant="outlined"
-                                    fullWidth
-                                    required
+            <Grid container spacing={2} alignItems="center" justifyContent="center">
+                <AccountCircleIcon sx={{ mr: 2 }} />
+                <Typography margin={1} variant="h4">
+                    Editing Account
+                </Typography>
+                <Typography margin={1} variant="subheader">{accountId}</Typography>
+                <form onSubmit={handleSubmit}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="Full Name"
+                                name="fullName"
+                                variant="outlined"
+                                fullWidth
+                                required
                                     value={formData.fullName}
                                     onChange={handleInputChange}
                                 />
@@ -237,7 +236,6 @@ const EditAccountForm = ({ accountId, handleOpenPasswordModal, accountStatus }) 
                         </Grid>
                     </form>
                 </Grid>
-            </Paper>
         </Box>
     );
 };

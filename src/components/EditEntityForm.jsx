@@ -81,8 +81,8 @@ const EditEntityForm = ({ entity, onSuccess }) => {
     };
 
     return (
-        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Typography variant="h4" component="h2" sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column',  gap: 2 }}>
+            <Typography variant="h5" component="h5" sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                 <EditIcon /> Edit {entity}
             </Typography>
             <Autocomplete

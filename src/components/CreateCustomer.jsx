@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
 import { createCustomer } from '../store/apiFunctions'; 
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 
 const CreateCustomerForm = () => {
     const [formData, setFormData] = useState({
@@ -54,11 +55,16 @@ const CreateCustomerForm = () => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
                 <Grid container spacing={2} direction="column" alignItems="center">
                     <form style={{ width: '80%' }} onSubmit={handleSubmit}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} sm={6}>
+                        <Grid container spacing={2} alignItems="center" justifyContent="center">
+                            <Grid item xs={12} sm={12} container alignItems="center" justifyContent="center">
+                                <SupportAgentIcon sx={{ mr: 1 }} /> {/* Adds margin to the right of the icon */}
+                                <Typography variant="h5">
+                                    Add Customer
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12} sm={12}>
                                 <TextField
                                     label="Customer Name"
                                     name="customerName"
@@ -101,7 +107,6 @@ const CreateCustomerForm = () => {
                         </Grid>
                     </form>
                 </Grid>
-            </Paper>
         </Box>
     );
 };

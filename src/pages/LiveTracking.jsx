@@ -36,7 +36,7 @@ const LiveTracking = () => {
     // eg. {8: true, 9: true, 12: false, 18: true} means that the rows for routes 8, 9 and 18 are expanded, 12 is not.
     const [openRow, setOpenRow] = useState({});
 
-    // keeps track of orders data for each route. used for toggling the rows. Format: {<RouteID>: <OrdersArray> <depotLongitude> <depotLatitude, <RouteID>: <OrdersArray> <depotLongitude> <depotLatitude}
+    // keeps track of orders data for each route. used for toggling the rows. Format: {<RouteID>: <OrdersArray>, <RouteID>: <OrdersArray>} note. each order has the depot lat and long info as well
     const [ordersData, setOrdersData] = React.useState({});
     const [routeIdToColour, setRouteIdToColour] = useState({});
     const [dateOptions, setDateOptions] = useState([]);
@@ -383,15 +383,6 @@ const LiveTracking = () => {
             setSelectAll(allChecked);
         }
     }, [checkedRoutes, routesData]);
-
-    useEffect(() => { // debugging
-        console.log("orders data: ", JSON.stringify(ordersData));
-    }, [ordersData]);
-
-    useEffect(() => { // debugging
-        console.log("checked routes: ", JSON.stringify(checkedRoutes));
-    }, [checkedRoutes]);
-
 
     return (
         <Box sx={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden' }}>

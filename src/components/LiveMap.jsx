@@ -96,13 +96,12 @@ const LiveMap = ({ checkedRoutes, ordersData, routeIdToColour }) => {
         for (const routeId in ordersData) {
             if (checkedRoutes[routeId]) {
                 routeIds.push(routeId);
-                const depotCoordinates = [ordersData[routeId].depotLongitude, ordersData[routeId].depotLatitude];
+                const depotCoordinates = [ordersData[routeId][0].depotLongitude, ordersData[routeId][0].depotLatitude];
                 const orders = ordersData[routeId].sort((a, b) => a.position - b.position);
                 const routeCoordinates = [depotCoordinates, ...orders.map(order => [order.longitude, order.latitude]), depotCoordinates];
 
-                const depotMarker = new mapboxgl.Marker({ color: 'blue' })
+                const depotMarker = new mapboxgl.Marker({ color: 'purple' })
                     .setLngLat(depotCoordinates)
-                    .setPopup(new mapboxgl.Popup().setText("Depot")) 
                     .addTo(map.current);
                 newMarkers.push(depotMarker);
 

@@ -35,6 +35,7 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
 {
     const [depots, setDepots] = useState([]);
     const [depotsLoading, setDepotLoading] = useState(false);
+    const [selectedDepot, setSelectedDepot] = useState(null);
     const [selectedDate, setSelectedDate] = useState(dayjs());
     const [unassignedDates, setUnassignedDates] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(true); // Track if orders are loaded
@@ -72,7 +73,7 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
         { id: 3, name: "Depot C" },
         { id: 4, name: "Depot D" },
     ];*/
-    const [selectedDepot, setSelectedDepot] = useState(depots[0].id);
+    
 
     const theme = useTheme();
 
@@ -217,7 +218,6 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
             {
               console.log("xxXX Depot List is " + JSON.stringify(depotsList));
               setDepots(depotsList);
-              setSelectedDepot(depots[0]);
             }
             else
             {
@@ -485,6 +485,12 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
             filterByDate(selectedDate);
         }
     }, [plannedOrders, selectedDate]);
+
+    useEffect(() => {
+        if (depots.length > 0) {
+            setSelectedDepot(depots[0]);
+        }
+    }, [depots]);
 
     const DepotAutocomplete = () => {
         if (depotsLoading) {

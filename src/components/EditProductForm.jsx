@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
 import { getProductDetails, updateProduct } from '../store/apiFunctions';
+import BackpackIcon from '@mui/icons-material/Backpack';
 
 const EditProductForm = ({ productId }) => {
     const [formData, setFormData] = useState({
@@ -72,6 +73,7 @@ const EditProductForm = ({ productId }) => {
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                 <Grid container spacing={2} alignItems="center" justifyContent="center">
+                    <BackpackIcon />
                     <Typography variant="h5" margin={1}>
                         Editing Product 
                     </Typography>

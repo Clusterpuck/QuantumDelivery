@@ -5,8 +5,7 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 
 const CreateVehicleForm = () => {
     const [formData, setFormData] = useState({
-        LicensePlate: '',
-        UnitOfMeasure: '',
+        licensePlate: '',
     });
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
@@ -23,25 +22,32 @@ const CreateVehicleForm = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         console.log('Creating vehicle...', formData);
-
+    
         try {
             const result = await createVehicle({
-                LicensePlate: formData.LicensePlate,
+                LicensePlate: formData.licensePlate,
             });
-
-            if (result) {
+    
+            // Explicitly check if the result contains the expected data
+            if (result && result.licensePlate) {  // Ensure licensePlate exists in the result
                 setSuccess(true);
                 setSuccessMessage('Vehicle created successfully!');
-                setError(null); 
+                setError(null);  // Clear any previous errors
                 console.log('Vehicle created successfully:', result);
             } else {
-                setError('Failed to create vehicle.');
+                setError('Failed to create vehicle.');  // Handle unexpected API response
             }
         } catch (err) {
-            setError('An error occurred while creating the vehicle.');
-            console.error(err);
+            if (err.message.includes("409")) {
+                setError(`Vehicle with license plate '${formData.licensePlate}' already exists.`);
+            } else {
+                setError('An error occurred while creating the vehicle.');
+            }
+            console.error('Error creating vehicle:', err);
         }
     };
+    
+    
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -55,11 +61,11 @@ const CreateVehicleForm = () => {
                             <Grid item xs={12} sm={12}>
                                 <TextField
                                     label="License Plate"
-                                    name="LicensePlate"
+                                    name="licensePlate" // lowercase name to match state
                                     variant="outlined"
                                     fullWidth
                                     required
-                                    value={formData.LicensePlate}
+                                    value={formData.licensePlate} // binding to lowercase state
                                     onChange={handleInputChange}
                                 />
                             </Grid>

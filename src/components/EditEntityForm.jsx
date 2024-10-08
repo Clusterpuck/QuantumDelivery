@@ -59,7 +59,7 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                     setEntityId(newValue.id);
                     break;
                 case 'vehicle':
-                    setEntityId(newValue.id);
+                    setEntityId(newValue.licensePlate);
                     break;
                 default:
                     setEntityId('');

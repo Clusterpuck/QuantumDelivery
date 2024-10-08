@@ -63,7 +63,7 @@ const DeleteEntityForm = ({ entity }) => {
                     setEntityId(newValue.id);
                     break;
                 case 'vehicle':
-                    setEntityId(newValue.id);
+                    setEntityId(newValue.licensePlate); 
                     break;
                 default:
                     setEntityId('');
@@ -73,6 +73,7 @@ const DeleteEntityForm = ({ entity }) => {
         }
         setError(null); // reset error on change
     };
+    
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -176,8 +177,6 @@ const DeleteEntityForm = ({ entity }) => {
                                 : 'Search by License Plate or Status'
                         }
                         variant="outlined"
-                        error={!!error}
-                        helperText={error}
                     />
                 )}
                 isOptionEqualToValue={(option, value) =>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
-import { createProduct } from '../store/apiFunctions'; // Ensure you import the createProduct function
 import Inventory2Icon from '@mui/icons-material/Inventory2';
+import { createProduct } from '../store/apiFunctions'; 
 
 const CreateProductForm = () => {
     const [formData, setFormData] = useState({

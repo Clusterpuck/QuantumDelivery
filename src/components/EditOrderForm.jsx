@@ -73,7 +73,7 @@ const EditOrderForm = ({ order, onRefresh, onClose, showMessage }) => {
     const handleQuantityChange = (productID, newQuantity) => {
         const updatedProducts = selectedProducts.map((product) =>
             product.productID === productID
-                ? { ...product, quantity: Math.max(1, newQuantity) }
+                ? { ...product, quantity: Math.max(1, Math.min(999, Number(newQuantity))) }
                 : product
         );
         setSelectedProducts(updatedProducts);

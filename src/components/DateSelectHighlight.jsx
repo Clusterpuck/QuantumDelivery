@@ -20,8 +20,6 @@ import Tooltip from '@mui/material/Tooltip';
  */
 const DateSelectHighlight = ({highlightedDates, selectedDate, handleDateChange, highlightedMessage}) => {
 
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-
   const HighlightedDay = (props) => {
     const { day, outsideCurrentMonth, ...other } = props;
 
@@ -30,11 +28,6 @@ const DateSelectHighlight = ({highlightedDates, selectedDate, handleDateChange, 
     );
 
     const isPastDate = dayjs(day).isBefore(dayjs(), 'day');
-
-    // Define tooltip message based on the date
-    // const tooltipMessage = isHighlighted ? 
-    //   (isPastDate ? 'This date is highlighted but in the past.' : 'This date is highlighted.') 
-    //   : '';
 
     const tooltipMessage = isHighlighted ? highlightedMessage : '';
 

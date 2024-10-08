@@ -64,13 +64,17 @@ const AccountDetailsForm = () => {
                         }
                     } else {
                         setError('No account details found.');
+                        handleShowMessage('No account details found.', 'error')
+                        
                     }
                 } catch (err) {
                     setError('Failed to fetch account details.');
+                    handleShowMessage('Failed to fetch account details.', 'error')
                     console.error(err);
                 }
             } else {
                 setError('No account ID found.');
+                handleShowMessage('No account ID found.', 'error')
             }
         };
         fetchAccountData();
@@ -81,8 +85,8 @@ const AccountDetailsForm = () => {
 
         if (name === 'phone') {
             // Validate the value against the regex
-            if (!/^(?:\d\s*){10}$/.test(value) && value !== '') {
-                setError('Phone number must contain exactly 10 digits.');
+            if (!/^(?:(?:\+61|0)4\d{2} ?\d{3} ?\d{3}|(?:\+61|0)(2|3|7|8)\d{8}|(?:\+61|0)1800 ?\d{3} ?\d{3}|(?:\+61|0)13\d{6}|(?:\+61|0)1900 ?\d{6})$/.test(value) && value !== '') {
+                setError('Invalid phone number');
             } else {
                 setError(null); // Clear error if valid
             }
@@ -118,7 +122,7 @@ const AccountDetailsForm = () => {
 
         if (!/^(?:(?:\+61|0)4\d{2} ?\d{3} ?\d{3}|(?:\+61|0)(2|3|7|8)\d{8}|(?:\+61|0)1800 ?\d{3} ?\d{3}|(?:\+61|0)13\d{6}|(?:\+61|0)1900 ?\d{6})$/.test(updatedAccountData.Phone)) {
             setError('Phone number is invalid')
-            handleShowMessage('Phone number must contain 10 digits', 'error')
+            //handleShowMessage('Phone number must contain 10 digits', 'error')
             return;
         }
 
@@ -127,14 +131,14 @@ const AccountDetailsForm = () => {
             if (result) {
                 setSuccess(true);
                 handleShowMessage('Account updated successfully!', 'success')
-                //setSuccessMessage('Account updated successfully!');
             } else {
-                //setError('Failed to update account.');
+                setError('Failed to update account.');
                 handleShowMessage('Failed to update account.', 'error')
                 
             }
         } catch (err) {
             setError('An error occurred while updating the account.');
+            handleShowMessage('An error occurred while updating the account.', 'error')
             console.error(err);
         }
     };
@@ -250,8 +254,6 @@ const AccountDetailsForm = () => {
                             <Button type="submit" variant="contained" color="primary" sx={{ width: "250px" }}>
                                 Save Changes
                             </Button>
-                            {error && <Typography color="error">{error}</Typography>}
-                            {success && <Typography color="green">Account created successfully!</Typography>}
                         </Grid>
                     </form>
                 </Grid>
@@ -274,7 +276,7 @@ const AccountDetailsForm = () => {
                 >
                     <CancelIcon />
                 </Button>
-                    <CheckPasswordForm username={accountId} onClose={handleClosePasswordModal} />
+                    <CheckPasswordForm username={accountId} onClose={handleClosePasswordModal} showMessage={handleShowMessage} />
                 </Box>
             </Modal>
             <Snackbar

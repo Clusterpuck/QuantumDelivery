@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Paper, Grid, Typography, Modal, Box, Button } from '@mui/material';
+import { Paper, Grid, Typography, Modal, Box, Button, Snackbar, Alert } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useNavigate } from 'react-router-dom';
@@ -42,12 +42,30 @@ const AdminControls = () =>
     const [entityType, setEntityType] = useState('user');
     const [openVehicleForm, setOpenVehicleForm] = useState(false);
     const [vehicleId, setVehicleId] = useState('');
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success',
+    });
 
 
     useEffect(() =>
     {
         enableScroll();
     }, []);
+
+    const handleShowMessage = (msg, type) => {
+        setSnackbar({
+            open: true,
+            message: msg,
+            severity: type
+        });
+    };
+
+    const handleSnackbarClose = () =>
+    {
+        setSnackbar(prev => ({ ...prev, open: false }));
+    };
 
     const handleSubmit = (entity, action) =>
     {
@@ -324,7 +342,7 @@ const AdminControls = () =>
                     >
                         <CancelIcon />
                     </Button>
-                    <CheckPasswordForm username={usernameForPasswordChange} onClose={handleClosePasswordModal} />
+                    <CheckPasswordForm username={usernameForPasswordChange} onClose={handleClosePasswordModal} showMessage={handleShowMessage} />
                 </Box>
             </Modal>
 
@@ -349,6 +367,16 @@ const AdminControls = () =>
                     {vehicleId ? <EditVehicleForm vehicleId={vehicleId} /> : <CreateVehicleForm />}
                 </Box>
             </Modal>
+            <Snackbar
+                open={snackbar.open}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
+            >
+                <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
 
         </div>
     );

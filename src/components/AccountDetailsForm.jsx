@@ -90,7 +90,7 @@ const AccountDetailsForm = () => {
         }
 
         try {
-            const result = await editAccount(accountId, updatedAccountData);
+            const result = await editAccount(updatedAccountData.Username, updatedAccountData);
             if (result) {
                 setSuccess(true);
                 setSuccessMessage('Account updated successfully!');

@@ -26,6 +26,8 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+    const [isQuantityValid, setIsQuantityValid] = useState(true);
+
 
     useEffect(() =>
     {
@@ -59,31 +61,33 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
 
     const handleQuantityChange = (event) =>
     {
-        if( Number(event.target.value) <= 1 )
+        const value = event.target.value
+        setQuantity(value)
+        if( !Number.isInteger(Number(value)) || Number(value) < 1 || Number(value) > 999)
         {
-            setQuantity(1)
+            setIsQuantityValid(false);
         }
         else{
-            setQuantity(Number(event.target.value));
-
+            setIsQuantityValid(true);
         }
     };
 
     const handleAddProduct = () =>
     {
-        if (selectedProduct)
+        if (selectedProduct && isQuantityValid)
         {
             setAddedProducts(prev =>
             {
                 const existingProductIndex = prev.findIndex(product => product.id === selectedProduct.id);
-                var updatedProducts;
+                let updatedProducts = [...prev];
                 if (existingProductIndex !== -1)
                 {
-                    // Product already exists, update the quantity
-                    updatedProducts = [...prev];
+                    const currentQuantity = updatedProducts[existingProductIndex].quantity;
+                    const newQuantity = Math.min(999, currentQuantity + Number(quantity)); // Ensure total does not exceed 999
+
                     updatedProducts[existingProductIndex] = {
                         ...updatedProducts[existingProductIndex],
-                        quantity: updatedProducts[existingProductIndex].quantity + quantity
+                        quantity: newQuantity // Use the validated new quantity
                     };
                 } else
                 {
@@ -92,7 +96,7 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
                         { 
                             id: selectedProduct.id, 
                             name: selectedProduct.name, 
-                            quantity: quantity, 
+                            quantity: Math.min(999, Number(quantity)), 
                             unitOfMeasure: selectedProduct.unitOfMeasure }
                     ];
                     // Product does not exist, add new entry
@@ -124,7 +128,7 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
     const handleTableQuantityChange = (productID, newQuantity) => {
         const updatedProducts = addedProducts.map((product) =>
             product.id === productID
-                ? { ...product, quantity: Math.max(1, newQuantity) }
+                ? { ...product, quantity: Math.max(1, Math.min(999, Number(newQuantity))) }
                 : product
         );
         setAddedProducts(updatedProducts);
@@ -182,7 +186,7 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
                     <Input
                         type="number"
                         value={params.row.quantity}
-                        inputProps={{ min: 1 }}  // Prevent going below 1
+                        inputProps={{ min: 1, max: 999 }}  // Prevent going below 1
                         onChange={(e) => handleTableQuantityChange(params.row.id, e.target.value)}
                     />
                 );
@@ -231,8 +235,9 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
                         fullWidth
                         value={quantity}
                         onChange={handleQuantityChange}
-                        inputProps={{ min: 1 }}
                         size="small"
+                        error={!isQuantityValid} // Set error prop based on validity
+                        helperText={!isQuantityValid ? "Quantity must be a whole number between 1 and 999" : ""}
                     />
                 </Grid>
                 <Grid item xs={2} justifyContent="center">
@@ -249,7 +254,7 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
                                     variant="contained"
                                     color="primary"
                                     size="small"
-                                    disabled={!selectedProduct}
+                                    disabled={!selectedProduct || !isQuantityValid}
                                 >
                                     Add Product
                                 </Button>

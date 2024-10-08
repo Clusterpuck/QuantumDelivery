@@ -134,7 +134,7 @@ const DeleteEntityForm = ({ entity }) => {
                         ? `${option.description}, ${option.address}, ${option.state} (Postcode: ${option.postCode})`
                         : entity === 'customer'
                         ? `${option.name} (Phone: ${option.phone})`
-                        : `${option.licenseplate} (Status: ${option.status})`
+                        : `${option.licensePlate} (Status: ${option.status})`
                 }
                 filterOptions={(options, { inputValue }) => {
                     return options.filter(
@@ -156,7 +156,7 @@ const DeleteEntityForm = ({ entity }) => {
                             ? option.id.toString().includes(inputValue) ||
                               option.name.toLowerCase().includes(inputValue.toLowerCase()) ||
                               option.phone.includes(inputValue)
-                            : option.licenseplate.toString().includes(inputValue) ||
+                            : option.licensePlate.toString().includes(inputValue) ||
                               option.status.toLowerCase().includes(inputValue.toLowerCase())
                     );
                 }}
@@ -173,7 +173,7 @@ const DeleteEntityForm = ({ entity }) => {
                                 ? 'Search by ID, Address, Postcode, or State'
                                 : entity === 'customer'
                                 ? 'Search by ID, Name, or Phone'
-                                : 'Search by Vehicle license plate or status'
+                                : 'Search by License Plate or Status'
                         }
                         variant="outlined"
                         error={!!error}

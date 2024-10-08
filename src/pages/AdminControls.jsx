@@ -92,6 +92,7 @@ const AdminControls = () =>
     const handleCloseProductForm = () => setOpenProductForm(false);
     const handleCloseLocationForm = () => setOpenLocationForm(false);
     const handleCloseCustomerForm = () => setOpenCustomerForm(false);
+    const handleCloseVehicleForm = () => setOpenCustomerForm(false);
     const handleCloseEditEntityForm = () => setOpenEditEntityForm(false);
 
     const handleEditEntitySuccess = async (collectedEntityId) =>
@@ -336,7 +337,7 @@ const AdminControls = () =>
             >
                 <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
                     <Button
-                        onClick={() => setOpenVehicleForm(false)}
+                        onClick={handleCloseVehicleForm}
                         sx={{
                             position: 'absolute',
                             top: 16,

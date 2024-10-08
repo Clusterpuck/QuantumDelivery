@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
-import { getLocationDetails, updateLocation } from '../store/apiFunctions'; 
+import { TextField, Box, Paper, Button, Grid, Typography, Autocomplete } from '@mui/material';
+import { fetchCustomers, getLocationDetails, updateLocation } from '../store/apiFunctions'; 
+import EditLocationAltIcon from '@mui/icons-material/EditLocationAlt';
 
 const EditLocationForm = ({ locationId }) => {
     const [formData, setFormData] = useState({
@@ -12,16 +13,23 @@ const EditLocationForm = ({ locationId }) => {
         PostCode: '',
         Country: '',
         Description: '',
+        CustomerID: '',
     });
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
 
+    const [customers, setCustomers] = useState(null);
+    const [loadingCustomers, setLoadingCustomers] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
+
     useEffect(() => {
         const fetchLocationData = async () => {
             try {
                 const locationData = await getLocationDetails(locationId); // Fetch location details
+                loadCustomers(locationData.customerID);
                 if (locationData) {
+                    console.log("In use effect location data is " + JSON.stringify(locationData));
                     setFormData({
                         Longitude: locationData.longitude || '',
                         Latitude: locationData.latitude || '',
@@ -31,6 +39,7 @@ const EditLocationForm = ({ locationId }) => {
                         PostCode: locationData.postCode || '',
                         Country: locationData.country || '',
                         Description: locationData.description || '',
+                        CustomerID: locationData.customerID || '',
                     });
                 } else {
                     setError('No location details found.');
@@ -44,6 +53,30 @@ const EditLocationForm = ({ locationId }) => {
         fetchLocationData();
     }, [locationId]);
 
+    
+  const handleCustomerChange = (event, newValue) => {
+  
+    setSelectedCustomer(newValue);
+     // Update formData with selected customer ID
+     setFormData((prevData) => ({
+        ...prevData,
+        CustomerID: newValue ? newValue.id : ''
+    }));
+  };
+
+  const loadCustomers = async (customerID) => {
+    setLoadingCustomers(true);
+    const newCustomers = await fetchCustomers();
+    setCustomers(newCustomers);
+       // Find the matching customer by CustomerID after customers are fetched
+       if (customerID) {
+        console.log("In load customers, form data customer ID is " + customerID);
+        const matchedCustomer = newCustomers.find(customer => customer.id === customerID);
+        setSelectedCustomer(matchedCustomer || null); // Set the matching customer
+    }
+    setLoadingCustomers(false);
+  };
+
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setFormData({
@@ -54,7 +87,7 @@ const EditLocationForm = ({ locationId }) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log('Saving changes...', formData); 
+        console.log('Saving changes...', JSON.stringify( formData ) ); 
 
         try {
             const result = await updateLocation(locationId, formData); // Update location in DB
@@ -78,10 +111,13 @@ const EditLocationForm = ({ locationId }) => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
-                <Grid container spacing={2} direction="column" alignItems="center">
-                    <Typography variant="h5" gutterBottom>
-                        Editing Location {locationId}
+                 <Grid container spacing={2} alignItems="center" justifyContent="center">
+                    <EditLocationAltIcon  />  
+                    <Typography variant="h5" margin={1}>
+                        Editing Location
+                    </Typography>
+                    <Typography variant='subheading'>
+                        {locationId}
                     </Typography>
                     <form style={{ width: '80%' }} onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
@@ -161,7 +197,22 @@ const EditLocationForm = ({ locationId }) => {
                                     onChange={handleInputChange}
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={6}>
+                                <Autocomplete
+                                    tabIndex={2}
+                                    disablePortal={false}
+                                    id="Customers"
+                                    options={customers || []}
+                                    loading={loadingCustomers}
+                                    getOptionLabel={(option) => `${option.name} ${option.phone}`}
+                                    value={selectedCustomer}
+                                    onChange={handleCustomerChange}
+                                    renderInput={(params) => (
+                                        <TextField {...params} required label="Select Customer" />
+                                    )}
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={12}>
                                 <TextField
                                     label="Description"
                                     name="Description"
@@ -181,7 +232,6 @@ const EditLocationForm = ({ locationId }) => {
                         </Grid>
                     </form>
                 </Grid>
-            </Paper>
         </Box>
     );
 };

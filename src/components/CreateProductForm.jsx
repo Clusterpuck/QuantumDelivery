@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
 import { createProduct } from '../store/apiFunctions'; 
 
 const CreateProductForm = () => {
@@ -45,8 +46,12 @@ const CreateProductForm = () => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
-                <Grid container spacing={2} direction="column" alignItems="center">
+                <Grid container spacing={2} alignItems="center" justifyContent="center">
+                <Inventory2Icon sx={{ mr: 1 }} /> {/* Adds margin to the right of the icon */}
+                                <Typography margin={1} variant="h4">
+                                    Add Product
+                                </Typography>
+
                     <form style={{ width: '80%' }} onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
@@ -81,7 +86,6 @@ const CreateProductForm = () => {
                         </Grid>
                     </form>
                 </Grid>
-            </Paper>
         </Box>
     );
 };

@@ -19,6 +19,11 @@ import EditVehicleForm from '../components/EditVehicleForm';
 import CheckPasswordForm from '../components/CheckPasswordForm';
 import { enableScroll } from '../assets/scroll.js';
 import { getAccountDetails } from '../store/apiFunctions.js'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import PersonIcon from '@mui/icons-material/Person';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 
 const AdminControls = () =>
 {
@@ -175,6 +180,14 @@ const AdminControls = () =>
 
     const entities = ['account', 'customer', 'location', 'product', 'vehicle'];
 
+    const entityIcons = {
+        account: AccountCircleIcon,
+        customer: PersonIcon,
+        location: LocationOnIcon,
+        product: ShoppingCartIcon,
+        vehicle: DirectionsCarIcon,
+    };
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 8 }}>
 
@@ -190,6 +203,7 @@ const AdminControls = () =>
                             key={entity}
                             entity={entity}
                             handleSubmit={handleSubmit}
+                            Icon = {entityIcons[entity]}
                         />
                     ))}
                 </Grid>
@@ -202,7 +216,17 @@ const AdminControls = () =>
                 aria-labelledby="delete-entity-modal"
                 aria-describedby="delete-entity-description"
             >
-                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 400, width: '100%' }}>
+                <Box sx={{ 
+                    position: 'absolute', 
+                    top: '50%', 
+                    left: '50%', 
+                    transform: 'translate(-50%, -50%)', 
+                    bgcolor: 'background.paper', 
+                    boxShadow: 24, 
+                    p: 4, 
+                    maxWidth: 400, 
+                    width: '100%',
+                    borderRadius: 2 }}>
                     <Button
                         onClick={handleCloseDelete}
                         sx={{
@@ -224,7 +248,17 @@ const AdminControls = () =>
                 aria-labelledby="account-form-modal"
                 aria-describedby="account-form-description"
             >
-                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
+                <Box sx={{ 
+                    position: 'absolute', 
+                    top: '50%', 
+                    left: '50%', 
+                    transform: 'translate(-50%, -50%)', 
+                    bgcolor: 'background.paper', 
+                    boxShadow: 24, 
+                    p: 4, 
+                    maxWidth: 600, 
+                    width: '100%',
+                    borderRadius: 2 }}>
                     <Button
                         onClick={handleCloseAccountForm}
                         sx={{
@@ -246,7 +280,17 @@ const AdminControls = () =>
                 aria-labelledby="product-form-modal"
                 aria-describedby="product-form-description"
             >
-                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
+                <Box sx={{ 
+                    position: 'absolute', 
+                    top: '50%', 
+                    left: '50%', 
+                    transform: 'translate(-50%, -50%)', 
+                    bgcolor: 'background.paper', 
+                    boxShadow: 24, 
+                    p: 4, 
+                    maxWidth: 600, 
+                    width: '100%',
+                    borderRadius: 2 }}>
                     <Button
                         onClick={handleCloseProductForm}
                         sx={{
@@ -268,7 +312,17 @@ const AdminControls = () =>
                 aria-labelledby="location-form-modal"
                 aria-describedby="location-form-description"
             >
-                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
+                <Box sx={{ 
+                    position: 'absolute', 
+                    top: '50%', 
+                    left: '50%', 
+                    transform: 'translate(-50%, -50%)', 
+                    bgcolor: 'background.paper', 
+                    boxShadow: 24, 
+                    p: 4, 
+                    maxWidth: 600, 
+                    width: '100%',
+                    borderRadius: 2 }}>
                     <Button
                         onClick={handleCloseLocationForm}
                         sx={{
@@ -290,7 +344,17 @@ const AdminControls = () =>
                 aria-labelledby="customer-form-modal"
                 aria-describedby="customer-form-description"
             >
-                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
+                <Box sx={{ 
+                    position: 'absolute', 
+                    top: '50%', 
+                    left: '50%', 
+                    transform: 'translate(-50%, -50%)', 
+                    bgcolor: 'background.paper', 
+                    boxShadow: 24, 
+                    p: 4, 
+                    maxWidth: 600, 
+                    width: '100%',
+                    borderRadius: 2 }}>
                     <Button
                         onClick={handleCloseCustomerForm}
                         sx={{
@@ -312,7 +376,17 @@ const AdminControls = () =>
                 aria-labelledby="edit-entity-modal"
                 aria-describedby="edit-entity-description"
             >
-                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 400, width: '100%' }}>
+                <Box sx={{ 
+                    position: 'absolute', 
+                    top: '50%', 
+                    left: '50%', 
+                    transform: 'translate(-50%, -50%)', 
+                    bgcolor: 'background.paper', 
+                    boxShadow: 24, 
+                    p: 4, 
+                    maxWidth: 400, 
+                    width: '100%',
+                    borderRadius: 2 }}>
                     <Button
                         onClick={handleCloseEditEntityForm}
                         sx={{
@@ -337,7 +411,17 @@ const AdminControls = () =>
                 aria-labelledby="password-form-modal"
                 aria-describedby="password-form-description"
             >
-                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 400, width: '100%' }}>
+                <Box sx={{ 
+                    position: 'absolute', 
+                    top: '50%', 
+                    left: '50%', 
+                    transform: 'translate(-50%, -50%)', 
+                    bgcolor: 'background.paper', 
+                    boxShadow: 24, 
+                    p: 4, 
+                    maxWidth: 400, 
+                    width: '100%',
+                    borderRadius: 2 }}>
                     <Button
                         onClick={handleClosePasswordModal}
                         sx={{
@@ -359,7 +443,17 @@ const AdminControls = () =>
                 aria-labelledby="vehicle-form-modal"
                 aria-describedby="vehicle-form-description"
             >
-                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 600, width: '100%' }}>
+                <Box sx={{ 
+                    position: 'absolute', 
+                    top: '50%', 
+                    left: '50%', 
+                    transform: 'translate(-50%, -50%)', 
+                    bgcolor: 'background.paper', 
+                    boxShadow: 24, 
+                    p: 4, 
+                    maxWidth: 600, 
+                    width: '100%',
+                    borderRadius: 2 }}>
                     <Button
                         onClick={handleCloseVehicleForm}
                         sx={{

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
 import { createVehicle } from '../store/apiFunctions'; 
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 
 const CreateVehicleForm = () => {
     const [formData, setFormData] = useState({
@@ -50,8 +51,11 @@ const CreateVehicleForm = () => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
-                <Grid container spacing={2} direction="column" alignItems="center">
+                 <Grid container spacing={2} alignItems="center" justifyContent="center">
+                <LocalShippingIcon sx={{ mr: 1 }} /> {/* Adds margin to the right of the icon */}
+                                <Typography margin={1} variant="h4">
+                                    Add Vehicle
+                                </Typography>
                     <form style={{ width: '80%' }} onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={12}>
@@ -75,7 +79,6 @@ const CreateVehicleForm = () => {
                         </Grid>
                     </form>
                 </Grid>
-            </Paper>
         </Box>
     );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
 import { getProductDetails, updateProduct } from '../store/apiFunctions';
+import BackpackIcon from '@mui/icons-material/Backpack';
 
 const EditProductForm = ({ productId }) => {
     const [formData, setFormData] = useState({
@@ -71,10 +72,13 @@ const EditProductForm = ({ productId }) => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
-                <Grid container spacing={2} direction="column" alignItems="center">
-                    <Typography variant="h5" gutterBottom>
-                        Editing Product {productId}
+                <Grid container spacing={2} alignItems="center" justifyContent="center">
+                    <BackpackIcon />
+                    <Typography variant="h5" margin={1}>
+                        Editing Product 
+                    </Typography>
+                    <Typography variant='subheading'>
+                        {productId}
                     </Typography>
                     <form style={{ width: '80%' }} onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
@@ -110,7 +114,6 @@ const EditProductForm = ({ productId }) => {
                         </Grid>
                     </form>
                 </Grid>
-            </Paper>
         </Box>
     );
 };

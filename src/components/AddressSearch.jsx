@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { AddressAutofill, AddressMinimap, useConfirmAddress } from '@mapbox/search-js-react';
-import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
+import { TextField, Box, Paper, Button, Grid, Typography, Autocomplete } from '@mui/material';
 import { createLocation, fetchRegion } from '../store/apiFunctions';
 import LocationOnIcon from '@mui/icons-material/LocationOn'; 
 import { Description } from '@mui/icons-material';
+import { fetchCustomers, fetchLocations, postMethod } from '../store/apiFunctions.js';
 
 const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
@@ -36,6 +37,9 @@ const AddressSearch = ({ onCloseForm }) => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [customers, setCustomers] = useState(null);
+    const [loadingCustomers, setLoadingCustomers] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
 
     // Load initial location data
     useEffect(() => {
@@ -47,6 +51,7 @@ const AddressSearch = ({ onCloseForm }) => {
             }
         };
         loadLocation();
+        loadCustomers();
     }, []);
 
     // Adjust Mapbox suggestion dropdown's z-index
@@ -96,6 +101,7 @@ const AddressSearch = ({ onCloseForm }) => {
             state: stateContext ? stateContext.text : '',
             zipCode: zipCode,  // set zipCode from context
             country: country, // set country from the last part of place_name
+            customerID: selectedCustomer ? selectedCustomer.id : 0
         }));
     };
 
@@ -115,6 +121,7 @@ const AddressSearch = ({ onCloseForm }) => {
                 Postcode: formData.zipCode,
                 Country: formData.country,
                 Description: formData.locationName,
+                customerID: selectedCustomer ? selectedCustomer.id : 0
             };
 
             console.log("locationData:", locationData); // Debug the location data
@@ -134,6 +141,20 @@ const AddressSearch = ({ onCloseForm }) => {
             console.error(err);
         }
     };
+
+    
+  const handleCustomerChange = (event, newValue) => {
+  
+    setSelectedCustomer(newValue);
+  };
+
+  const loadCustomers = async () => {
+    setLoadingCustomers(true);
+    const newCustomers = await fetchCustomers();
+    setCustomers(newCustomers);
+    setLoadingCustomers(false);
+  };
+
 
     // Handle reset map
     const handleResetMap = () => {
@@ -163,15 +184,14 @@ const AddressSearch = ({ onCloseForm }) => {
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
-                <Grid container spacing={2} direction="column" alignItems="center">
-                    <LocationOnIcon sx={{ fontSize: 50, mb: 1 }} />  
-                    <Typography variant="h5" gutterBottom sx={{ mb: 1 }}>
-                        Create a New Location
+            <Grid container spacing={2} alignItems="center" justifyContent="center">
+                    <LocationOnIcon  />  
+                    <Typography variant="h5" margin={1}>
+                        Create Location
                     </Typography>
                     <form ref={formRef} onSubmit={handleFormSubmit} style={{ width: '100%' }}>
                         <Grid container spacing={2}>
-                            <Grid item xs={12}>
+                            <Grid item xs={6}>
                                 <TextField
                                     id="address-name"
                                     name="address-name"
@@ -180,6 +200,21 @@ const AddressSearch = ({ onCloseForm }) => {
                                     fullWidth
                                     required
                                     onChange={(e) => setFormData(prev => ({ ...prev, locationName: e.target.value }))}
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Autocomplete
+                                    tabIndex={2}
+                                    disablePortal={false}
+                                    id="Customers"
+                                    options={customers || []}
+                                    loading={loadingCustomers}
+                                    getOptionLabel={(option) => `${option.name} ${option.phone}`}
+                                    value={selectedCustomer}
+                                    onChange={handleCustomerChange}
+                                    renderInput={(params) => (
+                                        <TextField {...params} required label="Select Customer" />
+                                    )}
                                 />
                             </Grid>
 
@@ -248,7 +283,7 @@ const AddressSearch = ({ onCloseForm }) => {
                             </Grid>
                         </Grid>
 
-                        <Box sx={{ height: 180, width: '100%', position: 'relative', mt: 2, mb: 5 }}>
+                        <Box sx={{ height: 150, width: '100%', position: 'relative', mt: 2, mb: 5 }}>
                             <AddressMinimap
                                 key={mapKey}
                                 feature={minimapFeature}
@@ -264,9 +299,9 @@ const AddressSearch = ({ onCloseForm }) => {
 
                         <Grid container justifyContent="space-between" spacing={2}>
                             <Grid item xs={12} sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <Button onClick={handleResetMap} variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
+                                {/* <Button onClick={handleResetMap} variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
                                     Clear Form
-                                </Button>
+                                </Button> */}
                                 <Button type="submit" variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
                                     Add Location
                                 </Button>
@@ -276,7 +311,6 @@ const AddressSearch = ({ onCloseForm }) => {
                         </Grid>
                     </form>
                 </Grid>
-            </Paper>
         </Box>
     );
 };

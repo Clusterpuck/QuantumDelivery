@@ -61,9 +61,9 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
 
     const handleQuantityChange = (event) =>
     {
-        const value = Number(event.target.value)
+        const value = event.target.value
         setQuantity(value)
-        if( value < 1 || value > 999)
+        if( Number(value) < 1 || Number(value) > 999)
         {
             setIsQuantityValid(false);
         }

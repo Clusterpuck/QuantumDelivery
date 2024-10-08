@@ -38,7 +38,7 @@ import { DataGrid } from '@mui/x-data-grid';
 
 // Local Imports
 import MapWithPins from '../components/MapWithPins.jsx';
-import { fetchMethod, deleteMethod } from '../store/apiFunctions';
+import { fetchMethod, deleteMethod, fetchDepots } from '../store/apiFunctions';
 import { formatDate } from '../store/helperFunctions';
 import { enableScroll } from '../assets/scroll.js';
 import { deleteRouteByDate } from '../store/apiFunctions.js'

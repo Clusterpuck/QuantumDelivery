@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { postDeliveryRoutes, fetchMethod, fetchNumVehicles } from '../store/apiFunctions';
+import { postDeliveryRoutes, fetchMethod, fetchNumVehicles, fetchDepots } from '../store/apiFunctions';
 // Date Picker
 import DateSelectHighlight from '../components/DateSelectHighlight.jsx';
 import dayjs from 'dayjs';
@@ -26,14 +26,15 @@ import CustomLoading from '../components/CustomLoading.jsx';
 import
 {
     TextField, Button, Grid, MenuItem, Typography, InputAdornment, Radio, RadioGroup,
-    FormControlLabel, Switch, Skeleton, FormGroup, Tooltip, Snackbar, Alert
+    FormControlLabel, Switch, Skeleton, FormGroup, Tooltip, Snackbar, Alert, Autocomplete
 } from '@mui/material';
 
 
 
 const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
 {
-
+    const [depots, setDepots] = useState([]);
+    const [depotsLoading, setDepotLoading] = useState(false);
     const [selectedDate, setSelectedDate] = useState(dayjs());
     const [unassignedDates, setUnassignedDates] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(true); // Track if orders are loaded
@@ -65,12 +66,12 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
 
 
     // Depot handling
-    const depots = [
+    /*const depots = [
         { id: 1, name: "Depot A" },
         { id: 2, name: "Depot B" },
         { id: 3, name: "Depot C" },
         { id: 4, name: "Depot D" },
-    ];
+    ];*/
     const [selectedDepot, setSelectedDepot] = useState(depots[0].id);
 
     const theme = useTheme();
@@ -206,6 +207,43 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
         setOrdersLoading(false);
     };
 
+    const loadDepots = async () =>
+        {
+          setDepotLoading(true);
+          try
+          {
+            const depotsList = await fetchDepots();
+            if (depotsList)
+            {
+              console.log("xxXX Depot List is " + JSON.stringify(depotsList));
+              setDepots(depotsList);
+              setSelectedDepot(depots[0]);
+            }
+            else
+            {
+              // throw error
+              console.error('Error fetching depots: ', error);
+              setSnackbar({
+                open: true,
+                message: 'Failed to load depots',
+                severity: 'error'
+              });
+            }
+          } catch (error)
+          {
+            // catch error
+            console.error('Error fetching depots: ', error);
+            setSnackbar({
+              open: true,
+              message: 'Failed to load depots',
+              severity: 'error'
+            });
+          }
+          finally
+          {
+            setDepotLoading(false);
+          }
+        };
 
 
     /**
@@ -247,13 +285,6 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
     {
         setNumVehicles(event.target.value);
     };
-
-    const handleDepotChange = (event) =>
-    {
-        setSelectedDepot(Number(event.target.value));
-    };
-
-
 
     /** Forms a list of current dates that there are routes planned */
     function extractOrderDates(inOrders)
@@ -435,11 +466,13 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
         }
     }
 
-
-
+    const handleDepotChange = (newValue) => {
+        setSelectedDepot(newValue);
+    };
 
     useEffect(() =>
     {
+        loadDepots();
         loadOrders();
         settingMaxVechicles(selectedDate);
 
@@ -452,6 +485,33 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
             filterByDate(selectedDate);
         }
     }, [plannedOrders, selectedDate]);
+
+    const DepotAutocomplete = () => {
+        if (depotsLoading) {
+            return (
+                <Skeleton sx={{
+                    width: '100%',
+                    height: '100px',
+                }} />
+            );
+        }
+
+        if (depots) {
+            return (
+                <Autocomplete
+                    disablePortal
+                    id="Depots"
+                    value={selectedDepot || null}
+                    options={depots}
+                    getOptionLabel={(option) => option.description}
+                    getOptionKey={(option) => option.id}
+                    fullWidth
+                    onChange={(event, newValue) => handleDepotChange(newValue)} // Pass the whole object
+                    renderInput={(params) => <TextField {...params} label="Select Depot" InputLabelProps={{ shrink: true }} />}
+                />
+            );
+        }
+    };
 
 
 
@@ -476,26 +536,7 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
                 </Grid>
                 {/*Depot drop down menu*/}
                 <Grid item xs={6} md={3}>
-                    <TextField
-                        select
-                        label="Depot"
-                        value={selectedDepot}
-                        fullWidth
-                        onChange={handleDepotChange}
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <WarehouseIcon />
-                                </InputAdornment>
-                            ),
-                        }}
-                    >
-                        {depots.map(depot => (
-                            <MenuItem key={depot.id} value={depot.id}>
-                                {depot.name}
-                            </MenuItem>
-                        ))}
-                    </TextField>
+                    <DepotAutocomplete />
                 </Grid>
                 {/**Calc type selection */}
                 <Grid item xs={6} md={3}>

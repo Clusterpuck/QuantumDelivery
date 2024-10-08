@@ -24,12 +24,19 @@ const CreateCustomerForm = () => {
         event.preventDefault();
         console.log('Creating customer...', formData);
 
+        const newCustomer = {
+            Name: formData.customerName,
+            Email: formData.customerEmail,
+            Phone: formData.customerPhone,
+        };
+        
+        if (!/^(?:\d\s*){10}$/.test(newCustomer.Phone)) {
+            setError('Phone number must contain 10 digits')
+            return;
+        }
+
         try {
-            const result = await createCustomer({
-                Name: formData.customerName,
-                Email: formData.customerEmail,
-                Phone: formData.customerPhone,
-            });
+            const result = await createCustomer(newCustomer);
 
             if (result) {
                 setSuccess(true);

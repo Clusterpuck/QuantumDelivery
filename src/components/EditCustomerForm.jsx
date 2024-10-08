@@ -42,9 +42,17 @@ const EditCustomerForm = ({ customerId }) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setError(null);
+        setSuccess(false);
         console.log('Saving changes...', formData); 
 
         try {
+            
+            if (!/^(?:\d\s*){10}$/.test(formData.Phone)) {
+                setError('Phone number must contain 10 digits')
+                return;
+            }
+
             const result = await updateCustomer(customerId, formData); // Update customer in DB
 
             if (result) {

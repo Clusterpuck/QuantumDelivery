@@ -70,7 +70,6 @@ const AccountDetailsForm = () => {
         event.preventDefault();
         setError(null);
         setSuccess(false);
-        
         const accountDetails = await getAccountDetails(accountId);
 
         // Prepare the updated account data to send to the backend
@@ -86,6 +85,11 @@ const AccountDetailsForm = () => {
         // Ensure email is in valid format
         if (!/\S+@\S+\.\S+/.test(updatedAccountData.Username)) {
             setError('Email format is invalid.');
+            return;
+        }
+
+        if (!/^(?:\d\s*){10}$/.test(updatedAccountData.Phone)) {
+            setError('Phone number must contain 10 digits')
             return;
         }
 

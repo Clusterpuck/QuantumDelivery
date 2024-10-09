@@ -83,6 +83,8 @@ const DriverViewRoutes = ({ inputUser }) => {
                 const selectedRoute = routeData.find(route => 
                     route.deliveryDate.split('T')[0] === selectedDateString
                 );
+
+                console.log("debugging cant see bug - selected route: ", JSON.stringify(selectedRoute));
             
                 if (selectedRoute) {
                     setRouteId(selectedRoute.deliveryRouteID);

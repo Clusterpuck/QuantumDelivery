@@ -1242,7 +1242,14 @@ export const reactivateAccount = async (accountId) => {
 export const fetchAccounts = async () => {
     let driverData = null
     try {
-        const driverResponse = await fetch( Constants.DATA_ENDPOINT + 'accounts');
+        const token = Cookies.get('authToken');
+        const driverResponse = await fetch( Constants.DATA_ENDPOINT + 'accounts', {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json', // Set the content type
+                ...(token && { 'Authorization': `Bearer ${token}` }), 
+            },
+        });
         if (!driverResponse.ok) {
             throw new Error('Failed to fetch accounts.');
         }

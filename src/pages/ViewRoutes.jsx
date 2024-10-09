@@ -549,7 +549,7 @@ const ViewRoutes = () => {
 
                                 {/* Route Details with Icons */}
                                 {/* Split into two columns */}
-                                <Grid container item xs={6} md={5} >
+                                <Grid container item xs={4} md={4} >
                                   <Grid item xs={12}>
                                     <Box display="flex" alignItems="center" >
                                       <LabelIcon color="primary" />
@@ -571,7 +571,7 @@ const ViewRoutes = () => {
                                 </Grid>
 
                                 {/* Second column */}
-                                <Grid container item xs={6} md={5} >
+                                <Grid container item xs={4} md={4} >
                                   <Grid item xs={12}>
                                     <Box display="flex" alignItems="center" >
                                       <FormatListNumberedIcon color="primary" />
@@ -585,12 +585,11 @@ const ViewRoutes = () => {
                                     </Box>
                                   </Grid>
                                 </Grid>
-                                {/**Spacer grid */}
-                                <Grid item xs={4} md={4}></Grid>
+                                
 
                                 {/**Grid for buttons */}
-                                <Grid container item xs={2} md={3} sx={{ ml: 'auto' }}>
-                                  <Grid item xs={6} md={6}>
+                                <Grid container item xs={4} md={4} justifyContent="flex-end">
+                                  <Grid item >
                                     <Tooltip
                                       title={route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED') ? "Cannot edit, some orders are not assigned or cancelled." : ""}
                                       disableHoverListener={!route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')}
@@ -609,7 +608,7 @@ const ViewRoutes = () => {
                                       </span>
                                     </Tooltip>
                                   </Grid>
-                                  <Grid item xs={6} md={6} >
+                                  <Grid item sx={{ ml: 1 }} >
                                     <Tooltip
                                       title={route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED') ? "Cannot delete, some orders are not assigned or cancelled." : ""}
                                       disableHoverListener={!route.orders.some(order => order.status !== 'ASSIGNED' && order.status !== 'CANCELLED')}

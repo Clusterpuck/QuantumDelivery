@@ -39,6 +39,7 @@ const DriverViewRoutes = ({ inputUser }) => {
     const driverUsername = Cookies.get('userName'); // username of logged in user, Admins will see no routes
     const [selectedDate, setSelectedDate] = useState(dayjs());
     const [dateOptions, setDateOptions] = useState([]);
+    const [depot, setDepot] = useState([]);
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: '',
@@ -85,6 +86,8 @@ const DriverViewRoutes = ({ inputUser }) => {
             
                 if (selectedRoute) {
                     setRouteId(selectedRoute.deliveryRouteID);
+
+                    setDepot([selectedRoute.depot.longitude, selectedRoute.depot.latitude, selectedRoute.depot.description]);
                     
                     const pendingDeliveries = selectedRoute.orders.filter(order => 
                         order.status !== 'DELIVERED' && order.status !== 'ISSUE'
@@ -190,9 +193,9 @@ const DriverViewRoutes = ({ inputUser }) => {
         disableScroll();
     }, []);
 
-    useEffect(() => { //disable scrolling on page load
-        console.log("Dates: ", dateOptions);
-    }, [dateOptions]);
+    useEffect(() => { 
+        console.log("depot location: ", depot);
+    }, [depot]);
 
     useEffect(() => {
         if( inputUser ) {
@@ -583,7 +586,7 @@ const DriverViewRoutes = ({ inputUser }) => {
                         >
                             <CircularProgress />
                         </Box>
-                    ) : noRoutesFound || finishedDelivery ? (
+                    ) : noRoutesFound ? (
                         <Box
                             sx={{
                                 position: 'fixed',
@@ -597,6 +600,11 @@ const DriverViewRoutes = ({ inputUser }) => {
                         >
                             <NoRouteFound />
                         </Box>
+                    ) : finishedDelivery ? (
+                        depot.length > 0 && (
+                            (<DriverMap start={currentLocation} end={[depot[0], depot[1]]} destination={depot[2]}/>)
+                        )
+                        
                     ) : (
                         currentLocation.length > 0 && (
                             (<DriverMap start={currentLocation} end={[currentDelivery?.longitude, currentDelivery?.latitude]} destination={currentDelivery?.address}/>)

@@ -11,21 +11,20 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import EditRouteForm from '../components/EditRouteForm';
 import PersonIcon from '@mui/icons-material/Person'; // person icon
 import { Switch } from '@mui/material';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import MoreTimeIcon from '@mui/icons-material/MoreTime';
-import FeedbackIcon from '@mui/icons-material/Feedback';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
 import InsertInvitationIcon from '@mui/icons-material/InsertInvitation';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import { LinearProgress } from '@mui/material';
+import { LinearProgress, CircularProgress } from '@mui/material';
+import QLogo from '../../quantalogo.png';
 
 // Material-UI Components
-import {
-Button, Grid, Paper, Snackbar,
-Alert, Typography, Accordion, AccordionDetails, AccordionSummary,
-Box, Skeleton, Modal, Dialog, Tooltip, Badge
-} from '@mui/material';
+import
+  {
+    Button, Grid, Paper, Snackbar,
+    Alert, Typography, Accordion, AccordionDetails, AccordionSummary,
+    Box, Skeleton, Modal, Dialog, Tooltip, Badge
+  } from '@mui/material';
 
 // Material-UI Icons
 import RouteIcon from '@mui/icons-material/Route';
@@ -50,7 +49,8 @@ const styleConstants = {
 
 
 // Page design for View Routes page
-const ViewRoutes = () => {
+const ViewRoutes = () =>
+{
   const [routes, setRoutes] = useState([]);
   const [routesLoading, setRoutesLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -74,6 +74,7 @@ const ViewRoutes = () => {
 
   // State for controlling Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [calculatingRoutes, setCalculatingRoutes] = useState(false);
 
   const theme = useTheme();
 
@@ -93,17 +94,21 @@ const ViewRoutes = () => {
   };
 
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     enableScroll();
     loadRoutes();
+    fetchCalculatingStatus();
 
   }, []);
 
-  useEffect(() => {
+  useEffect(() =>
+  {
     loadRoutes();
   }, [isActiveRoutes]);
 
-  const handleShowMessage = (msg, type) => {
+  const handleShowMessage = (msg, type) =>
+  {
     setSnackbar({
       open: true,
       message: msg,
@@ -111,8 +116,67 @@ const ViewRoutes = () => {
     });
   };
 
+  const fetchCalculatingStatus = async (requestID) =>
+  {
+    setCalculatingRoutes(true);
+    let calcsRunning = await fetchMethod('Calculation');
+    console.log("calcs running values is " + calcsRunning);
+
+    // Define the delay times in milliseconds
+    const delayTimes = [2000, 5000, 10000, 30000, 60000]; // 2s, 5s, 10s, 30s, 1min
+    let currentDelayIndex = 0;
+
+    while (calcsRunning !== 0)
+    {
+      // Wait for the current delay time
+      await new Promise(resolve => setTimeout(resolve, delayTimes[currentDelayIndex]));
+
+      // Fetch the current status again
+      calcsRunning = await fetchMethod('Calculation');
+
+      // Move to the next delay time if we haven't reached the maximum
+      if (currentDelayIndex < delayTimes.length - 1)
+      {
+        currentDelayIndex++;
+      }
+    }
+    loadRoutes();
+    if (requestID)
+    {
+      const response = await fetchMethod('Calculation/' + requestID);
+      // Parse startTime and endTime to Date objects
+      const startTime = new Date(response.startTime);
+      const endTime = new Date(response.endTime);
+
+      // Calculate the duration in seconds
+      const durationInSeconds = ((endTime - startTime) / 1000).toFixed(2); // Adjust precision as needed
+      if (response.status === 'COMPLETED')
+      {
+        setSnackbar({
+          open: true,
+          message: 'Route calculation done! Finished in ' + durationInSeconds + "seconds",
+          severity: 'success'
+        });
+      }
+      else
+      {
+        setSnackbar({
+          open: true,
+          message: 'Route calculation failed! Stopped in ' + durationInSeconds + "seconds",
+          severity: 'error'
+        });
+
+      }
+      console.log("xxXXxxcalc response msg is " + JSON.stringify(response));
+    }
+
+    // Optionally, you can set calculatingRoutes to false when done
+    setCalculatingRoutes(false);
+  };
+
   // Function to handle switch toggle
-  const handleToggle = (event) => {
+  const handleToggle = (event) =>
+  {
     setIsActiveRoutes(event.target.checked);
   };
 
@@ -122,39 +186,46 @@ const ViewRoutes = () => {
   // Close Modal function
   const handleCloseModal = () => setIsModalOpen(false);
 
-  const handleEditClick = (route) => {
+  const handleEditClick = (route) =>
+  {
     setSelectedRouteToEdit(route);
     setOpenEditDialog(true);
   };
 
-  const handleCloseEditDialog = () => {
+  const handleCloseEditDialog = () =>
+  {
     setOpenEditDialog(false);
     setSelectedRouteToEdit(null);
   };
 
-  const handleDeleteClick = (routeID) => {
+  const handleDeleteClick = (routeID) =>
+  {
     setRouteToDelete(routeID);
     setOpenDeleteDialog(true);
   };
 
-  const handleCancelDelete = () => {
+  const handleCancelDelete = () =>
+  {
     setOpenDeleteDialog(false);
     setRouteToDelete(null);
   };
 
-  const handleDeleteAllClick = (date) => {
+  const handleDeleteAllClick = (date) =>
+  {
     setDateToDelete(date);
     setDateToDeleteRead(date);
     setOpenDeleteAllDialog(true);
   };
 
-  const handleCancelDeleteAll = () => {
+  const handleCancelDeleteAll = () =>
+  {
     setOpenDeleteAllDialog(false);
     setDateToDelete(null);
   };
 
   /** Deals with user requesting closing the snackbar */
-  const handleSnackbarClose = () => {
+  const handleSnackbarClose = () =>
+  {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
 
@@ -166,10 +237,13 @@ const ViewRoutes = () => {
    * @param {*}
    * @returns {*}
    */
-  const handleConfirmDelete = async () => {
-    try {
+  const handleConfirmDelete = async () =>
+  {
+    try
+    {
       const result = await deleteMethod(routeToDelete, 'DeliveryRoutes');
-      if (result) {
+      if (result)
+      {
         //console.log('Item deleted successfully:', result);
         //await loadOrders();
         loadRoutes();
@@ -178,25 +252,31 @@ const ViewRoutes = () => {
           message: 'Route deleted successfully!',
           severity: 'success'
         });
-      } else {
+      } else
+      {
         console.error('Failed to delete item.');
       }
     }
-    catch (error) {
+    catch (error)
+    {
       setSnackbarMessage(error.message);
       setSnackbarSeverity('error');
       showMessage(error.message, 'error');
-    } finally {
+    } finally
+    {
       setOpenDeleteDialog(false);
       setRouteToDelete(null);
     }
 
   };
 
-  const deleteAllRoutesByDate = async () => {
-    try {
+  const deleteAllRoutesByDate = async () =>
+  {
+    try
+    {
       let result = await deleteRouteByDate(dateToDelete);
-      if (result) {
+      if (result)
+      {
         //console.log('Item deleted successfully:', result);
         //await loadOrders();
         loadRoutes();
@@ -205,16 +285,19 @@ const ViewRoutes = () => {
           message: 'Routes deleted successfully!',
           severity: 'success'
         });
-      } else {
+      } else
+      {
         console.error('Failed to delete item.');
       }
     }
-    catch (error) {
+    catch (error)
+    {
       setSnackbarMessage(error.message);
       setSnackbarSeverity('error');
       showMessage(error.message, 'error');
     }
-    finally {
+    finally
+    {
       setOpenDeleteAllDialog(false);
       setRouteToDelete(null);
     }
@@ -227,22 +310,27 @@ const ViewRoutes = () => {
    * @async
    * @returns {unknown}
    */
-  const loadRoutes = async () => {//need to update get route to manage getting existing orders
+  const loadRoutes = async (requestID) =>
+  {//need to update get route to manage getting existing orders
     //should return the same as CalcRoute
     const url = isActiveRoutes
       ? 'DeliveryRoutes/active'  // Active routes
       : 'DeliveryRoutes';        // All routes
     setRoutesLoading(true);
-    try {
+    try
+    {
       const routesList = await fetchMethod(url);
-      if (routesList) {
+      if (routesList)
+      {
         //console.log("xxXX Route List is " + JSON.stringify(routesList));
         //setRoutes(routesList);
-        const groupedRoutes = routesList.reduce((acc, route) => {
+        const groupedRoutes = routesList.reduce((acc, route) =>
+        {
           const deliveryDate = new Date(route.deliveryDate).toDateString(); // Convert to string (ignoring time)
 
           // Check if this date already exists in the accumulator
-          if (!acc[deliveryDate]) {
+          if (!acc[deliveryDate])
+          {
             acc[deliveryDate] = []; // Initialize array if it doesn't exist
           }
 
@@ -263,7 +351,8 @@ const ViewRoutes = () => {
         //console.log("xxXXGrouped Routes by Date: ", groupedRoutes);
         return groupedRoutes;
       }
-      else {
+      else
+      {
         // throw error
         console.error('Error fetching delivery routes: ', error);
         setSnackbar({
@@ -272,7 +361,8 @@ const ViewRoutes = () => {
           severity: 'error'
         });
       }
-    } catch (error) {
+    } catch (error)
+    {
       // catch error
       console.error('Error fetching delivery routes: ', error);
       setSnackbar({
@@ -281,7 +371,8 @@ const ViewRoutes = () => {
         severity: 'error'
       });
     }
-    finally {
+    finally
+    {
       setRoutesLoading(false);
     }
   };
@@ -300,7 +391,8 @@ const ViewRoutes = () => {
   ];
 
 
-  const RouteState = ({ dateRoutes }) => {
+  const RouteState = ({ dateRoutes }) =>
+  {
 
     // Active Routes: A route is active if none of the orders in that route have the 'ASSIGNED' status.
     const activeRoutes = dateRoutes.filter(route =>
@@ -319,7 +411,7 @@ const ViewRoutes = () => {
 
     return (
       <Grid container>
-        <Grid item xs={4} md={3} >
+        <Grid item xs={3} md={3} >
           <Badge
             showZero
             badgeContent={activeRoutes.length}
@@ -332,7 +424,7 @@ const ViewRoutes = () => {
           </Typography>
 
         </Grid>
-        <Grid item xs={4} md={3} >
+        <Grid item xs={3} md={3} >
           <Badge
             showZero
             badgeContent={plannedRoutes.length}
@@ -345,7 +437,7 @@ const ViewRoutes = () => {
           </Typography>
 
         </Grid>
-        <Grid item xs={4} md={3} >
+        <Grid item xs={3} md={3} >
           <Badge
             showZero
             badgeContent={finishedRoutes.length}
@@ -357,6 +449,20 @@ const ViewRoutes = () => {
             Finished
           </Typography>
 
+        </Grid>
+        <Grid item xs={3} md={3} >
+          <Badge
+            showZero
+            badgeContent={dateRoutes.reduce((acc, curr) =>
+              acc + curr.orders.filter(order => order.delayed).length, 0)} // Ensuring it shows 0
+            color={dateRoutes.reduce((acc, curr) =>
+              acc + curr.orders.filter(order => order.delayed).length, 0) > 0 ? "error" : "primary"}
+          >
+            <MoreTimeIcon sx={{ color: theme.palette.primary.darkaccent }} />
+          </Badge>
+          <Typography variant="subtitle2">
+            Delayed
+          </Typography>
         </Grid>
         {/*<Grid item xs={4} md={12/5}>
            <Box display="flex" flexDirection="column" alignItems="center">
@@ -381,20 +487,7 @@ const ViewRoutes = () => {
             /> 
           </Box> 
         </Grid>*/}
-        <Grid item xs={4} md={3} >
-          <Badge
-            showZero
-            badgeContent={dateRoutes.reduce((acc, curr) =>
-              acc + curr.orders.filter(order => order.delayed).length, 0)} // Ensuring it shows 0
-            color={dateRoutes.reduce((acc, curr) =>
-              acc + curr.orders.filter(order => order.delayed).length, 0) > 0 ? "error" : "primary"}
-          >
-            <MoreTimeIcon sx={{ color: theme.palette.primary.darkaccent }} />
-          </Badge>
-          <Typography variant="subtitle2">
-            Delayed
-          </Typography>
-        </Grid>
+
         {/* <Grid item xs={4} md={12/5} >
           <Badge
             showZero
@@ -414,6 +507,65 @@ const ViewRoutes = () => {
     );
   };
 
+  const CalculationDisplay = () =>
+  {
+
+
+    if (calculatingRoutes)
+    {
+      // Route calculations are happening
+      return (
+        <Box sx={{ display: { xs: 'none', md: 'block' }, textAlign: 'center' }}>
+          <Tooltip title="There are route calculations running">
+          <img
+            src={QLogo}
+            alt="Company Logo"
+            style={{
+              height: 30,
+              animation: 'throb 1.5s infinite',
+            }}
+          />
+          </Tooltip>
+          <Typography
+            variant="subtitle2"
+            sx={{
+              textAlign: 'left',
+              position: 'relative',
+              '&::after': {
+                content: '"..."', // Max dots to show
+                position: 'absolute',
+                left: '100%',
+                marginLeft: '5px', // Add some space between the text and dots
+                width: '1em', // Width of the dot area
+                overflow: 'hidden',
+                display: 'inline-block',
+                animation: 'dots 1.5s steps(3, end) infinite'
+              }
+            }}
+          >  Calculating routes
+          </Typography>
+        </Box>
+      );
+    } else
+    {
+      // Route calculations done
+      return (
+        <Box sx={{ display: { xs: 'none', md: 'block' }, textAlign: 'center' }}>
+          <Tooltip title="No calculations for routes are currently running">
+            <img
+              src={QLogo}
+              alt="Company Logo"
+              style={{ height: 30, filter: 'grayscale(100%)' }}
+            />
+          </Tooltip>
+          <Typography variant="subtitle2" >
+            Calculations Done
+          </Typography> {/* Text below logo */}
+        </Box>
+      );
+    }
+  }
+
 
 
   return (
@@ -424,15 +576,24 @@ const ViewRoutes = () => {
       <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }} mt={4}>
         <Paper elevation={3} sx={{ p: 4, maxWidth: 1500, width: '100%' }}>
 
-          <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Typography variant="h3" component="h3" sx={{ display: 'flex', alignItems: 'center' }}>
-              <RouteIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
-              Routes
-            </Typography>
+          <Grid item xs={12} md={12} container spacing={2}>
+
+            <Grid item xs={12} md={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Typography variant="h3" component="h3" sx={{ display: 'flex', alignItems: 'center' }}>
+                <RouteIcon sx={{ fontSize: 'inherit', marginRight: 1 }} />
+                Routes
+              </Typography>
+            </Grid>
+
+          
           </Grid>
 
+
           <Grid item xs={12} md={12} container spacing={2}>
-            <Grid item xs={2} md={2} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+
+            
+
+            <Grid item xs={7.5} md={7.5} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
               <Typography>{isActiveRoutes ? "Active Routes" : "All Routes"}</Typography>
               <Switch
                 checked={isActiveRoutes}
@@ -441,11 +602,18 @@ const ViewRoutes = () => {
               />
             </Grid>
 
-            <Grid item xs={10} padding={2} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Grid item xs={2} md={2} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+              <CalculationDisplay />
+
+            </Grid>
+
+
+            <Grid paddingBottom={1} item xs={2.5} md={2.5} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
               <Button
                 variant="contained"
                 color="primary"
                 onClick={handleOpenModal}
+                
                 sx={{ borderRadius: '18px' }}
               >
                 <AddIcon sx={{ fontSize: '2rem' }} /> Create New Routes
@@ -504,7 +672,8 @@ const ViewRoutes = () => {
                                 variant="determinate"
                                 color='primary'
 
-                                value={(() => {
+                                value={(() =>
+                                {
                                   const delivered = dateRoutes.reduce((acc, curr) => acc + curr.orders.filter(order => order.status === 'DELIVERED').length, 0);
                                   const total = dateRoutes.reduce((acc, curr) => acc + curr.orders.length, 0);
                                   return total > 0 ? (delivered / total) * 100 : 0; // Calculate percentage
@@ -585,7 +754,7 @@ const ViewRoutes = () => {
                                     </Box>
                                   </Grid>
                                 </Grid>
-                                
+
 
                                 {/**Grid for buttons */}
                                 <Grid container item xs={4} md={4} justifyContent="flex-end">
@@ -704,7 +873,7 @@ const ViewRoutes = () => {
                     </Button>
                   </Grid>
                 </Grid>
-                <AddRouteForm updateRoutes={loadRoutes} closeView={handleCloseModal} showMessage={handleShowMessage} />
+                <AddRouteForm updateRoutes={fetchCalculatingStatus} closeView={handleCloseModal} showMessage={handleShowMessage} />
               </Box>
             </Modal>
 

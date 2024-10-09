@@ -319,7 +319,17 @@ const LiveTracking = () => {
                                                                     <TableCell>{order.orderID}</TableCell>
                                                                     <TableCell>{order.address}</TableCell>
                                                                     <TableCell>{order.customerName}</TableCell>
-                                                                    <TableCell>{order.productNames.join(", ")}</TableCell>
+                                                                    <TableCell
+                                                                        sx={{
+                                                                            textOverflow: 'ellipsis', // For truncating text
+                                                                            overflow: 'hidden',
+                                                                            whiteSpace: 'nowrap',
+                                                                            maxWidth: '120px',
+                                                                        }}>
+                                                                            <Tooltip title={order.productNames.join(", ")} arrow>
+                                                                            {order.productNames.join(", ")}
+                                                                            </Tooltip>
+                                                                            </TableCell>
                                                                     <TableCell className={getStatusColour(order)} sx={{ color: '#f2f2f2', borderRadius: '10px' }}>{order.status}{order.delayed ? ", DELAYED" : ""}</TableCell>
                                                                 </TableRow>
                                                             ))}

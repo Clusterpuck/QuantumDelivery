@@ -39,8 +39,6 @@ const MapWithPins = ({inputLocations, depotLong, depotLat}) =>
                 .addTo(map);
         };
 
-        console.log("depot long,", depotLong, "depot lat ",depotLat);
-
         if (depotLong !== null && depotLat !== null) {
             const depotMarker = new mapboxgl.Marker({ color: 'purple' })
                     .setLngLat([depotLong, depotLat])

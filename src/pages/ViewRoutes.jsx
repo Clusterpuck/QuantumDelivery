@@ -583,29 +583,43 @@ const ViewRoutes = () =>
                               <Grid item xs={12} md={12} container alignItems="center" spacing={2} sx={{ mb: 2 }}>
 
                                 {/* Route Details with Icons */}
-                                <Grid item xs={6} md={5}>
-                                  <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
-                                    <LabelIcon color="primary" />
-                                    <Typography>ID: {route.deliveryRouteID}</Typography>
-                                  </Box>
+                                {/* Split into two columns */}
+    <Grid container item xs={6} md={5} >
+      <Grid item xs={12}>
+        <Box display="flex" alignItems="center" >
+          <LabelIcon color="primary" />
+          <Typography>ID: {route.deliveryRouteID}</Typography>
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Box display="flex" alignItems="center" >
+          <DirectionsCarIcon color="primary" />
+          <Typography>Vehicle: {route.vehicleId}</Typography>
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Box display="flex" alignItems="center" >
+          <PersonIcon color="primary" />
+          <Typography>Driver: {route.driverUsername}</Typography>
+        </Box>
+      </Grid>
+    </Grid>
 
-                                  <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
-                                    <DirectionsCarIcon color="primary" />
-                                    <Typography>Vehicle: {route.vehicleId}</Typography>
-                                  </Box>
-                                  <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
-                                    <PersonIcon color="primary" />
-                                    <Typography>Driver: {route.driverUsername}</Typography>
-                                  </Box>
-                                  <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
-                                    <FormatListNumberedIcon color="primary" />
-                                    <Typography>Orders: {route.orders.length}</Typography>
-                                  </Box>
-                                  <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
-                                    <WarehouseIcon color="primary" />
-                                    <Typography>Depot: {route.depot.description}</Typography>
-                                  </Box>
-                                </Grid>
+    {/* Second column */}
+    <Grid container item xs={6} md={5} >
+      <Grid item xs={12}>
+        <Box display="flex" alignItems="center" >
+          <FormatListNumberedIcon color="primary" />
+          <Typography>Orders: {route.orders.length}</Typography>
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Box display="flex" alignItems="center" >
+          <WarehouseIcon color="primary" />
+          <Typography>Depot: {route.depot.description}</Typography>
+        </Box>
+      </Grid>
+    </Grid>
                                 {/**Spacer grid */}
                                 <Grid item xs={4} md={4}></Grid>
 

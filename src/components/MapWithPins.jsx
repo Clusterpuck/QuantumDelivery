@@ -24,7 +24,7 @@ const MapWithPins = ({inputLocations, depotLong, depotLat}) =>
             container: mapContainerRef.current,
             style: "mapbox://styles/mapbox/streets-v11",
             center: [ inputLocations[midOrder].longitude, inputLocations[midOrder].latitude],
-            zoom: 13,
+            zoom: 10,
         });
 
         // Create markers from the locations array
@@ -45,6 +45,24 @@ const MapWithPins = ({inputLocations, depotLong, depotLat}) =>
             const depotMarker = new mapboxgl.Marker({ color: 'purple' })
                     .setLngLat([depotLong, depotLat])
                     .addTo(map);
+        }
+
+        const coordinates = inputLocations.map(loc => [loc.longitude, loc.latitude]);
+
+        // Add the depot coordinates if they're provided
+        if (depotLong !== null && depotLat !== null) {
+            coordinates.push([depotLong, depotLat]);
+        }
+
+        if (coordinates.length > 0) {
+            const bounds = coordinates.reduce((bounds, coord) => {
+                return bounds.extend(coord);
+            }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+
+            map.fitBounds(bounds, {
+                padding: 50, // Adjusts the padding around the map for a better view
+                maxZoom: 15, // Ensures the zoom level doesn't get too close
+            });
         }
 
 

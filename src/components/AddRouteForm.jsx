@@ -113,7 +113,8 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
      * @returns {*}
      */
     const calcRoutes = async () =>
-    {
+    {//change this to take the requested id then return somehow to the parent component
+        //which should then set loading status to true
         try
         {
             setRoutesLoading(true);
@@ -121,14 +122,6 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
             if (!datePlannedOrders || datePlannedOrders.length == 0) return;
 
             // Create a dayjs object for the selected date and get the local timezone offset in milliseconds
-        const localDate = dayjs(selectedDate).startOf('day');
-        const utcOffset = localDate.utcOffset(); // Get the offset in minutes
-        console.log("Formatting string is now " + formatDateToYYYYMMDD(new Date(selectedDate)));
-
-        // Create a UTC date by subtracting the offset
-        const utcDate = localDate.subtract(utcOffset, 'minute').toISOString();
-
-            console.log("In calcroutes selected date converted is " + utcDate + " new date is " + new Date(selectedDate));
             const userInput = {
                 numVehicle: numVehicles,
                 calcType: calcType,
@@ -142,15 +135,17 @@ const AddRouteForm = ({ updateRoutes, closeView, showMessage }) =>
 
             //console.log("Payload being sent: ", JSON.stringify(userInput));
             const responseMessage = await postDeliveryRoutes(userInput);
+            console.log("xxXXRoutes response is " + JSON.stringify(responseMessage.requestID));
             if (responseMessage === null) {
                 showMessage('Route failed to create', 'error');
             }
             else {
-                showMessage('Route created successfully', 'success');
+                showMessage('Route request success. Calculating ...', 'success');
             }
 
+            //send the calc request here
             //needs to return all routes, not just new routes
-            updateRoutes();
+            updateRoutes(responseMessage.requestID);
             //send instead of relying on set due to asynch setting
             //resets order list after them being assigned to routes
             closeView();

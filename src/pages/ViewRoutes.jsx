@@ -31,6 +31,7 @@ import
 // Material-UI Icons
 import RouteIcon from '@mui/icons-material/Route';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import WarehouseIcon from '@mui/icons-material/Warehouse';
 
 
 // Data Grid
@@ -600,6 +601,10 @@ const ViewRoutes = () =>
                                     <FormatListNumberedIcon color="primary" />
                                     <Typography>Orders: {route.orders.length}</Typography>
                                   </Box>
+                                  <Box display="flex" alignItems="center" sx={{ gap: 2 }}>
+                                    <WarehouseIcon color="primary" />
+                                    <Typography>Depot: {route.depot.description}</Typography>
+                                  </Box>
                                 </Grid>
                                 {/**Spacer grid */}
                                 <Grid item xs={4} md={4}></Grid>
@@ -676,7 +681,7 @@ const ViewRoutes = () =>
                                         .map((order) => ({
                                           latitude: order.latitude,
                                           longitude: order.longitude,
-                                        }))}
+                                        }))} depotLong = {route.depot.longitude} depotLat = {route.depot.latitude}
                                     />
                                   ) : (
                                     <p>No Orders</p>

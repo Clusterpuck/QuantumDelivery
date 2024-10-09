@@ -7,7 +7,7 @@ mapboxgl.accessToken =
     'pk.eyJ1IjoiMTI4ODAxNTUiLCJhIjoiY2x2cnY3d2ZkMHU4NzJpbWdwdHRvbjg2NSJ9.Mn-C9eFgQ8kO-NhEkrCnGg';
 
 
-const MapWithPins = ({inputLocations}) =>
+const MapWithPins = ({inputLocations, depotLong, depotLat}) =>
 {
 
     const mapContainerRef = useRef(null);
@@ -39,12 +39,21 @@ const MapWithPins = ({inputLocations}) =>
                 .addTo(map);
         };
 
+        console.log("depot long,", depotLong, "depot lat ",depotLat);
+
+        if (depotLong !== null && depotLat !== null) {
+            const depotMarker = new mapboxgl.Marker({ color: 'purple' })
+                    .setLngLat([depotLong, depotLat])
+                    .addTo(map);
+        }
+
+
         // Add navigation control (the +/- zoom buttons)
         map.addControl(new mapboxgl.NavigationControl(), "top-right");
 
         // Clean up on unmount
         return () => map.remove();
-    }, [inputLocations]);
+    }, [inputLocations, depotLong, depotLat]);
 
     
 

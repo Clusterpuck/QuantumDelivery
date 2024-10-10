@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback  } from 'react';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -16,7 +16,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import {Input} from '@mui/material';
 import {Tooltip} from '@mui/material';
 
-const ProductListForm = ({ addedProducts, setAddedProducts }) =>
+const ProductListForm = React.memo(({ addedProducts, setAddedProducts }) =>
 {
     const [products, setProducts] = useState([]);
     const [loadingProducts, setLoadingProducts] = useState(false);
@@ -54,10 +54,14 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
         loadProducts();
     }, []);
 
-    const handleProductChange = (event, value) =>
-    {
+    // const handleProductChange = (event, value) =>
+    // {
+    //     setSelectedProduct(value);
+    // };
+    
+    const handleProductChange = useCallback((event, value) => {
         setSelectedProduct(value);
-    };
+    }, []);
 
     const handleQuantityChange = (event) =>
     {
@@ -72,7 +76,7 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
         }
     };
 
-    const handleAddProduct = () =>
+    const handleAddProduct = React.memo(() =>
     {
         if (selectedProduct && isQuantityValid)
         {
@@ -108,7 +112,7 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
             setQuantity(1);
            
         } 
-    };
+    }, [selectedProduct, isQuantityValid, quantity]);;
 
     const handleRemoveProduct = (id) =>
     {
@@ -144,32 +148,6 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
     const skeletonStyles = {
         ...commonStyles,
         height: 56,  // Set a fixed height for the skeleton to simulate the input field height
-    };
-
-
-    const ProductAutocomplete = () =>
-    {
-
-        if (loadingProducts)
-        {
-            return <Skeleton variant="rectangular" animation="wave" sx={skeletonStyles} />;
-        }
-
-        if (products)
-        {
-            return (
-                <Autocomplete
-                    size="small"
-                    value={selectedProduct}
-                    onChange={handleProductChange}
-                    options={products}
-                    getOptionLabel={(option) => `${option.name} (${option.unitOfMeasure})`}
-                    renderInput={(params) => <TextField {...params} label="Select Product" variant="outlined" fullWidth />}
-                />
-            );
-        }
-
-        // return <p>No Customers</p>;
     };
 
     const columns = [
@@ -226,7 +204,18 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
             <Grid container spacing={1}>
                 <Grid item xs={7} md={7} >
-                    <ProductAutocomplete />
+                    {loadingProducts ? (
+                        <Skeleton variant="rectangular" animation="wave" sx={skeletonStyles} />
+                    ) : (
+                        <Autocomplete
+                            size="small"
+                            value={selectedProduct}
+                            onChange={handleProductChange}
+                            options={products}
+                            getOptionLabel={(option) => `${option.name} (${option.unitOfMeasure})`}
+                            renderInput={(params) => <TextField {...params} label="Select Product" variant="outlined" fullWidth />}
+                        />
+                    )}
                 </Grid>
                 <Grid item xs={3}>
                     <TextField
@@ -286,6 +275,6 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
             </Snackbar>
         </Box>
     );
-};
+});
 
 export default ProductListForm;

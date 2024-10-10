@@ -115,7 +115,7 @@ const AdminControls = () =>
     const handleCloseProductForm = () => setOpenProductForm(false);
     const handleCloseLocationForm = () => setOpenLocationForm(false);
     const handleCloseCustomerForm = () => setOpenCustomerForm(false);
-    const handleCloseVehicleForm = () => setOpenCustomerForm(false);
+    const handleCloseVehicleForm = () => setOpenVehicleForm(false);
     const handleCloseEditEntityForm = () => setOpenEditEntityForm(false);
 
     const handleEditEntitySuccess = async (collectedEntityId) =>

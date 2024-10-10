@@ -106,7 +106,7 @@ const AddOrder = ({ updateOrders, closeModal, showMessage }) => {
       order: {
         dateOrdered: now,
         orderNotes: orderNote || 'No Note',
-        customerId: selectedCustomer.id,
+        customerName: selectedCustomer.name,
         locationId: selectedLocation.id,
         deliveryDate: selectedDate,
       },
@@ -180,9 +180,9 @@ const AddOrder = ({ updateOrders, closeModal, showMessage }) => {
                 disablePortal = {false} 
                 id="Locations"
                 size="small"
-                options={locations && selectedCustomer ? locations.filter(location => location.customerID === selectedCustomer.id) : []}
+                options={locations && selectedCustomer ? locations.filter(location => location.customerName === selectedCustomer.name) : []}
                 loading={loadingLocations}
-                getOptionLabel={(option) => option.address + "," + option.description}
+                getOptionLabel={(option) => option.description + "," + option.address  }
                 value={selectedLocation}
                 noOptionsText={selectedCustomer ? "Customer has no locations" : "Select a customer first"}
                 onChange={handleLocationChange}

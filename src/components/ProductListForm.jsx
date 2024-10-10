@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback  } from 'react';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -16,7 +16,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import {Input} from '@mui/material';
 import {Tooltip} from '@mui/material';
 
-const ProductListForm = ({ addedProducts, setAddedProducts }) =>
+const ProductListForm = React.memo(({ addedProducts, setAddedProducts }) =>
 {
     const [products, setProducts] = useState([]);
     const [loadingProducts, setLoadingProducts] = useState(false);
@@ -54,10 +54,14 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
         loadProducts();
     }, []);
 
-    const handleProductChange = (event, value) =>
-    {
+    // const handleProductChange = (event, value) =>
+    // {
+    //     setSelectedProduct(value);
+    // };
+    
+    const handleProductChange = useCallback((event, value) => {
         setSelectedProduct(value);
-    };
+    }, []);
 
     const handleQuantityChange = (event) =>
     {
@@ -147,7 +151,7 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
     };
 
 
-    const ProductAutocomplete = () =>
+    const ProductAutocomplete = React.memo(({ loadingProducts, products, selectedProduct, onProductChange }) =>
     {
 
         if (loadingProducts)
@@ -161,7 +165,7 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
                 <Autocomplete
                     size="small"
                     value={selectedProduct}
-                    onChange={handleProductChange}
+                    onChange={onProductChange}
                     options={products}
                     getOptionLabel={(option) => `${option.name} (${option.unitOfMeasure})`}
                     renderInput={(params) => <TextField {...params} label="Select Product" variant="outlined" fullWidth />}
@@ -170,7 +174,7 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
         }
 
         // return <p>No Customers</p>;
-    };
+    });
 
     const columns = [
         { field: 'id', headerName: 'ID', flex: 0.2 },
@@ -226,7 +230,12 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
             <Grid container spacing={1}>
                 <Grid item xs={7} md={7} >
-                    <ProductAutocomplete />
+                    <ProductAutocomplete 
+                        loadingProducts={loadingProducts} 
+                        products={products} 
+                        selectedProduct={selectedProduct} 
+                        onProductChange={handleProductChange} 
+                    />
                 </Grid>
                 <Grid item xs={3}>
                     <TextField
@@ -286,6 +295,6 @@ const ProductListForm = ({ addedProducts, setAddedProducts }) =>
             </Snackbar>
         </Box>
     );
-};
+});
 
 export default ProductListForm;

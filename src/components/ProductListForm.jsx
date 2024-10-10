@@ -76,7 +76,7 @@ const ProductListForm = React.memo(({ addedProducts, setAddedProducts }) =>
         }
     };
 
-    const handleAddProduct = () =>
+    const handleAddProduct = React.memo(() =>
     {
         if (selectedProduct && isQuantityValid)
         {
@@ -112,7 +112,7 @@ const ProductListForm = React.memo(({ addedProducts, setAddedProducts }) =>
             setQuantity(1);
            
         } 
-    };
+    }, [selectedProduct, isQuantityValid, quantity]);;
 
     const handleRemoveProduct = (id) =>
     {
@@ -149,32 +149,6 @@ const ProductListForm = React.memo(({ addedProducts, setAddedProducts }) =>
         ...commonStyles,
         height: 56,  // Set a fixed height for the skeleton to simulate the input field height
     };
-
-
-    const ProductAutocomplete = React.memo(({ loadingProducts, products, selectedProduct, onProductChange }) =>
-    {
-
-        if (loadingProducts)
-        {
-            return <Skeleton variant="rectangular" animation="wave" sx={skeletonStyles} />;
-        }
-
-        if (products)
-        {
-            return (
-                <Autocomplete
-                    size="small"
-                    value={selectedProduct}
-                    onChange={onProductChange}
-                    options={products}
-                    getOptionLabel={(option) => `${option.name} (${option.unitOfMeasure})`}
-                    renderInput={(params) => <TextField {...params} label="Select Product" variant="outlined" fullWidth />}
-                />
-            );
-        }
-
-        // return <p>No Customers</p>;
-    });
 
     const columns = [
         { field: 'id', headerName: 'ID', flex: 0.2 },
@@ -230,12 +204,18 @@ const ProductListForm = React.memo(({ addedProducts, setAddedProducts }) =>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
             <Grid container spacing={1}>
                 <Grid item xs={7} md={7} >
-                    <ProductAutocomplete 
-                        loadingProducts={loadingProducts} 
-                        products={products} 
-                        selectedProduct={selectedProduct} 
-                        onProductChange={handleProductChange} 
-                    />
+                    {loadingProducts ? (
+                        <Skeleton variant="rectangular" animation="wave" sx={skeletonStyles} />
+                    ) : (
+                        <Autocomplete
+                            size="small"
+                            value={selectedProduct}
+                            onChange={handleProductChange}
+                            options={products}
+                            getOptionLabel={(option) => `${option.name} (${option.unitOfMeasure})`}
+                            renderInput={(params) => <TextField {...params} label="Select Product" variant="outlined" fullWidth />}
+                        />
+                    )}
                 </Grid>
                 <Grid item xs={3}>
                     <TextField

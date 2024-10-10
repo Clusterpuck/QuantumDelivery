@@ -13,7 +13,7 @@ const EditLocationForm = ({ locationId }) => {
         PostCode: '',
         Country: '',
         Description: '',
-        CustomerID: '',
+        CustomerName: '',
     });
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
@@ -27,7 +27,7 @@ const EditLocationForm = ({ locationId }) => {
         const fetchLocationData = async () => {
             try {
                 const locationData = await getLocationDetails(locationId); // Fetch location details
-                loadCustomers(locationData.customerID);
+                loadCustomers(locationData.customerName);
                 if (locationData) {
                     console.log("In use effect location data is " + JSON.stringify(locationData));
                     setFormData({
@@ -39,7 +39,7 @@ const EditLocationForm = ({ locationId }) => {
                         PostCode: locationData.postCode || '',
                         Country: locationData.country || '',
                         Description: locationData.description || '',
-                        CustomerID: locationData.customerID || '',
+                        CustomerName: locationData.customerName || '',
                     });
                 } else {
                     setError('No location details found.');
@@ -60,18 +60,18 @@ const EditLocationForm = ({ locationId }) => {
      // Update formData with selected customer ID
      setFormData((prevData) => ({
         ...prevData,
-        CustomerID: newValue ? newValue.id : ''
+        CustomerName: newValue ? newValue.name : ''
     }));
   };
 
-  const loadCustomers = async (customerID) => {
+  const loadCustomers = async (customerName) => {
     setLoadingCustomers(true);
     const newCustomers = await fetchCustomers();
     setCustomers(newCustomers);
        // Find the matching customer by CustomerID after customers are fetched
-       if (customerID) {
-        console.log("In load customers, form data customer ID is " + customerID);
-        const matchedCustomer = newCustomers.find(customer => customer.id === customerID);
+       if (customerName) {
+        console.log("In load customers, form data customer ID is " + customerName);
+        const matchedCustomer = newCustomers.find(customer => customer.name === customerName);
         setSelectedCustomer(matchedCustomer || null); // Set the matching customer
     }
     setLoadingCustomers(false);

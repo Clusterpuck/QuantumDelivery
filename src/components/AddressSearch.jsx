@@ -59,7 +59,10 @@ const AddressSearch = ({ onCloseForm }) => {
         const adjustMapboxZIndex = () => {
             const results = document.querySelectorAll('[class^="mbx"][class$="--Results"]');
             results.forEach((result) => {
-                result.style.zIndex = '3000';
+                if( result.style.zIndex !== '3000')
+                {
+                    result.style.zIndex = '3000';
+                }
             });
         };
 
@@ -101,7 +104,7 @@ const AddressSearch = ({ onCloseForm }) => {
             state: stateContext ? stateContext.text : '',
             zipCode: zipCode,  // set zipCode from context
             country: country, // set country from the last part of place_name
-            customerID: selectedCustomer ? selectedCustomer.id : 0
+            customerName: selectedCustomer ? selectedCustomer.name : ''
         }));
     };
 
@@ -121,7 +124,7 @@ const AddressSearch = ({ onCloseForm }) => {
                 Postcode: formData.zipCode,
                 Country: formData.country,
                 Description: formData.locationName,
-                customerID: selectedCustomer ? selectedCustomer.id : 0
+                CustomerName: selectedCustomer ? selectedCustomer.name : ''
             };
 
             console.log("locationData:", locationData); // Debug the location data

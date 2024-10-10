@@ -6,6 +6,7 @@ const EditCustomerForm = ({ customerId }) => {
     const [formData, setFormData] = useState({
         Name: '',
         Phone: '',
+        Email: '',
     });
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
@@ -19,6 +20,7 @@ const EditCustomerForm = ({ customerId }) => {
                     setFormData({
                         Name: customerData.name || '',
                         Phone: customerData.phone || '',
+                        Email: customerData.email || '',
                     });
                 } else {
                     setError('No customer details found.');
@@ -85,12 +87,12 @@ const EditCustomerForm = ({ customerId }) => {
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
-                                    label="Customer Name"
-                                    name="Name"
+                                    label="Customer Email"
+                                    name="Email"
                                     variant="outlined"
                                     fullWidth
                                     required
-                                    value={formData.Name}
+                                    value={formData.Email}
                                     onChange={handleInputChange}
                                 />
                             </Grid>

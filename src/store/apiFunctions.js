@@ -784,12 +784,10 @@ export const deleteProduct = async (productId) => {
 };
 
 // deletes customer by their ID
-export const deleteCustomer = async (customerId) => {
+export const deleteCustomer = async (customerName) => {
     try {
-        // ensure customerId is an integer
-        const id = parseInt(customerId, 10);
         const token = Cookies.get('authToken');
-        const response = await fetch(`${Constants.DATA_ENDPOINT}customers/${id}`, {
+        const response = await fetch(`${Constants.DATA_ENDPOINT}customers/${customerName}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -858,19 +856,16 @@ export const createCustomer = async (customerData) => {
 };
 
 // edit an existing customer
-export const updateCustomer = async (customerId, customerData) => {
-    const idAsInt = parseInt(customerId, 10); // convert customerId to integer
-    if (isNaN(idAsInt)) {
-        throw new Error('Invalid customer ID: must be an integer');
-    }
+export const updateCustomer = async (customerName, customerData) => {
+    
 
     if (!customerData || !customerData.Name || !customerData.Phone) {
         throw new Error('Customer name and phone are required to edit a customer.');
     }
 
-    console.log('Editing customer:', idAsInt, customerData); // log the customer data being sent
+    console.log('Editing customer:', customerName, customerData); // log the customer data being sent
     try {
-        const url = `${Constants.DATA_ENDPOINT}customers/${idAsInt}`; 
+        const url = `${Constants.DATA_ENDPOINT}customers/${customerName}`; 
         console.log(`Sending PUT request to: ${url}`); 
 
         const token = Cookies.get('authToken');
@@ -898,15 +893,11 @@ export const updateCustomer = async (customerId, customerData) => {
 };
 
 // get customer details by ID
-export const getCustomerDetails = async (customerId) => {
-    const idAsInt = parseInt(customerId, 10); // convert customerId to integer
-    if (isNaN(idAsInt)) {
-        throw new Error('Invalid customer ID: must be an integer');
-    }
-
-    console.log('Fetching customer details for ID:', idAsInt); // log the customer ID being fetched
+export const getCustomerDetails = async (customerName) => {
+    //const idAsInt = parseInt(customerId, 10); // convert customerId to integer
+    console.log('Fetching customer details for ID:', customerName); 
     try {
-        const url = `${Constants.DATA_ENDPOINT}customers/${idAsInt}`; 
+        const url = `${Constants.DATA_ENDPOINT}customers/${customerName}`; 
         console.log(`Fetching customer details from: ${url}`); // log the full URL
 
         const token = Cookies.get('authToken');
@@ -920,7 +911,7 @@ export const getCustomerDetails = async (customerId) => {
 
         if (!response.ok) {
             const errorText = await response.text(); // capture response text for detailed error
-            console.error(`Error fetching customer details for ID ${idAsInt}, status: ${response.status}, error: ${errorText}`);
+            console.error(`Error fetching customer details for Name ${customerName}, status: ${response.status}, error: ${errorText}`);
             throw new Error('Failed to fetch customer details');
         }
 

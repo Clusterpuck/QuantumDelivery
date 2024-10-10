@@ -60,7 +60,7 @@ const DeleteEntityForm = ({ entity }) => {
                     setEntityId(newValue.id);
                     break;
                 case 'customer':
-                    setEntityId(newValue.id);
+                    setEntityId(newValue.name);
                     break;
                 case 'vehicle':
                     setEntityId(newValue.licensePlate); 
@@ -154,9 +154,9 @@ const DeleteEntityForm = ({ entity }) => {
                               option.state.toLowerCase().includes(inputValue.toLowerCase()) || 
                               option.description.toLowerCase().includes(inputValue.toLowerCase())
                             : entity === 'customer'
-                            ? option.id.toString().includes(inputValue) ||
-                              option.name.toLowerCase().includes(inputValue.toLowerCase()) ||
-                              option.phone.includes(inputValue)
+                            ? option.name.toLowerCase().includes(inputValue.toLowerCase()) ||
+                              option.phone.includes(inputValue) ||
+                              option.email.toLowerCase().includes(inputValue.toLowerCase())
                             : option.licensePlate.toString().includes(inputValue) ||
                               option.status.toLowerCase().includes(inputValue.toLowerCase())
                     );
@@ -187,7 +187,7 @@ const DeleteEntityForm = ({ entity }) => {
                         : entity === 'location'
                         ? option.id === value.id
                         : entity === 'customer'
-                        ? option.id === value.id
+                        ? option.name === value.name
                         : option.id === value.id
                 }
             />

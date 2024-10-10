@@ -76,7 +76,7 @@ const ProductListForm = React.memo(({ addedProducts, setAddedProducts }) =>
         }
     };
 
-    const handleAddProduct = React.memo(() =>
+    const handleAddProduct = () =>
     {
         if (selectedProduct && isQuantityValid)
         {
@@ -112,7 +112,7 @@ const ProductListForm = React.memo(({ addedProducts, setAddedProducts }) =>
             setQuantity(1);
            
         } 
-    }, [selectedProduct, isQuantityValid, quantity]);;
+    };
 
     const handleRemoveProduct = (id) =>
     {

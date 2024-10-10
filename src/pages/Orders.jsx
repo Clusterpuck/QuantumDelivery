@@ -97,7 +97,7 @@ const Orders = () =>
         if (orders.length > 0) {
             return orders.filter(order => 
                 order.orderID.toString().includes(query) ||
-                formatDateForSearch(order.dateOrdered).includes(query) ||
+                formatDateForSearch(order.deliveryDate).includes(query) ||
                 order.address.toLowerCase().includes(query) ||
                 order.customerName.toLowerCase().includes(query) ||
                 order.orderNotes.toLowerCase().includes(query) ||

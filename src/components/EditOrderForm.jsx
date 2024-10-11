@@ -110,7 +110,7 @@ const EditOrderForm = ({ order, onRefresh, onClose, showMessage }) => {
         const input = {
             orderId: order.orderID,
             status: selectedStatus,
-            customerId: selectedCustomer?.id,
+            customerName: selectedCustomer?.name,
             locationId: selectedLocation?.id,
             deliveryDate: selectedDeliveryDate.toISOString(),
             orderNotes,

@@ -324,7 +324,7 @@ const LiveTracking = () => {
                                                                             textOverflow: 'ellipsis', // For truncating text
                                                                             overflow: 'hidden',
                                                                             whiteSpace: 'nowrap',
-                                                                            maxWidth: '120px',
+                                                                            maxWidth: '95px',
                                                                         }}>
                                                                             <Tooltip title={order.productNames.join(", ")} arrow>
                                                                             {order.productNames.join(", ")}

@@ -16,20 +16,32 @@ const LiveMap = ({ checkedRoutes, ordersData, routeIdToColour }) => {
 
     const fetchDirections = async (coordinates) => {
         const validCoordinates = coordinates.filter(coord => !isNaN(coord[0]) && !isNaN(coord[1]));
-        const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates.join(';')}?geometries=geojson&access_token=${mapboxgl.accessToken}&overview=full`;
 
         if (validCoordinates.length === 0) {
             console.error('No valid coordinates available for route.');
             return;
         }
 
+        const chunkSize = 25;
+        const directionRequests = [];
+
+        for (let i = 0; i < validCoordinates.length; i += chunkSize - 1) {
+            const chunk = validCoordinates.slice(i, i + chunkSize);
+            
+            const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${chunk.join(';')}?geometries=geojson&access_token=${mapboxgl.accessToken}&overview=full`;
+            directionRequests.push(fetch(url).then(res => res.json()));
+        }
+
         try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Error fetching directions: ${response.statusText}`);
-            }
-            const data = await response.json();
-            return data.routes[0].geometry.coordinates;
+            // Resolve all API requests and combine the route coordinates
+            const responses = await Promise.all(directionRequests);
+            const combinedCoordinates = responses.reduce((acc, data) => {
+                if (data.routes && data.routes[0]) {
+                    acc.push(...data.routes[0].geometry.coordinates);
+                }
+                return acc;
+            }, []);
+            return combinedCoordinates;
         } catch (error) {
             console.error('Error fetching directions:', error);
         }

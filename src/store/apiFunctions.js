@@ -1426,7 +1426,7 @@ export const getVehicle = async (id) => {
 };
 
 // PUT: api/Vehicles/{id}
-// updates a vehicles details
+// updates a vehicle's details
 export const updateVehicle = async (id, updatedVehicle) => {
     try {
         const token = Cookies.get('authToken');
@@ -1485,7 +1485,7 @@ export const createVehicle = async (newVehicle) => {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
             },
-            body: JSON.stringify(newVehicle),
+            body: JSON.stringify(newVehicle), 
         });
 
         if (!response.ok) {

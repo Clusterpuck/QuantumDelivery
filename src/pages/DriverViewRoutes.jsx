@@ -22,7 +22,7 @@ import '../index.css';
 import { useTheme } from '@mui/material/styles';
 
 
-const DriverViewRoutes = ({ inputUser }) => {
+const DriverViewRoutes = ({ inputUser, selectedDateChange }) => {
     // initialise drawer on the left (which shows delivery progress) to closed
     const [drawerOpen, setDrawerOpen] = React.useState(false);
     const [phoneDialogOpen, setPhoneDialogOpen] = React.useState(false); // whether the phone number for current delivery is shown
@@ -126,6 +126,10 @@ const DriverViewRoutes = ({ inputUser }) => {
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
+        if( selectedDateChange )
+        {
+            selectedDateChange(date);
+        }
     };
 
     const handleShowMessage = (msg, type) =>

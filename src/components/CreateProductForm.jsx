@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
+import { TextField, Box, CircularProgress, Button, Grid, Typography } from '@mui/material';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import { createProduct } from '../store/apiFunctions'; 
 
@@ -10,6 +10,7 @@ const CreateProductForm = ({ onClose }) => {
     });
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
+    const [loadingSubmit, setLoadingSubmit] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
 
     const handleInputChange = (event) => {
@@ -21,6 +22,7 @@ const CreateProductForm = ({ onClose }) => {
     };
 
     const handleSubmit = async (event) => {
+        setLoadingSubmit(true);
         event.preventDefault();
         console.log('Creating product...', formData);
 
@@ -42,6 +44,8 @@ const CreateProductForm = ({ onClose }) => {
         } catch (err) {
             setError('An error occurred while creating the product.');
             console.error(err);
+        } finally {
+            setLoadingSubmit(false);
         }
     };
 
@@ -80,7 +84,7 @@ const CreateProductForm = ({ onClose }) => {
                         </Grid>
                         <Grid item xs={12} sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <Button type="submit" variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
-                                Create Product
+                            {loadingSubmit ? <CircularProgress color="secondary" size = {24}/> :  "Add Product" }
                             </Button>
                             {error && <Typography color="error">{error}</Typography>}
                             {success && <Typography color="green">{successMessage}</Typography>}

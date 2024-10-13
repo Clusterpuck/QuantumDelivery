@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Box, Paper, Button, Grid, Typography, Autocomplete } from '@mui/material';
+import { TextField, Box, CircularProgress, Button, Grid, Typography, Autocomplete } from '@mui/material';
 import { fetchCustomers, getLocationDetails, updateLocation } from '../store/apiFunctions'; 
 import EditLocationAltIcon from '@mui/icons-material/EditLocationAlt';
 
@@ -18,6 +18,7 @@ const EditLocationForm = ({ locationId, onClose }) => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [loadingSubmit, setLoadingSubmit] = useState(false);
 
     const [customers, setCustomers] = useState(null);
     const [loadingCustomers, setLoadingCustomers] = useState(false);
@@ -86,6 +87,7 @@ const EditLocationForm = ({ locationId, onClose }) => {
     };
 
     const handleSubmit = async (event) => {
+        setLoadingSubmit(true);
         event.preventDefault();
         console.log('Saving changes...', JSON.stringify( formData ) ); 
 
@@ -107,6 +109,8 @@ const EditLocationForm = ({ locationId, onClose }) => {
         } catch (err) {
             console.error(err);
             setError('An error occurred while updating the location.');
+        } finally {
+            setLoadingSubmit(false)
         }
     };
 
@@ -226,7 +230,7 @@ const EditLocationForm = ({ locationId, onClose }) => {
                         </Grid>
                         <Grid item xs={12} sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <Button type="submit" variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
-                                Save Changes
+                            {loadingSubmit ? <CircularProgress color="secondary" size = {24}/> :  "Save Changes" }
                             </Button>
                             {error && <Typography color="error">{error}</Typography>}
                             {success && <Typography color="green">{successMessage}</Typography>}

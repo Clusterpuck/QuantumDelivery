@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, TextField, Typography, Autocomplete } from '@mui/material';
+import { Box, Button, TextField, Typography, Autocomplete, CircularProgress } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { getAccounts, getProducts, getLocations, getCustomers, getVehicles } from '../store/apiFunctions'; 
 
 const EditEntityForm = ({ entity, onSuccess }) => {
+    const [loadingSubmit, setLoadingSubmit] = useState(false);
     const [entityId, setEntityId] = useState('');
     const [error, setError] = useState(null);
     const [accounts, setAccounts] = useState([]);
@@ -73,6 +74,7 @@ const EditEntityForm = ({ entity, onSuccess }) => {
     };
 
     const handleSubmit = (event) => {
+        setLoadingSubmit(true);
         event.preventDefault();
         if (entityId) {
             console.log(`Editing ${entity} with ID:`, entityId);
@@ -80,6 +82,8 @@ const EditEntityForm = ({ entity, onSuccess }) => {
         } else {
             setError(`Please provide a valid ${entity === 'account' ? 'Username' : `${entity} ID`}.`);
         }
+        setLoadingSubmit(false);
+
     };
 
     return (
@@ -165,7 +169,7 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                 }
             />
             <Button variant="contained" color="primary" type="submit">
-                Load {entity} for Editing
+            {loadingSubmit ? <CircularProgress color="secondary" size = {24}/> : ("Load " +entity+ " for Editing") }   
             </Button>
         </Box>
     );

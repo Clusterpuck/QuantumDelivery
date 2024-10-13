@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, TextField, Typography, Autocomplete } from '@mui/material';
+import { Box, Button, TextField, Typography, Autocomplete, CircularProgress } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteAccount, deleteProduct, deleteCustomer, deleteLocation, deleteVehicle, getAccounts, getProducts, getCustomers, getLocations, getVehicles } from '../store/apiFunctions'; 
 
@@ -13,6 +13,7 @@ const DeleteEntityForm = ({ entity, onClose }) => {
     const [customers, setCustomers] = useState([]);
     const [vehicles, setVehicles] = useState([]);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [loadingSubmit, setLoadingSubmit] = useState(false);
 
     // fetch data based on entity type
     useEffect(() => {
@@ -76,6 +77,7 @@ const DeleteEntityForm = ({ entity, onClose }) => {
     
 
     const handleSubmit = async (event) => {
+        setLoadingSubmit(true);
         event.preventDefault();
         console.log(`Delete ${entity} with ID:`, entityId);
 
@@ -111,6 +113,8 @@ const DeleteEntityForm = ({ entity, onClose }) => {
         } catch (err) {
             setError(`An error occurred while deleting the ${entity}.`);
             console.error(err);
+        } finally {
+            setLoadingSubmit(false)
         }
     };
 
@@ -193,7 +197,7 @@ const DeleteEntityForm = ({ entity, onClose }) => {
                 }
             />
             <Button variant="contained" color="error" type="submit">
-                Delete {entity}
+            {loadingSubmit ? <CircularProgress color="secondary" size = {24}/> :  ("Delete " + entity )}
             </Button>
             {error && <Typography color="error">{error}</Typography>}
             {success && <Typography color="green">{`${entity} deleted successfully!`}</Typography>}

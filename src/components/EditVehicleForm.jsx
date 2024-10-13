@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
+import { TextField, Box, CircularProgress, Button, Grid, Typography } from '@mui/material';
 import { getVehicle, updateVehicle } from '../store/apiFunctions'; 
 
 const EditVehicleForm = ({ vehicleId, onClose }) => {
@@ -10,6 +10,7 @@ const EditVehicleForm = ({ vehicleId, onClose }) => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [loadingSubmit, setLoadingSubmit] = useState(false);
 
     useEffect(() => {
         const fetchVehicleData = async () => {
@@ -40,6 +41,7 @@ const EditVehicleForm = ({ vehicleId, onClose }) => {
     };
 
     const handleSubmit = async (event) => {
+        setLoadingSubmit(true)
         event.preventDefault();
         console.log('Saving changes...', formData);
 
@@ -62,12 +64,13 @@ const EditVehicleForm = ({ vehicleId, onClose }) => {
         } catch (err) {
             console.error(err);
             setError('An error occurred while updating the vehicle.');
+        } finally {
+            setLoadingSubmit(false)
         }
     };
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper elevation={3} sx={{ padding: 3, maxWidth: 800, width: '100%' }}>
                 <Grid container spacing={2} direction="column" alignItems="center">
                     <Typography variant="h5" gutterBottom>
                         Editing Vehicle {vehicleId}
@@ -88,14 +91,13 @@ const EditVehicleForm = ({ vehicleId, onClose }) => {
                         </Grid>
                         <Grid item xs={12} sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <Button type="submit" variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
-                                Save Changes
+                            {loadingSubmit ? <CircularProgress color="secondary" size = {24}/> :  "Save Changes" } 
                             </Button>
                             {error && <Typography color="error">{error}</Typography>}
                             {success && <Typography color="green">{successMessage}</Typography>}
                         </Grid>
                     </form>
                 </Grid>
-            </Paper>
         </Box>
     );
 };

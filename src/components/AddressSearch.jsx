@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { AddressAutofill, AddressMinimap, useConfirmAddress } from '@mapbox/search-js-react';
-import { TextField, Box, Paper, Button, Grid, Typography, Autocomplete } from '@mui/material';
+import { TextField, Box, CircularProgress, Button, Grid, Typography, Autocomplete } from '@mui/material';
 import { createLocation, fetchRegion } from '../store/apiFunctions';
 import LocationOnIcon from '@mui/icons-material/LocationOn'; 
 import { Description } from '@mui/icons-material';
@@ -36,6 +36,7 @@ const AddressSearch = ({ onCloseForm }) => {
 
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
+    const [loadingSubmit, setLoadingSubmit] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [customers, setCustomers] = useState(null);
     const [loadingCustomers, setLoadingCustomers] = useState(false);
@@ -110,9 +111,10 @@ const AddressSearch = ({ onCloseForm }) => {
 
     // Handle form submission
     const handleFormSubmit = async (event) => {
+        setLoadingSubmit(true);
         event.preventDefault();
         console.log('Creating location...', formData);
-        const result = await showConfirm();
+        //const result = await showConfirm();
 
         try {
             const locationData = {
@@ -142,6 +144,8 @@ const AddressSearch = ({ onCloseForm }) => {
         } catch (err) {
             setError('An error occurred while creating the location.');
             console.error(err);
+        } finally {
+            setLoadingSubmit(false);
         }
     };
 
@@ -306,7 +310,7 @@ const AddressSearch = ({ onCloseForm }) => {
                                     Clear Form
                                 </Button> */}
                                 <Button type="submit" variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
-                                    Add Location
+                                {loadingSubmit ? <CircularProgress color="secondary" size = {24}/> :  "Add Location" }
                                 </Button>
                                 {error && <Typography color="error">{error}</Typography>}
                                 {success && <Typography color="green">{successMessage}</Typography>}

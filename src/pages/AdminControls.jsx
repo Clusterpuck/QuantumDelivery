@@ -110,13 +110,37 @@ const AdminControls = () =>
         }
     };
 
-    const handleCloseDelete = () => setOpenDelete(false);
-    const handleCloseAccountForm = () => setOpenAccountForm(false);
-    const handleCloseProductForm = () => setOpenProductForm(false);
-    const handleCloseLocationForm = () => setOpenLocationForm(false);
-    const handleCloseCustomerForm = () => setOpenCustomerForm(false);
-    const handleCloseVehicleForm = () => setOpenVehicleForm(false);
-    const handleCloseEditEntityForm = () => setOpenEditEntityForm(false);
+    const handleCloseDelete = () => {
+        handleShowMessage('Entity deleted successfully!', 'success');
+        setOpenDelete(false);
+    };
+    const handleCloseAccountForm = () => {
+        handleShowMessage('Account submitted successfully!', 'success');
+        setOpenAccountForm(false);
+    };
+
+    const handleCloseProductForm = () => {
+        handleShowMessage('Product submitted successfully!', 'success');
+        setOpenProductForm(false);
+    };
+
+    const handleCloseLocationForm = () => {
+        handleShowMessage('Location submitted successfully!', 'success');
+        setOpenLocationForm(false);
+    };
+
+    const handleCloseCustomerForm = () => {
+        handleShowMessage('Customer submitted successfully!', 'success');
+        setOpenCustomerForm(false);
+    };
+
+    const handleCloseVehicleForm = () => {
+        handleShowMessage('Vehicle submitted successfully!', 'success');
+        setOpenVehicleForm(false);
+    };
+    const handleCloseEditEntityForm = () => {
+        setOpenEditEntityForm(false);
+    };
 
     const handleEditEntitySuccess = async (collectedEntityId) =>
     {

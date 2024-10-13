@@ -46,7 +46,7 @@ const LiveTracking = () => {
 
     const colourPalette = [
 
-        '#3a429f', // violet blue
+        '#3D7F9D', // cerulean
         '#a97dce', // lavender
         '#f4a4af', // cherry blossom pink
         '#a7577f', // china rose

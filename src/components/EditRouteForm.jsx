@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { styled } from '@mui/system';
 import { fetchAccounts, fetchVehicles, updateRouteDetails } from '../store/apiFunctions.js';
 import '../index.css';
 import {
@@ -80,6 +81,21 @@ const EditRouteForm = ({ route, onRefresh, onClose, showMessage }) => {
         }
     }, [route, drivers, vehicles]);
 
+    const downStyledPopper = styled(Popper)(({ theme }) => ({
+        '.MuiAutocomplete-listbox': {
+            maxHeight: '150px', // Adjust the height to fit 4 options before scrolling
+            overflowY: 'auto',
+        },
+    }));
+
+    const upStyledPopper = styled(Popper)(({ theme }) => ({
+        '.MuiAutocomplete-listbox': {
+            maxHeight: '150px', // Adjust the height to fit 4 options before scrolling
+            overflowY: 'auto',
+            placement: "top-start"
+        },
+    }));
+
     const DriverAutocomplete = () => {
         if (loadingDrivers) {
             return <Skeleton variant="rectangular" animation="wave" sx={skeletonStyles} />;
@@ -97,6 +113,7 @@ const EditRouteForm = ({ route, onRefresh, onClose, showMessage }) => {
                     fullWidth
                     onChange={(event, newValue) => handleDriverChange(newValue)}
                     renderInput={(params) => <TextField {...params} label="Select Driver" />}
+                    PopperComponent={downStyledPopper} 
                     
                 />
             );
@@ -120,6 +137,7 @@ const EditRouteForm = ({ route, onRefresh, onClose, showMessage }) => {
                     fullWidth
                     onChange={(event, newValue) => handleVehicleChange(newValue)}
                     renderInput={(params) => <TextField {...params} label="Select Vehicle" />}
+                    PopperComponent={upStyledPopper} 
                     
                 />
             );

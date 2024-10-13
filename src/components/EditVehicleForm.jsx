@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TextField, Box, CircularProgress, Button, Grid, Typography } from '@mui/material';
 import { getVehicle, updateVehicle } from '../store/apiFunctions'; 
 
-const EditVehicleForm = ({ vehicleId }) => {
+const EditVehicleForm = ({ vehicleId, onClose }) => {
     const [formData, setFormData] = useState({
         LicensePlate: '',
         UnitOfMeasure: '',
@@ -55,6 +55,9 @@ const EditVehicleForm = ({ vehicleId }) => {
                 setSuccess(true);
                 setSuccessMessage(result.message); 
                 console.log('Vehicle updated successfully:', result);
+
+                // Close the modal after successful form submission
+                onClose(); 
             } else {
                 setError('Failed to update vehicle.');
             }            

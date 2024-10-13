@@ -237,7 +237,7 @@ const AdminControls = () =>
                     >
                         <CancelIcon />
                     </Button>
-                    {deleteEntity && <DeleteEntityForm entity={deleteEntity} />}
+                    {deleteEntity && <DeleteEntityForm entity={deleteEntity} onClose={handleCloseDelete}/>}
                 </Box>
             </Modal>
 
@@ -269,7 +269,7 @@ const AdminControls = () =>
                     >
                         <CancelIcon />
                     </Button>
-                    {userMode === 'add' ? <CreateAccountForm /> : <EditAccountForm accountId={accountId} handleOpenPasswordModal={handleOpenPasswordModal} accountStatus={accountStatus} />}
+                    {userMode === 'add' ? <CreateAccountForm onClose={handleCloseAccountForm}/> : <EditAccountForm accountId={accountId} handleOpenPasswordModal={handleOpenPasswordModal} accountStatus={accountStatus} onClose={handleCloseAccountForm} />}
                 </Box>
             </Modal>
 
@@ -301,7 +301,7 @@ const AdminControls = () =>
                     >
                         <CancelIcon />
                     </Button>
-                    {productId ? <EditProductForm productId={productId} /> : <CreateProductForm />}
+                    {productId ? <EditProductForm productId={productId} onClose={handleCloseProductForm} /> : <CreateProductForm onClose={handleCloseProductForm}/>}
                 </Box>
             </Modal>
 
@@ -333,7 +333,7 @@ const AdminControls = () =>
                     >
                         <CancelIcon />
                     </Button>
-                    {locationId ? <EditLocationForm locationId={locationId} /> : <CreateLocation />}
+                    {locationId ? <EditLocationForm locationId={locationId} onClose={handleCloseLocationForm}/> : <CreateLocation onClose={handleCloseLocationForm}/>}
                 </Box>
             </Modal>
 
@@ -365,7 +365,7 @@ const AdminControls = () =>
                     >
                         <CancelIcon />
                     </Button>
-                    {customerId ? <EditCustomerForm customerId={customerId} /> : <CreateCustomer />}
+                    {customerId ? <EditCustomerForm customerId={customerId} onClose={handleCloseCustomerForm}/> : <CreateCustomer onClick={handleCloseCustomerForm}/>}
                 </Box>
             </Modal>
 
@@ -464,7 +464,7 @@ const AdminControls = () =>
                     >
                         <CancelIcon />
                     </Button>
-                    {vehicleId ? <EditVehicleForm vehicleId={vehicleId} /> : <CreateVehicleForm />}
+                    {vehicleId ? <EditVehicleForm vehicleId={vehicleId} onClose={handleCloseVehicleForm}/> : <CreateVehicleForm onClose={handleCloseVehicleForm}/>}
                 </Box>
             </Modal>
             <Snackbar

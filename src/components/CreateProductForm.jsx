@@ -3,7 +3,7 @@ import { TextField, Box, CircularProgress, Button, Grid, Typography } from '@mui
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import { createProduct } from '../store/apiFunctions'; 
 
-const CreateProductForm = () => {
+const CreateProductForm = ({ onClose }) => {
     const [formData, setFormData] = useState({
         productName: '',
         unitOfMeasure: '',
@@ -37,6 +37,7 @@ const CreateProductForm = () => {
                 setSuccessMessage('Product created successfully!');
                 setError(null); // Clear error state on success
                 console.log('Product created successfully:', result);
+                onClose();
             } else {
                 setError('Failed to create product.');
             }

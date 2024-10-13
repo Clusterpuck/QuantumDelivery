@@ -3,7 +3,7 @@ import { TextField, Box, CircularProgress, Button, Grid, Typography, MenuItem, S
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { getAccountDetails, reactivateAccount, editAccount } from '../store/apiFunctions'; 
 
-const EditAccountForm = ({ accountId, handleOpenPasswordModal, accountStatus }) => {
+const EditAccountForm = ({ accountId, handleOpenPasswordModal, accountStatus, onClose }) => {
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -86,6 +86,7 @@ const EditAccountForm = ({ accountId, handleOpenPasswordModal, accountStatus }) 
             if (result) {
                 setSuccess(true);
                 setSuccessMessage('Account updated successfully!');
+                onClose();
             } else {
                 setError('Failed to update account.');
             }

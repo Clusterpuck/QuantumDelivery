@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
+import { TextField, Box, CircularProgress, Button, Grid, Typography } from '@mui/material';
 import { getProductDetails, updateProduct } from '../store/apiFunctions';
 import BackpackIcon from '@mui/icons-material/Backpack';
 
@@ -11,6 +11,7 @@ const EditProductForm = ({ productId }) => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [loadingSubmit, setLoadingSubmit] = useState(false);
 
     useEffect(() => {
         const fetchProductData = async () => {
@@ -45,6 +46,7 @@ const EditProductForm = ({ productId }) => {
     };
 
     const handleSubmit = async (event) => {
+        setLoadingSubmit(true)
         event.preventDefault();
         console.log('Saving changes...', formData); 
         console.log('Form Data:', formData);
@@ -67,6 +69,8 @@ const EditProductForm = ({ productId }) => {
         } catch (err) {
             console.error(err); 
             setError('An error occurred while updating the product.');
+        } finally {
+            setLoadingSubmit(false)
         }
     };
 
@@ -107,7 +111,7 @@ const EditProductForm = ({ productId }) => {
                         </Grid>
                         <Grid item xs={12} sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <Button type="submit" variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
-                                Save Changes
+                            {loadingSubmit ? <CircularProgress color="secondary" size = {24}/> :  "Save Changes" } 
                             </Button>
                             {error && <Typography color="error">{error}</Typography>}
                             {success && <Typography color="green">{successMessage}</Typography>}

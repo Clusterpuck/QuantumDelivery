@@ -35,9 +35,9 @@ const AccountDetailsForm = () => {
     };
 
     const handleSnackbarClose = () =>
-        {
-            setSnackbar(prev => ({ ...prev, open: false }));
-        };
+    {
+        setSnackbar(prev => ({ ...prev, open: false }));
+    };
 
     // get username from cookie (id) and authToken
     const accountId = Cookies.get('userName');
@@ -64,17 +64,16 @@ const AccountDetailsForm = () => {
                         }
                     } else {
                         setError('No account details found.');
-                        handleShowMessage('No account details found.', 'error')
-                        
+                        handleShowMessage('No account details found.', 'error');
                     }
                 } catch (err) {
                     setError('Failed to fetch account details.');
-                    handleShowMessage('Failed to fetch account details.', 'error')
+                    handleShowMessage('Failed to fetch account details.', 'error');
                     console.error(err);
                 }
             } else {
                 setError('No account ID found.');
-                handleShowMessage('No account ID found.', 'error')
+                handleShowMessage('No account ID found.', 'error');
             }
         };
         fetchAccountData();
@@ -121,8 +120,7 @@ const AccountDetailsForm = () => {
         }
 
         if (!/^(?:(?:\+61|0)4\d{2} ?\d{3} ?\d{3}|(?:\+61|0)(2|3|7|8)\d{8}|(?:\+61|0)1800 ?\d{3} ?\d{3}|(?:\+61|0)13\d{6}|(?:\+61|0)1900 ?\d{6})$/.test(updatedAccountData.Phone)) {
-            setError('Phone number is invalid')
-            //handleShowMessage('Phone number must contain 10 digits', 'error')
+            setError('Phone number is invalid');
             return;
         }
 
@@ -130,25 +128,21 @@ const AccountDetailsForm = () => {
             const result = await editAccount(updatedAccountData.Username, updatedAccountData);
             if (result) {
                 setSuccess(true);
-                handleShowMessage('Account updated successfully!', 'success')
+                handleShowMessage('Account updated successfully!', 'success');
             } else {
                 setError('Failed to update account.');
-                handleShowMessage('Failed to update account.', 'error')
-                
+                handleShowMessage('Failed to update account.', 'error');
             }
         } catch (err) {
             setError('An error occurred while updating the account.');
-            handleShowMessage('An error occurred while updating the account.', 'error')
+            handleShowMessage('An error occurred while updating the account.', 'error');
             console.error(err);
         }
     };
 
-
     const handleClosePasswordModal = () => {
         setOpenPasswordModal(false);
     }
-
-    
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
@@ -159,9 +153,6 @@ const AccountDetailsForm = () => {
                         <Typography variant="h3" component="h3" >
                             Account Details
                         </Typography>
-                    </Grid>
-                    <Grid item>
-                        {/* Form Starts Here */}
                     </Grid>
                     <form style={{ width: '80%', alignItems: 'center' }} onSubmit={handleSubmit}>
                         <Grid container spacing={2}>
@@ -188,22 +179,11 @@ const AccountDetailsForm = () => {
                                     required
                                     InputProps={{
                                         readOnly: true,
+                                        style: { backgroundColor: '#f5f5f5' }, // Grey background to indicate view-only
                                     }}
                                 />
                             </Grid>
-                            {/* <Grid item xs={12} sm={6}>
-                                <TextField
-                                    label="Password"
-                                    name="password"
-                                    value={formData.password}
-                                    onChange={handleInputChange}
-                                    type="password"
-                                    variant="outlined"
-                                    fullWidth
-                                    required
-                                />
-                            </Grid> */}
-                             <Grid item xs={12} sm={12}>
+                            <Grid item xs={12} sm={12}>
                                 <TextField
                                     label="Address"
                                     name="address"
@@ -228,25 +208,24 @@ const AccountDetailsForm = () => {
                                 {error && <Typography color="error">{error}</Typography>}
                             </Grid>  
                             <Grid item xs={12} sm={6}>
-                                <FormControl fullWidth required>
-                                    <InputLabel>Company Role</InputLabel>
-                                    <Select
-                                        name="companyRole"
-                                        value={formData.companyRole}
-                                        onChange={handleInputChange}
-                                        disabled={!editRole} // Disable if the role is "Driver"
-                                    >
-                                        <MenuItem value="DRIVER" sx={{ textAlign: 'left' }}>Driver</MenuItem>
-                                        <MenuItem value="ADMIN" sx={{ textAlign: 'left' }}>Admin</MenuItem>
-                                    </Select>
-                                </FormControl>
+                                <TextField
+                                    label="Company Role"
+                                    name="companyRole"
+                                    value={formData.companyRole}
+                                    variant="outlined"
+                                    fullWidth
+                                    InputProps={{
+                                        readOnly: true,
+                                        style: { backgroundColor: '#f5f5f5' }, // Grey background to indicate view-only
+                                    }}
+                                />
                             </Grid>
                         </Grid>
                         <Grid item xs={12} sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <Button
+                            <Button
                                 variant="contained"
                                 color="primary"
-                                onClick={()=>setOpenPasswordModal(true)}
+                                onClick={() => setOpenPasswordModal(true)}
                                 sx={{ width: "250px", mb: 2 }}
                             >
                                 Change Password
@@ -258,37 +237,18 @@ const AccountDetailsForm = () => {
                     </form>
                 </Grid>
             </Paper>
-             {/* Password modal */}
-             <Modal
-                open={openPasswordModal}
-                onClose={handleClosePasswordModal}
-                aria-labelledby="password-form-modal"
-                aria-describedby="password-form-description"
-            >
-                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, maxWidth: 400, width: '100%' }}>
-                <Button
-                    onClick={handleClosePasswordModal}
-                    sx={{
-                        position: 'absolute',
-                        top: 16,
-                        right: 16,
-                    }}
-                >
-                    <CancelIcon />
-                </Button>
-                    <CheckPasswordForm username={accountId} onClose={handleClosePasswordModal} showMessage={handleShowMessage} />
-                </Box>
-            </Modal>
-            <Snackbar
-                open={snackbar.open}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                autoHideDuration={6000}
-                onClose={handleSnackbarClose}
-            >
+
+            <Snackbar open={snackbar.open} autoHideDuration={6000} onClose={handleSnackbarClose}>
                 <Alert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
                     {snackbar.message}
                 </Alert>
             </Snackbar>
+
+            <Modal open={openPasswordModal} onClose={handleClosePasswordModal}>
+                <Box sx={{ /* Modal styling */ }}>
+                    <CheckPasswordForm onClose={handleClosePasswordModal} />
+                </Box>
+            </Modal>
         </Box>
     );
 };

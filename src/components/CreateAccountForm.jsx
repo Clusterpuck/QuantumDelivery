@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Box, Paper, Button, Grid, Typography, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import { TextField, Box, CircularProgress, Button, Grid, Typography, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { createAccount } from '../store/apiFunctions';
 
@@ -15,6 +15,7 @@ const CreateAccountForm = () => {
     });
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
+    const [loadingSubmit, setLoadingSubmit] = useState(false);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -25,6 +26,7 @@ const CreateAccountForm = () => {
     };
 
     const handleSubmit = async (event) => {
+        setLoadingSubmit(true);
         event.preventDefault();
         if( formData.password !== formData.confirmPassword )
         {
@@ -44,6 +46,7 @@ const CreateAccountForm = () => {
 
             if (!/^(?:(?:\+61|0)4\d{2} ?\d{3} ?\d{3}|(?:\+61|0)(2|3|7|8)\d{8}|(?:\+61|0)1800 ?\d{3} ?\d{3}|(?:\+61|0)13\d{6}|(?:\+61|0)1900 ?\d{6})$/.test(newAccountData.Phone)) {
                 setError('Phone number is invalid')
+                setLoadingSubmit(false)
                 return;
             }
     
@@ -59,6 +62,8 @@ const CreateAccountForm = () => {
             } catch (err) {
                 setError('An error occurred while creating the account.');
                 console.error(err);
+            } finally{
+                setLoadingSubmit(false);
             }
 
         }
@@ -165,7 +170,7 @@ const CreateAccountForm = () => {
                         </Grid>
                         <Grid item xs={12} sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                             <Button type="submit" variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
-                                Create Account
+                                {loadingSubmit ? <CircularProgress color="secondary" size = {24}/> :  "Add Account" }
                             </Button>
                             {error && <Typography color="error">{error}</Typography>} {/* TODO GET RID OF THIS*/}
                             {success && <Typography color="green">Account created successfully!</Typography>} {/* TODO GET RID OF THIS*/}

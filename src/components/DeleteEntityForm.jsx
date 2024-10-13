@@ -3,7 +3,7 @@ import { Box, Button, TextField, Typography, Autocomplete } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteAccount, deleteProduct, deleteCustomer, deleteLocation, deleteVehicle, getAccounts, getProducts, getCustomers, getLocations, getVehicles } from '../store/apiFunctions'; 
 
-const DeleteEntityForm = ({ entity }) => {
+const DeleteEntityForm = ({ entity, onClose }) => {
     const [entityId, setEntityId] = useState('');
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
@@ -104,6 +104,7 @@ const DeleteEntityForm = ({ entity }) => {
 
             if (result) {
                 setSuccess(true);
+                onClose();
             } else {
                 setError(`Failed to delete ${entity}.`);
             }

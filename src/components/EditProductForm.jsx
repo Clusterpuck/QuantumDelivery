@@ -3,7 +3,7 @@ import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
 import { getProductDetails, updateProduct } from '../store/apiFunctions';
 import BackpackIcon from '@mui/icons-material/Backpack';
 
-const EditProductForm = ({ productId }) => {
+const EditProductForm = ({ productId, onClose }) => {
     const [formData, setFormData] = useState({
         Name: '',
         UnitOfMeasure: '',
@@ -61,6 +61,7 @@ const EditProductForm = ({ productId }) => {
                 }
                 setSuccessMessage('Product updated successfully!');
                 console.log('Product updated successfully:', result);
+                onClose();
             } else {
                 setError('Failed to update product.');
             }

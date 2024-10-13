@@ -3,7 +3,7 @@ import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
 import { createCustomer } from '../store/apiFunctions'; 
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 
-const CreateCustomerForm = () => {
+const CreateCustomerForm = ( { onClose } ) => {
     const [formData, setFormData] = useState({
         customerName: '',
         customerEmail: '',
@@ -42,6 +42,7 @@ const CreateCustomerForm = () => {
             if (result) {
                 setSuccess(true);
                 setSuccessMessage('Customer created successfully!');
+                onClose();
                 setError(null); 
                 console.log('Customer created successfully:', result);
             } else {

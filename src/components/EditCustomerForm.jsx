@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TextField, Box, Paper, Button, Grid, Typography } from '@mui/material';
 import { getCustomerDetails, updateCustomer } from '../store/apiFunctions'; 
 
-const EditCustomerForm = ({ customerId }) => {
+const EditCustomerForm = ({ customerId, onClose }) => {
     const [formData, setFormData] = useState({
         Name: '',
         Phone: '',
@@ -64,6 +64,7 @@ const EditCustomerForm = ({ customerId }) => {
                     return;
                 }
                 setSuccessMessage('Customer updated successfully!');
+                onClose();
                 console.log('Customer updated successfully:', result);
             } else {
                 setError('Failed to update customer.');

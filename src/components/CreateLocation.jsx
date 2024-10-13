@@ -4,7 +4,7 @@ import AddressSearch from './AddressSearch';
 const CreateLocationForm = () => {
 
     return (
-        <AddressSearch />
+        <AddressSearch  />
     );
 };
 

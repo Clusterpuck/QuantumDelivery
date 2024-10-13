@@ -3,7 +3,7 @@ import { TextField, Box, Paper, Button, Grid, Typography, MenuItem, Select, Inpu
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { createAccount } from '../store/apiFunctions';
 
-const CreateAccountForm = () => {
+const CreateAccountForm = ({ onClose }) => {
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -15,6 +15,8 @@ const CreateAccountForm = () => {
     });
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
+
+
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -53,6 +55,7 @@ const CreateAccountForm = () => {
                     setSuccess(true);
                     setError(null);
                     console.log('Account created successfully:', result);
+                    onClose();
                 } else {
                     setError('Failed to create account.');
                 }

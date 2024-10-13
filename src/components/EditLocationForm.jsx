@@ -3,7 +3,7 @@ import { TextField, Box, Paper, Button, Grid, Typography, Autocomplete } from '@
 import { fetchCustomers, getLocationDetails, updateLocation } from '../store/apiFunctions'; 
 import EditLocationAltIcon from '@mui/icons-material/EditLocationAlt';
 
-const EditLocationForm = ({ locationId }) => {
+const EditLocationForm = ({ locationId, onClose }) => {
     const [formData, setFormData] = useState({
         Longitude: '',
         Latitude: '',
@@ -100,6 +100,7 @@ const EditLocationForm = ({ locationId }) => {
                 }
                 setSuccessMessage('Location updated successfully!');
                 console.log('Location updated successfully:', result);
+                onClose();
             } else {
                 setError('Failed to update location.');
             }

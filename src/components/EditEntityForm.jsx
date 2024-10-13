@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, Typography, Autocomplete, CircularProgress } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { getAccounts, getProducts, getLocations, getCustomers, getVehicles } from '../store/apiFunctions'; 
+import { getAccounts, getProducts, getLocations, getCustomers, getVehicles } from '../store/apiFunctions';
 
 const EditEntityForm = ({ entity, onSuccess }) => {
     const [loadingSubmit, setLoadingSubmit] = useState(false);
@@ -14,7 +14,7 @@ const EditEntityForm = ({ entity, onSuccess }) => {
     const [vehicles, setVehicles] = useState([]);
     const [selectedItem, setSelectedItem] = useState(null);
 
-    // fetch data based on entity type
+    // Fetch data based on entity type
     useEffect(() => {
         const fetchEntities = async () => {
             let fetchedEntities;
@@ -70,7 +70,7 @@ const EditEntityForm = ({ entity, onSuccess }) => {
         } else {
             setEntityId('');
         }
-        setError(null); // reset error on change
+        setError(null); // Reset error on change
     };
 
     const handleSubmit = (event) => {
@@ -83,38 +83,37 @@ const EditEntityForm = ({ entity, onSuccess }) => {
             setError(`Please provide a valid ${entity === 'account' ? 'Username' : `${entity} ID`}.`);
         }
         setLoadingSubmit(false);
-
     };
 
     return (
-        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column',  gap: 2 }}>
+        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Typography variant="h5" component="h5" sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                 <EditIcon /> Edit {entity}
             </Typography>
             <Autocomplete
                 options={
-                    entity === 'account' ? accounts : 
-                    entity === 'product' ? products : 
+                    entity === 'account' ? accounts :
+                    entity === 'product' ? products :
                     entity === 'location' ? locations :
                     entity === 'customer' ? customers :
                     entity === 'vehicle' ? vehicles :
                     []
                 }
-                getOptionLabel={(option) => 
-                    entity === 'account' 
+                getOptionLabel={(option) =>
+                    entity === 'account'
                         ? `${option.name} (${option.username})`
-                        : entity === 'product' 
+                        : entity === 'product'
                         ? `${option.name} (ID: ${option.id})`
                         : entity === 'location'
                         ? `${option.description}, ${option.address}, ${option.state} (Postcode: ${option.postCode})`
                         : entity === 'customer'
                         ? `${option.name} (Phone: ${option.phone})`
-                        : `${option.licensePlate} (Status: ${option.status})`
+                        : `${option.licensePlate} (Make: ${option.make}, Model: ${option.model}, Status: ${option.status})`
                 }
                 filterOptions={(options, { inputValue }) => {
-                    // filter logic based on entity type
+                    // Filter logic based on entity type
                     return options.filter(
-                        (option) => entity === 'account' 
+                        (option) => entity === 'account'
                             ? option.username.toLowerCase().includes(inputValue.toLowerCase()) ||
                               option.name.toLowerCase().includes(inputValue.toLowerCase()) ||
                               option.phone.includes(inputValue) ||
@@ -133,6 +132,8 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                               option.phone.includes(inputValue) ||
                               option.email.toLowerCase().includes(inputValue.toLowerCase())
                             : option.licensePlate.toString().includes(inputValue) ||
+                              option.make.toLowerCase().includes(inputValue.toLowerCase()) || // Include make in filter
+                              option.model.toLowerCase().includes(inputValue.toLowerCase()) || // Include model in filter
                               option.status.toLowerCase().includes(inputValue.toLowerCase())
                     );
                 }}
@@ -149,27 +150,27 @@ const EditEntityForm = ({ entity, onSuccess }) => {
                                 ? 'Search by ID, Address, Postcode, or State'
                                 : entity === 'customer'
                                 ? 'Search by ID, Name, or Phone'
-                                : 'Search by License Plate or Status'
+                                : 'Search by License Plate, Make, Model, or Status' // Update label
                         }
                         variant="outlined"
                         error={!!error}
                         helperText={error}
                     />
                 )}
-                isOptionEqualToValue={(option, value) => 
-                    entity === 'account' 
+                isOptionEqualToValue={(option, value) =>
+                    entity === 'account'
                         ? option.username === value.username
-                        : entity === 'product' 
+                        : entity === 'product'
                         ? option.id === value.id
                         : entity === 'location'
                         ? option.id === value.id
                         : entity === 'customer'
                         ? option.id === value.id
-                        : option.id === value.id
+                        : option.licensePlate === value.licensePlate
                 }
             />
             <Button variant="contained" color="primary" type="submit">
-            {loadingSubmit ? <CircularProgress color="secondary" size = {24}/> : ("Load " +entity+ " for Editing") }   
+                {loadingSubmit ? <CircularProgress color="secondary" size={24} /> : ("Load " + entity + " for Editing")}
             </Button>
         </Box>
     );

@@ -4,8 +4,11 @@ import { getVehicle, updateVehicle } from '../store/apiFunctions';
 
 const EditVehicleForm = ({ vehicleId, onClose }) => {
     const [formData, setFormData] = useState({
-        LicensePlate: '',
-        UnitOfMeasure: '',
+        licensePlate: '', // Use lowercase 'licensePlate'
+        make: '', // Use lowercase 'make'
+        model: '', // Use lowercase 'model'
+        colour: '', // Use lowercase 'colour'
+        capacity: 0, // Use lowercase 'capacity'
     });
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
@@ -18,7 +21,11 @@ const EditVehicleForm = ({ vehicleId, onClose }) => {
                 const vehicleData = await getVehicle(vehicleId); 
                 if (vehicleData) {
                     setFormData({
-                        LicensePlate: vehicleData.licensePlate || '',
+                        licensePlate: vehicleData.licensePlate || '', // Use lowercase
+                        make: vehicleData.make || '', // Use lowercase
+                        model: vehicleData.model || '', // Use lowercase
+                        colour: vehicleData.colour || '', // Use lowercase
+                        capacity: vehicleData.capacity || 0, // Use lowercase
                     });
                 } else {
                     setError('No vehicle details found.');
@@ -41,63 +48,102 @@ const EditVehicleForm = ({ vehicleId, onClose }) => {
     };
 
     const handleSubmit = async (event) => {
-        setLoadingSubmit(true)
+        setLoadingSubmit(true);
         event.preventDefault();
         console.log('Saving changes...', formData);
 
         try {
-            const result = await updateVehicle(vehicleId, formData); 
-
-            console.log('vehicleId:', vehicleId); // Should be the same as formData.LicensePlate
-            console.log('formData.LicensePlate:', formData.LicensePlate);
+            const result = await updateVehicle(vehicleId, formData);
 
             if (result && result.message) {
                 setSuccess(true);
-                setSuccessMessage(result.message); 
-                console.log('Vehicle updated successfully:', result);
-
-                // Close the modal after successful form submission
+                setSuccessMessage(result.message);
                 onClose(); 
             } else {
                 setError('Failed to update vehicle.');
-            }            
+            }
         } catch (err) {
             console.error(err);
             setError('An error occurred while updating the vehicle.');
         } finally {
-            setLoadingSubmit(false)
+            setLoadingSubmit(false);
         }
     };
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                <Grid container spacing={2} direction="column" alignItems="center">
-                    <Typography variant="h5" gutterBottom>
-                        Editing Vehicle {vehicleId}
-                    </Typography>
-                    <form style={{ width: '80%' }} onSubmit={handleSubmit}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} sm={12}>
-                                <TextField
-                                    label="License Plate"
-                                    name="LicensePlate"
-                                    variant="outlined"
-                                    fullWidth
-                                    required
-                                    value={formData.LicensePlate}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
+            <Grid container spacing={2} direction="column" alignItems="center">
+                <Typography variant="h5" gutterBottom>
+                    Editing Vehicle {vehicleId}
+                </Typography>
+                <form style={{ width: '80%' }} onSubmit={handleSubmit}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={12}>
+                            <TextField
+                                label="License Plate"
+                                name="licensePlate" // Use lowercase name
+                                variant="outlined"
+                                fullWidth
+                                required
+                                value={formData.licensePlate} // Use lowercase
+                                onChange={handleInputChange}
+                            />
                         </Grid>
-                        <Grid item xs={12} sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <Button type="submit" variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
-                            {loadingSubmit ? <CircularProgress color="secondary" size = {24}/> :  "Save Changes" } 
-                            </Button>
-                            {error && <Typography color="error">{error}</Typography>}
-                            {success && <Typography color="green">{successMessage}</Typography>}
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="Make"
+                                name="make" // Use lowercase name
+                                variant="outlined"
+                                fullWidth
+                                required
+                                value={formData.make} // Use lowercase
+                                onChange={handleInputChange}
+                            />
                         </Grid>
-                    </form>
-                </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="Model"
+                                name="model" // Use lowercase name
+                                variant="outlined"
+                                fullWidth
+                                required
+                                value={formData.model} // Use lowercase
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="Colour"
+                                name="colour" // Use lowercase name
+                                variant="outlined"
+                                fullWidth
+                                required
+                                value={formData.colour} // Use lowercase
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="Capacity"
+                                name="capacity" // Use lowercase name
+                                type="number"
+                                variant="outlined"
+                                fullWidth
+                                required
+                                value={formData.capacity} // Use lowercase
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12} sx={{ mt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <Button type="submit" variant="contained" color="primary" sx={{ width: "250px", mb: 2 }}>
+                            {loadingSubmit ? <CircularProgress color="secondary" size={24} /> : "Save Changes"}
+                        </Button>
+                        {error && <Typography color="error">{error}</Typography>}
+                        {success && <Typography color="green">{successMessage}</Typography>}
+                    </Grid>
+                </form>
+            </Grid>
         </Box>
     );
 };

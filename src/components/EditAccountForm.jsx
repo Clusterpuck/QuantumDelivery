@@ -214,11 +214,13 @@ const EditAccountForm = ({ accountId, handleOpenPasswordModal, accountStatus, on
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <FormControl fullWidth required>
-                                    <InputLabel>Company Role</InputLabel>
+                                <InputLabel id="company-role-label">Company Role</InputLabel>
                                     <Select
+                                        labelId="company-role-label"
                                         name="companyRole"
                                         value={formData.companyRole}
                                         onChange={handleInputChange}
+                                        label="Company Role"
                                     >
                                         <MenuItem value="DRIVER">Driver</MenuItem>
                                         <MenuItem value="ADMIN">Admin</MenuItem>

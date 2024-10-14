@@ -110,37 +110,86 @@ const AdminControls = () =>
         }
     };
 
+    // did this past the "final changes" date for code so apologies for it being jank
     const handleCloseDelete = () => {
+        setOpenDelete(false);
+    };
+    const handleCloseDeleteSuccess = () => {
         handleShowMessage('Entity deleted successfully!', 'success');
         setOpenDelete(false);
     };
+    const handleCloseAccountFormEdit = () => {
+        handleShowMessage('Account updated successfully!', 'success');
+        setOpenAccountForm(false);
+    };
+
+    const handleCloseProductFormEdit = () => {
+        handleShowMessage('Product updated successfully!', 'success');
+        setOpenProductForm(false);
+    };
+
+    const handleCloseLocationFormEdit = () => {
+        handleShowMessage('Location updated successfully!', 'success');
+        setOpenLocationForm(false);
+    };
+
+    const handleCloseCustomerFormEdit = () => {
+        handleShowMessage('Customer updated successfully!', 'success');
+        setOpenCustomerForm(false);
+    };
+
+    const handleCloseVehicleFormEdit= () => {
+        handleShowMessage('Vehicle updated successfully!', 'success');
+        setOpenVehicleForm(false);
+    };
+    const handleCloseAccountFormCreate = () => {
+        handleShowMessage('Account created successfully!', 'success');
+        setOpenAccountForm(false);
+    };
+
+    const handleCloseProductFormCreate = () => {
+        handleShowMessage('Product created successfully!', 'success');
+        setOpenProductForm(false);
+    };
+
+    const handleCloseLocationFormCreate = () => {
+        handleShowMessage('Location created successfully!', 'success');
+        setOpenLocationForm(false);
+    };
+
+    const handleCloseCustomerFormCreate = () => {
+        handleShowMessage('Customer created successfully!', 'success');
+        setOpenCustomerForm(false);
+    };
+
+    const handleCloseVehicleFormCreate = () => {
+        handleShowMessage('Vehicle created successfully!', 'success');
+        setOpenVehicleForm(false);
+    };
     const handleCloseAccountForm = () => {
-        handleShowMessage('Account submitted successfully!', 'success');
         setOpenAccountForm(false);
     };
 
     const handleCloseProductForm = () => {
-        handleShowMessage('Product submitted successfully!', 'success');
         setOpenProductForm(false);
     };
 
     const handleCloseLocationForm = () => {
-        handleShowMessage('Location submitted successfully!', 'success');
         setOpenLocationForm(false);
     };
 
     const handleCloseCustomerForm = () => {
-        handleShowMessage('Customer submitted successfully!', 'success');
         setOpenCustomerForm(false);
     };
 
     const handleCloseVehicleForm = () => {
-        handleShowMessage('Vehicle submitted successfully!', 'success');
         setOpenVehicleForm(false);
     };
     const handleCloseEditEntityForm = () => {
         setOpenEditEntityForm(false);
     };
+
+    
 
     const handleEditEntitySuccess = async (collectedEntityId) =>
     {
@@ -261,7 +310,7 @@ const AdminControls = () =>
                     >
                         <CancelIcon />
                     </Button>
-                    {deleteEntity && <DeleteEntityForm entity={deleteEntity} onClose={handleCloseDelete}/>}
+                    {deleteEntity && <DeleteEntityForm entity={deleteEntity} onClose={handleCloseDeleteSuccess}/>}
                 </Box>
             </Modal>
 
@@ -293,7 +342,7 @@ const AdminControls = () =>
                     >
                         <CancelIcon />
                     </Button>
-                    {userMode === 'add' ? <CreateAccountForm onClose={handleCloseAccountForm}/> : <EditAccountForm accountId={accountId} handleOpenPasswordModal={handleOpenPasswordModal} accountStatus={accountStatus} onClose={handleCloseAccountForm} />}
+                    {userMode === 'add' ? <CreateAccountForm onClose={handleCloseAccountFormCreate}/> : <EditAccountForm accountId={accountId} handleOpenPasswordModal={handleOpenPasswordModal} accountStatus={accountStatus} onClose={handleCloseAccountFormEdit} />}
                 </Box>
             </Modal>
 
@@ -325,7 +374,7 @@ const AdminControls = () =>
                     >
                         <CancelIcon />
                     </Button>
-                    {productId ? <EditProductForm productId={productId} onClose={handleCloseProductForm} /> : <CreateProductForm onClose={handleCloseProductForm}/>}
+                    {productId ? <EditProductForm productId={productId} onClose={handleCloseProductFormEdit} /> : <CreateProductForm onClose={handleCloseProductFormCreate}/>}
                 </Box>
             </Modal>
 
@@ -357,7 +406,7 @@ const AdminControls = () =>
                     >
                         <CancelIcon />
                     </Button>
-                    {locationId ? <EditLocationForm locationId={locationId} onClose={handleCloseLocationForm}/> : <CreateLocation onClose={handleCloseLocationForm}/>}
+                    {locationId ? <EditLocationForm locationId={locationId} onClose={handleCloseLocationFormEdit}/> : <CreateLocation onClose={handleCloseLocationFormCreate}/>}
                 </Box>
             </Modal>
 
@@ -389,7 +438,7 @@ const AdminControls = () =>
                     >
                         <CancelIcon />
                     </Button>
-                    {customerId ? <EditCustomerForm customerId={customerId} onClose={handleCloseCustomerForm}/> : <CreateCustomer onClick={handleCloseCustomerForm}/>}
+                    {customerId ? <EditCustomerForm customerId={customerId} onClose={handleCloseCustomerFormEdit}/> : <CreateCustomer onClose={handleCloseCustomerFormCreate}/>}
                 </Box>
             </Modal>
 
@@ -488,7 +537,7 @@ const AdminControls = () =>
                     >
                         <CancelIcon />
                     </Button>
-                    {vehicleId ? <EditVehicleForm vehicleId={vehicleId} onClose={handleCloseVehicleForm}/> : <CreateVehicleForm onClose={handleCloseVehicleForm}/>}
+                    {vehicleId ? <EditVehicleForm vehicleId={vehicleId} onClose={handleCloseVehicleFormEdit}/> : <CreateVehicleForm onClose={handleCloseVehicleFormCreate}/>}
                 </Box>
             </Modal>
             <Snackbar

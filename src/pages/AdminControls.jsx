@@ -115,7 +115,7 @@ const AdminControls = () =>
         setOpenDelete(false);
     };
     const handleCloseDeleteSuccess = () => {
-        handleShowMessage('Entity deleted successfully!', 'success');
+        handleShowMessage('Deleted successfully!', 'success');
         setOpenDelete(false);
     };
     const handleCloseAccountFormEdit = () => {

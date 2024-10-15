@@ -44,7 +44,6 @@ const CreateCustomerForm = ( { onClose } ) => {
 
             if (result) {
                 setSuccess(true);
-                setSuccessMessage('Customer created successfully!');
                 onClose();
                 setError(null); 
                 console.log('Customer created successfully:', result);

@@ -805,6 +805,7 @@ const ViewRoutes = () =>
                               <Grid container item xs={12} spacing={2}>
                                 {/* DataGrid for orders */}
                                 <Grid item xs={12} md={7} sx={styleConstants.fieldSpacing}>
+                                <div style={{ maxHeight: 400, overflowY: 'auto' }}> {/* Set the max height */}
                                   <DataGrid
                                     rows={route.orders
                                       .slice()
@@ -815,6 +816,7 @@ const ViewRoutes = () =>
                                     autoHeight
                                     density='compact'
                                   />
+                                  </div>
                                 </Grid>
 
                                 {/* Map for orders */}

@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Snackbar, Alert, Paper, Box, Table, TableBody, TableCell,
     TableContainer, TableHead, TableRow, Button, Dialog,
-    Tooltip, Checkbox, FormControlLabel, Grid} from '@mui/material';
-import { formatDate } from '../store/helperFunctions';
+    Tooltip, Grid, TablePagination} from '@mui/material';
 import EditOrderForm from './EditOrderForm';
 import dayjs from 'dayjs';
 import { deleteOrder } from '../store/apiFunctions';
@@ -16,7 +15,6 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { useTheme } from '@mui/material/styles';
 
-const statusOptions = ["PLANNED", "ON-ROUTE", "DELIVERED", "CANCELLED", "ASSIGNED", "ISSUE"];
  // Mapping header names to JSON keys
  const headerMapping = {
     'ID': 'orderID',
@@ -53,8 +51,17 @@ const PlannedOrdersTable = ({ orders, onRefresh, showMessage }) => {
     const [orderToDelete, setOrderToDelete] = useState(null);
     const [sortBy, setSortBy] = useState('deliveryDate'); // Default sort by deliveryDate
     const [sortDirection, setSortDirection] = useState('asc');
-    const [selectedStatuses, setSelectedStatuses] = useState(statusOptions);
-    //const [filteredData, setFilteredData] = useState(orders);
+    const [page, setPage] = useState(0);  // For pagination
+    const [rowsPerPage, setRowsPerPage] = useState(25);  // Rows per page for pagination
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);  // Reset to the first page when rows per page changes
+    };
 
     const handleSnackbarClose = () => {
         setSnackbarOpen(false);
@@ -65,13 +72,6 @@ const PlannedOrdersTable = ({ orders, onRefresh, showMessage }) => {
         setOpenEditDialog(true);
     };
 
-    const handleToggleStatus = (status) => {
-        const updatedStatuses = selectedStatuses.includes(status)
-            ? selectedStatuses.filter(s => s !== status)
-            : [...selectedStatuses, status];
-    
-        setSelectedStatuses(updatedStatuses);
-    };
 
     const handleCloseEditDialog = () => {
         setOpenEditDialog(false);
@@ -91,10 +91,21 @@ const PlannedOrdersTable = ({ orders, onRefresh, showMessage }) => {
     const visibleRows = React.useMemo(() => {
         // Filter for just planned
         const filteredRows = orders.filter((item) => item.status === 'PLANNED');
-        
+        setPage(0);
         // Then sort the filtered rows
         return filteredRows.sort(getComparator(sortDirection, sortBy));
     }, [orders, sortDirection, sortBy]);
+
+    
+     // Paginate the rows
+     const paginatedRows = React.useMemo(() => {
+        if (visibleRows.length > 0) {
+            const startIndex = page * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+            return visibleRows.slice(startIndex, endIndex);
+        }
+        return [];
+    }, [visibleRows, page, rowsPerPage]);
     
 
     
@@ -275,12 +286,21 @@ const PlannedOrdersTable = ({ orders, onRefresh, showMessage }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {visibleRows.map((row) => (
+                        {paginatedRows.map((row) => (
                             <Row key={row.orderID} row={row}/>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
+            <TablePagination
+                component="div"
+                count={visibleRows.length}  // Total number of rows
+                page={page}
+                onPageChange={handleChangePage}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                rowsPerPageOptions={[5, 10, 25]}  // Rows per page options
+            />
 
             <Snackbar
                 open={snackbarOpen}

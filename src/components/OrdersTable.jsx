@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {useState } from 'react';
 import { Snackbar, Alert, Paper, Box, Table, TableBody, TableCell,
     TableContainer, TableHead, TableRow, Button, Dialog,
-    Tooltip, Checkbox, FormControlLabel, Grid} from '@mui/material';
-import { formatDate } from '../store/helperFunctions';
+    Tooltip, Checkbox, FormControlLabel, Grid, TablePagination} from '@mui/material';
 import EditOrderForm from '../components/EditOrderForm';
 import dayjs from 'dayjs';
 import { deleteOrder } from '../store/apiFunctions';
@@ -58,6 +57,42 @@ const OrdersTable = ({ orders, onRefresh, showMessage }) => {
         statusOptions.filter(status => !disabledStatuses.includes(status)) // Exclude "DELIVERED" and "CANCELLED"
     );
     //const [filteredData, setFilteredData] = useState(orders);
+    const [page, setPage] = useState(0);  // For pagination
+    const [rowsPerPage, setRowsPerPage] = useState(25);  // Rows per page for pagination
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);  // Reset to the first page when rows per page changes
+    };
+
+    const visibleRows = React.useMemo(() => {
+        if( orders )
+        {
+            // First filter the rows based on the selected statuses
+            const filteredRows = orders.filter((item) => selectedStatuses.includes(item.status));
+            
+            setPage(0);
+            // Then sort the filtered rows
+            return filteredRows.sort(getComparator(sortDirection, sortBy));
+
+
+        }
+        return [];
+    }, [orders, selectedStatuses, sortDirection, sortBy]);
+
+     // Paginate the rows
+     const paginatedRows = React.useMemo(() => {
+        if (visibleRows.length > 0) {
+            const startIndex = page * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+            return visibleRows.slice(startIndex, endIndex);
+        }
+        return [];
+    }, [visibleRows, page, rowsPerPage]);
 
     const handleSnackbarClose = () => {
         setSnackbarOpen(false);
@@ -91,18 +126,7 @@ const OrdersTable = ({ orders, onRefresh, showMessage }) => {
         setOrderToDelete(null);
     };
 
-    const visibleRows = React.useMemo(() => {
-        if( orders )
-        {
-            // First filter the rows based on the selected statuses
-            const filteredRows = orders.filter((item) => selectedStatuses.includes(item.status));
-            
-            // Then sort the filtered rows
-            return filteredRows.sort(getComparator(sortDirection, sortBy));
-
-        }
-        return [];
-    }, [orders, selectedStatuses, sortDirection, sortBy]);
+ 
     
 
     
@@ -304,12 +328,21 @@ const OrdersTable = ({ orders, onRefresh, showMessage }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {visibleRows.map((row) => (
+                        {paginatedRows.map((row) => (
                             <Row key={row.orderID} row={row}/>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
+            <TablePagination
+                component="div"
+                count={visibleRows.length}  // Total number of rows
+                page={page}
+                onPageChange={handleChangePage}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                rowsPerPageOptions={[5, 10, 25]}  // Rows per page options
+            />
 
             <Snackbar
                 open={snackbarOpen}

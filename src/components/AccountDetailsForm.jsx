@@ -245,7 +245,17 @@ const AccountDetailsForm = () => {
             </Snackbar>
 
             <Modal open={openPasswordModal} onClose={handleClosePasswordModal}>
-                <Box sx={{ /* Modal styling */ }}>
+            <Box sx={{ 
+                    position: 'absolute', 
+                    top: '50%', 
+                    left: '50%', 
+                    transform: 'translate(-50%, -50%)', 
+                    bgcolor: 'background.paper', 
+                    boxShadow: 24, 
+                    p: 4, 
+                    maxWidth: 400, 
+                    width: '100%',
+                    borderRadius: 2 }}>
                     <CheckPasswordForm onClose={handleClosePasswordModal} />
                 </Box>
             </Modal>

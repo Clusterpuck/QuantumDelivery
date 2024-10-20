@@ -141,7 +141,8 @@ const ViewRoutes = () =>
       }
     }
     loadRoutes();
-    if (requestID)
+   if (requestID)
+   //requestID is no longer used for calculation finish due to python limits
     {
       const response = await fetchMethod('Calculation/' + requestID);
       // Parse startTime and endTime to Date objects
